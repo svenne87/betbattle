@@ -1,0 +1,11 @@
+android/ATTR_MINIFY=true
+android/ATTR_PROJECT_NAME=BetKampen
+android/abi=armeabi-v7a
+android/distribute_path=/Users/Svempa/Downloads
+android/key_password=Betkampen2014
+android/keystore_alias=betkampen
+android/keystore_password=Betkampen2014
+android/keystore_path=/Users/Svempa/android.keystore
+android/recent_output=/Users/Svempa/Downloads
+android/sdk_version=4.1.2
+eclipse.preferences.version=1

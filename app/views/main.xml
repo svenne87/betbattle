@@ -1,0 +1,10 @@
+<Alloy>
+	<Window class="container" id="mainWin" platform="android">
+		<Require type="widget" src="ds.slideMenu" id="ds"/> 
+	</Window>
+	<NavigationWindow id="nav" platform="ios">
+		<Window class="container" id="mainWin">
+			<Require type="widget" src="ds.slideMenu" id="ds"/> 
+		</Window>
+	</NavigationWindow>
+</Alloy>

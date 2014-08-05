@@ -1,0 +1,6 @@
+<Alloy>
+	<Window class="container" id="challengeWindow">
+		<ScrollView id="challenge">
+		</ScrollView>
+	</Window>
+</Alloy>

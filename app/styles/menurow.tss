@@ -1,0 +1,38 @@
+"Label[platform=ios]": {
+  color: "#FFF",
+  font: {
+    fontSize: "20",
+    font : 'Helvetica'
+  }
+},
+"Label[platform=android]": {
+  color: "#FFF",
+  font: {
+    fontSize: "20",
+	fontFamily: 'Roboto-Regular'
+  }
+},
+".vgroup": {
+  layout: "vertical",
+  height: Ti.UI.SIZE
+},
+"#row": {
+  height : '60dp',
+  selectedBackgroundColor : '#303030',
+  selectedColor : 'white',
+  backgroundColor : '#40000000',
+},
+"#icon[platform=ios]": {
+  width: "38dp",
+  left: "5dp",
+},
+"#icon[platform=android]": {
+	width : "38dp",
+	height: "38dp",
+	left : "5dp",
+	top : "9dp"
+}
+
+"#title": {
+  left: "54dp"
+}

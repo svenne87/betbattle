@@ -1,0 +1,6 @@
+<Alloy>
+	<Window class="container" id="groupSelectWindow">
+		<View id="groupSelect">
+		</View>
+	</Window>
+</Alloy>

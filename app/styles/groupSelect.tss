@@ -1,0 +1,11 @@
+".container": {
+	layout: 'vertical',
+    width: Ti.UI.FILL,
+    height: Ti.UI.FILL,
+	backgroundColor:"#303030"
+},
+"#groupSelect":{
+	height:'100%',
+	width:'100%',
+	layout:'vertical'
+}

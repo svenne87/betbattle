@@ -1,0 +1,11 @@
+".container": {
+	layout: 'vertical',
+    width: Ti.UI.FILL,
+    height: Ti.UI.FILL,
+	backgroundColor: '#303030',
+},
+"#nav[platform=ios]":{
+	backgroundImage : 'images/green_bg.png',
+	tintColor : '#FFF',
+	barColor : '#FFF'
+}

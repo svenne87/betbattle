@@ -1,0 +1,99 @@
+".container": {
+	layout: 'vertical',
+	width: Ti.UI.FILL,
+	height: Ti.UI.FILL,
+	backgroundColor: 'transparent'
+},
+"#content":{
+	height: '100%',
+	width: '100%',
+	backgroundImage: '/images/Default-Portrait.png',
+	layout: 'vertical'
+},
+"#facebookBtn":{
+	top: '70%',
+	height: '7%',
+	width: '68.5%',
+	backgroundColor: '#336699',
+	borderRadius: 3
+},
+"#facebookBtnText[platform=ios]":{
+	color: '#FFF',
+	left: '19%',
+	width: 'auto',
+	font: {
+		fontFamily: 'Helvetica Neue',
+		fontSize: 14,
+		fontWeight: 'normal'
+	}
+},
+"#facebookBtnText[platform=android]":{
+	color: '#FFF',
+	left: '19%',
+	width: 'auto',
+	font: {
+		fontFamily: 'Roboto-Regular',
+		fontSize: 16,
+		fontWeight: 'normal'
+	}
+}
+".scrollView":{
+	backgroundColor: '#61A542',
+	backgroundGradient: {
+		type: "linear",
+		startPoint: {
+			x: "0%",
+			y: "0%"
+		},
+		endPoint: {
+			x: "0%",
+			y: "100%"
+		},
+		colors: [
+			{
+				color: "#61A542",
+				offset: 0.0
+			}, {
+				color: "#458940",
+				offset: 1.0
+			}
+		]
+	}
+},
+".tutorialInfoLabel[platform=android]":{
+	color: '#FFF',
+	width: '90%',
+	textAlign: 'center',
+	height: Ti.UI.SIZE,
+	top: '5%',
+	font: {
+		fontFamily: 'Roboto-Regular',
+		fontSize: 22,
+		fontWeight: 'normal'
+	}
+},
+".tutorialInfoLabel[platform=ios]":{
+	color: '#FFF',
+	width: '90%',
+	textAlign: 'center',
+	height: Ti.UI.SIZE,
+	top: '5%',
+	font: {
+		fontFamily: 'Helvetica Neue',
+		fontSize: 20,
+		fontWeight: 'normal'
+	}
+},
+".shadowContainer":{
+	top: '31%',
+	left: '16.5%',
+	height: '65%',
+	width: '70%',
+	opacity:0.5,
+	backgroundColor : '#303030'
+},
+".tutorialImage":{
+	top : '30%',
+	height : '65%',
+	width : '70%'
+}
