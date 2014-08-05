@@ -34,6 +34,8 @@ Alloy.Globals.CLOSE = true;
 
 Alloy.Globals.FBERROR = true;
 
+Alloy.Globals.PHRASES = {};
+
 Alloy.Globals.INVITEURL = "https://apps.facebook.com/betkampen";
 
 Alloy.Globals.BETKAMPENURL = "http://secure.jimdavislabs.se/secure/betkampen_vm";
@@ -174,36 +176,6 @@ Alloy.Globals.checkCoins = function() {
                         });
                         alertWindow.show();
                     }
-                }
-            } else Ti.API.error("Error =>" + this.response);
-        };
-    }
-};
-
-Alloy.Globals.getLanguage = function() {
-    if (Alloy.Globals.checkConnection()) {
-        var xhr = Titanium.Network.createHTTPClient();
-        xhr.onerror = function(e) {
-            Ti.API.error("Bad Sever =>" + e.error);
-        };
-        try {
-            xhr.open("GET", Alloy.Globals.GETLANGUAGE);
-            xhr.setRequestHeader("content-type", "application/json");
-            xhr.setTimeout(Alloy.Globals.TIMEOUT);
-            xhr.send();
-        } catch (e) {}
-        xhr.onload = function() {
-            if ("200" == this.status) {
-                if (4 == this.readyState) {
-                    var file1 = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory, "language.json");
-                    file1.write(this.responseText);
-                    
-                    setTimeout(function() {
-                        var file2 = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory, "language.json");
-                        var rawJson = file2.read().text;
-                        Ti.API.log((JSON.parse(rawJson)).test);
-                    }, 2000);
-                    
                 }
             } else Ti.API.error("Error =>" + this.response);
         };

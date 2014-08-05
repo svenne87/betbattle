@@ -340,11 +340,9 @@ if (Alloy.Globals.FBERROR) {
 }
 
 addEvent();
-
+							Ti.API.log(Alloy.Globals.PHRASES.test);
 // check login
-if (Alloy.Globals.checkConnection()) {	
-	Alloy.Globals.getLanguage();
-	
+if (Alloy.Globals.checkConnection()) {		
 	if (fb.loggedIn) {
 		if (!opened) {
 			// don't show the dialog at auto login

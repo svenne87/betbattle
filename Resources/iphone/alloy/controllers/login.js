@@ -567,8 +567,8 @@ function Controller() {
         }
     });
     addEvent();
+    Ti.API.log(Alloy.Globals.PHRASES.test);
     if (Alloy.Globals.checkConnection()) {
-        Alloy.Globals.getLanguage();
         if (fb.loggedIn) {
             opened || Ti.App.Properties.setString("appLaunch", JSON.stringify({
                 opened: true

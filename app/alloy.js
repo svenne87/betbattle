@@ -28,6 +28,7 @@ Alloy.Globals.WINDOWS = [];
 Alloy.Globals.OPEN = true;
 Alloy.Globals.CLOSE = true;
 Alloy.Globals.FBERROR = true;
+Alloy.Globals.PHRASES = {};
 
 // urls. Everything live needs to be done over SSL
 Alloy.Globals.INVITEURL = 'https://apps.facebook.com/betkampen';
@@ -237,55 +238,6 @@ Alloy.Globals.checkCoins = function() {
 		};
 	}
 };
-
-
-// get correct language file
-Alloy.Globals.getLanguage = function() {
-	// check connection
-	if (Alloy.Globals.checkConnection()) {
-		var xhr = Titanium.Network.createHTTPClient();
-		xhr.onerror = function(e) {
-			Ti.API.error('Bad Sever =>' + e.error);
-		};
-
-		try {
-			xhr.open('GET', Alloy.Globals.GETLANGUAGE); // + '?lang=' + Titanium.Locale);
-			xhr.setRequestHeader("content-type", "application/json");
-			xhr.setTimeout(Alloy.Globals.TIMEOUT);
-
-			xhr.send();
-		} catch(e) {
-			//
-		}
-
-		xhr.onload = function() {
-			if (this.status == '200') {
-				if (this.readyState == 4) {
-					var json = JSON.parse(this.responseText);
-					// write it to the file system
-					var file1 = Titanium.Filesystem.getFile(
-					Titanium.Filesystem.applicationDataDirectory, 'language.json');
-					file1.write(json);
-					//Ti.API.log(file1.nativePath);
-					//Ti.API.log(file1.read().text);
-					
-					setTimeout(function(){
-						var file2 = Titanium.Filesystem.getFile(
-						Titanium.Filesystem.applicationDataDirectory, 'language.json'
-						);
-						Ti.API.log(file2.read().text);
-						
-					},2000);
-				}
-			} else {
-				Ti.API.error("Error =>" + this.response);
-			}
-		};
-	}
-};
-
-
-
 
 // construct Challenge objects
 Alloy.Globals.constructChallenge = function(responseAPI) {
