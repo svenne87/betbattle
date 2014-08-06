@@ -34,6 +34,8 @@ Alloy.Globals.CLOSE = true;
 
 Alloy.Globals.FBERROR = true;
 
+Alloy.Globals.PHRASES = {};
+
 Alloy.Globals.INVITEURL = "https://apps.facebook.com/betkampen";
 
 Alloy.Globals.BETKAMPENURL = "http://secure.jimdavislabs.se/secure/betkampen_vm";
@@ -67,6 +69,8 @@ Alloy.Globals.BETKAMPENCHECKCOINSURL = Alloy.Globals.BETKAMPENURL + "/api/check_
 Alloy.Globals.BETKAMPENCOINSANDROIDURL = Alloy.Globals.BETKAMPENURL + "/api/get_coins_android.php";
 
 Alloy.Globals.BETKAMPENSHAREURL = Alloy.Globals.BETKAMPENURL + "/api/share.php";
+
+Alloy.Globals.GETLANGUAGE = Alloy.Globals.BETKAMPENURL + "/api/testar_language.php";
 
 Alloy.Globals.performTimeout = function(func) {
     setTimeout(function() {

@@ -1,3 +1,12 @@
+function __processArg(obj, key) {
+    var arg = null;
+    if (obj) {
+        arg = obj[key] || null;
+        delete obj[key];
+    }
+    return arg;
+}
+
 function Controller() {
     function removeEvent() {
         $.facebookBtn.removeEventListener("click", listener);
@@ -185,9 +194,11 @@ function Controller() {
     }
     require("alloy/controllers/BaseController").apply(this, Array.prototype.slice.call(arguments));
     this.__controllerPath = "login";
-    arguments[0] ? arguments[0]["__parentSymbol"] : null;
-    arguments[0] ? arguments[0]["$model"] : null;
-    arguments[0] ? arguments[0]["__itemTemplate"] : null;
+    if (arguments[0]) {
+        __processArg(arguments[0], "__parentSymbol");
+        __processArg(arguments[0], "$model");
+        __processArg(arguments[0], "__itemTemplate");
+    }
     var $ = this;
     var exports = {};
     $.__views.login = Ti.UI.createWindow({
@@ -555,11 +566,12 @@ function Controller() {
             Alloy.Globals.showFeedbackDialog("Något gick fel! Du kanske avbröt inloggningen?");
             indicator.closeIndicator();
         } else if (e.cancelled) {
-            Alloy.Globals.showFeedbackDialog("Avbrytet");
+            Alloy.Globals.showFeedbackDialog("Avbrutet");
             indicator.closeIndicator();
         }
     });
     addEvent();
+    Ti.API.log(Alloy.Globals.PHRASES.test);
     if (Alloy.Globals.checkConnection()) {
         if (fb.loggedIn) {
             opened || Ti.App.Properties.setString("appLaunch", JSON.stringify({
