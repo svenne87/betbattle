@@ -11,10 +11,24 @@
 	layout: 'vertical'
 },
 "#facebookBtn":{
-	top: '70%',
+	top: '50%',
 	height: '7%',
 	width: '68.5%',
 	backgroundColor: '#336699',
+	borderRadius: 3
+},
+"#loginBtn":{
+	top '60%',
+	height: '7%',
+	width: '68.5%',
+	backgroundColor: '#333333',
+	borderRadius: 3
+},
+"#registerBtn":{
+	top '70%',
+	height: '7%',
+	width: '68.5%',
+	backgroundColor: '#333333',
 	borderRadius: 3
 },
 "#facebookBtnText[platform=ios]":{
@@ -37,6 +51,16 @@
 		fontWeight: 'normal'
 	}
 }
+"#loginBtnText[platform=android]":{
+	color: '#000',
+	left: '19%',
+	width: 'auto',
+	font: {
+		fontFamily: 'Roboto-Regular',
+		fontSize: 16,
+		fontWeight: 'normal'
+	}
+},
 ".scrollView":{
 	backgroundColor: '#61A542',
 	backgroundGradient: {
