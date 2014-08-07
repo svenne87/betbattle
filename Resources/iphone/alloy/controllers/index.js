@@ -20,9 +20,9 @@ function Controller() {
     function doError() {
         indicator.closeIndicator();
         var alertWindow = Titanium.UI.createAlertDialog({
-            title: "Något gick fel!",
-            message: "Ett fel uppstod vid hämtande av ditt språk. Vänligen försök igen.",
-            buttonNames: [ "Försök igen", "Stäng" ]
+            title: "Something went wrong!",
+            message: "An error occured while trying to fetch your local language files. Please try again.",
+            buttonNames: [ "OK", "Cancel" ]
         });
         alertWindow.addEventListener("click", function(e) {
             switch (e.index) {
@@ -47,8 +47,7 @@ function Controller() {
                 doError();
             };
             try {
-                xhr.open("GET", Alloy.Globals.GETLANGUAGE + "?lang=" + Titanium.Locale);
-                Ti.API.log(Alloy.Globals.GETLANGUAGE + "?lang=" + Titanium.Locale.getCurrentCountry() + " " + Titanium.Locale.getCurrentLanguage());
+                xhr.open("GET", Alloy.Globals.GETLANGUAGE + "?lang=" + Alloy.Globals.LOCALE);
                 xhr.setRequestHeader("content-type", "application/json");
                 xhr.setTimeout(Alloy.Globals.TIMEOUT);
                 xhr.send();
@@ -69,7 +68,20 @@ function Controller() {
                     Ti.API.error("Error =>" + this.response);
                 }
             };
-        } else Alloy.Globals.showFeedbackDialog("Ingen anslutning!");
+        } else {
+            var alertWindow = Titanium.UI.createAlertDialog({
+                title: "Bet Battle",
+                message: "No internet connection detected!",
+                buttonNames: [ "OK" ]
+            });
+            alertWindow.addEventListener("click", function(e) {
+                switch (e.index) {
+                  case 0:
+                    alertWindow.hide();
+                }
+            });
+            alertWindow.show();
+        }
     }
     require("alloy/controllers/BaseController").apply(this, Array.prototype.slice.call(arguments));
     this.__controllerPath = "index";
@@ -85,6 +97,8 @@ function Controller() {
         width: Ti.UI.FILL,
         height: Ti.UI.FILL,
         backgroundColor: "transparent",
+        apiName: "Ti.UI.Window",
+        classes: [ "container" ],
         id: "index"
     });
     $.__views.index && $.addTopLevelView($.__views.index);

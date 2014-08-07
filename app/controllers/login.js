@@ -33,7 +33,7 @@ function getChallengesAndStart() {
 		Ti.API.error('Bad Sever =>' + e.error);
 		indicator.closeIndicator();
 		addEvent();
-		Alloy.Globals.showFeedbackDialog('Något gick fel! Försök igen.');
+		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 	};
 
 	try {
@@ -48,7 +48,7 @@ function getChallengesAndStart() {
 		Ti.API.error('Bad Sever =>' + e.error);
 		indicator.closeIndicator();
 		addEvent();
-		Alloy.Globals.showFeedbackDialog('Något gick fel! Försök igen.');
+		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 	}
 	xhr.onload = function() {
 		if (this.status == '200') {
@@ -60,7 +60,7 @@ function getChallengesAndStart() {
 				} catch(e) {
 					indicator.closeIndicator();
 					addEvent();
-					Alloy.Globals.showFeedbackDialog('Något gick fel! Försök igen.');
+					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 				}
 
 				// construct array with objects
@@ -102,12 +102,12 @@ function getChallengesAndStart() {
 				}
 
 			} else {
-				Alloy.Globals.showFeedbackDialog('Något gick fel! Försök igen.');
+				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 				indicator.closeIndicator();
 				addEvent();
 			}
 		} else {
-			Alloy.Globals.showFeedbackDialog('Server svarar med felkod ' + this.status);
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 			indicator.closeIndicator();
 			addEvent();
 			Ti.API.error("Error =>" + this.response);
@@ -120,9 +120,9 @@ function doError() {
 	addEvent();
 
 	var alertWindow = Titanium.UI.createAlertDialog({
-		title : 'Något gick fel!',
-		message : 'Ett fel uppstod vid kontaktande av Facebook. Vänligen försök igen.',
-		buttonNames : ['Försök igen', 'Stäng']
+		title : Alloy.Globals.PHRASES.commonErrorTxt,
+		message : Alloy.Globals.PHRASES.facebookConnectionErrorTxt + ' ' + Alloy.Globals.PHRASES.retryTxt,
+		buttonNames : [Alloy.Globals.PHRASES.retryBtnTxt, Alloy.Globals.PHRASES.closeBtnTxt]
 	});
 
 	alertWindow.addEventListener('click', function(e) {
@@ -200,7 +200,7 @@ function loginAuthenticated(fb) {
 					Ti.API.error('Bad Sever =>' + e.error);
 					indicator.closeIndicator();
 					addEvent();
-					Alloy.Globals.showFeedbackDialog('Något gick fel! Försök igen.');
+					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 				};
 
 				try {
@@ -210,7 +210,7 @@ function loginAuthenticated(fb) {
 					var param = '{"auth_token" : "' + fb.accessToken + '"}';
 					xhr.send(param);
 				} catch(e) {
-					Alloy.Globals.showFeedbackDialog('Något gick fel! Internet kanske inte är på? Försök igen.');
+					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.internetMayBeOffErrorTxt);
 					indicator.closeIndicator();
 					addEvent();
 				}
@@ -224,7 +224,7 @@ function loginAuthenticated(fb) {
 							} catch(e) {
 								indicator.closeIndicator();
 								addEvent();
-								Alloy.Globals.showFeedbackDialog('Något gick fel! Försök igen.');
+								Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 							}
 
 							if (response !== null) {
@@ -234,18 +234,18 @@ function loginAuthenticated(fb) {
 									getChallengesAndStart();
 								}
 							} else {
-								Alloy.Globals.showFeedbackDialog('Något gick fel! Försök igen.');
+								Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 								indicator.closeIndicator();
 								addEvent();
 							}
 
 						} else {
-							Alloy.Globals.showFeedbackDialog('Något gick fel! Försök igen.');
+							Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 							indicator.closeIndicator();
 							addEvent();
 						}
 					} else {
-						Alloy.Globals.showFeedbackDialog('Något gick fel! Försök igen.' + this.status);
+						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 						Ti.API.error("Error =>" + this.response);
 						indicator.closeIndicator();
 						addEvent();
@@ -267,7 +267,7 @@ function login() {
 	if (Alloy.Globals.checkConnection()) {
 		fb.authorize();
 	} else {
-		Alloy.Globals.showFeedbackDialog('Ingen Anslutning!');
+		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 		//removeEvent();
 		//addEvent();
 	}
@@ -277,9 +277,9 @@ function login() {
 
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({
-	top : 200
+	top : 200,
+	text : Alloy.Globals.PHRASES.loadingTxt
 });
-
 /* Main Flow */
 
 var opened = Ti.App.Properties.getString('appLaunch');
@@ -328,19 +328,28 @@ if (Alloy.Globals.FBERROR) {
 				loginAuthenticated(fb);
 			}, 300);
 		} else if (e.error) {
-			Alloy.Globals.showFeedbackDialog("Något gick fel! Du kanske avbröt inloggningen?");
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.facebookAbortConnectionTxt);
 			//addEvent();
 			indicator.closeIndicator();
 		} else if (e.cancelled) {
-			Alloy.Globals.showFeedbackDialog("Avbrutet");
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.canceledTxt);
 			indicator.closeIndicator();
 			//addEvent();
 		}
 	});
 }
 
-addEvent();
-							Ti.API.log(Alloy.Globals.PHRASES.test);
+addEvent();					  // + '?lang=' + Alloy.Globals.LOCALE gick inte så bra...
+							  // TODO gick inte försöka igen efter Timeout vid login försök...
+							  // TODO går inte att logga in, kan vara fb session som löpt up, sen går de inte försöka igen....
+// set correct language phrase
+$.facebookBtnText.text = Alloy.Globals.PHRASES.loginFacebookButtonTxt;							  
+$.viewOneLabel.text = Alloy.Globals.PHRASES.labelOneTxt;
+$.viewTwoLabel.text = Alloy.Globals.PHRASES.labelTwoTxt;
+$.viewThreeLabel.text = Alloy.Globals.PHRASES.labelThreeTxt;
+$.viewFourLabel.text = Alloy.Globals.PHRASES.labelFourTxt;
+$.viewFiveLabel.text = Alloy.Globals.PHRASES.labelFiveTxt;
+
 // check login
 if (Alloy.Globals.checkConnection()) {		
 	if (fb.loggedIn) {
@@ -371,7 +380,7 @@ if (Alloy.Globals.checkConnection()) {
 		}
 	} else {
 		if (!opened) {
-			Alloy.Globals.showFeedbackDialog('Välkommen till Betkampen, för att lättare komma igång kan du när du vill titta igenom våran tutorial. Detta gör du genom att bläddra åt höger. Du kan även få mer coins att spela för genom att dela till Facebook.');
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.welcomePhrase);
 			//finally
 			Ti.App.Properties.setString("appLaunch", JSON.stringify({
 				opened : true
@@ -379,7 +388,7 @@ if (Alloy.Globals.checkConnection()) {
 		}
 	}
 } else {
-	Alloy.Globals.showFeedbackDialog('Ingen anslutning!');
+	Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 }
 
 

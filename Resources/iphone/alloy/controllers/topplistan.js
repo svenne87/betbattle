@@ -22,6 +22,8 @@ function Controller() {
         width: Ti.UI.FILL,
         height: Ti.UI.FILL,
         backgroundColor: "#303030",
+        apiName: "Ti.UI.Window",
+        classes: [ "container" ],
         id: "scoreView"
     });
     $.__views.scoreView && $.addTopLevelView($.__views.scoreView);
@@ -29,7 +31,8 @@ function Controller() {
     _.extend($, $.__views);
     var uie = require("lib/IndicatorWindow");
     var indicator = uie.createIndicatorWindow({
-        top: 200
+        top: 200,
+        text: Alloy.Globals.PHRASES.loadingTxt
     });
     var url = Alloy.Globals.BETKAMPENURL + "/webviews/scoreboard_wv.php";
     var win = $.scoreView;

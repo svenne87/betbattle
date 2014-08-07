@@ -14,6 +14,7 @@ function createIndicatorWindow(args) {
     var width = 180, height = 50;
     var args = args || {};
     var top = args.top || 140;
+    var text = args.text || "Loading...";
     var win = Titanium.UI.createWindow({
         height: height,
         width: width,
@@ -43,7 +44,7 @@ function createIndicatorWindow(args) {
         left: 10,
         width: Ti.UI.FILL,
         height: Ti.UI.FILL,
-        text: L("Laddar..."),
+        text: L(text),
         color: "#fff",
         font: {
             fontFamily: "Helvetica",

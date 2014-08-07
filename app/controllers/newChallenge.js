@@ -70,7 +70,7 @@ function createGameListObject(response) {
 function createNoGamesView() {
 	$.newChallenge.add(Ti.UI.createLabel({
 		width : '100%',
-		text : 'Inga spel hittades',
+		text : Alloy.Globals.PHRASES.noGamesTxt,
 		left : 60,
 		top : 40,
 		font : {
@@ -110,7 +110,7 @@ function createAndShowTableView(league, array) {
 
 	if (OS_IOS) {
 		refresher = Ti.UI.createRefreshControl({
-			tintColor : '#58B101'
+			tintColor : Alloy.Globals.themeColor()
 		});
 
 		// will refresh on pull
@@ -118,7 +118,7 @@ function createAndShowTableView(league, array) {
 			if (Alloy.Globals.checkConnection()) {
 				getGames(leagueId);
 			} else {
-				Alloy.Globals.showFeedbackDialog('Ingen anslutning!');
+				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 				refresher.endRefreshing();
 			}
 
@@ -237,33 +237,16 @@ function createAndShowTableView(league, array) {
 			rowChild = false;
 		}
 
-		var row = Ti.UI.createTableViewRow({
+		var row = $.UI.create('TableViewRow', {
+			classes : ['challengesSection'], 
 			id : array[i].attributes.round,
-			hasChild : rowChild,
-			isparent : true,
-			opened : false,
 			sub : subRowArray,
-			width : '100%',
-			backgroundColor : '#242424',
-			backgroundGradient : {
-				type : "linear",
-				startPoint : {
-					x : "0%",
-					y : "0%"
-				},
-				endPoint : {
-					x : "0%",
-					y : "100%"
-				},
-				colors : [{
-					color : "#2E2E2E",
-					offset : 0.0
-				}, {
-					color : "#151515",
-					offset : 1.0
-				}]
-			},
+			opened : false,
+			isparent : true
 		});
+
+		var themeColor = Alloy.Globals.themeColor();
+		if(Alloy.Globals.themeColor() === '#ea7337') { themeColor = "FFF";} // small fix for orange
 
 		row.add(Ti.UI.createLabel({
 			text : dateString,
@@ -274,11 +257,11 @@ function createAndShowTableView(league, array) {
 				fontWeight : 'normal',
 				fontFamily : Alloy.Globals.getFont()
 			},
-			color : '#58B101'
+			color : themeColor
 		}));
 
 		row.add(Ti.UI.createLabel({
-			text : 'Antal matcher: ' + array[i].attributes.game_values.length,
+			text : Alloy.Globals.PHRASES.nrOfGamesTxt + ' ' + array[i].attributes.game_values.length,
 			top : 30,
 			left : 60,
 			font : {
@@ -378,7 +361,7 @@ function createAndShowTableView(league, array) {
 				var now = new Date();
 
 				if (now.getTime() > matchDate.getTime()) {
-					Alloy.Globals.showFeedbackDialog('Denna omgången har redan börjat, därför kan du inte utmana någon på den.');
+					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.roundHasStartedErrorTxt);
 				} else {
 					var arg = {
 						round : e.row.id,
@@ -422,7 +405,7 @@ function getGames(league) {
 		xhr.onerror = function(e) {
 			Ti.API.error('Bad Sever =>' + e.error);
 			indicator.closeIndicator();
-			Alloy.Globals.showFeedbackDialog('Något gick fel! Försök igen.');
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 			if (OS_IOS) {
 				if ( typeof refresher !== 'undefined') {
 					refresher.endRefreshing();
@@ -439,7 +422,7 @@ function getGames(league) {
 			xhr.send();
 		} catch(e) {
 			indicator.closeIndicator();
-			Alloy.Globals.showFeedbackDialog('Något gick fel! Försök igen.');
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 			if (OS_IOS) {
 				if ( typeof refresher !== 'undefined') {
 					refresher.endRefreshing();
@@ -460,11 +443,11 @@ function getGames(league) {
 					}
 
 				} else {
-					Alloy.Globals.showFeedbackDialog('Något gick fel!');
+					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 				}
 				indicator.closeIndicator();
 			} else {
-				Alloy.Globals.showFeedbackDialog('Server svarar med felkod' + this.status + ' ' + JSON.parse(this.responseText));
+				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 				indicator.closeIndicator();
 				if (OS_IOS) {
 					if ( typeof refresher !== 'undefined') {
@@ -476,7 +459,7 @@ function getGames(league) {
 		};
 
 	} else {
-		Alloy.Globals.showFeedbackDialog('Ingen anslutning!');
+		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 	}
 }
 
@@ -489,7 +472,8 @@ var refresher;
 
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({
-	top : 200
+	top : 200,
+	text : Alloy.Globals.PHRASES.loadingTxt
 });
 
 var fontawesome = require('lib/IconicFont').IconicFont({
@@ -509,7 +493,7 @@ if (OS_ANDROID) {
 			$.newChallenge = null;
 		};
 		$.newChallenge.activity.actionBar.displayHomeAsUp = true;
-		$.newChallenge.activity.actionBar.title = 'Betkampen';
+		$.newChallenge.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
 		indicator.openIndicator();
 	});
 	/*

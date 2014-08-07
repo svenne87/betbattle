@@ -11,10 +11,10 @@ function Controller() {
     function performFacebookPost(fb) {
         var data = {
             link: Alloy.Globals.BETKAMPENURL,
-            name: "Gå med i Betkampens VM-turnering!",
-            caption: "Stöd Barncancerfonden!",
+            name: Alloy.Globals.PHRASES.fbPostNameTxt,
+            caption: Alloy.Globals.PHRASES.fbPostCaptionTxt,
             picture: Alloy.Globals.BETKAMPENURL + "/images/log_bk.png",
-            description: "Utmana dina vänner på att tippa resultaten under fotbolls VM. Ha kul och stöd samtidigt Barncancerfonden! Tävla i turneringar eller utmana på enskilda spel."
+            description: Alloy.Globals.PHRASES.fbPostDescriptionTxt
         };
         indicator.openIndicator();
         fb.dialog("feed", data, function(event) {
@@ -23,7 +23,7 @@ function Controller() {
                 xhr.onerror = function(e) {
                     Ti.API.error("Bad Sever =>" + e.error);
                     indicator.closeIndicator();
-                    Alloy.Globals.showFeedbackDialog("Något gick fel vid kontakt med våran server! Försök igen.");
+                    Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                 };
                 try {
                     xhr.open("POST", Alloy.Globals.BETKAMPENSHAREURL);
@@ -34,7 +34,7 @@ function Controller() {
                     xhr.send(param);
                 } catch (e) {
                     indicator.closeIndicator();
-                    Alloy.Globals.showFeedbackDialog("Något gick fel vid kontakt med våran server! Försök igen.");
+                    Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                 }
                 xhr.onload = function() {
                     if ("200" == this.status) {
@@ -58,10 +58,10 @@ function Controller() {
                 };
             } else {
                 indicator.closeIndicator();
-                Alloy.Globals.showFeedbackDialog("Ingen anslutning!");
+                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionError);
             } else {
                 indicator.closeIndicator();
-                event.error && !event.cancelled && Alloy.Globals.showFeedbackDialog("Något gick fel när vi försökte kontakta Facebook!");
+                event.error && !event.cancelled && Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.facebookConnectionErrorTxt);
             }
         });
     }
@@ -75,57 +75,57 @@ function Controller() {
                 performFacebookPost(fb);
             } else fb.reauthorize([ "publish_actions" ], "friends", function(e) {
                 facebookModuleError = false;
-                e.success ? performFacebookPost(fb) : e.error && !e.cancelled && Alloy.Globals.showFeedbackDialog("Något gick fel när vi försökte kontakta Facebook!");
+                e.success ? performFacebookPost(fb) : e.error && !e.cancelled && Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.facebookConnectionErrorTxt);
             });
-            facebookModuleError && Alloy.Globals.showFeedbackDialog("Ett fel uppstod med Facebook, vänligen prova logga ut och in igen.");
-        } else Alloy.Globals.showFeedbackDialog("Ingen anslutning!");
+            facebookModuleError && Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.unknownFacebookErrorTxt);
+        } else Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
     }
     function createSection() {
         var section = Ti.UI.createTableViewSection();
         var args = {
-            title: "Utmaningar",
+            title: Alloy.Globals.PHRASES.challengesTxt,
             customView: "challengesView",
             image: "/images/ikon_spelanasta.png"
         };
         section.add(Alloy.createController("menurow", args).getView());
         var args2 = {
-            title: "Skapa utmaning",
+            title: Alloy.Globals.PHRASES.createChallengeTxt,
             customView: "newChallengeLeague",
             image: "/images/Skapa_Utmaning.png"
         };
         section.add(Alloy.createController("menurow", args2).getView());
         var args3 = {
-            title: "Min profil",
+            title: Alloy.Globals.PHRASES.myProfileTxt,
             customView: "profile",
             image: "/images/Min_Profil.png"
         };
         section.add(Alloy.createController("menurow", args3).getView());
         var args4 = {
-            title: "Topplistan",
+            title: Alloy.Globals.PHRASES.scoreboardTxt,
             customView: "topplistan",
             image: "/images/Topplista.png"
         };
         section.add(Alloy.createController("menurow", args4).getView());
         var args5 = {
-            title: "Butik",
+            title: Alloy.Globals.PHRASES.storeTxt,
             customView: "store",
             image: "/images/Store.png"
         };
         section.add(Alloy.createController("menurow", args5).getView());
         var args6 = {
-            title: "Villkor",
+            title: Alloy.Globals.PHRASES.termsTxt,
             customView: "terms",
             image: "/images/villkor.png"
         };
         section.add(Alloy.createController("menurow", args6).getView());
         var args7 = {
-            title: "Dela",
+            title: Alloy.Globals.PHRASES.shareTxt,
             customView: "share",
             image: "/images/share.png"
         };
         section.add(Alloy.createController("menurow", args7).getView());
         var args8 = {
-            title: "Logga ut",
+            title: Alloy.Globals.PHRASES.signOutTxt,
             customView: "logout",
             image: "/images/Logga_Ut.png"
         };
@@ -144,13 +144,13 @@ function Controller() {
                 fullScreen: false
             });
             win = null;
-        } else Alloy.Globals.showFeedbackDialog("Ingen Anslutning!"); else var win;
+        } else Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionError); else var win;
         "share" === e.row.customView && shareOnFacebook();
         if (true && "logout" === e.row.customView) if (Alloy.Globals.checkConnection()) {
             var alertWindow = Titanium.UI.createAlertDialog({
-                title: "Betkampen",
-                message: "Är du säker på att du vill logga ut?",
-                buttonNames: [ "Logga ut", "Avbryt" ]
+                title: Alloy.Globals.PHRASES.betbattleTxt,
+                message: Alloy.Globals.PHRASES.confirmLogoutDialogTxt,
+                buttonNames: [ Alloy.Globals.PHRASES.signOutTxt, Alloy.Globals.PHRASES.abortBtnTxt ]
             });
             alertWindow.addEventListener("click", function(e) {
                 switch (e.index) {
@@ -175,7 +175,7 @@ function Controller() {
                 }
             });
             alertWindow.show();
-        } else Alloy.Globals.showFeedbackDialog("Ingen anslutning!");
+        } else Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
     }
     require("alloy/controllers/BaseController").apply(this, Array.prototype.slice.call(arguments));
     this.__controllerPath = "main";
@@ -191,10 +191,14 @@ function Controller() {
         width: Ti.UI.FILL,
         height: Ti.UI.FILL,
         backgroundColor: "#303030",
+        apiName: "Ti.UI.Window",
+        classes: [ "container" ],
         id: "mainWin"
     });
     $.__views.ds = Alloy.createWidget("ds.slideMenu", "widget", {
+        apiName: "Alloy.Require",
         id: "ds",
+        classes: [],
         __parentSymbol: $.__views.mainWin
     });
     $.__views.ds.setParent($.__views.mainWin);
@@ -202,8 +206,29 @@ function Controller() {
         backgroundImage: "images/green_bg.png",
         tintColor: "#FFF",
         barColor: "#FFF",
+        backgroundColor: "#ea7337",
+        backgroundGradient: {
+            type: "linear",
+            startPoint: {
+                x: "0%",
+                y: "0%"
+            },
+            endPoint: {
+                x: "0%",
+                y: "100%"
+            },
+            colors: [ {
+                color: "#EC814B",
+                offset: 0
+            }, {
+                color: "#CA5215",
+                offset: 1
+            } ]
+        },
         window: $.__views.mainWin,
-        id: "nav"
+        apiName: "Ti.UI.iOS.NavigationWindow",
+        id: "nav",
+        classes: []
     });
     $.__views.nav && $.addTopLevelView($.__views.nav);
     exports.destroy = function() {};
@@ -234,7 +259,8 @@ function Controller() {
     }
     var uie = require("lib/IndicatorWindow");
     var indicator = uie.createIndicatorWindow({
-        top: 200
+        top: 200,
+        text: Alloy.Globals.PHRASES.loadingTxt
     });
     $.mainWin.addEventListener("close", function() {
         indicator.closeIndicator();

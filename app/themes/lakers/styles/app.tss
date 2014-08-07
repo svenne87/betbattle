@@ -1,0 +1,54 @@
+// test override   // lägga till klass eller typ 		rightInfoLabel.applyProperties({"color":"green"});   Blå: #3c3f9c  Orange: #ea7337
+"#betbattleLogo":{
+	top: '30%',
+	image : '/images/betkampenlogo.png'
+},
+"#facebookBtn":{
+	top: '30%',
+	height: '7%',
+	width: '68.5%',
+	backgroundColor: '#336699',
+	borderRadius: 3
+},
+"#nav[platform=ios]":{
+backgroundColor : '#ea7337',
+		backgroundGradient : {
+			type : "linear",
+			startPoint : {
+				x : "0%",
+				y : "0%"
+			},
+			endPoint : {
+				x : "0%",
+				y : "100%"
+			},
+			colors : [{
+				color : "#EC814B",
+				offset : 0.0
+			}, {
+				color : "#CA5215",
+				offset : 1.0
+			}]
+		},
+},
+".challengesSection": {
+	backgroundColor : '#ea7337',
+		backgroundGradient : {
+			type : "linear",
+			startPoint : {
+				x : "0%",
+				y : "0%"
+			},
+			endPoint : {
+				x : "0%",
+				y : "100%"
+			},
+			colors : [{
+				color : "#EC814B",
+				offset : 0.0
+			}, {
+				color : "#CA5215",
+				offset : 1.0
+			}]
+		},
+}

@@ -29,6 +29,7 @@ Alloy.Globals.OPEN = true;
 Alloy.Globals.CLOSE = true;
 Alloy.Globals.FBERROR = true;
 Alloy.Globals.PHRASES = {};
+Alloy.Globals.LOCALE = Titanium.Locale.getCurrentLanguage().toLowerCase();
 
 // urls. Everything live needs to be done over SSL
 Alloy.Globals.INVITEURL = 'https://apps.facebook.com/betkampen';
@@ -57,6 +58,16 @@ Alloy.Globals.performTimeout = function(func) {
 	} else { func;
 	}
 
+};
+
+Alloy.Globals.themeColor = function() {
+	var theme = 2;
+	switch(theme) {
+		case 1: 
+			return '#58B101';
+		case 2:
+			return '#ea7337';
+	}
 };
 
 Alloy.Globals.getFont = function() {
@@ -100,9 +111,9 @@ Alloy.Globals.getFontSize = function(target) {
 // show feedback dialog
 Alloy.Globals.showFeedbackDialog = function(msg) {
 	var alertWindow = Titanium.UI.createAlertDialog({
-		title : 'Betkampen',
+		title : Alloy.Globals.PHRASES.betbattleTxt,
 		message : msg,
-		buttonNames : ['OK']
+		buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt]
 	});
 
 	alertWindow.addEventListener('click', function(e) {
@@ -162,7 +173,7 @@ Alloy.Globals.postDeviceToken = function(deviceToken) {
 			}
 		};
 	} else {
-		Alloy.Globals.showFeedbackDialog('Ingen anslutning!');
+		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 	}
 };
 
@@ -199,9 +210,9 @@ Alloy.Globals.checkCoins = function() {
 					if (coins !== null) {
 						if (coins <= 0) {
 							var alertWindow = Titanium.UI.createAlertDialog({
-								title : 'Betkampen',
-								message : 'Du har inga coins att spela för!',
-								buttonNames : ['OK', 'Butik']
+								title : Alloy.Globals.PHRASES.betbattleTxt,
+								message : Alloy.Globals.PHRASES.noCoinsErrorTxt,
+								buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.storeTxt]
 							});
 
 							alertWindow.addEventListener('click', function(e) {

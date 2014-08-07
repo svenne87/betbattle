@@ -32,6 +32,8 @@ function Controller() {
         width: Ti.UI.FILL,
         height: Ti.UI.FILL,
         backgroundColor: "#303030",
+        apiName: "Ti.UI.Window",
+        classes: [ "container" ],
         id: "newChallengeLeague"
     });
     $.__views.newChallengeLeague && $.addTopLevelView($.__views.newChallengeLeague);
@@ -48,7 +50,7 @@ function Controller() {
     });
     tableHeaderView.add(Ti.UI.createLabel({
         top: 50,
-        text: "Välj Liga",
+        text: Alloy.Globals.PHRASES.leagueChooseTxt,
         font: {
             fontSize: Alloy.Globals.getFontSize(3),
             fontWeight: "normal",
@@ -75,30 +77,10 @@ function Controller() {
     for (var i in leagues) {
         var child;
         child = true;
-        var tableRow = Ti.UI.createTableViewRow({
+        var tableRow = $.UI.create("TableViewRow", {
+            classes: [ "challengesSection" ],
             id: leagues[i].id,
-            hasChild: child,
-            width: "100%",
-            height: 60,
-            backgroundColor: "#242424",
-            backgroundGradient: {
-                type: "linear",
-                startPoint: {
-                    x: "0%",
-                    y: "0%"
-                },
-                endPoint: {
-                    x: "0%",
-                    y: "100%"
-                },
-                colors: [ {
-                    color: "#2E2E2E",
-                    offset: 0
-                }, {
-                    color: "#151515",
-                    offset: 1
-                } ]
-            }
+            hasChild: child
         });
         if (true != child) {
             var fontawesome = require("lib/IconicFont").IconicFont({
@@ -151,7 +133,7 @@ function Controller() {
     table.setData(data);
     table.addEventListener("click", function(e) {
         if (2 == Alloy.Globals.SLIDERZINDEX) return;
-        Alloy.Globals.checkConnection() ? openChallengesForLeague(e.row.id) : Alloy.Globals.showFeedbackDialog("Ingen Anslutning!");
+        Alloy.Globals.checkConnection() ? openChallengesForLeague(e.row.id) : Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
     });
     $.newChallengeLeague.add(table);
     _.extend($, exports);

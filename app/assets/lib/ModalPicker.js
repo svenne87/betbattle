@@ -1,4 +1,4 @@
-function ModalPicker(prefs, data) {
+function ModalPicker(prefs, data, text) {
 
     var self = Ti.UI.createLabel(prefs);
 
@@ -15,11 +15,11 @@ function ModalPicker(prefs, data) {
 
 
     var select = Ti.UI.createButton({
-        title: 'Välj',
+        title: text,
         style: Ti.UI.iPhone.SystemButtonStyle.PLAIN,
         color : '#FFF',
         backgroundImage : 'none',
-        width : 50
+        width : 100
     });
 
 

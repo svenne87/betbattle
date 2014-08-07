@@ -1,6 +1,7 @@
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({
-	top : 200
+	top : 200,
+	text : Alloy.Globals.PHRASES.loadingTxt
 });
 
 if (OS_IOS) {
@@ -48,10 +49,10 @@ if (OS_IOS) {
 				Ti.API.log('Module ready.');
 				break;
 			case InAppProducts.STATE_NOT_SUPPORTED:
-				Alloy.Globals.showFeedbackDialog('Funkar inte att köra i emulatorn!');
+				Alloy.Globals.showFeedbackDialog('This does not work in the emulator!');
 				break;
 			default:
-				Alloy.Globals.showFeedbackDialog('Modulen är inte redo!');
+				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.moduleNotReadyTxt);
 		}
 	}
 
@@ -81,7 +82,7 @@ if (OS_IOS) {
 			// condition associated with the purchaseUpdate event, although
 			// the purchase itself may be in PURCHASE_STATE_FAILED state.
 			indicator.closeIndicator();
-			Alloy.Globals.showFeedbackDialog('Köpet misslyckades! Vänligen försök igen.');
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.purchaseFailureTxt);
 		} else {
 			Ti.API.info('Product: ' + e.purchase.SKU + ' state: ' + purchaseStateToString(e.purchase.state));
 			switch (e.purchase.state) {
@@ -92,7 +93,7 @@ if (OS_IOS) {
 				case InAppProducts.PURCHASE_STATE_CANCELED:
 					// Android only
 					indicator.closeIndicator();
-					Alloy.Globals.showFeedbackDialog('Köpet avbröts.');
+					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.purchaseCanceledTxt);
 					break;
 				case InAppProducts.PURCHASE_STATE_REFUNDED:
 					// Android only
@@ -103,7 +104,7 @@ if (OS_IOS) {
 				case InAppProducts.PURCHASE_STATE_FAILED:
 					// iOS only
 					indicator.closeIndicator();
-					Alloy.Globals.showFeedbackDialog('Köpet misslyckades! Vänligen försök igen.');
+					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.purchaseFailureTxt);
 					break;
 				case InAppProducts.PURCHASE_STATE_RESTORED:
 					// iOS only
@@ -163,9 +164,9 @@ if (OS_IOS) {
 
 	function retry(identifier, receipt, msg) {
 		var alertWindow = Titanium.UI.createAlertDialog({
-			title : 'Något gick fel!',
+			title : Alloy.Globals.PHRASES.commonErrorTxt,
 			message : msg,
-			buttonNames : ['OK', 'Försök igen']
+			buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.retryTxt]
 		});
 
 		alertWindow.addEventListener('click', function(e) {
@@ -192,7 +193,7 @@ if (OS_IOS) {
 			var xhr = Titanium.Network.createHTTPClient();
 			xhr.onerror = function(e) {
 				indicator.closeIndicator();
-				retry(identifier, receipt, 'Något gick fel försök igen!');
+				retry(identifier, receipt, Alloy.Globals.PHRASES.commonErrorTxt);
 			};
 
 			try {
@@ -206,7 +207,7 @@ if (OS_IOS) {
 				xhr.send(param);
 			} catch(e) {
 				indicator.closeIndicator();
-				retry(identifier, receipt, 'Något gick fel försök igen!');
+				retry(identifier, receipt, Alloy.Globals.PHRASES.commonErrorTxt);
 			}
 			xhr.onload = function() {
 				if (this.status == '200') {
@@ -223,7 +224,7 @@ if (OS_IOS) {
 			};
 		} else {
 			indicator.closeIndicator();
-			Alloy.Globals.showFeedbackDialog('Ingen anslutning!');
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 		}
 	}
 
@@ -242,7 +243,7 @@ if (OS_IOS) {
 				applicationPayload : appPayload
 			});
 		} else {
-			Alloy.Globals.showFeedbackDialog('Ingen anslutning!');
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 		}
 
 	}
@@ -299,9 +300,9 @@ if (OS_IOS) {
 
 	function fetchProductsError() {
 		var alertWindow = Titanium.UI.createAlertDialog({
-			title : 'Något gick fel!',
-			message : 'Ett fel uppstod när vi försökte hämta tillgängliga produkter. Vänligen försök igen.',
-			buttonNames : ['Försök igen', 'Stäng']
+			title : Alloy.Globals.PHRASES.commonErrorTxt,
+			message : Alloy.Globals.PHRASES.purchaseFetchTxt,
+			buttonNames : [Alloy.Globals.PHRASES.retryTxt, Alloy.Globals.PHRASES.closeBtnTxt]
 		});
 
 		alertWindow.addEventListener('click', function(e) {
@@ -338,7 +339,7 @@ if (OS_IOS) {
 				fontFamily : Alloy.Globals.getFont(),
 				fontSize : Alloy.Globals.getFontSize(3)
 			},
-			text : 'Köp Coins'
+			text : Alloy.Globals.PHRASES.buyCoinsTxt
 		}));
 
 		$.store.add(imageView);
@@ -358,7 +359,7 @@ if (OS_IOS) {
 				}
 			} else {
 				indicator.closeIndicator();
-				Alloy.Globals.showFeedbackDialog('Ingen Anslutning!');
+				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 			}
 		}
 
@@ -386,7 +387,7 @@ if (OS_IOS) {
 			$.store.close();
 		};
 		$.store.activity.actionBar.displayHomeAsUp = true;
-		$.store.activity.actionBar.title = 'Betkampen';
+		$.store.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
 	});
 
 	$.store.addEventListener('close', function() {
@@ -399,7 +400,7 @@ if (OS_IOS) {
 
 			var xhr = Titanium.Network.createHTTPClient();
 			xhr.onerror = function(e) {
-				Alloy.Globals.showFeedbackDialog('Något gick fel! Försök igen.');
+				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 				indicator.closeIndicator();
 			};
 
@@ -414,7 +415,7 @@ if (OS_IOS) {
 
 				logInApp(param);
 			} catch(e) {
-				Alloy.Globals.showFeedbackDialog('Något gick fel! Försök igen.');
+				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 				indicator.closeIndicator();
 			}
 			xhr.onload = function() {
@@ -425,9 +426,9 @@ if (OS_IOS) {
 
 					} else {
 						var alertWindow = Titanium.UI.createAlertDialog({
-							title : 'Något gick fel!',
+							title : Alloy.Globals.PHRASES.commonErrorTxt,
 							message : JSON.parse(this.responseText),
-							buttonNames : ['OK', 'Försök igen']
+							buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.retryTxt]
 						});
 
 						alertWindow.addEventListener('click', function(e) {
@@ -445,9 +446,9 @@ if (OS_IOS) {
 				} else {
 					indicator.closeIndicator();
 					var alertWindow = Titanium.UI.createAlertDialog({
-						title : 'Något gick fel!',
+						title : Alloy.Globals.PHRASES.commonErrorTxt,
 						message : JSON.parse(this.responseText),
-						buttonNames : ['OK', 'Försök igen']
+						buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.retryTxt]
 					});
 
 					alertWindow.addEventListener('click', function(e) {
@@ -464,7 +465,7 @@ if (OS_IOS) {
 				}
 			};
 		} else {
-			Alloy.Globals.showFeedbackDialog('Ingen anslutning!');
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 		}
 	}
 
@@ -489,7 +490,7 @@ if (OS_IOS) {
 			});
 		} else {
 			logInApp('Setup FAILED.');
-			Alloy.Globals.showFeedbackDialog('Något gick fel! Försök igen.');
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 			indicator.closeIndicator();
 		}
 	});
@@ -518,7 +519,7 @@ if (OS_IOS) {
 
 			logInApp('success!!!');
 		} else {
-			Alloy.Globals.showFeedbackDialog('Något gick fel! Försök igen.');
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 			// TODO retry?
 		}
 	});
@@ -634,7 +635,7 @@ if (OS_IOS) {
 			fontWeight : 'normal',
 			fontSize : Alloy.Globals.getFontSize(3)
 		},
-		text : 'Köp Coins'
+		text : Alloy.Globals.PHRASES.buyCoinsTxt
 	}));
 
 	$.store.add(imageView);
@@ -700,9 +701,9 @@ if (OS_IOS) {
 				logInApp("Setup was already made... Starting query for products.");
 			} else {
 				var alertWindow = Titanium.UI.createAlertDialog({
-					title : 'Betkampen Fel',
-					message : 'Vi ber om ursäkt men ett allvarligt fel uppstod! Appen kommer att avslutas.',
-					buttonNames : ['OK']
+					title : Alloy.Globals.PHRASES.betbattleErrorTxt,
+					message : Alloy.Globals.PHRASES.criticalErrorTxt,
+					buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt]
 				});
 
 				alertWindow.addEventListener('click', function(e) {

@@ -1,6 +1,7 @@
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({
-	top : 200
+	top : 200,
+	text: Alloy.Globals.PHRASES.loadingTxt
 });
 
 var url = Alloy.Globals.BETKAMPENURL + '/webviews/profile_wv.php?fbid=' + Alloy.Globals.FACEBOOKOBJECT.id + '&uid=' + Alloy.Globals.BETKAMPENUID + '&authorization=' + Alloy.Globals.FACEBOOK.accessToken;
@@ -12,7 +13,7 @@ if(OS_ANDROID){
 	$.profile.addEventListener('open', function(){
 		$.profile.activity.actionBar.onHomeIconItemSelected = function() { $.profile.close(); $.profile = null; };
    		$.profile.activity.actionBar.displayHomeAsUp = true;
-   		$.profile.activity.actionBar.title = 'Betkampen';
+   		$.profile.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
 		indicator.openIndicator();
 	});
 

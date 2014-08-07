@@ -31,7 +31,7 @@ function getGroups() {
 				refresher.endRefreshing();
 			}
 		}
-		Alloy.Globals.showFeedbackDialog('Något gick fel! Försök igen.');
+		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 		Ti.API.error('Bad Sever =>' + e.error);
 	};
 
@@ -50,7 +50,7 @@ function getGroups() {
 				refresher.endRefreshing();
 			}
 		}
-		Alloy.Globals.showFeedbackDialog('Något gick fel, försök igen!');
+		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 	}
 	xhr.onload = function() {
 		if (this.status == '200') {
@@ -107,7 +107,7 @@ function getGroups() {
 				}
 
 			} else {
-				Alloy.Globals.showFeedbackDialog('Något gick fel!');
+				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 			}
 			indicator.closeIndicator();
 		} else {
@@ -117,7 +117,7 @@ function getGroups() {
 					refresher.endRefreshing();
 				}
 			}
-			Alloy.Globals.showFeedbackDialog('Server svarar med felkod' + this.status + ' ' + JSON.parse(this.responseText));
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 			Ti.API.error("Error =>" + this.response);
 		}
 	};
@@ -140,7 +140,7 @@ function challengeGroup(array, param) {
 				var alertWindow = Titanium.UI.createAlertDialog({
 					title : 'Betkampen',
 					message : JSON.parse(this.responseText),
-					buttonNames : ['OK', 'Butik']
+					buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.storeTxt]
 				});
 
 				alertWindow.addEventListener('click', function(e) {
@@ -210,7 +210,7 @@ function challengeGroup(array, param) {
 		} catch(e) {
 			indicator.closeIndicator();
 			submitButton.touchEnabled = true;
-			Alloy.Globals.showFeedbackDialog('Något gick fel! Försök igen.');
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 		}
 		xhr.onload = function() {
 			if (this.status == '200') {
@@ -224,7 +224,7 @@ function challengeGroup(array, param) {
 						fb.appid = Ti.App.Properties.getString('ti.facebook.appid');
 
 						fb.dialog("apprequests", {
-							message : response.from + " har utmanat dig på Betkampen " + Alloy.Globals.INVITEURL,
+							message : response.from + " " + Alloy.Globals.PHRASES.hasChallengedYouBetBattleTxt + " " + Alloy.Globals.INVITEURL,
 							to : response.to,
 						}, function(responseFb) {
 
@@ -232,9 +232,9 @@ function challengeGroup(array, param) {
 								// show dialog and if ok close window
 								response.message = response.message.replace(/(<br \/>)+/g, "\n");
 								var alertWindow = Titanium.UI.createAlertDialog({
-									title : 'Betkampen',
+									title : Alloy.Globals.PHRASES.betbattleTxt,
 									message : response.message,
-									buttonNames : ['OK']
+									buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt]
 								});
 
 								alertWindow.addEventListener('click', function() {
@@ -263,9 +263,9 @@ function challengeGroup(array, param) {
 						response = response.replace(/(<br \/>)+/g, "\n");
 						// show dialog and if ok close window
 						var alertWindow = Titanium.UI.createAlertDialog({
-							title : 'Betkampen',
+							title : Alloy.Globals.PHRASES.betbattleTxt,
 							message : response,
-							buttonNames : ['OK']
+							buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt]
 						});
 
 						alertWindow.addEventListener('click', function() {
@@ -293,7 +293,7 @@ function challengeGroup(array, param) {
 					}
 
 				} else {
-					Alloy.Globals.showFeedbackDialog('Något gick fel!');
+					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 					submitButton.touchEnabled = true;
 				}
 			} else {
@@ -305,7 +305,7 @@ function challengeGroup(array, param) {
 		};
 
 	} else {
-		Alloy.Globals.showFeedbackDialog('Ingen anslutning!');
+		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 	}
 }
 
@@ -338,7 +338,7 @@ function createSubmitButtons() {
 			top : -1,
 			width : '70%',
 			id : 'submitButton',
-			backgroundColor : '#58B101',
+			backgroundColor : Alloy.Globals.themeColor(),
 			borderRadius : 6,
 			font : {
 				fontFamily : Alloy.Globals.getFont(),
@@ -355,7 +355,7 @@ function createSubmitButtons() {
 			top : -1,
 			width : '70%',
 			id : 'submitButton',
-			backgroundColor : '#58B101',
+			backgroundColor : Alloy.Globals.themeColor(),
 			borderRadius : 6,
 			font : {
 				fontFamily : Alloy.Globals.getFont(),
@@ -372,18 +372,18 @@ function createSubmitButtons() {
 			// call function to send to server
 			challengeGroup(selectedGroupIds, params);
 		} else {
-			Alloy.Globals.showFeedbackDialog('Du kan bara välja en grupp att utmana!');
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.groupChallengeErrorTxt);
 		}
 
 	});
 
 	if (iOSVersion < 7) {
 		friendsButton = Ti.UI.createButton({
-			title : 'Visa vänner',
+			title : Alloy.Globals.PHRASES.showFriendsTxt,
 			height : 30,
 			width : '70%',
 			id : 'submitButton',
-			backgroundColor : '#58B101',
+			backgroundColor : Alloy.Globals.themeColor(),
 			borderRadius : 6,
 			font : {
 				fontFamily : Alloy.Globals.getFont(),
@@ -394,11 +394,11 @@ function createSubmitButtons() {
 		});
 	} else {
 		friendsButton = Ti.UI.createButton({
-			title : 'Visa vänner',
+			title : Alloy.Globals.PHRASES.showFriendsTxt,
 			height : buttonHeight,
 			width : '70%',
 			id : 'submitButton',
-			backgroundColor : '#58B101',
+			backgroundColor : Alloy.Globals.themeColor(),
 			borderRadius : 6,
 			font : {
 				fontFamily : Alloy.Globals.getFont(),
@@ -471,7 +471,7 @@ function createViews(array) {
 
 	if (OS_IOS) {
 		refresher = Ti.UI.createRefreshControl({
-			tintColor : '#58B101'
+			tintColor : Alloy.Globals.themeColor()
 		});
 
 		// will refresh on pull
@@ -479,7 +479,7 @@ function createViews(array) {
 			if(Alloy.Globals.checkConnection()){
 				getGroups();
 			} else {
-				Alloy.Globals.showFeedbackDialog('Ingen anslutning!');
+				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 				refresher.endRefreshing();
 			}
 		});
@@ -494,7 +494,7 @@ function createViews(array) {
 		width : '100%',
 		textAlign : 'center',
 		top : 50,
-		text : 'Välj en grupp',
+		text : Alloy.Globals.PHRASES.chooseGroupTxt,
 		font : {
 			fontSize : Alloy.Globals.getFontSize(3),
 			fontWeight : 'normal',
@@ -585,32 +585,15 @@ function createViews(array) {
 		} else if (OS_ANDROID) {
 			hasChild = false;
 		}
-
-		var row = Ti.UI.createTableViewRow({
+		
+		
+		var row = $.UI.create('TableViewRow', {
+			classes : ['challengesSection'], 
 			id : array[i].attributes.id,
 			hasChild : hasChild,
 			isparent : true,
 			opened : false,
 			sub : subRowArray,
-			backgroundColor : '#242424',
-			backgroundGradient : {
-				type : "linear",
-				startPoint : {
-					x : "0%",
-					y : "0%"
-				},
-				endPoint : {
-					x : "0%",
-					y : "100%"
-				},
-				colors : [{
-					color : "#2E2E2E",
-					offset : 0.0
-				}, {
-					color : "#151515",
-					offset : 1.0
-				}]
-			},
 		});
 
 		row.add(Ti.UI.createLabel({
@@ -626,7 +609,7 @@ function createViews(array) {
 		}));
 
 		row.add(Ti.UI.createLabel({
-			text : 'Antal medlemmar: ' + array[i].attributes.members.length,
+			text : Alloy.Globals.PHRASES.nrOfMembersTxt + ': ' + array[i].attributes.members.length,
 			top : 26,
 			left : 60,
 			font : {
@@ -758,7 +741,7 @@ function createViews(array) {
 				};
 			}
 			// since we are not selecting several groups right now
-			e.row.setBackgroundColor('#58B101');
+			e.row.setBackgroundColor(Alloy.Globals.themeColor());
 			e.row.backgroundGradient = {};
 			selectedGroupIds[0] = e.row.id;
 		}
@@ -781,7 +764,8 @@ var refresher;
 
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({
-	top : 200
+	top : 200,
+	text : Alloy.Globals.PHRASES.loadingTxt
 });
 
 $.groupSelectWindow.addEventListener('close', function() {
@@ -805,7 +789,7 @@ if (OS_ANDROID) {
 			$.groupSelectWindow = null;
 		};
 		$.groupSelectWindow.activity.actionBar.displayHomeAsUp = true;
-		$.groupSelectWindow.activity.title = 'Betkampen';
+		$.groupSelectWindow.activity.title = Alloy.Globals.PHRASES.betbattleTxt;
 		indicator.openIndicator();
 	});
 	/*
@@ -826,5 +810,5 @@ if (OS_IOS) {
 if (Alloy.Globals.checkConnection()) {
 	getGroups();
 } else {
-	Alloy.Globals.showFeedbackDialog('Ingen anslutning!');
+	Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 }

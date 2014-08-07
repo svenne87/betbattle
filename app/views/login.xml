@@ -2,32 +2,34 @@
 	<Window class="container" id="login">
 		<ScrollableView id="scrollableView" showPagingControl="true">
 			<View id="content">
+				<ImageView id="betbattleLogo" /> <!-- TEMP -->
+		
 				<View id="facebookBtn">
-					<Label id="facebookBtnText">Logga in med facebook</Label>
+					<Label id="facebookBtnText">sign in with Facebook</Label>
 				</View>
 			</View>
 			<View id="view1" class="scrollView">
-				<Label class="tutorialInfoLabel">Välj skapa utmaning i menyn för att komma igång!</Label>
+				<Label id="viewOneLabel" class="tutorialInfoLabel">Choose create challenge in the menu to get started!</Label>
 				<View class="shadowContainer" />
 				<ImageView class="tutorialImage" image="/images/tutoneios.png" />
 			</View>
 			<View id="view2" class="scrollView">
-				<Label class="tutorialInfoLabel">Välj sedan vilken liga och omgång du vill spela på!</Label>
+				<Label id="viewTwoLabel" class="tutorialInfoLabel">Then choose which league and round you want to play!</Label>
 				<View class="shadowContainer" />
 				<ImageView class="tutorialImage" image="/images/tutthreeios.png" />
 			</View>
 			<View id="view3" class="scrollView">
-				<Label class="tutorialInfoLabel">Gör dina val, satsa Coins och klicka på utmana, i steget efter välj dina vänner att utmana och skicka sedan iväg utmaningen!</Label>
+				<Label id="viewThreeLabel" class="tutorialInfoLabel">Make your selections, bet Coins and hit challenge. After that choose friends to challenge and click to send the challenge!</Label>
 				<View class="shadowContainer" />
 				<ImageView class="tutorialImage" image="/images/tutfourios.png" />
 			</View>
 			<View id="view4" class="scrollView">
-				<Label class="tutorialInfoLabel">För att köpa Coins väljer du Butik i menyn och väljer där hur mycket Coins du vill köpa, följ sedan instruktionerna.</Label>
+				<Label id="viewFourLabel" class="tutorialInfoLabel">To buy Coins you need to choose 'Store' in the menu, you then select the amount you wish to purchase and follow the instructions.</Label>
 				<View class="shadowContainer" />
 				<ImageView class="tutorialImage" image="/images/tutfiveios.png" />
 			</View>
 			<View id="view5" class="scrollView">
-				<Label class="tutorialInfoLabel">Under menyvalet "Min Profil" får du en överblick av dina XP-poäng, vinster, Coins och utmärkelser.</Label>
+				<Label id="viewFiveLabel" class="tutorialInfoLabel">Under the option 'My Profile' you'll see an overall view for your experience points, total wins and achievements!</Label>
 				<View class="shadowContainer" />
 				<ImageView class="tutorialImage" image="/images/tutsixios.png" />
 			</View>

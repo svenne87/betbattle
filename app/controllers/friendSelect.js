@@ -26,7 +26,7 @@ function challengeFriends(groupName) {
 				var alertWindow = Titanium.UI.createAlertDialog({
 					title : 'Betkampen',
 					message : JSON.parse(this.responseText),
-					buttonNames : ['OK', 'Butik']
+					buttonNames : [Alloy.Globals.PHRASES.okConfirmBtnTxt, Alloy.Globals.PHRASES.storeTxt]
 				});
 
 				alertWindow.addEventListener('click', function(e) {
@@ -89,7 +89,7 @@ function challengeFriends(groupName) {
 		} catch(e) {
 			indicator.closeIndicator();
 			submitButton.touchEnabled = true;
-			Alloy.Globals.showFeedbackDialog('Något gick fel! Försök igen.');
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 		}
 		xhr.onload = function() {
 			if (this.status == '200') {
@@ -104,7 +104,7 @@ function challengeFriends(groupName) {
 						fb.appid = Ti.App.Properties.getString('ti.facebook.appid');
 
 						fb.dialog("apprequests", {
-							message : response.from + " har utmanat dig på Betkampen " + Alloy.Globals.INVITEURL,
+							message : response.from + " " + Alloy.Globals.PHRASES.hasChallengedYouBetBattleTxt + " " + Alloy.Globals.INVITEURL,
 							to : response.to,
 						}, function(responseFb) {
 
@@ -112,9 +112,9 @@ function challengeFriends(groupName) {
 								// show dialog and if ok close window
 								response.message = response.message.replace(/(<br \/>)+/g, "\n");
 								var alertWindow = Titanium.UI.createAlertDialog({
-									title : 'Betkampen',
+									title : Alloy.Globals.PHRASES.betbattleTxt,
 									message : response.message,
-									buttonNames : ['OK']
+									buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt]
 								});
 
 								alertWindow.addEventListener('click', function() {
@@ -146,9 +146,9 @@ function challengeFriends(groupName) {
 						response = response.replace(/(<br \/>)+/g, "\n");
 						// show dialog and if ok close window
 						var alertWindow = Titanium.UI.createAlertDialog({
-							title : 'Betkampen',
+							title : Alloy.Globals.PHRASES.betbattleTxt,
 							message : response,
-							buttonNames : ['OK']
+							buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt]
 						});
 
 						alertWindow.addEventListener('click', function() {
@@ -173,7 +173,7 @@ function challengeFriends(groupName) {
 					}
 				} else {
 					submitButton.touchEnabled = true;
-					Alloy.Globals.showFeedbackDialog('Något gick fel!');
+					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 				}
 			} else {
 				indicator.closeIndicator();
@@ -184,7 +184,7 @@ function challengeFriends(groupName) {
 		};
 
 	} else {
-		Alloy.Globals.showFeedbackDialog('Ingen anslutning!');
+		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 	}
 }
 
@@ -220,7 +220,7 @@ function getFacebookFriends() {
 			createFriendsView(facebookFriendsObjects);
 		} else {
 			indicator.closeIndicator();
-			Alloy.Globals.showFeedbackDialog('Något gick fel! Vänligen försök igen.');
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 		}
 	});
 
@@ -242,7 +242,7 @@ function createSubmitButtons() {
 		width : '70%',
 		id : 'submitButton',
 		borderRadius : 6,
-		backgroundColor : '#58B101',
+		backgroundColor : Alloy.Globals.themeColor(),
 		font : {
 			fontSize : Alloy.Globals.getFontSize(2),
 			fontWeight : 'normal',
@@ -258,19 +258,19 @@ function createSubmitButtons() {
 
 			if (OS_IOS) {
 				dialog = Ti.UI.createAlertDialog({
-					title : 'Ange gruppnamn',
-					message : 'En grupp skapas automatiskt för varje utmaning med vänner, vänligen ange namn på gruppen.',
+					title : Alloy.Globals.PHRASES.stateGroupNameTxt,
+					message : Alloy.Globals.PHRASES.groupCreationInfoTxt,
 					style : Ti.UI.iPhone.AlertDialogStyle.PLAIN_TEXT_INPUT,
-					buttonNames : ['OK', 'Cancel']
+					buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtntxt]
 				});
 
 			} else if (OS_ANDROID) {
 				var textfield = Ti.UI.createTextField();
 				dialog = Ti.UI.createAlertDialog({
-					title : 'Ange gruppnamn',
-					message : 'En grupp skapas automatiskt för varje utmaning med vänner, vänligen ange namn på gruppen.',
+					title : Alloy.Globals.PHRASES.stateGroupNameTxt,
+					message : Alloy.Globals.PHRASES.groupCreationInfoTxt,
 					androidView : textfield,
-					buttonNames : ['OK', 'Cancel']
+					buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtnTxt]
 				});
 			}
 
@@ -287,7 +287,7 @@ function createSubmitButtons() {
 					if (text.length > 2 && text.length < 16) {
 						challengeFriends(text);
 					} else {
-						Alloy.Globals.showFeedbackDialog('Namnet måste var mellan 2 - 15 tecken');
+						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.groupNameErrorTxt);
 					}
 				} else {
 					dialog.hide();
@@ -295,7 +295,7 @@ function createSubmitButtons() {
 			});
 			dialog.show();
 		} else {
-			Alloy.Globals.showFeedbackDialog('Du måste välja minst en vän att utmana!');
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.friendChallengeErrorTxt);
 		}
 	});
 
@@ -381,7 +381,7 @@ function createFriendsView(array) {
 		barColor : '#303030',
 		showCancel : true,
 		height : 43,
-		hintText : 'Sök vänner',
+		hintText : Alloy.Globals.PHRASES.searchFriendsTxt,
 		top : 0,
 		color : '#FFF',
 		backgroundColor : '#303030'
@@ -432,7 +432,7 @@ function createFriendsView(array) {
 		width : '100%',
 		textAlign : 'center',
 		top : 50,
-		text : 'Välj vänner',
+		text : Alloy.Globals.PHRASES.showFriendsTxt,
 		font : {
 			fontSize : Alloy.Globals.getFontSize(3),
 			fontWeight : 'normal',
@@ -560,7 +560,8 @@ var param = args.param || null;
 
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({
-	top : 200
+	top : 200,
+	text : Alloy.Globals.PHRASES.loadingTxt
 });
 
 if (OS_ANDROID) {
@@ -572,7 +573,7 @@ if (OS_ANDROID) {
 			$.friendSelectWindow = null;
 		};
 		$.friendSelectWindow.activity.actionBar.displayHomeAsUp = true;
-		$.friendSelectWindow.activity.actionBar.title = 'Betkampen';
+		$.friendSelectWindow.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
 		indicator.openIndicator();
 	});
 
@@ -592,5 +593,5 @@ $.friendSelectWindow.addEventListener('close', function() {
 if (Alloy.Globals.checkConnection()) {
 	getFacebookFriends();
 } else {
-	Alloy.Globals.showFeedbackDialog('Ingen anslutning!');
+	Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 }

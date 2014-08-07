@@ -1,11 +1,36 @@
 ".container": {
 	layout: 'vertical',
-    width: Ti.UI.FILL,
-    height: Ti.UI.FILL,
-	backgroundColor:"#303030"
+	width: Ti.UI.FILL,
+	height: Ti.UI.FILL,
+	backgroundColor: "#303030"
 },
 "#groupSelect":{
-	height:'100%',
-	width:'100%',
-	layout:'vertical'
+	height: '100%',
+	width: '100%',
+	layout: 'vertical'
+},
+".challengesSection":{
+	width: '100%',
+	backgroundColor: '#242424',
+	backgroundGradient: {
+		type: "linear",
+		startPoint: {
+			x: "0%",
+			y: "0%"
+		},
+		endPoint: {
+			x: "0%",
+			y: "100%"
+		},
+		colors: [
+			{
+				color: "#2E2E2E",
+				offset: 0.0
+			}, {
+				color: "#151515",
+				offset: 1.0
+			}
+		]
+	}
 }
+

@@ -36,6 +36,8 @@ Alloy.Globals.FBERROR = true;
 
 Alloy.Globals.PHRASES = {};
 
+Alloy.Globals.LOCALE = Titanium.Locale.getCurrentLanguage().toLowerCase();
+
 Alloy.Globals.INVITEURL = "https://apps.facebook.com/betkampen";
 
 Alloy.Globals.BETKAMPENURL = "http://secure.jimdavislabs.se/secure/betkampen_vm";
@@ -76,6 +78,17 @@ Alloy.Globals.performTimeout = function(func) {
     func;
 };
 
+Alloy.Globals.themeColor = function() {
+    var theme = 2;
+    switch (theme) {
+      case 1:
+        return "#58B101";
+
+      case 2:
+        return "#ea7337";
+    }
+};
+
 Alloy.Globals.getFont = function() {
     return "Helvetica Neue";
 };
@@ -88,9 +101,9 @@ Alloy.Globals.getFontSize = function(target) {
 
 Alloy.Globals.showFeedbackDialog = function(msg) {
     var alertWindow = Titanium.UI.createAlertDialog({
-        title: "Betkampen",
+        title: Alloy.Globals.PHRASES.betbattleTxt,
         message: msg,
-        buttonNames: [ "OK" ]
+        buttonNames: [ Alloy.Globals.PHRASES.okConfirmTxt ]
     });
     alertWindow.addEventListener("click", function(e) {
         switch (e.index) {
@@ -128,7 +141,7 @@ Alloy.Globals.postDeviceToken = function(deviceToken) {
                 Ti.API.log(response);
             } else Ti.API.log(this.response); else Ti.API.error("Error =>" + this.response);
         };
-    } else Alloy.Globals.showFeedbackDialog("Ingen anslutning!");
+    } else Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 };
 
 Alloy.Globals.checkCoins = function() {
@@ -156,9 +169,9 @@ Alloy.Globals.checkCoins = function() {
                     }
                     if (null !== coins && 0 >= coins) {
                         var alertWindow = Titanium.UI.createAlertDialog({
-                            title: "Betkampen",
-                            message: "Du har inga coins att spela för!",
-                            buttonNames: [ "OK", "Butik" ]
+                            title: Alloy.Globals.PHRASES.betbattleTxt,
+                            message: Alloy.Globals.PHRASES.noCoinsErrorTxt,
+                            buttonNames: [ Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.storeTxt ]
                         });
                         alertWindow.addEventListener("click", function(e) {
                             switch (e.index) {

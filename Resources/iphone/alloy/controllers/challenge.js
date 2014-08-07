@@ -41,7 +41,7 @@ function Controller() {
                     var alertWindow = Titanium.UI.createAlertDialog({
                         title: "Betkampen",
                         message: JSON.parse(this.responseText),
-                        buttonNames: [ "OK", "Butik" ]
+                        buttonNames: [ Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.storeTxt ]
                     });
                     alertWindow.addEventListener("click", function(e) {
                         switch (e.index) {
@@ -85,7 +85,7 @@ function Controller() {
             } catch (e) {
                 indicator.closeIndicator();
                 submitButton.touchEnabled = true;
-                Alloy.Globals.showFeedbackDialog("Något gick fel! Försök igen.");
+                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             }
             xhr.onload = function() {
                 if ("200" == this.status) {
@@ -93,9 +93,9 @@ function Controller() {
                     if (4 == this.readyState) {
                         var response = JSON.parse(this.responseText);
                         var alertWindow = Titanium.UI.createAlertDialog({
-                            title: "Betkampen",
+                            title: Alloy.Globals.PHRASES.betbattleTxt,
                             message: response,
-                            buttonNames: [ "OK" ]
+                            buttonNames: [ Alloy.Globals.PHRASES.okConfirmTxt ]
                         });
                         alertWindow.addEventListener("click", function() {
                             submitButton.touchEnabled = true;
@@ -111,7 +111,7 @@ function Controller() {
                         });
                         alertWindow.show();
                     } else {
-                        Alloy.Globals.showFeedbackDialog("Något gick fel!");
+                        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                         submitButton.touchEnabled = true;
                     }
                 } else {
@@ -122,7 +122,7 @@ function Controller() {
                 }
             };
         } else {
-            Alloy.Globals.showFeedbackDialog("Ingen anslutning!");
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
             indicator.closeIndicator();
         }
     }
@@ -258,7 +258,7 @@ function Controller() {
                 fontFamily: Alloy.Globals.getFont(),
                 fontSize: Alloy.Globals.getFontSize(2)
             },
-            text: "Vilket lag gör första målet?"
+            text: Alloy.Globals.PHRASES.firstGoalTxt
         }));
         var teamOneButton = Titanium.UI.createView({
             top: 10,
@@ -312,7 +312,7 @@ function Controller() {
                 fontFamily: Alloy.Globals.getFont(),
                 fontSize: Alloy.Globals.getFontSize(1)
             },
-            text: "Inget mål"
+            text: Alloy.Globals.PHRASES.noGoalTxt
         }));
         var gameObj = new Object();
         gameObj.gameId = game.attributes.game_id;
@@ -362,7 +362,7 @@ function Controller() {
                 fontFamily: Alloy.Globals.getFont(),
                 fontSize: Alloy.Globals.getFontSize(2)
             },
-            text: "Tippa antal gula kort"
+            text: Alloy.Globals.PHRASES.nrOfYellowCardsTxt
         }));
         var gameObj = new Object();
         gameObj.gameId = game.attributes.game_id;
@@ -386,7 +386,7 @@ function Controller() {
             height: 40,
             textAlign: "center"
         };
-        var numberPicker = new ModalPicker(visualPrefs, data);
+        var numberPicker = new ModalPicker(visualPrefs, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt);
         modalPickersToHide.push(numberPicker);
         numberPicker.text = "0";
         numberPicker.self.addEventListener("change", function() {
@@ -468,7 +468,7 @@ function Controller() {
             height: 40,
             textAlign: "center"
         };
-        var teamOnePicker = new ModalPicker(visualPrefsOne, data);
+        var teamOnePicker = new ModalPicker(visualPrefsOne, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt);
         modalPickersToHide.push(teamOnePicker);
         teamOnePicker.text = "0";
         teamOnePicker.self.addEventListener("change", function() {
@@ -484,7 +484,7 @@ function Controller() {
             height: 40,
             textAlign: "center"
         };
-        var teamTwoPicker = new ModalPicker(visualPrefsTwo, data);
+        var teamTwoPicker = new ModalPicker(visualPrefsTwo, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt);
         modalPickersToHide.push(teamTwoPicker);
         teamTwoPicker.text = "0";
         teamTwoPicker.self.addEventListener("change", function() {
@@ -517,7 +517,7 @@ function Controller() {
                 fontFamily: Alloy.Globals.getFont(),
                 fontSize: Alloy.Globals.getFontSize(2)
             },
-            text: coinsToJoin + " BetKampen coins"
+            text: coinsToJoin + " " + Alloy.Globals.PHRASES.betbattleTxt + " " + Alloy.Globals.PHRASES.coinsTxt
         }));
         $.challenge.add(coinsView);
     }
@@ -540,7 +540,7 @@ function Controller() {
                 fontFamily: Alloy.Globals.getFont(),
                 fontSize: Alloy.Globals.getFontSize(2)
             },
-            text: "Välj coins att satsa"
+            text: Alloy.Globals.PHRASES.chooseCoinsBetTxt
         }));
         $.challenge.add(betView);
         var betArray = [ "20", "40", "60", "80", "100" ];
@@ -549,7 +549,7 @@ function Controller() {
         var i;
         var betPicker;
         data.push(Titanium.UI.createPickerRow({
-            title: "Välj",
+            title: Alloy.Globals.PHRASES.chooseConfirmBtnTxt,
             value: -1
         }));
         for (var i = 0; betArray.length > i; i++) data.push(Titanium.UI.createPickerRow({
@@ -566,9 +566,9 @@ function Controller() {
             height: 40,
             textAlign: "center"
         };
-        var betPicker = new ModalPicker(visualPrefs, data);
+        var betPicker = new ModalPicker(visualPrefs, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt);
         modalPickersToHide.push(betPicker);
-        betPicker.text = "Välj";
+        betPicker.text = Alloy.Globals.PHRASES.chooseConfirmBtnTxt;
         betPicker.self.addEventListener("change", function() {
             coinsToJoin = betPicker.value;
         });
@@ -593,7 +593,7 @@ function Controller() {
             width: "70%",
             height: 40,
             color: "#FFF",
-            backgroundColor: "#58B101",
+            backgroundColor: Alloy.Globals.themeColor(),
             borderRadius: 6,
             font: {
                 fontFamily: Alloy.Globals.getFont(),
@@ -607,7 +607,7 @@ function Controller() {
                 indicator.openIndicator();
                 submitButton.touchEnabled = false;
                 postAnswer(betkampenId, cid, coinsToJoin);
-            } else Alloy.Globals.checkConnection() ? createChallengeAndChooseFriends(betkampenId, coinsToJoin) : Alloy.Globals.showFeedbackDialog("Ingen Anslutning!"); else Alloy.Globals.showFeedbackDialog("Allt är inte korrekt valt!");
+            } else Alloy.Globals.checkConnection() ? createChallengeAndChooseFriends(betkampenId, coinsToJoin) : Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt); else Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.notAllValuesErrorTxt);
         });
         submitView.add(submitButton);
         $.challenge.add(submitView);
@@ -626,7 +626,7 @@ function Controller() {
             createBorderView();
             -1 === roundId ? createBetCoinsView(coinsToJoin) : createBetCoinsChooseView();
             createBorderView();
-            -1 === roundId ? createSubmitButtonView("Svara", Alloy.Globals.BETKAMPENUID, challengeObject.attributes.id) : createSubmitButtonView("Utmana", Alloy.Globals.BETKAMPENUID, -1);
+            -1 === roundId ? createSubmitButtonView("Svara", Alloy.Globals.BETKAMPENUID, challengeObject.attributes.id) : createSubmitButtonView(Alloy.Globals.PHRASES.challengeBtnTxt, Alloy.Globals.BETKAMPENUID, -1);
         }
         var image = Ti.UI.createView({
             width: "100%",
@@ -663,7 +663,7 @@ function Controller() {
                     textAlign: "center",
                     backgroundColor: "#303030",
                     color: "#FFF",
-                    text: "Utmaning med gruppen:",
+                    text: Alloy.Globals.PHRASES.challengeWithGroupTxt + ":",
                     font: {
                         fontFamily: Alloy.Globals.getFont(),
                         fontSize: Alloy.Globals.getFontSize(2),
@@ -675,7 +675,7 @@ function Controller() {
                     width: "100%",
                     textAlign: "center",
                     backgroundColor: "#303030",
-                    color: "#58B101",
+                    color: Alloy.Globals.themeColor(),
                     text: currentGroupName,
                     font: {
                         fontFamily: Alloy.Globals.getFont(),
@@ -697,7 +697,7 @@ function Controller() {
                 break;
 
               case 3:
-                Alloy.Globals.performTimeout(createResultView("Resultatet i matchen", gameObjects[i]));
+                Alloy.Globals.performTimeout(createResultView(Alloy.Globals.PHRASES.resultTxt, gameObjects[i]));
                 break;
 
               case 4:
@@ -705,15 +705,15 @@ function Controller() {
                 break;
 
               case 5:
-                Alloy.Globals.performTimeout(createResultView("Resultat efter första perioden", gameObjects[i]));
+                Alloy.Globals.performTimeout(createResultView(Alloy.Globals.PHRASES.resultAfterFirstPeriodTxt, gameObjects[i]));
                 break;
 
               case 6:
-                Alloy.Globals.performTimeout(createResultView("Resultat efter andra perioden", gameObjects[i]));
+                Alloy.Globals.performTimeout(createResultView(Alloy.Globals.PHRASES.resultAfterSecondPeriodTxt, gameObjects[i]));
                 break;
 
               case 7:
-                Alloy.Globals.performTimeout(createResultView("Resultat efter halvlek", gameObjects[i]));
+                Alloy.Globals.performTimeout(createResultView(Alloy.Globals.PHRASES.halfTimeResultTxt, gameObjects[i]));
             }
         }
         Alloy.Globals.performTimeout(doRest());
@@ -732,6 +732,8 @@ function Controller() {
         width: Ti.UI.FILL,
         height: Ti.UI.FILL,
         backgroundColor: "#303030",
+        apiName: "Ti.UI.Window",
+        classes: [ "container" ],
         id: "challengeWindow"
     });
     $.__views.challengeWindow && $.addTopLevelView($.__views.challengeWindow);
@@ -744,7 +746,9 @@ function Controller() {
         backgroundColor: "#303030",
         showVerticalScrollIndicator: true,
         showHorizontalScrollIndicator: false,
-        id: "challenge"
+        apiName: "Ti.UI.ScrollView",
+        id: "challenge",
+        classes: []
     });
     $.__views.challengeWindow.add($.__views.challenge);
     exports.destroy = function() {};
@@ -772,10 +776,11 @@ function Controller() {
     var gameArray = [];
     var uie = require("lib/IndicatorWindow");
     var indicator = uie.createIndicatorWindow({
-        top: 200
+        top: 200,
+        text: Alloy.Globals.PHRASES.loadingTxt
     });
     var submitButton;
-    var menuText = "Skapa Utmaning";
+    var menuText = Alloy.Globals.PHRASES.createChallengeTxt;
     -1 === roundId && (menuText = challengeObject.attributes.league[0].league_name);
     $.challengeWindow.addEventListener("close", function() {
         indicator.closeIndicator();
@@ -786,7 +791,7 @@ function Controller() {
         var xhr = Titanium.Network.createHTTPClient();
         xhr.onerror = function(e) {
             indicator.closeIndicator();
-            Alloy.Globals.showFeedbackDialog("Något gick fel, Försök igen!");
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             Ti.API.error("Bad Sever =>" + e.error);
         };
         try {
@@ -797,7 +802,7 @@ function Controller() {
             xhr.send();
         } catch (e) {
             indicator.closeIndicator();
-            Alloy.Globals.showFeedbackDialog("Något gick fel, Försök igen!");
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
         }
         xhr.onload = function() {
             if ("200" == this.status) if (4 == this.readyState) {
@@ -836,14 +841,14 @@ function Controller() {
                 createLayout();
             } else {
                 indicator.closeIndicator();
-                Alloy.Globals.showFeedbackDialog("Något gick fel!");
+                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             } else {
                 indicator.closeIndicator();
-                Alloy.Globals.showFeedbackDialog("Något gick fel! Försök igen.");
+                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                 Ti.API.error("Error =>" + this.response);
             }
         };
-    } else Alloy.Globals.showFeedbackDialog("Ingen anslutning!");
+    } else Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
     _.extend($, exports);
 }
 

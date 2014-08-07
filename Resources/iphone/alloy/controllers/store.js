@@ -22,11 +22,11 @@ function Controller() {
             break;
 
           case InAppProducts.STATE_NOT_SUPPORTED:
-            Alloy.Globals.showFeedbackDialog("Funkar inte att köra i emulatorn!");
+            Alloy.Globals.showFeedbackDialog("This does not work in the emulator!");
             break;
 
           default:
-            Alloy.Globals.showFeedbackDialog("Modulen är inte redo!");
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.moduleNotReadyTxt);
         }
     }
     function receivedProductsEventFunction(e) {
@@ -47,7 +47,7 @@ function Controller() {
         indicator.openIndicator();
         if (e.errorCode) {
             indicator.closeIndicator();
-            Alloy.Globals.showFeedbackDialog("Köpet misslyckades! Vänligen försök igen.");
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.purchaseFailureTxt);
         } else {
             Ti.API.info("Product: " + e.purchase.SKU + " state: " + purchaseStateToString(e.purchase.state));
             switch (e.purchase.state) {
@@ -57,7 +57,7 @@ function Controller() {
 
               case InAppProducts.PURCHASE_STATE_CANCELED:
                 indicator.closeIndicator();
-                Alloy.Globals.showFeedbackDialog("Köpet avbröts.");
+                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.purchaseCanceledTxt);
                 break;
 
               case InAppProducts.PURCHASE_STATE_REFUNDED:
@@ -68,7 +68,7 @@ function Controller() {
 
               case InAppProducts.PURCHASE_STATE_FAILED:
                 indicator.closeIndicator();
-                Alloy.Globals.showFeedbackDialog("Köpet misslyckades! Vänligen försök igen.");
+                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.purchaseFailureTxt);
                 break;
 
               case InAppProducts.PURCHASE_STATE_RESTORED:            }
@@ -88,9 +88,9 @@ function Controller() {
     }
     function retry(identifier, receipt, msg) {
         var alertWindow = Titanium.UI.createAlertDialog({
-            title: "Något gick fel!",
+            title: Alloy.Globals.PHRASES.commonErrorTxt,
             message: msg,
-            buttonNames: [ "OK", "Försök igen" ]
+            buttonNames: [ Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.retryTxt ]
         });
         alertWindow.addEventListener("click", function(e) {
             switch (e.index) {
@@ -112,7 +112,7 @@ function Controller() {
             var xhr = Titanium.Network.createHTTPClient();
             xhr.onerror = function() {
                 indicator.closeIndicator();
-                retry(identifier, receipt, "Något gick fel försök igen!");
+                retry(identifier, receipt, Alloy.Globals.PHRASES.commonErrorTxt);
             };
             try {
                 xhr.open("POST", Alloy.Globals.BETKAMPENCOINSURL);
@@ -123,7 +123,7 @@ function Controller() {
                 xhr.send(param);
             } catch (e) {
                 indicator.closeIndicator();
-                retry(identifier, receipt, "Något gick fel försök igen!");
+                retry(identifier, receipt, Alloy.Globals.PHRASES.commonErrorTxt);
             }
             xhr.onload = function() {
                 if ("200" == this.status) {
@@ -136,7 +136,7 @@ function Controller() {
             };
         } else {
             indicator.closeIndicator();
-            Alloy.Globals.showFeedbackDialog("Ingen anslutning!");
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
         }
     }
     function purchaseCurrentProduct(prod) {
@@ -149,7 +149,7 @@ function Controller() {
                 quantity: 1,
                 applicationPayload: appPayload
             });
-        } else Alloy.Globals.showFeedbackDialog("Ingen anslutning!");
+        } else Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
     }
     function buildGUI(products) {
         try {
@@ -194,9 +194,9 @@ function Controller() {
     }
     function fetchProductsError() {
         var alertWindow = Titanium.UI.createAlertDialog({
-            title: "Något gick fel!",
-            message: "Ett fel uppstod när vi försökte hämta tillgängliga produkter. Vänligen försök igen.",
-            buttonNames: [ "Försök igen", "Stäng" ]
+            title: Alloy.Globals.PHRASES.commonErrorTxt,
+            message: Alloy.Globals.PHRASES.purchaseFetchTxt,
+            buttonNames: [ Alloy.Globals.PHRASES.retryTxt, Alloy.Globals.PHRASES.closeBtnTxt ]
         });
         alertWindow.addEventListener("click", function(e) {
             switch (e.index) {
@@ -228,7 +228,7 @@ function Controller() {
                 fontFamily: Alloy.Globals.getFont(),
                 fontSize: Alloy.Globals.getFontSize(3)
             },
-            text: "Köp Coins"
+            text: Alloy.Globals.PHRASES.buyCoinsTxt
         }));
         $.store.add(imageView);
         indicator.openIndicator();
@@ -240,7 +240,7 @@ function Controller() {
             fetchProductsError();
         } else {
             indicator.closeIndicator();
-            Alloy.Globals.showFeedbackDialog("Ingen Anslutning!");
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
         }
         Ti.API.info("... initialization complete!");
     }
@@ -258,6 +258,8 @@ function Controller() {
         width: Ti.UI.FILL,
         height: Ti.UI.FILL,
         backgroundColor: "#303030",
+        apiName: "Ti.UI.Window",
+        classes: [ "container" ],
         id: "store"
     });
     $.__views.store && $.addTopLevelView($.__views.store);
@@ -265,7 +267,8 @@ function Controller() {
     _.extend($, $.__views);
     var uie = require("lib/IndicatorWindow");
     var indicator = uie.createIndicatorWindow({
-        top: 200
+        top: 200,
+        text: Alloy.Globals.PHRASES.loadingTxt
     });
     var InAppProducts = require("com.logicallabs.inappproducts");
     var iOSVersion;

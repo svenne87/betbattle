@@ -1,6 +1,7 @@
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({
-	top : 200
+	top : 200,
+	text : Alloy.Globals.PHRASES.loadingTxt
 });
 
 var url = Alloy.Globals.BETKAMPENURL + '/webviews/scoreboard_wv.php';
@@ -13,7 +14,7 @@ if(OS_ANDROID){
 	$.scoreView.addEventListener('open', function(){
 		$.scoreView.activity.actionBar.onHomeIconItemSelected = function() { $.scoreView.close(); $.scoreView = null; };
    		$.scoreView.activity.actionBar.displayHomeAsUp = true;
-   		$.scoreView.activity.actionBar.title = 'Betkampen';
+   		$.scoreView.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
 		indicator.openIndicator();
 	});
 /*	

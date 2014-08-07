@@ -22,6 +22,8 @@ function Controller() {
         width: Ti.UI.FILL,
         height: Ti.UI.FILL,
         backgroundColor: "#303030",
+        apiName: "Ti.UI.Window",
+        classes: [ "container" ],
         id: "profile"
     });
     $.__views.profile && $.addTopLevelView($.__views.profile);
@@ -29,7 +31,8 @@ function Controller() {
     _.extend($, $.__views);
     var uie = require("lib/IndicatorWindow");
     var indicator = uie.createIndicatorWindow({
-        top: 200
+        top: 200,
+        text: Alloy.Globals.PHRASES.loadingTxt
     });
     var url = Alloy.Globals.BETKAMPENURL + "/webviews/profile_wv.php?fbid=" + Alloy.Globals.FACEBOOKOBJECT.id + "&uid=" + Alloy.Globals.BETKAMPENUID + "&authorization=" + Alloy.Globals.FACEBOOK.accessToken;
     var win = $.profile;

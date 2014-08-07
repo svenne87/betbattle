@@ -1,6 +1,7 @@
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({
-	top : 200
+	top : 200,
+	text : Alloy.Globals.PHRASES.loadingTxt
 });
 
 var url = Alloy.Globals.BETKAMPENURL + '/webviews/terms_wv.php';
@@ -12,7 +13,7 @@ if(OS_ANDROID){
 	$.terms.addEventListener('open', function(){
 		$.terms.activity.actionBar.onHomeIconItemSelected = function() { $.terms.close(); $.terms = null; };
    		$.terms.activity.actionBar.displayHomeAsUp = true;
-   		$.terms.activity.actionBar.title = 'Betkampen';
+   		$.terms.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
 		indicator.openIndicator();
 	});
 /*

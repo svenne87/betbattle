@@ -49,7 +49,7 @@ var tableHeaderView = Ti.UI.createView({
 
 tableHeaderView.add(Ti.UI.createLabel({
 	top : 50,
-	text : 'Välj Liga',
+	text : Alloy.Globals.PHRASES.leagueChooseTxt,
 	font : {
 		fontSize : Alloy.Globals.getFontSize(3),
 		fontWeight : 'normal',
@@ -93,30 +93,10 @@ for (var i in leagues) {
 		child = true;
 	}
 
-	var tableRow = Ti.UI.createTableViewRow({
-		id : leagues[i].id,
-		hasChild : child,
-		width : '100%',
-		height : 60,
-		backgroundColor : '#242424',
-		backgroundGradient : {
-			type : "linear",
-			startPoint : {
-				x : "0%",
-				y : "0%"
-			},
-			endPoint : {
-				x : "0%",
-				y : "100%"
-			},
-			colors : [{
-				color : "#2E2E2E",
-				offset : 0.0
-			}, {
-				color : "#151515",
-				offset : 1.0
-			}]
-		}
+	var tableRow = $.UI.create('TableViewRow', {
+		classes : ['challengesSection'], 
+		id :leagues[i].id, 
+		hasChild : child
 	});
 
 	// add custom icon on Android to symbol that the row has child
@@ -190,7 +170,7 @@ table.addEventListener('click', function(e) {
 		// get games and build UI
 		openChallengesForLeague(e.row.id);	
 	} else {
-		Alloy.Globals.showFeedbackDialog('Ingen Anslutning!');
+		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 	}
 });
 
@@ -200,7 +180,7 @@ if(OS_ANDROID){
 	$.newChallengeLeague.addEventListener('open', function(){
 		$.newChallengeLeague.activity.actionBar.onHomeIconItemSelected = function() { $.newChallengeLeague.close(); $.newChallengeLeague = null; };
    		$.newChallengeLeague.activity.actionBar.displayHomeAsUp = true;
-   		$.newChallengeLeague.activity.actionBar.title = 'Betkampen';
+   		$.newChallengeLeague.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
 	});
 /*
 	$.newChallengeLeague.addEventListener('androidback', function(){

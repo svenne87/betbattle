@@ -34,26 +34,25 @@ function doError() {
 	indicator.closeIndicator();
 
 	var alertWindow = Titanium.UI.createAlertDialog({
-		title : 'Något gick fel!',
-		message : 'Ett fel uppstod vid hämtande av ditt språk. Vänligen försök igen.',
-		buttonNames : ['Försök igen', 'Stäng']
+		title : 'Something went wrong!',
+		message : 'An error occured while trying to fetch your local language files. Please try again.',
+		buttonNames : ['OK', 'Cancel']
 	});
 
 	alertWindow.addEventListener('click', function(e) {
 		switch (e.index) {
-			case 0:
-				alertWindow.hide();
-				indicator.openIndicator();
-				getLanguage();
-				break;
-			case 1:
-				alertWindow.hide();
-				break;
+		case 0:
+			alertWindow.hide();
+			indicator.openIndicator();
+			getLanguage();
+			break;
+		case 1:
+			alertWindow.hide();
+			break;
 		}
 	});
 	alertWindow.show();
 }
-
 
 // get correct language file for this device
 function getLanguage() {
@@ -68,7 +67,8 @@ function getLanguage() {
 		};
 
 		try {
-			xhr.open('GET', Alloy.Globals.GETLANGUAGE + '?lang=' + Titanium.Locale.getCurrentLanguage());
+			xhr.open('GET', Alloy.Globals.GETLANGUAGE + '?lang=' + Alloy.Globals.LOCALE);
+			// TODO Titanium.Locale.getCurrentLanguage().toLowerCase()  'sv'
 			xhr.setRequestHeader("content-type", "application/json");
 			xhr.setTimeout(Alloy.Globals.TIMEOUT);
 
@@ -85,7 +85,7 @@ function getLanguage() {
 					var file1 = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory, 'language.json');
 					file1.write(this.responseText);
 
-					Alloy.Globals.PHRASES  = JSON.parse(file1.read().text);
+					Alloy.Globals.PHRASES = JSON.parse(file1.read().text);
 					openLogin();
 				}
 				indicator.closeIndicator();
@@ -95,14 +95,25 @@ function getLanguage() {
 			}
 		};
 	} else {
-		Alloy.Globals.showFeedbackDialog('Ingen anslutning!');
+		var alertWindow = Titanium.UI.createAlertDialog({
+			title : 'Bet Battle',
+			message : 'No internet connection detected!',
+			buttonNames : ['OK']
+		});
+
+		alertWindow.addEventListener('click', function(e) {
+			switch (e.index) {
+			case 0:
+				alertWindow.hide();
+				break;
+			}
+		});
+		alertWindow.show();
 	}
 }
 
-
 // run it
 getLanguage();
-
 
 // byta tutorial bilderna innan update's
 
