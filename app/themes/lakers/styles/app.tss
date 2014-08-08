@@ -1,38 +1,28 @@
-// test override   // lägga till klass eller typ 		rightInfoLabel.applyProperties({"color":"green"});   Blå: #3c3f9c  Orange: #ea7337
+// test override 
 "#betbattleLogo":{
-	top: '30%',
-	image : '/images/betkampenlogo.png'
 },
 "#facebookBtn":{
-	top: '30%',
+	top: '75%',
 	height: '7%',
 	width: '68.5%',
 	backgroundColor: '#336699',
 	borderRadius: 3
 },
+".navLogo":{
+	image : 'images/lakers_header.png',
+	left : 99,
+	width: 130,
+	height : 40
+},
 "#nav[platform=ios]":{
-backgroundColor : '#ea7337',
-		backgroundGradient : {
-			type : "linear",
-			startPoint : {
-				x : "0%",
-				y : "0%"
-			},
-			endPoint : {
-				x : "0%",
-				y : "100%"
-			},
-			colors : [{
-				color : "#EC814B",
-				offset : 0.0
-			}, {
-				color : "#CA5215",
-				offset : 1.0
-			}]
-		},
+	translucent: false,
+	statusBarStyle: Titanium.UI.iPhone.StatusBar.LIGHT_CONTENT,
+	backgroundImage : 'none',
+	backgroundColor : 'none',
+	backgroundGradient : 'none'
 },
 ".challengesSection": {
-	backgroundColor : '#ea7337',
+	backgroundColor : '#EA7337',
 		backgroundGradient : {
 			type : "linear",
 			startPoint : {
@@ -44,10 +34,10 @@ backgroundColor : '#ea7337',
 				y : "100%"
 			},
 			colors : [{
-				color : "#EC814B",
+				color : "#D85000",
 				offset : 0.0
 			}, {
-				color : "#CA5215",
+				color : "#F09C00",
 				offset : 1.0
 			}]
 		},

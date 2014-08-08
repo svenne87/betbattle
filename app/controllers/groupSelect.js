@@ -588,7 +588,7 @@ function createViews(array) {
 		
 		
 		var row = $.UI.create('TableViewRow', {
-			classes : ['challengesSection'], 
+			classes : ['challengesSectionDefault'], 
 			id : array[i].attributes.id,
 			hasChild : hasChild,
 			isparent : true,

@@ -6,10 +6,20 @@ function WPATH(s) {
 
 module.exports = [ {
     isClass: true,
-    priority: 10000.9004,
+    priority: 10000.9003,
+    key: "navLogo",
+    style: {
+        image: "images/lakers_header.png",
+        left: 99,
+        width: 130,
+        height: 40
+    }
+}, {
+    isClass: true,
+    priority: 10000.9005,
     key: "challengesSection",
     style: {
-        backgroundColor: "#ea7337",
+        backgroundColor: "#EA7337",
         backgroundGradient: {
             type: "linear",
             startPoint: {
@@ -21,17 +31,17 @@ module.exports = [ {
                 y: "100%"
             },
             colors: [ {
-                color: "#EC814B",
+                color: "#D85000",
                 offset: 0
             }, {
-                color: "#CA5215",
+                color: "#F09C00",
                 offset: 1
             } ]
         }
     }
 }, {
     isId: true,
-    priority: 100000.0002,
+    priority: 100000.0007,
     key: "leftMenu",
     style: {
         top: "0dp",
@@ -42,7 +52,7 @@ module.exports = [ {
     }
 }, {
     isId: true,
-    priority: 100000.0003,
+    priority: 100000.0008,
     key: "rightMenu",
     style: {
         top: "0dp",
@@ -53,7 +63,7 @@ module.exports = [ {
     }
 }, {
     isId: true,
-    priority: 100000.0004,
+    priority: 100000.0009,
     key: "navview",
     style: {
         top: "0dp",
@@ -64,7 +74,7 @@ module.exports = [ {
     }
 }, {
     isId: true,
-    priority: 100000.0005,
+    priority: 100000.001,
     key: "movableview",
     style: {
         left: "0",
@@ -73,7 +83,7 @@ module.exports = [ {
     }
 }, {
     isId: true,
-    priority: 100000.0006,
+    priority: 100000.0011,
     key: "contentview",
     style: {
         left: "0dp",
@@ -84,7 +94,7 @@ module.exports = [ {
     }
 }, {
     isId: true,
-    priority: 100000.0007,
+    priority: 100000.0012,
     key: "shadowview",
     style: {
         shadowColor: "black",
@@ -96,7 +106,7 @@ module.exports = [ {
     }
 }, {
     isId: true,
-    priority: 100000.0008,
+    priority: 100000.0013,
     key: "leftButton",
     style: {
         backgroundImage: "none",
@@ -109,7 +119,7 @@ module.exports = [ {
     }
 }, {
     isId: true,
-    priority: 100000.0009,
+    priority: 100000.0014,
     key: "rightButton",
     style: {
         backgroundImage: "none",
@@ -124,16 +134,13 @@ module.exports = [ {
     isId: true,
     priority: 100000.9001,
     key: "betbattleLogo",
-    style: {
-        top: "30%",
-        image: "/images/betkampenlogo.png"
-    }
+    style: {}
 }, {
     isId: true,
     priority: 100000.90019999999,
     key: "facebookBtn",
     style: {
-        top: "30%",
+        top: "75%",
         height: "7%",
         width: "68.5%",
         backgroundColor: "#336699",
@@ -141,27 +148,13 @@ module.exports = [ {
     }
 }, {
     isId: true,
-    priority: 100101.9003,
+    priority: 100101.9004,
     key: "nav",
     style: {
-        backgroundColor: "#ea7337",
-        backgroundGradient: {
-            type: "linear",
-            startPoint: {
-                x: "0%",
-                y: "0%"
-            },
-            endPoint: {
-                x: "0%",
-                y: "100%"
-            },
-            colors: [ {
-                color: "#EC814B",
-                offset: 0
-            }, {
-                color: "#CA5215",
-                offset: 1
-            } ]
-        }
+        translucent: false,
+        statusBarStyle: Titanium.UI.iPhone.StatusBar.LIGHT_CONTENT,
+        backgroundImage: "none",
+        backgroundColor: "none",
+        backgroundGradient: "none"
     }
 } ];

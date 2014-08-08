@@ -8,4 +8,11 @@
 	backgroundImage : 'images/green_bg.png',
 	tintColor : '#FFF',
 	barColor : '#FFF'
+},
+".navLogo":{
+	left : 86,
+	width : 155,
+	height : 45,
+	top : 16,
+	image : '/images/betkampenlogo.png'
 }

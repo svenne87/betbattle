@@ -535,12 +535,8 @@ if (OS_IOS){
     		color : 'white'
 		});
 	} else {
-		$.nav.add(Ti.UI.createImageView({
-			left : 86,
-			width : 155,
-			height : 45,
-			top : 16,
-			image : '/images/betkampenlogo.png'
+		$.nav.add($.UI.create('ImageView', {
+			classes : ['navLogo']
 		}));
 	}
 

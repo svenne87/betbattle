@@ -35,8 +35,8 @@ function Controller() {
                         userInfo = null;
                     }
                     if (null !== userInfo) {
-                        userInfoCoinsLabel.setText(userInfo.totalCoins);
-                        userInfoWinsLabel.setText(userInfo.points);
+                        userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.coinsInfoTxt + ": " + userInfo.totalCoins);
+                        userInfoWinsLabel.setText(Alloy.Globals.PHRASES.winningsInfoTxt + ": " + userInfo.points);
                     }
                 }
             } else {
@@ -218,7 +218,7 @@ function Controller() {
         }));
         var startTextLeftPos = 150;
         var textLeftPos = 200;
-        var potTextPos = 162;
+        var potTextPos = 171;
         firstRowView.add(Ti.UI.createLabel({
             left: startTextLeftPos,
             font: {
@@ -237,7 +237,7 @@ function Controller() {
         }
         firstRowView.add(Ti.UI.createLabel({
             left: textLeftPos,
-            text: date + " " + time,
+            text: " " + date + " " + time,
             font: {
                 fontSize: size,
                 fontWeight: "normal",
@@ -302,7 +302,7 @@ function Controller() {
         }
         secondRowView.add(Ti.UI.createLabel({
             left: textLeftPos,
-            text: currentPot,
+            text: " " + currentPot,
             font: {
                 fontSize: Alloy.Globals.getFontSize(1),
                 fontFamily: Alloy.Globals.getFont()
@@ -629,7 +629,7 @@ function Controller() {
         } catch (e) {}
         if (currentCoins > -1) {
             currentCoins += coins;
-            userInfoCoinsLabel.setText(currentCoins.toString());
+            userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.coinsInfoTxt + ": " + currentCoins.toString());
         }
     });
     Ti.App.addEventListener("challengesViewRefresh", function() {

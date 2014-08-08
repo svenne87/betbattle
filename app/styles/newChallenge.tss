@@ -4,7 +4,7 @@
 	height: Ti.UI.FILL,
 	backgroundColor: "#303030"
 },
-".challengesSection":{
+".challengesSectionDefault":{
 	width: '100%',
 	backgroundColor: '#242424',
 	backgroundGradient: {

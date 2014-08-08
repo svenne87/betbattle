@@ -78,7 +78,7 @@ function Controller() {
         var child;
         child = true;
         var tableRow = $.UI.create("TableViewRow", {
-            classes: [ "challengesSection" ],
+            classes: [ "challengesSectionDefault" ],
             id: leagues[i].id,
             hasChild: child
         });
@@ -111,15 +111,20 @@ function Controller() {
             image: imageLocation
         });
         leagueImageView.addEventListener("error", function() {
-            leagueImageView.image = "/images/Skapa_Utmaning.png";
+            leagueImageView.image = "/images/Skapa_Utmaning_Default.png";
         });
         tableRow.add(leagueImageView);
+        var leagueName = leagues[i].name;
+        if (leagueName.length > 17) {
+            leagueName = leagueName.substring(0, 14);
+            leagueName += "...";
+        }
         tableRow.add(Ti.UI.createLabel({
             width: "80%",
             height: "auto",
             left: 60,
             top: 15,
-            text: leagues[i].name,
+            text: leagueName,
             font: {
                 fontSize: Alloy.Globals.getFontSize(2),
                 fontWeight: "normal",

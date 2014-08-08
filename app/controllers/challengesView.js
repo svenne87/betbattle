@@ -22,7 +22,7 @@ Ti.App.addEventListener('updateCoins', function(coins) {
 
 	if (currentCoins > -1) {
 		currentCoins = currentCoins + coins;
-		userInfoCoinsLabel.setText(currentCoins.toString());
+		userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.coinsInfoTxt + ": " + currentCoins.toString());
 	}
 });
 
@@ -83,8 +83,8 @@ function getUserInfo() {
 				}
 
 				if (userInfo !== null) {
-					userInfoCoinsLabel.setText(userInfo.totalCoins);
-					userInfoWinsLabel.setText(userInfo.points);
+					userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.coinsInfoTxt + ": " + userInfo.totalCoins);
+					userInfoWinsLabel.setText(Alloy.Globals.PHRASES.winningsInfoTxt + ": " + userInfo.points);
 				}
 			}
 		} else {
@@ -443,7 +443,7 @@ function constructChallengeRows(obj, index, type) {
 
 	var startTextLeftPos = 150;
 	var textLeftPos = 200;
-	var potTextPos = 162;
+	var potTextPos = 171;
 
 	if (OS_ANDROID) {
 		startTextLeftPos = 155;
@@ -471,7 +471,7 @@ function constructChallengeRows(obj, index, type) {
 
 	firstRowView.add(Ti.UI.createLabel({
 		left : textLeftPos,
-		text : date + ' ' + time,
+		text : ' ' + date + ' ' + time,
 		font : {
 			fontSize : size,
 			fontWeight : 'normal',
@@ -556,7 +556,7 @@ function constructChallengeRows(obj, index, type) {
 
 	secondRowView.add(Ti.UI.createLabel({
 		left : textLeftPos,
-		text : currentPot,
+		text : ' ' + currentPot,
 		font : {
 			fontSize : Alloy.Globals.getFontSize(1),
 			fontFamily : Alloy.Globals.getFont()
@@ -668,7 +668,7 @@ function constructTableView(array) {
 		width : 20,
 		image : '/images/totalt_saldo.png'
 	}));
-
+	
 	userInfoViewBottom.add(Ti.UI.createImageView({
 		left : 60,
 		height : 15,

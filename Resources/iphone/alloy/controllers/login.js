@@ -220,15 +220,13 @@ function Controller() {
     });
     __alloyId0.push($.__views.content);
     $.__views.betbattleLogo = Ti.UI.createImageView({
-        top: "30%",
-        image: "/images/betkampenlogo.png",
         apiName: "Ti.UI.ImageView",
         id: "betbattleLogo",
         classes: []
     });
     $.__views.content.add($.__views.betbattleLogo);
     $.__views.facebookBtn = Ti.UI.createView({
-        top: "30%",
+        top: "75%",
         height: "7%",
         width: "68.5%",
         backgroundColor: "#336699",

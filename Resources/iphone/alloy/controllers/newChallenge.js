@@ -144,7 +144,7 @@ function Controller() {
             var rowChild;
             rowChild = true;
             var row = $.UI.create("TableViewRow", {
-                classes: [ "challengesSection" ],
+                classes: [ "challengesSectionDefault" ],
                 id: array[i].attributes.round,
                 sub: subRowArray,
                 opened: false,

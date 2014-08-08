@@ -9,7 +9,7 @@
 	width: '100%',
 	layout: 'vertical'
 },
-".challengesSection":{
+".challengesSectionDefault":{
 	width: '100%',
 	backgroundColor: '#242424',
 	backgroundGradient: {

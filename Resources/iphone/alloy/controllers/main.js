@@ -203,28 +203,13 @@ function Controller() {
     });
     $.__views.ds.setParent($.__views.mainWin);
     $.__views.nav = Ti.UI.iOS.createNavigationWindow({
-        backgroundImage: "images/green_bg.png",
+        backgroundImage: "none",
         tintColor: "#FFF",
         barColor: "#FFF",
-        backgroundColor: "#ea7337",
-        backgroundGradient: {
-            type: "linear",
-            startPoint: {
-                x: "0%",
-                y: "0%"
-            },
-            endPoint: {
-                x: "0%",
-                y: "100%"
-            },
-            colors: [ {
-                color: "#EC814B",
-                offset: 0
-            }, {
-                color: "#CA5215",
-                offset: 1
-            } ]
-        },
+        translucent: false,
+        statusBarStyle: Titanium.UI.iPhone.StatusBar.LIGHT_CONTENT,
+        backgroundColor: "none",
+        backgroundGradient: "none",
         window: $.__views.mainWin,
         apiName: "Ti.UI.iOS.NavigationWindow",
         id: "nav",
@@ -338,12 +323,8 @@ function Controller() {
             fontFamily: Alloy.Globals.getFont()
         },
         color: "white"
-    }) : $.nav.add(Ti.UI.createImageView({
-        left: 86,
-        width: 155,
-        height: 45,
-        top: 16,
-        image: "/images/betkampenlogo.png"
+    }) : $.nav.add($.UI.create("ImageView", {
+        classes: [ "navLogo" ]
     }));
     $.mainWin.setLeftNavButton(buttonBarMenu);
     _.extend($, exports);
