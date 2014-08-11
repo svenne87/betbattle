@@ -125,11 +125,17 @@ function Controller() {
         };
         section.add(Alloy.createController("menurow", args7).getView());
         var args8 = {
+            title: Alloy.Globals.PHRASES.settingsTxt,
+            customView: "settings",
+            image: "/images/Logga_Ut.png"
+        };
+        section.add(Alloy.createController("menurow", args8).getView());
+        var args9 = {
             title: Alloy.Globals.PHRASES.signOutTxt,
             customView: "logout",
             image: "/images/Logga_Ut.png"
         };
-        section.add(Alloy.createController("menurow", args8).getView());
+        section.add(Alloy.createController("menurow", args9).getView());
         return section;
     }
     function rowSelect(e) {

@@ -1,0 +1,6 @@
+<Alloy>
+	<Window class="container" id="settingsWindow">	
+		<View id="settingsView">
+		</View>
+	</Window>
+</Alloy>

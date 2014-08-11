@@ -12,6 +12,8 @@ Alloy.Globals.CHALLENGEINDEX;
 
 Alloy.Globals.LEAGUES;
 
+Alloy.Globals.AVAILABLELANGUAGES;
+
 Alloy.Globals.SLIDERZINDEX = 1;
 
 Alloy.Globals.TIMEOUT = 3e4;
@@ -72,7 +74,7 @@ Alloy.Globals.BETKAMPENCOINSANDROIDURL = Alloy.Globals.BETKAMPENURL + "/api/get_
 
 Alloy.Globals.BETKAMPENSHAREURL = Alloy.Globals.BETKAMPENURL + "/api/share.php";
 
-Alloy.Globals.GETLANGUAGE = Alloy.Globals.BETKAMPENURL + "/api/testar_language.php";
+Alloy.Globals.GETLANGUAGE = Alloy.Globals.BETKAMPENURL + "/api/get_language.php";
 
 Alloy.Globals.performTimeout = function(func) {
     func;

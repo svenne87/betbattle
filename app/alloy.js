@@ -17,6 +17,7 @@ Alloy.Globals.CHALLENGEOBJECTARRAY = [];
 Alloy.Globals.BETKAMPENUID = 0;
 Alloy.Globals.CHALLENGEINDEX;
 Alloy.Globals.LEAGUES;
+Alloy.Globals.AVAILABLELANGUAGES;
 Alloy.Globals.SLIDERZINDEX = 1;
 Alloy.Globals.TIMEOUT = 30000;
 Alloy.Globals.CURRENTVIEW;
@@ -49,7 +50,7 @@ Alloy.Globals.BETKAMPENCOINSURL = Alloy.Globals.BETKAMPENURL + '/api/get_coins.p
 Alloy.Globals.BETKAMPENCHECKCOINSURL = Alloy.Globals.BETKAMPENURL + '/api/check_coins.php';
 Alloy.Globals.BETKAMPENCOINSANDROIDURL = Alloy.Globals.BETKAMPENURL + '/api/get_coins_android.php';
 Alloy.Globals.BETKAMPENSHAREURL = Alloy.Globals.BETKAMPENURL + '/api/share.php';
-Alloy.Globals.GETLANGUAGE = Alloy.Globals.BETKAMPENURL + '/api/testar_language.php';
+Alloy.Globals.GETLANGUAGE = Alloy.Globals.BETKAMPENURL + '/api/get_language.php';
 
 Alloy.Globals.performTimeout = function(func) {
 	if (OS_ANDROID) {

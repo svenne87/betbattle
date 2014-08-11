@@ -36,7 +36,7 @@ function doError() {
 	var alertWindow = Titanium.UI.createAlertDialog({
 		title : 'Something went wrong!',
 		message : 'An error occured while trying to fetch your local language files. Please try again.',
-		buttonNames : ['OK', 'Cancel']
+		buttonNames : ['Retry', 'Cancel']
 	});
 
 	alertWindow.addEventListener('click', function(e) {
@@ -68,7 +68,6 @@ function getLanguage() {
 
 		try {
 			xhr.open('GET', Alloy.Globals.GETLANGUAGE + '?lang=' + Alloy.Globals.LOCALE);
-			// TODO Titanium.Locale.getCurrentLanguage().toLowerCase()  'sv'
 			xhr.setRequestHeader("content-type", "application/json");
 			xhr.setTimeout(Alloy.Globals.TIMEOUT);
 
@@ -86,6 +85,16 @@ function getLanguage() {
 					file1.write(this.responseText);
 
 					Alloy.Globals.PHRASES = JSON.parse(file1.read().text);
+					
+					// store language and that we have selected a language
+					Ti.App.Properties.setString("language", JSON.stringify({
+						language : Alloy.Globals.LOCALE
+					}));
+					Ti.App.Properties.setString("languageSelected", JSON.stringify({
+						languageSelected : true
+					}));
+					
+					
 					openLogin();
 				}
 				indicator.closeIndicator();
@@ -113,7 +122,22 @@ function getLanguage() {
 }
 
 // run it
-getLanguage();
+var language = Ti.App.Properties.getString('languageSelected');
+
+// check if a language file has been downloaded
+if(language) {
+	// set current language
+	try {
+		var file1 = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory, 'language.json');
+		Alloy.Globals.PHRASES = JSON.parse(file1.read().text);
+		openLogin();
+	} catch (e) {
+		getLanguage();
+	}
+
+} else {
+	getLanguage();
+}
 
 // byta tutorial bilderna innan update's
 

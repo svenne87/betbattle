@@ -14,6 +14,7 @@ function addEvent() {
 function createLeagueAndUidObj(response) {
 	Alloy.Globals.BETKAMPENUID = response.betkampen_uid;
 	Alloy.Globals.LEAGUES = [];
+	Alloy.Globals.AVAILABLELANGUAGES = [];
 
 	for (var i = 0; i < response.leagues.length; i++) {
 		var league = {
@@ -24,6 +25,17 @@ function createLeagueAndUidObj(response) {
 		// store all active leagues
 		Alloy.Globals.LEAGUES.push(league);
 	}
+	
+	for(var i = 0; i < response.languages.length; i++) {
+		var language = {
+			name : response.languages[i].name,
+			imageLocation : response.languages[i].imageLocation,
+			description : response.languages[i].description
+		};
+		// store all available languages
+		Alloy.Globals.AVAILABLELANGUAGES.push(language);
+	}
+	
 }
 
 function getChallengesAndStart() {

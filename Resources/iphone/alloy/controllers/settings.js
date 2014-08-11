@@ -8,28 +8,17 @@ function __processArg(obj, key) {
 }
 
 function Controller() {
-    function openLogin() {
-        var login;
-        var login = Alloy.createController("login").getView();
-        login.open({
-            modal: false
-        });
-        Alloy.Globals.INDEXWIN = login;
-        login = null;
-    }
-    function doError() {
-        indicator.closeIndicator();
+    function showAlertWithRestartNote() {
         var alertWindow = Titanium.UI.createAlertDialog({
-            title: "Something went wrong!",
-            message: "An error occured while trying to fetch your local language files. Please try again.",
-            buttonNames: [ "Retry", "Cancel" ]
+            title: Alloy.Globals.PHRASES.betbattleTxt,
+            message: Alloy.Globals.PHRASES.appRestartTxt,
+            buttonNames: [ Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtnTxt ]
         });
         alertWindow.addEventListener("click", function(e) {
             switch (e.index) {
               case 0:
                 alertWindow.hide();
-                indicator.openIndicator();
-                getLanguage();
+                Ti.App._restart();
                 break;
 
               case 1:
@@ -66,7 +55,7 @@ function Controller() {
                         Ti.App.Properties.setString("languageSelected", JSON.stringify({
                             languageSelected: true
                         }));
-                        openLogin();
+                        showAlertWithRestartNote();
                     }
                     indicator.closeIndicator();
                 } else {
@@ -90,7 +79,7 @@ function Controller() {
         }
     }
     require("alloy/controllers/BaseController").apply(this, Array.prototype.slice.call(arguments));
-    this.__controllerPath = "index";
+    this.__controllerPath = "settings";
     if (arguments[0]) {
         __processArg(arguments[0], "__parentSymbol");
         __processArg(arguments[0], "$model");
@@ -98,30 +87,54 @@ function Controller() {
     }
     var $ = this;
     var exports = {};
-    $.__views.index = Ti.UI.createWindow({
+    $.__views.settingsWindow = Ti.UI.createWindow({
         layout: "vertical",
         width: Ti.UI.FILL,
         height: Ti.UI.FILL,
-        backgroundColor: "transparent",
+        backgroundColor: "#303030",
         apiName: "Ti.UI.Window",
         classes: [ "container" ],
-        id: "index"
+        id: "settingsWindow"
     });
-    $.__views.index && $.addTopLevelView($.__views.index);
+    $.__views.settingsWindow && $.addTopLevelView($.__views.settingsWindow);
+    $.__views.settingsView = Ti.UI.createView({
+        layout: "vertical",
+        width: Ti.UI.FILL,
+        height: Ti.UI.FILL,
+        apiName: "Ti.UI.View",
+        id: "settingsView",
+        classes: []
+    });
+    $.__views.settingsWindow.add($.__views.settingsView);
     exports.destroy = function() {};
     _.extend($, $.__views);
     var uie = require("lib/IndicatorWindow");
     var indicator = uie.createIndicatorWindow({
-        top: 200
+        top: 200,
+        text: Alloy.Globals.PHRASES.loadingTxt
     });
-    var language = Ti.App.Properties.getString("languageSelected");
-    if (language) try {
-        var file1 = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory, "language.json");
-        Alloy.Globals.PHRASES = JSON.parse(file1.read().text);
-        openLogin();
-    } catch (e) {
+    var testEngButton = Ti.UI.createButton({
+        height: 30,
+        width: 100,
+        top: 20,
+        title: "EN"
+    });
+    var testSvButton = Ti.UI.createButton({
+        height: 30,
+        width: 100,
+        top: 60,
+        title: "SV"
+    });
+    testEngButton.addEventListener("click", function() {
+        Alloy.Globals.LOCALE = "en";
         getLanguage();
-    } else getLanguage();
+    });
+    testSvButton.addEventListener("click", function() {
+        Alloy.Globals.LOCALE = "sv";
+        getLanguage();
+    });
+    $.settingsView.add(testEngButton);
+    $.settingsView.add(testSvButton);
     _.extend($, exports);
 }
 

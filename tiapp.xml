@@ -7,7 +7,7 @@
     <property name="acs-oauth-key-production" type="string">XUDyrlVKb0NfXdL4QdaIU7VyLAPMsir3</property>
     <property name="acs-api-key-production" type="string">D7l0zo29uTpQCn5LktRmgfQKfEM55dlf</property>
     <id>apps.topgame.betkampen</id>
-    <name>BetKampen</name>
+    <name>Växjö Lakers</name>
     <version>1.2.5</version>
     <publisher>Topgame</publisher>
     <url>http://betkampen.se</url>
