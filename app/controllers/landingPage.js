@@ -249,6 +249,10 @@ inviteBtn.add(Ti.UI.createLabel({
 	text: "BJUD IN"
 }));
 
+bot_img.addEventListener("click", function(e){
+	
+});
+
 top_img.add(border1);
 mid_img.add(border2);
 bot_img.add(border3);
