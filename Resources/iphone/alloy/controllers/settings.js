@@ -8,6 +8,57 @@ function __processArg(obj, key) {
 }
 
 function Controller() {
+    function changeLanguageConfirm(lang) {
+        var languageDescription = Alloy.Globals.AVAILABLELANGUAGES[lang].description;
+        var alertWindow = Titanium.UI.createAlertDialog({
+            title: Alloy.Globals.PHRASES.betbattleTxt,
+            message: Alloy.Globals.PHRASES.confirmLanguageChangeTxt + ' "' + languageDescription + '"?',
+            buttonNames: [ Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtnTxt ]
+        });
+        alertWindow.addEventListener("click", function(e) {
+            switch (e.index) {
+              case 0:
+                alertWindow.hide();
+                Alloy.Globals.LOCALE = Alloy.Globals.AVAILABLELANGUAGES[lang].name;
+                getLanguage();
+                break;
+
+              case 1:
+                alertWindow.hide();
+            }
+        });
+        alertWindow.show();
+    }
+    function createPickers() {
+        var data = [];
+        var currentLocale = JSON.parse(Ti.App.Properties.getString("language"));
+        var currentLanguage;
+        Ti.API.log(currentLocale);
+        Ti.API.log(currentLocale.language);
+        for (var lang in Alloy.Globals.AVAILABLELANGUAGES) {
+            currentLocale.language == Alloy.Globals.AVAILABLELANGUAGES[lang].name && (currentLanguage = Alloy.Globals.AVAILABLELANGUAGES[lang].description);
+            data.push(Titanium.UI.createPickerRow({
+                title: Alloy.Globals.AVAILABLELANGUAGES[lang].description,
+                value: lang
+            }));
+        }
+        var ModalPicker = require("lib/ModalPicker");
+        var visualPrefs = {
+            top: 5,
+            opacity: .85,
+            borderRadius: 3,
+            backgroundColor: "#FFF",
+            width: 140,
+            height: 40,
+            textAlign: "center"
+        };
+        picker = new ModalPicker(visualPrefs, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt);
+        picker.text = currentLanguage;
+        picker.self.addEventListener("change", function() {
+            changeLanguageConfirm(picker.value);
+        });
+        $.settingsView.add(picker);
+    }
     function showAlertWithRestartNote() {
         var alertWindow = Titanium.UI.createAlertDialog({
             title: Alloy.Globals.PHRASES.betbattleTxt,
@@ -113,28 +164,25 @@ function Controller() {
         top: 200,
         text: Alloy.Globals.PHRASES.loadingTxt
     });
-    var testEngButton = Ti.UI.createButton({
-        height: 30,
-        width: 100,
+    var picker;
+    $.settingsWindow.addEventListener("close", function() {
+        indicator.closeIndicator();
+        picker.close();
+    });
+    $.settingsView.add(Ti.UI.createLabel({
+        height: 20,
         top: 20,
-        title: "EN"
-    });
-    var testSvButton = Ti.UI.createButton({
-        height: 30,
-        width: 100,
-        top: 60,
-        title: "SV"
-    });
-    testEngButton.addEventListener("click", function() {
-        Alloy.Globals.LOCALE = "en";
-        getLanguage();
-    });
-    testSvButton.addEventListener("click", function() {
-        Alloy.Globals.LOCALE = "sv";
-        getLanguage();
-    });
-    $.settingsView.add(testEngButton);
-    $.settingsView.add(testSvButton);
+        width: "100%",
+        textAlign: "center",
+        backgroundColor: "#303030",
+        color: "#FFF",
+        text: Alloy.Globals.PHRASES.changeLanguageTxt,
+        font: {
+            fontFamily: Alloy.Globals.getFont(),
+            fontSize: Alloy.Globals.getFontSize(2)
+        }
+    }));
+    createPickers();
     _.extend($, exports);
 }
 
