@@ -14,7 +14,6 @@ function addEvent() {
 function createLeagueAndUidObj(response) {
 	Alloy.Globals.BETKAMPENUID = response.betkampen_uid;
 	Alloy.Globals.LEAGUES = [];
-	Alloy.Globals.AVAILABLELANGUAGES = [];
 
 	for (var i = 0; i < response.leagues.length; i++) {
 		var league = {
@@ -25,17 +24,6 @@ function createLeagueAndUidObj(response) {
 		// store all active leagues
 		Alloy.Globals.LEAGUES.push(league);
 	}
-	
-	for(var i = 0; i < response.languages.length; i++) {
-		var language = {
-			name : response.languages[i].name,
-			imageLocation : response.languages[i].imageLocation,
-			description : response.languages[i].description
-		};
-		// store all available languages
-		Alloy.Globals.AVAILABLELANGUAGES.push(language);
-	}
-	
 }
 
 function getChallengesAndStart() {
@@ -84,7 +72,7 @@ function getChallengesAndStart() {
 				};
 
 				if (OS_IOS) {
-					var loginSuccessWindow = Alloy.createController('main', args).getView();
+					var loginSuccessWindow = Alloy.createController('landingPage', args).getView();
 					loginSuccessWindow.open({
 						fullScreen : true,
 						transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
@@ -92,7 +80,7 @@ function getChallengesAndStart() {
 					loginSuccessWindow = null;
 
 				} else if (OS_ANDROID) {
-					var loginSuccessWindow = Alloy.createController('main', args).getView();
+					var loginSuccessWindow = Alloy.createController('landingPage', args).getView();
 					loginSuccessWindow.open({
 						fullScreen : true,
 						navBarHidden : false,
@@ -317,6 +305,7 @@ $.facebookBtn.add(Ti.UI.createLabel({
 	fontSize : 40
 }));
 
+
 var fb = require('facebook');
 
 // app id and permission's
@@ -432,3 +421,79 @@ if (OS_ANDROID) {
 		activity.finish();
 	});
 }
+
+// email login
+var LoginWindow = Ti.UI.createWindow({
+	backgroundColor: 'white',
+	width: 300,
+	height: 300,
+	opacity: 0.8,
+	borderRadius: 20
+});
+ 
+var username = Titanium.UI.createTextField({
+    color:'#336699',
+    top:40,
+    left:25,
+    width:250,
+    height:40,
+    hintText:'Username',
+    keyboardType:Titanium.UI.KEYBOARD_DEFAULT,
+    returnKeyType:Titanium.UI.RETURNKEY_DEFAULT,
+    borderStyle:Titanium.UI.INPUT_BORDERSTYLE_ROUNDED
+});
+LoginWindow.add(username);
+ 
+var password = Titanium.UI.createTextField({
+    color:'#336699',
+    top:90,
+    left:25,
+    width:250,
+    height:40,
+    hintText:'Password',
+    passwordMask:true,
+    keyboardType:Titanium.UI.KEYBOARD_DEFAULT,
+    returnKeyType:Titanium.UI.RETURNKEY_DEFAULT,
+    borderStyle:Titanium.UI.INPUT_BORDERSTYLE_ROUNDED
+});
+LoginWindow.add(password);
+ 
+var signInBtn = Titanium.UI.createButton({
+    top: '50%',
+	height: '17%',
+	width: '68.5%',
+	left: '15%',
+	backgroundColor: '#000',
+	color: '#fff',
+	borderRadius: 3,
+	title: 'Login'
+});
+LoginWindow.add(signInBtn);
+
+var cancelBtn = Titanium.UI.createButton({
+    top: '70%',
+	height: '17%',
+	width: '68.5%',
+	left: '15%',
+	backgroundColor: '#000',
+	color: '#fff',
+	borderRadius: 3,
+	title: 'Cancel'
+});
+LoginWindow.add(cancelBtn);
+
+$.loginBtn.addEventListener('click', function(e)
+{
+	
+	LoginWindow.open({modal:true});
+	
+	//alert('du får inte logga in :P');
+});
+cancelBtn.addEventListener('click', function(e)
+{
+	
+	LoginWindow.close();
+});
+
+
+	

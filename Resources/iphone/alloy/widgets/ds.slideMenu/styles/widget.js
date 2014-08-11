@@ -41,7 +41,7 @@ module.exports = [ {
     }
 }, {
     isId: true,
-    priority: 100000.0002,
+    priority: 100000.0007,
     key: "leftMenu",
     style: {
         top: "0dp",
@@ -52,7 +52,7 @@ module.exports = [ {
     }
 }, {
     isId: true,
-    priority: 100000.0003,
+    priority: 100000.0008,
     key: "rightMenu",
     style: {
         top: "0dp",
@@ -63,7 +63,7 @@ module.exports = [ {
     }
 }, {
     isId: true,
-    priority: 100000.0004,
+    priority: 100000.0009,
     key: "navview",
     style: {
         top: "0dp",
@@ -74,7 +74,7 @@ module.exports = [ {
     }
 }, {
     isId: true,
-    priority: 100000.0005,
+    priority: 100000.001,
     key: "movableview",
     style: {
         left: "0",
@@ -83,7 +83,7 @@ module.exports = [ {
     }
 }, {
     isId: true,
-    priority: 100000.0006,
+    priority: 100000.0011,
     key: "contentview",
     style: {
         left: "0dp",
@@ -94,7 +94,7 @@ module.exports = [ {
     }
 }, {
     isId: true,
-    priority: 100000.0007,
+    priority: 100000.0012,
     key: "shadowview",
     style: {
         shadowColor: "black",
@@ -106,7 +106,7 @@ module.exports = [ {
     }
 }, {
     isId: true,
-    priority: 100000.0008,
+    priority: 100000.0013,
     key: "leftButton",
     style: {
         backgroundImage: "none",
@@ -119,7 +119,7 @@ module.exports = [ {
     }
 }, {
     isId: true,
-    priority: 100000.0009,
+    priority: 100000.0014,
     key: "rightButton",
     style: {
         backgroundImage: "none",

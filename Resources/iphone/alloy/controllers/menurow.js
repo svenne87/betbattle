@@ -18,7 +18,7 @@ function Controller() {
     var $ = this;
     var exports = {};
     $.__views.row = Ti.UI.createTableViewRow({
-        height: "60dp",
+        height: "50dp",
         selectedBackgroundColor: "#303030",
         selectedColor: "white",
         backgroundColor: "#40000000",
@@ -28,7 +28,7 @@ function Controller() {
     });
     $.__views.row && $.addTopLevelView($.__views.row);
     $.__views.icon = Ti.UI.createImageView({
-        width: "38dp",
+        width: "22dp",
         left: "5dp",
         apiName: "Ti.UI.ImageView",
         id: "icon",
@@ -46,10 +46,10 @@ function Controller() {
     $.__views.title = Ti.UI.createLabel({
         color: "#FFF",
         font: {
-            fontSize: "20",
+            fontSize: "15",
             font: "Helvetica"
         },
-        left: "54dp",
+        left: "34dp",
         apiName: "Ti.UI.Label",
         id: "title",
         classes: []

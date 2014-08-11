@@ -17,7 +17,6 @@ function Controller() {
     function createLeagueAndUidObj(response) {
         Alloy.Globals.BETKAMPENUID = response.betkampen_uid;
         Alloy.Globals.LEAGUES = [];
-        Alloy.Globals.AVAILABLELANGUAGES = [];
         for (var i = 0; response.leagues.length > i; i++) {
             var league = {
                 id: response.leagues[i].id,
@@ -25,14 +24,6 @@ function Controller() {
                 logo: response.leagues[i].logo
             };
             Alloy.Globals.LEAGUES.push(league);
-        }
-        for (var i = 0; response.languages.length > i; i++) {
-            var language = {
-                name: response.languages[i].name,
-                imageLocation: response.languages[i].imageLocation,
-                description: response.languages[i].description
-            };
-            Alloy.Globals.AVAILABLELANGUAGES.push(language);
         }
     }
     function getChallengesAndStart() {
@@ -71,7 +62,7 @@ function Controller() {
                     dialog: indicator
                 };
                 var loginSuccessWindow;
-                var loginSuccessWindow = Alloy.createController("main", args).getView();
+                var loginSuccessWindow = Alloy.createController("landingPage", args).getView();
                 loginSuccessWindow.open({
                     fullScreen: true,
                     transition: Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
@@ -260,6 +251,58 @@ function Controller() {
         classes: []
     });
     $.__views.facebookBtn.add($.__views.facebookBtnText);
+    $.__views.loginBtn = Ti.UI.createView({
+        top: "1%",
+        height: "7%",
+        width: "68.5%",
+        backgroundColor: "#fff",
+        borderRadius: 3,
+        apiName: "Ti.UI.View",
+        id: "loginBtn",
+        classes: []
+    });
+    $.__views.content.add($.__views.loginBtn);
+    $.__views.loginBtnText = Ti.UI.createLabel({
+        color: "#000",
+        left: "19%",
+        width: "auto",
+        font: {
+            fontFamily: "Helvetica Neue",
+            fontSize: 14,
+            fontWeight: "normal"
+        },
+        text: "Sign in with Email",
+        apiName: "Ti.UI.Label",
+        id: "loginBtnText",
+        classes: []
+    });
+    $.__views.loginBtn.add($.__views.loginBtnText);
+    $.__views.signUpBtn = Ti.UI.createView({
+        top: "1%",
+        height: "7%",
+        width: "68.5%",
+        backgroundColor: "#fff",
+        borderRadius: 3,
+        apiName: "Ti.UI.View",
+        id: "signUpBtn",
+        classes: []
+    });
+    $.__views.content.add($.__views.signUpBtn);
+    $.__views.signUpBtnText = Ti.UI.createLabel({
+        color: "#000",
+        left: "19%",
+        width: "auto",
+        font: {
+            fontFamily: "Helvetica Neue",
+            fontSize: 14,
+            fontWeight: "normal"
+        },
+        text: "Sign up for Betbattle",
+        apiName: "Ti.UI.Label",
+        id: "signUpBtnText",
+        classes: []
+    });
+    $.__views.signUpBtn.add($.__views.signUpBtnText);
     $.__views.view1 = Ti.UI.createView({
         backgroundColor: "#61A542",
         backgroundGradient: {
@@ -663,6 +706,68 @@ function Controller() {
         children = null;
         $.scrollableView = null;
         $.destroy();
+    });
+    var LoginWindow = Ti.UI.createWindow({
+        backgroundColor: "white",
+        width: 300,
+        height: 300,
+        opacity: .8,
+        borderRadius: 20
+    });
+    var username = Titanium.UI.createTextField({
+        color: "#336699",
+        top: 40,
+        left: 25,
+        width: 250,
+        height: 40,
+        hintText: "Username",
+        keyboardType: Titanium.UI.KEYBOARD_DEFAULT,
+        returnKeyType: Titanium.UI.RETURNKEY_DEFAULT,
+        borderStyle: Titanium.UI.INPUT_BORDERSTYLE_ROUNDED
+    });
+    LoginWindow.add(username);
+    var password = Titanium.UI.createTextField({
+        color: "#336699",
+        top: 90,
+        left: 25,
+        width: 250,
+        height: 40,
+        hintText: "Password",
+        passwordMask: true,
+        keyboardType: Titanium.UI.KEYBOARD_DEFAULT,
+        returnKeyType: Titanium.UI.RETURNKEY_DEFAULT,
+        borderStyle: Titanium.UI.INPUT_BORDERSTYLE_ROUNDED
+    });
+    LoginWindow.add(password);
+    var signInBtn = Titanium.UI.createButton({
+        top: "50%",
+        height: "17%",
+        width: "68.5%",
+        left: "15%",
+        backgroundColor: "#000",
+        color: "#fff",
+        borderRadius: 3,
+        title: "Login"
+    });
+    LoginWindow.add(signInBtn);
+    var cancelBtn = Titanium.UI.createButton({
+        top: "70%",
+        height: "17%",
+        width: "68.5%",
+        left: "15%",
+        backgroundColor: "#000",
+        color: "#fff",
+        borderRadius: 3,
+        title: "Cancel"
+    });
+    LoginWindow.add(cancelBtn);
+    $.loginBtn.addEventListener("click", function() {
+        LoginWindow.open({
+            modal: true
+        });
+    });
+    cancelBtn.addEventListener("click", function() {
+        LoginWindow.close();
     });
     _.extend($, exports);
 }
