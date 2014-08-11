@@ -1,9 +1,20 @@
+function __processArg(obj, key) {
+    var arg = null;
+    if (obj) {
+        arg = obj[key] || null;
+        delete obj[key];
+    }
+    return arg;
+}
+
 function Controller() {
     require("alloy/controllers/BaseController").apply(this, Array.prototype.slice.call(arguments));
     this.__controllerPath = "profile";
-    arguments[0] ? arguments[0]["__parentSymbol"] : null;
-    arguments[0] ? arguments[0]["$model"] : null;
-    arguments[0] ? arguments[0]["__itemTemplate"] : null;
+    if (arguments[0]) {
+        __processArg(arguments[0], "__parentSymbol");
+        __processArg(arguments[0], "$model");
+        __processArg(arguments[0], "__itemTemplate");
+    }
     var $ = this;
     var exports = {};
     $.__views.profile = Ti.UI.createWindow({
@@ -11,6 +22,8 @@ function Controller() {
         width: Ti.UI.FILL,
         height: Ti.UI.FILL,
         backgroundColor: "#303030",
+        apiName: "Ti.UI.Window",
+        classes: [ "container" ],
         id: "profile"
     });
     $.__views.profile && $.addTopLevelView($.__views.profile);
@@ -18,7 +31,8 @@ function Controller() {
     _.extend($, $.__views);
     var uie = require("lib/IndicatorWindow");
     var indicator = uie.createIndicatorWindow({
-        top: 200
+        top: 200,
+        text: Alloy.Globals.PHRASES.loadingTxt
     });
     var url = Alloy.Globals.BETKAMPENURL + "/webviews/profile_wv.php?fbid=" + Alloy.Globals.FACEBOOKOBJECT.id + "&uid=" + Alloy.Globals.BETKAMPENUID + "&authorization=" + Alloy.Globals.FACEBOOK.accessToken;
     var win = $.profile;
@@ -29,7 +43,7 @@ function Controller() {
             $.profile = null;
         };
         $.profile.activity.actionBar.displayHomeAsUp = true;
-        $.profile.activity.actionBar.title = "Betkampen";
+        $.profile.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
         indicator.openIndicator();
     });
     var extwebview;

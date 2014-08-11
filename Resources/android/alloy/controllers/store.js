@@ -1,9 +1,18 @@
+function __processArg(obj, key) {
+    var arg = null;
+    if (obj) {
+        arg = obj[key] || null;
+        delete obj[key];
+    }
+    return arg;
+}
+
 function Controller() {
     function makePurchase(product) {
         if (Alloy.Globals.checkConnection()) {
             var xhr = Titanium.Network.createHTTPClient();
             xhr.onerror = function() {
-                Alloy.Globals.showFeedbackDialog("Något gick fel! Försök igen.");
+                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                 indicator.closeIndicator();
             };
             try {
@@ -14,7 +23,7 @@ function Controller() {
                 xhr.send(param);
                 logInApp(param);
             } catch (e) {
-                Alloy.Globals.showFeedbackDialog("Något gick fel! Försök igen.");
+                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                 indicator.closeIndicator();
             }
             xhr.onload = function() {
@@ -22,9 +31,9 @@ function Controller() {
                     indicator.closeIndicator();
                     if (4 == this.readyState) Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText)); else {
                         var alertWindow = Titanium.UI.createAlertDialog({
-                            title: "Något gick fel!",
+                            title: Alloy.Globals.PHRASES.commonErrorTxt,
                             message: JSON.parse(this.responseText),
-                            buttonNames: [ "OK", "Försök igen" ]
+                            buttonNames: [ Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.retryTxt ]
                         });
                         alertWindow.addEventListener("click", function(e) {
                             switch (e.index) {
@@ -41,9 +50,9 @@ function Controller() {
                 } else {
                     indicator.closeIndicator();
                     var alertWindow = Titanium.UI.createAlertDialog({
-                        title: "Något gick fel!",
+                        title: Alloy.Globals.PHRASES.commonErrorTxt,
                         message: JSON.parse(this.responseText),
-                        buttonNames: [ "OK", "Försök igen" ]
+                        buttonNames: [ Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.retryTxt ]
                     });
                     alertWindow.addEventListener("click", function(e) {
                         switch (e.index) {
@@ -58,7 +67,7 @@ function Controller() {
                     });
                 }
             };
-        } else Alloy.Globals.showFeedbackDialog("Ingen anslutning!");
+        } else Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
     }
     function runSetup() {
         logInApp("Running startSetup...");
@@ -183,9 +192,11 @@ function Controller() {
     }
     require("alloy/controllers/BaseController").apply(this, Array.prototype.slice.call(arguments));
     this.__controllerPath = "store";
-    arguments[0] ? arguments[0]["__parentSymbol"] : null;
-    arguments[0] ? arguments[0]["$model"] : null;
-    arguments[0] ? arguments[0]["__itemTemplate"] : null;
+    if (arguments[0]) {
+        __processArg(arguments[0], "__parentSymbol");
+        __processArg(arguments[0], "$model");
+        __processArg(arguments[0], "__itemTemplate");
+    }
     var $ = this;
     var exports = {};
     $.__views.store = Ti.UI.createWindow({
@@ -193,6 +204,8 @@ function Controller() {
         width: Ti.UI.FILL,
         height: Ti.UI.FILL,
         backgroundColor: "#303030",
+        apiName: "Ti.UI.Window",
+        classes: [ "container" ],
         id: "store"
     });
     $.__views.store && $.addTopLevelView($.__views.store);
@@ -200,7 +213,8 @@ function Controller() {
     _.extend($, $.__views);
     var uie = require("lib/IndicatorWindow");
     var indicator = uie.createIndicatorWindow({
-        top: 200
+        top: 200,
+        text: Alloy.Globals.PHRASES.loadingTxt
     });
     $.store.orientationModes = [ Titanium.UI.PORTRAIT ];
     $.store.addEventListener("open", function() {
@@ -208,7 +222,7 @@ function Controller() {
             $.store.close();
         };
         $.store.activity.actionBar.displayHomeAsUp = true;
-        $.store.activity.actionBar.title = "Betkampen";
+        $.store.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
     });
     $.store.addEventListener("close", function() {
         indicator.closeIndicator();
@@ -228,7 +242,7 @@ function Controller() {
             });
         } else {
             logInApp("Setup FAILED.");
-            Alloy.Globals.showFeedbackDialog("Något gick fel! Försök igen.");
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             indicator.closeIndicator();
         }
     });
@@ -243,7 +257,7 @@ function Controller() {
                 createPurchaseButton(productDetails);
             }
             logInApp("success!!!");
-        } else Alloy.Globals.showFeedbackDialog("Något gick fel! Försök igen.");
+        } else Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
     });
     InAppBilling.addEventListener("consumecomplete", function(e) {
         logInApp("Consume response: " + responseString(e.responseCode));
@@ -273,7 +287,7 @@ function Controller() {
             fontWeight: "normal",
             fontSize: Alloy.Globals.getFontSize(3)
         },
-        text: "Köp Coins"
+        text: Alloy.Globals.PHRASES.buyCoinsTxt
     }));
     $.store.add(imageView);
     if ("<< Public Key >>" === PUBLIC_KEY) Alloy.Globals.showFeedbackDialog("Please put your app's public key in PUBLIC_KEY in this example."); else {
@@ -288,9 +302,9 @@ function Controller() {
                 logInApp("Setup was already made... Starting query for products.");
             } else {
                 var alertWindow = Titanium.UI.createAlertDialog({
-                    title: "Betkampen Fel",
-                    message: "Vi ber om ursäkt men ett allvarligt fel uppstod! Appen kommer att avslutas.",
-                    buttonNames: [ "OK" ]
+                    title: Alloy.Globals.PHRASES.betbattleErrorTxt,
+                    message: Alloy.Globals.PHRASES.criticalErrorTxt,
+                    buttonNames: [ Alloy.Globals.PHRASES.okConfirmTxt ]
                 });
                 alertWindow.addEventListener("click", function(e) {
                     switch (e.index) {

@@ -1,4 +1,4 @@
-function ModalPicker(prefs, data) {
+function ModalPicker(prefs, data, text) {
     var self = Ti.UI.createLabel(prefs);
     self.id = null;
     var subWin = Ti.UI.createWindow({
@@ -9,11 +9,11 @@ function ModalPicker(prefs, data) {
         navBarHidden: true
     });
     var select = Ti.UI.createButton({
-        title: "Välj",
+        title: text,
         style: Ti.UI.iPhone.SystemButtonStyle.PLAIN,
         color: "#FFF",
         backgroundImage: "none",
-        width: 50
+        width: 100
     });
     var flexSpace = Ti.UI.createButton({
         systemButton: Ti.UI.iPhone.SystemButton.FLEXIBLE_SPACE

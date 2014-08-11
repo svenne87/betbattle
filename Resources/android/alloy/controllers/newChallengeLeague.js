@@ -1,3 +1,12 @@
+function __processArg(obj, key) {
+    var arg = null;
+    if (obj) {
+        arg = obj[key] || null;
+        delete obj[key];
+    }
+    return arg;
+}
+
 function Controller() {
     function openChallengesForLeague(league) {
         var arg = {
@@ -11,9 +20,11 @@ function Controller() {
     }
     require("alloy/controllers/BaseController").apply(this, Array.prototype.slice.call(arguments));
     this.__controllerPath = "newChallengeLeague";
-    arguments[0] ? arguments[0]["__parentSymbol"] : null;
-    arguments[0] ? arguments[0]["$model"] : null;
-    arguments[0] ? arguments[0]["__itemTemplate"] : null;
+    if (arguments[0]) {
+        __processArg(arguments[0], "__parentSymbol");
+        __processArg(arguments[0], "$model");
+        __processArg(arguments[0], "__itemTemplate");
+    }
     var $ = this;
     var exports = {};
     $.__views.newChallengeLeague = Ti.UI.createWindow({
@@ -21,6 +32,8 @@ function Controller() {
         width: Ti.UI.FILL,
         height: Ti.UI.FILL,
         backgroundColor: "#303030",
+        apiName: "Ti.UI.Window",
+        classes: [ "container" ],
         id: "newChallengeLeague"
     });
     $.__views.newChallengeLeague && $.addTopLevelView($.__views.newChallengeLeague);
@@ -37,7 +50,7 @@ function Controller() {
     });
     tableHeaderView.add(Ti.UI.createLabel({
         top: 50,
-        text: "Välj Liga",
+        text: Alloy.Globals.PHRASES.leagueChooseTxt,
         font: {
             fontSize: Alloy.Globals.getFontSize(3),
             fontWeight: "normal",
@@ -61,30 +74,10 @@ function Controller() {
     for (var i in leagues) {
         var child;
         child = false;
-        var tableRow = Ti.UI.createTableViewRow({
+        var tableRow = $.UI.create("TableViewRow", {
+            classes: [ "challengesSectionDefault" ],
             id: leagues[i].id,
-            hasChild: child,
-            width: "100%",
-            height: 60,
-            backgroundColor: "#242424",
-            backgroundGradient: {
-                type: "linear",
-                startPoint: {
-                    x: "0%",
-                    y: "0%"
-                },
-                endPoint: {
-                    x: "0%",
-                    y: "100%"
-                },
-                colors: [ {
-                    color: "#2E2E2E",
-                    offset: 0
-                }, {
-                    color: "#151515",
-                    offset: 1
-                } ]
-            }
+            hasChild: child
         });
         if (true != child) {
             var fontawesome = require("lib/IconicFont").IconicFont({
@@ -115,15 +108,20 @@ function Controller() {
             image: imageLocation
         });
         leagueImageView.addEventListener("error", function() {
-            leagueImageView.image = "/images/Skapa_Utmaning.png";
+            leagueImageView.image = "/images/Skapa_Utmaning_Default.png";
         });
         tableRow.add(leagueImageView);
+        var leagueName = leagues[i].name;
+        if (leagueName.length > 17) {
+            leagueName = leagueName.substring(0, 14);
+            leagueName += "...";
+        }
         tableRow.add(Ti.UI.createLabel({
             width: "80%",
             height: "auto",
             left: 60,
             top: 15,
-            text: leagues[i].name,
+            text: leagueName,
             font: {
                 fontSize: Alloy.Globals.getFontSize(2),
                 fontWeight: "normal",
@@ -137,7 +135,7 @@ function Controller() {
     table.setData(data);
     table.addEventListener("click", function(e) {
         if (2 == Alloy.Globals.SLIDERZINDEX) return;
-        Alloy.Globals.checkConnection() ? openChallengesForLeague(e.row.id) : Alloy.Globals.showFeedbackDialog("Ingen Anslutning!");
+        Alloy.Globals.checkConnection() ? openChallengesForLeague(e.row.id) : Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
     });
     $.newChallengeLeague.orientationModes = [ Titanium.UI.PORTRAIT ];
     $.newChallengeLeague.addEventListener("open", function() {
@@ -146,7 +144,7 @@ function Controller() {
             $.newChallengeLeague = null;
         };
         $.newChallengeLeague.activity.actionBar.displayHomeAsUp = true;
-        $.newChallengeLeague.activity.actionBar.title = "Betkampen";
+        $.newChallengeLeague.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
     });
     $.newChallengeLeague.add(table);
     _.extend($, exports);

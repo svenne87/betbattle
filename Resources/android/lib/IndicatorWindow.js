@@ -8,6 +8,7 @@ function createIndicatorWindow(args) {
     var width = 180, height = 50;
     var args = args || {};
     var top = args.top || 140;
+    var text = args.text || "Loading...";
     var win = Titanium.UI.createWindow({
         height: height,
         width: width,
@@ -28,7 +29,7 @@ function createIndicatorWindow(args) {
     });
     var activityIndicator;
     activityIndicator = Ti.UI.Android.createProgressIndicator({
-        message: "Laddar...",
+        message: text,
         location: Ti.UI.Android.PROGRESS_INDICATOR_DIALOG,
         type: Ti.UI.Android.PROGRESS_INDICATOR_INDETERMINANT,
         cancelable: false
@@ -37,7 +38,7 @@ function createIndicatorWindow(args) {
         left: 10,
         width: Ti.UI.FILL,
         height: Ti.UI.FILL,
-        text: L("Laddar..."),
+        text: L(text),
         color: "#fff",
         font: {
             fontFamily: "Helvetica",
