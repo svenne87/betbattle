@@ -1,3 +1,4 @@
+var args = arguments[0] || {};
 var top_view = Ti.UI.createView({
 	id: "top_view",
 	backgroundColor: "white",
@@ -250,7 +251,23 @@ inviteBtn.add(Ti.UI.createLabel({
 }));
 
 bot_img.addEventListener("click", function(e){
-	
+				if (OS_IOS) {
+					var loginSuccessWindow = Alloy.createController('main', args).getView();
+					loginSuccessWindow.open({
+						fullScreen : true,
+						transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
+					});
+					loginSuccessWindow = null;
+
+				} else if (OS_ANDROID) {
+					var loginSuccessWindow = Alloy.createController('main', args).getView();
+					loginSuccessWindow.open({
+						fullScreen : true,
+						navBarHidden : false,
+						orientationModes : [Titanium.UI.PORTRAIT]
+					});
+					loginSuccessWindow = null;
+				}
 });
 
 top_img.add(border1);
