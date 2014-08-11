@@ -25,25 +25,7 @@ function Controller() {
         classes: [ "container" ],
         id: "landingPage"
     });
-    $.__views.ds = Alloy.createWidget("ds.slideMenu", "widget", {
-        apiName: "Alloy.Require",
-        id: "ds",
-        classes: [],
-        __parentSymbol: $.__views.landingPage
-    });
-    $.__views.ds.setParent($.__views.landingPage);
-    $.__views.nav = Ti.UI.iOS.createNavigationWindow({
-        translucent: false,
-        statusBarStyle: Titanium.UI.iPhone.StatusBar.LIGHT_CONTENT,
-        backgroundImage: "none",
-        backgroundColor: "none",
-        backgroundGradient: "none",
-        window: $.__views.landingPage,
-        apiName: "Ti.UI.iOS.NavigationWindow",
-        id: "nav",
-        classes: []
-    });
-    $.__views.nav && $.addTopLevelView($.__views.nav);
+    $.__views.landingPage && $.addTopLevelView($.__views.landingPage);
     exports.destroy = function() {};
     _.extend($, $.__views);
     var args = arguments[0] || {};
