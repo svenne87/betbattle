@@ -219,7 +219,7 @@ function Controller() {
     });
     __alloyId0.push($.__views.content);
     $.__views.facebookBtn = Ti.UI.createView({
-        top: "70%",
+        top: "50%",
         height: "7%",
         width: "68.5%",
         backgroundColor: "#336699",
@@ -240,6 +240,50 @@ function Controller() {
         id: "facebookBtnText"
     });
     $.__views.facebookBtn.add($.__views.facebookBtnText);
+    $.__views.loginBtn = Ti.UI.createView({
+        top: "60%",
+        height: "7%",
+        width: "68.5%",
+        backgroundColor: "#000000",
+        borderRadius: 3,
+        id: "loginBtn"
+    });
+    $.__views.content.add($.__views.loginBtn);
+    $.__views.loginBtnText = Ti.UI.createLabel({
+        color: "#000",
+        left: "19%",
+        width: "auto",
+        font: {
+            fontFamily: "Roboto-Regular",
+            fontSize: 16,
+            fontWeight: "normal"
+        },
+        text: "Logga in med E-post",
+        id: "loginBtnText"
+    });
+    $.__views.loginBtn.add($.__views.loginBtnText);
+    $.__views.registerBtn = Ti.UI.createView({
+        top: "70%",
+        height: "7%",
+        width: "68.5%",
+        backgroundColor: "#000000",
+        borderRadius: 3,
+        id: "registerBtn"
+    });
+    $.__views.content.add($.__views.registerBtn);
+    $.__views.registerBtnText = Ti.UI.createLabel({
+        color: "#000",
+        left: "19%",
+        width: "auto",
+        font: {
+            fontFamily: "Roboto-Regular",
+            fontSize: 16,
+            fontWeight: "normal"
+        },
+        text: "Nytt Konto",
+        id: "registerBtnText"
+    });
+    $.__views.registerBtn.add($.__views.registerBtnText);
     $.__views.view1 = Ti.UI.createView({
         backgroundColor: "#61A542",
         backgroundGradient: {

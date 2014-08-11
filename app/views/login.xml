@@ -5,13 +5,14 @@
 				<View id="facebookBtn">
 					<Label id="facebookBtnText">Logga in med facebook</Label>
 				</View>
-				<View id="LoginBtn">
-					<Label id="LoginBtnText">Logga in med E-post</Label>
+				<View id="loginBtn">
+					<Label id="loginBtnText">Logga in med E-post</Label>
 				</View>
-				<View id="RegisterBtn">
-					<Label id="RegisterBtnText">Nytt Konto</Label>
+				<View id="registerBtn">
+					<Label id="registerBtnText">Nytt Konto</Label>
 				</View>
 			</View>
+			
 			<View id="view1" class="scrollView">
 				<Label class="tutorialInfoLabel">Välj skapa utmaning i menyn för att komma igång!</Label>
 				<View class="shadowContainer" />

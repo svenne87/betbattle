@@ -1,4 +1,4 @@
-android/ATTR_MINIFY=true
+android/ATTR_MINIFY=false
 android/ATTR_MINIFY.type=Boolean
 android/ATTR_PROJECT_NAME=betbattle
 android/ATTR_PROJECT_NAME.type=String
