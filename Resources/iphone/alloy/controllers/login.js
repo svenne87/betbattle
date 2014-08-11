@@ -251,32 +251,6 @@ function Controller() {
         classes: []
     });
     $.__views.facebookBtn.add($.__views.facebookBtnText);
-    $.__views.loginBtn = Ti.UI.createView({
-        top: "1%",
-        height: "7%",
-        width: "68.5%",
-        backgroundColor: "#fff",
-        borderRadius: 3,
-        apiName: "Ti.UI.View",
-        id: "loginBtn",
-        classes: []
-    });
-    $.__views.content.add($.__views.loginBtn);
-    $.__views.loginBtnText = Ti.UI.createLabel({
-        color: "#000",
-        left: "19%",
-        width: "auto",
-        font: {
-            fontFamily: "Helvetica Neue",
-            fontSize: 14,
-            fontWeight: "normal"
-        },
-        text: "Sign in with Email",
-        apiName: "Ti.UI.Label",
-        id: "loginBtnText",
-        classes: []
-    });
-    $.__views.loginBtn.add($.__views.loginBtnText);
     $.__views.signUpBtn = Ti.UI.createView({
         top: "1%",
         height: "7%",
@@ -290,19 +264,45 @@ function Controller() {
     $.__views.content.add($.__views.signUpBtn);
     $.__views.signUpBtnText = Ti.UI.createLabel({
         color: "#000",
-        left: "19%",
         width: "auto",
+        textAlign: "center",
         font: {
             fontFamily: "Helvetica Neue",
             fontSize: 14,
             fontWeight: "normal"
         },
-        text: "Sign up for Betbattle",
+        text: "Register with Email",
         apiName: "Ti.UI.Label",
         id: "signUpBtnText",
         classes: []
     });
     $.__views.signUpBtn.add($.__views.signUpBtnText);
+    $.__views.loginBtn = Ti.UI.createView({
+        top: "1%",
+        height: "7%",
+        width: "68.5%",
+        backgroundColor: "#fff",
+        borderRadius: 3,
+        apiName: "Ti.UI.View",
+        id: "loginBtn",
+        classes: []
+    });
+    $.__views.content.add($.__views.loginBtn);
+    $.__views.loginBtnText = Ti.UI.createLabel({
+        color: "#000",
+        width: "auto",
+        textAlign: "center",
+        font: {
+            fontFamily: "Helvetica Neue",
+            fontSize: 14,
+            fontWeight: "normal"
+        },
+        text: "Sign in",
+        apiName: "Ti.UI.Label",
+        id: "loginBtnText",
+        classes: []
+    });
+    $.__views.loginBtn.add($.__views.loginBtnText);
     $.__views.view1 = Ti.UI.createView({
         backgroundColor: "#61A542",
         backgroundGradient: {
@@ -747,7 +747,7 @@ function Controller() {
         backgroundColor: "#000",
         color: "#fff",
         borderRadius: 3,
-        title: "Login"
+        title: "Sign in"
     });
     LoginWindow.add(signInBtn);
     var cancelBtn = Titanium.UI.createButton({
@@ -768,6 +768,9 @@ function Controller() {
     });
     cancelBtn.addEventListener("click", function() {
         LoginWindow.close();
+    });
+    signInBtn.addEventListener("click", function() {
+        alert("Username and Password are required");
     });
     _.extend($, exports);
 }

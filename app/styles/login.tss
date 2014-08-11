@@ -37,33 +37,6 @@
 		fontWeight: 'normal'
 	}
 },
-"#loginBtn":{
-	top: '1%',
-	height: '7%',
-	width: '68.5%',
-	backgroundColor: '#fff',
-	borderRadius: 3
-},
-"#loginBtnText[platform=ios]":{
-	color: '#000',
-	left: '19%',
-	width: 'auto',
-	font: {
-		fontFamily: 'Helvetica Neue',
-		fontSize: 14,
-		fontWeight: 'normal'
-	}
-},
-"#loginBtnText[platform=android]":{
-	color: '#000',
-	left: '19%',
-	width: 'auto',
-	font: {
-		fontFamily: 'Roboto-Regular',
-		fontSize: 16,
-		fontWeight: 'normal'
-	}
-},
 "#signUpBtn":{
 	top: '1%',
 	height: '7%',
@@ -73,8 +46,9 @@
 },
 "#signUpBtnText[platform=ios]":{
 	color: '#000',
-	left: '19%',
+	//left: '19%',
 	width: 'auto',
+	textAlign: 'center',
 	font: {
 		fontFamily: 'Helvetica Neue',
 		fontSize: 14,
@@ -83,8 +57,38 @@
 },
 "#signUpBtnText[platform=android]":{
 	color: '#000',
-	left: '19%',
+	//left: '19%',
 	width: 'auto',
+	textAlign: 'center',
+	font: {
+		fontFamily: 'Roboto-Regular',
+		fontSize: 16,
+		fontWeight: 'normal'
+	}
+},
+"#loginBtn":{
+	top: '1%',
+	height: '7%',
+	width: '68.5%',
+	backgroundColor: '#fff',
+	borderRadius: 3
+},
+"#loginBtnText[platform=ios]":{
+	color: '#000',
+	//left: '19%',
+	width: 'auto',
+	textAlign: 'center',
+	font: {
+		fontFamily: 'Helvetica Neue',
+		fontSize: 14,
+		fontWeight: 'normal'
+	}
+},
+"#loginBtnText[platform=android]":{
+	color: '#000',
+	//left: '19%',
+	width: 'auto',
+	textAlign: 'center',
 	font: {
 		fontFamily: 'Roboto-Regular',
 		fontSize: 16,

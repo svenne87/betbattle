@@ -14,6 +14,7 @@ function addEvent() {
 function createLeagueAndUidObj(response) {
 	Alloy.Globals.BETKAMPENUID = response.betkampen_uid;
 	Alloy.Globals.LEAGUES = [];
+	Alloy.Globals.AVAILABLELANGUAGES = [];
 
 	for (var i = 0; i < response.leagues.length; i++) {
 		var league = {
@@ -24,6 +25,14 @@ function createLeagueAndUidObj(response) {
 		// store all active leagues
 		Alloy.Globals.LEAGUES.push(league);
 	}
+	        for (var i = 0; response.languages.length > i; i++) {
+            var language = {
+                name: response.languages[i].name,
+                imageLocation: response.languages[i].imageLocation,
+                description: response.languages[i].description
+            };
+            Alloy.Globals.AVAILABLELANGUAGES.push(language);
+        }
 }
 
 function getChallengesAndStart() {
@@ -466,7 +475,7 @@ var signInBtn = Titanium.UI.createButton({
 	backgroundColor: '#000',
 	color: '#fff',
 	borderRadius: 3,
-	title: 'Login'
+	title: 'Sign in'
 });
 LoginWindow.add(signInBtn);
 
@@ -495,5 +504,9 @@ cancelBtn.addEventListener('click', function(e)
 	LoginWindow.close();
 });
 
+signInBtn.addEventListener('click', function(e)
+{
+	alert("Username and Password are required");
+});
 
 	
