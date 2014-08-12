@@ -38,7 +38,11 @@ Alloy.Globals.FBERROR = true;
 
 Alloy.Globals.PHRASES = {};
 
-Alloy.Globals.LOCALE = Titanium.Locale.getCurrentLanguage().toLowerCase();
+var lang = JSON.parse(Ti.App.Properties.getString("language"));
+
+lang = lang.language;
+
+Alloy.Globals.LOCALE = "undefined" == typeof lang || "" == lang || null == lang ? Titanium.Locale.getCurrentLanguage().toLowerCase() : lang;
 
 Alloy.Globals.INVITEURL = "https://apps.facebook.com/betkampen";
 

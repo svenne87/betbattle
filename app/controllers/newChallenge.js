@@ -414,7 +414,7 @@ function getGames(league) {
 		};
 
 		try {
-			xhr.open('GET', Alloy.Globals.BETKAMPENGETGAMESURL + '/?uid=' + Alloy.Globals.BETKAMPENUID + '&league=' + league);
+			xhr.open('GET', Alloy.Globals.BETKAMPENGETGAMESURL + '/?uid=' + Alloy.Globals.BETKAMPENUID + '&league=' + league + '&lang=' + Alloy.Globals.LOCALE);
 			xhr.setRequestHeader("content-type", "application/json");
 			xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
 			xhr.setTimeout(Alloy.Globals.TIMEOUT);

@@ -61,7 +61,7 @@ function getUserInfo() {
 	};
 
 	try {
-		xhr.open('POST', Alloy.Globals.BETKAMPENUSERURL + '?uid=' + Alloy.Globals.BETKAMPENUID);
+		xhr.open('POST', Alloy.Globals.BETKAMPENUSERURL + '?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
 		xhr.setRequestHeader("content-type", "application/json");
 		xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
 		xhr.setTimeout(Alloy.Globals.TIMEOUT);
@@ -1030,7 +1030,7 @@ function getChallenges() {
 	};
 
 	try {
-		xhr.open('GET', Alloy.Globals.BETKAMPENCHALLENGESURL + '/?uid=' + Alloy.Globals.BETKAMPENUID);
+		xhr.open('GET', Alloy.Globals.BETKAMPENCHALLENGESURL + '/?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
 		xhr.setRequestHeader("challengesView-type", "application/json");
 		xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
 		xhr.setTimeout(Alloy.Globals.TIMEOUT);
