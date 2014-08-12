@@ -1,6 +1,7 @@
 <Alloy>
+	<NavigationWindow id="nav" platform="ios">
 	<Window class="container" id="landingPage">
 		
 	</Window>
-	
+	</NavigationWindow>
 </Alloy>
