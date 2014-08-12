@@ -270,6 +270,26 @@ bot_img.addEventListener("click", function(e){
 				}
 });
 
+if(OS_IOS){
+	Alloy.Globals.NAV = $.nav;
+	
+	if(iOSVersion < 7){
+		$.landingPage.titleControl = Ti.UI.createLabel({
+    	text : 'Betkampen',
+    	font : {
+        	fontSize : Alloy.Globals.getFontSize(2),
+       	 	fontWeight : 'bold',
+        	fontFamily : Alloy.Globals.getFont()
+    	},
+    		color : 'white'
+		});
+	} else {
+		$.nav.add($.UI.create('ImageView', {
+			classes : ['navLogo']
+		}));
+	}
+}
+
 top_img.add(border1);
 mid_img.add(border2);
 bot_img.add(border3);
