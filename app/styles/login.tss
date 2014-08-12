@@ -37,14 +37,14 @@
 		fontWeight: 'normal'
 	}
 },
-"#signUpBtn":{
+"#registerBtn":{
 	top: '1%',
 	height: '7%',
 	width: '68.5%',
 	backgroundColor: '#fff',
 	borderRadius: 3
 },
-"#signUpBtnText[platform=ios]":{
+"#registerBtnText[platform=ios]":{
 	color: '#000',
 	//left: '19%',
 	width: 'auto',
@@ -55,7 +55,7 @@
 		fontWeight: 'normal'
 	}
 },
-"#signUpBtnText[platform=android]":{
+"#registerBtnText[platform=android]":{
 	color: '#000',
 	//left: '19%',
 	width: 'auto',
