@@ -25,7 +25,20 @@ function Controller() {
         classes: [ "container" ],
         id: "landingPage"
     });
-    $.__views.landingPage && $.addTopLevelView($.__views.landingPage);
+    $.__views.nav = Ti.UI.iOS.createNavigationWindow({
+        backgroundImage: "none",
+        tintColor: "#FFF",
+        barColor: "#FFF",
+        translucent: false,
+        statusBarStyle: Titanium.UI.iPhone.StatusBar.LIGHT_CONTENT,
+        backgroundColor: "none",
+        backgroundGradient: "none",
+        window: $.__views.landingPage,
+        apiName: "Ti.UI.iOS.NavigationWindow",
+        id: "nav",
+        classes: []
+    });
+    $.__views.nav && $.addTopLevelView($.__views.nav);
     exports.destroy = function() {};
     _.extend($, $.__views);
     var args = arguments[0] || {};
@@ -263,6 +276,20 @@ function Controller() {
         });
         loginSuccessWindow = null;
     });
+    Alloy.Globals.NAV = $.nav;
+    var iOSVersion;
+    iOSVersion = parseInt(Ti.Platform.version);
+    7 > iOSVersion ? $.landingPage.titleControl = Ti.UI.createLabel({
+        text: "Betkampen",
+        font: {
+            fontSize: Alloy.Globals.getFontSize(2),
+            fontWeight: "bold",
+            fontFamily: Alloy.Globals.getFont()
+        },
+        color: "white"
+    }) : $.nav.add($.UI.create("ImageView", {
+        classes: [ "navLogo" ]
+    }));
     top_img.add(border1);
     mid_img.add(border2);
     bot_img.add(border3);

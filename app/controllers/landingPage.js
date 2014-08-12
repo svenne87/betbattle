@@ -272,6 +272,11 @@ bot_img.addEventListener("click", function(e){
 
 if(OS_IOS){
 	Alloy.Globals.NAV = $.nav;
+	var iOSVersion;
+
+	if(OS_IOS){
+		iOSVersion = parseInt(Ti.Platform.version);
+	}
 	
 	if(iOSVersion < 7){
 		$.landingPage.titleControl = Ti.UI.createLabel({
