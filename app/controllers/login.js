@@ -216,11 +216,7 @@ function loginAuthenticated(fb) {
 					xhr.open('POST', Alloy.Globals.BETKAMPENLOGINURL);
 					xhr.setRequestHeader("content-type", "application/json");
 					xhr.setTimeout(Alloy.Globals.TIMEOUT);
-<<<<<<< HEAD
 					var param = '{"auth_token" : "' + fb.accessToken + '", "lang":"' + Alloy.Globals.LOCALE + '"}';
-=======
-					var param = '{"auth_token" : "' + fb.accessToken + '", "lang" : "' + Alloy.Globals.LOCALE +'"}';
->>>>>>> FETCH_HEAD
 					xhr.send(param);
 				} catch(e) {
 					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.internetMayBeOffErrorTxt);
