@@ -756,7 +756,7 @@ function Controller() {
         backgroundColor: "#000",
         color: "#fff",
         borderRadius: 3,
-        title: "Sign in"
+        title: Alloy.Globals.PHRASES.signInTxt
     });
     LoginWindow.add(signInBtn);
     var cancelBtn = Titanium.UI.createButton({
@@ -767,7 +767,7 @@ function Controller() {
         backgroundColor: "#000",
         color: "#fff",
         borderRadius: 3,
-        title: "Cancel"
+        title: Alloy.Globals.PHRASES.abortBtnTxt
     });
     LoginWindow.add(cancelBtn);
     $.loginBtn.addEventListener("click", function() {
