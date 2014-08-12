@@ -293,6 +293,15 @@ if(OS_IOS){
 			classes : ['navLogo']
 		}));
 	}
+}else{
+	Ti.Gesture.addEventListener('orientationchange', function(e) {
+ 		Ti.Android.currentActivity.setRequestedOrientation(Ti.Android.SCREEN_ORIENTATION_PORTRAIT);
+    });
+	
+	$.landingPage.orientationModes = [Titanium.UI.PORTRAIT];	
+	$.landingPage.addEventListener('open', function(){	
+	
+	
 }
 
 top_img.add(border1);
