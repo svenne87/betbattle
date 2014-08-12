@@ -3,7 +3,7 @@
 // create new challenge and choose friends to challenge
 function createChallengeAndChooseFriends(betkampenId, betAmount) {
 	// build the json string
-	var param = '{"betkampen_id":"' + betkampenId + '", "server_url":"' + Alloy.Globals.BETKAMPENURL + '", "round":"' + roundId + '", "bet_amount":"' + betAmount + '", "gamevalue": [{';
+	var param = '{"lang" : "' + Alloy.Globals.LOCALE + '", "betkampen_id":"' + betkampenId + '", "server_url":"' + Alloy.Globals.BETKAMPENURL + '", "round":"' + roundId + '", "bet_amount":"' + betAmount + '", "gamevalue": [{';
 
 	for (var i in gameArray) {
 		if (gameArray[i].gameValue.length === undefined) {
@@ -126,10 +126,10 @@ function postAnswer(betkampenId, cid, betAmount) {
 
 			if (tournamentIndex === -1) {
 				// for normal challenge
-				param = '{"betkampen_id":"' + betkampenId + '", "cid":"' + cid + '", "bet_amount":"' + betAmount + '", "gamevalue": [{';
+				param = '{"lang" : "' + Alloy.Globals.LOCALE +'", "betkampen_id":"' + betkampenId + '", "cid":"' + cid + '", "bet_amount":"' + betAmount + '", "gamevalue": [{';
 			} else {
 				// for tournament
-				param = '{"betkampen_id":"' + betkampenId + '", "tournament":"' + challengeObject.attributes.id + '", "round":"' + gameObjects[0].attributes.round_id + '", "league":"' + gameObjects[0].attributes.league_id + '", "gamevalue": [{';
+				param = '{"lang" : "' + Alloy.Globals.LOCALE +'", "betkampen_id":"' + betkampenId + '", "tournament":"' + challengeObject.attributes.id + '", "round":"' + gameObjects[0].attributes.round_id + '", "league":"' + gameObjects[0].attributes.league_id + '", "gamevalue": [{';
 			}
 
 			for (var i in gameArray) {
@@ -1271,13 +1271,13 @@ if (Alloy.Globals.checkConnection()) {
 	try {
 		if (roundId === -1) {
 			if (tournamentIndex === -1) {
-				xhr.open('GET', Alloy.Globals.BETKAMPENGAMESURL + '/?uid=' + Alloy.Globals.BETKAMPENUID + '&cid=' + challengeObject.attributes.id);
+				xhr.open('GET', Alloy.Globals.BETKAMPENGAMESURL + '/?uid=' + Alloy.Globals.BETKAMPENUID + '&cid=' + challengeObject.attributes.id + '&lang=' + Alloy.Globals.LOCALE);
 			} else {
-				xhr.open('GET', Alloy.Globals.BETKAMPENGETGAMESFORTOURNAMENT + '/?uid=' + Alloy.Globals.BETKAMPENUID + '&tid=' + challengeObject.attributes.id + '&round=' + challengeObject.attributes.round);
+				xhr.open('GET', Alloy.Globals.BETKAMPENGETGAMESFORTOURNAMENT + '/?uid=' + Alloy.Globals.BETKAMPENUID + '&tid=' + challengeObject.attributes.id + '&round=' + challengeObject.attributes.round + '&lang=' + Alloy.Globals.LOCALE);
 			}
 
 		} else {
-			xhr.open('GET', Alloy.Globals.BETKAMPENGETGAMESFORCHALLENGEURL + '/?uid=' + Alloy.Globals.BETKAMPENUID + '&league=' + leagueId + '&round=' + roundId);
+			xhr.open('GET', Alloy.Globals.BETKAMPENGETGAMESFORCHALLENGEURL + '/?uid=' + Alloy.Globals.BETKAMPENUID + '&league=' + leagueId + '&round=' + roundId + '&lang=' + Alloy.Globals.LOCALE);
 		}
 
 		xhr.setRequestHeader("content-type", "application/json");

@@ -36,7 +36,7 @@ function getGroups() {
 	};
 
 	try {
-		xhr.open('GET', Alloy.Globals.BETKAMPENGETGROUPSURL);
+		xhr.open('GET', Alloy.Globals.BETKAMPENGETGROUPSURL + '/?lang=' + Alloy.Globals.LOCALE);
 
 		xhr.setRequestHeader("content-type", "application/json");
 		xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);

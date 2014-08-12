@@ -301,6 +301,8 @@ if(OS_IOS){
 	$.landingPage.orientationModes = [Titanium.UI.PORTRAIT];	
 	$.landingPage.addEventListener('open', function(){	
 	
+	});
+	
 	
 }
 
