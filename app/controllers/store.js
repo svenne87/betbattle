@@ -201,8 +201,8 @@ if (OS_IOS) {
 				xhr.setRequestHeader("content-type", "application/json");
 				xhr.setTimeout(Alloy.Globals.TIMEOUT);
 				var storeTest = 0;
-				//TODO should be 0 for Production
-				var param = '{"receipt":"' + receiptText64String + '", "coins_item":"' + identifier + '", "sandbox":"' + storeTest + '", "user":"' + Alloy.Globals.FACEBOOKOBJECT.id + '", "betkampen_id":"' + Alloy.Globals.BETKAMPENUID + '"}';
+				//TODO should be 0 for Production  
+				var param = '{"receipt":"' + receiptText64String + '", "coins_item":"' + identifier + '", "sandbox":"' + storeTest + '", "user":"' + Alloy.Globals.FACEBOOKOBJECT.id + '", "betkampen_id":"' + Alloy.Globals.BETKAMPENUID + '", "lang" : "' + Alloy.Globals.LOCALE +'"}';          
 
 				xhr.send(param);
 			} catch(e) {
@@ -405,7 +405,7 @@ if (OS_IOS) {
 			};
 
 			try {
-				xhr.open('POST', Alloy.Globals.BETKAMPENCOINSANDROIDURL + '?uid=' + Alloy.Globals.BETKAMPENUID);
+				xhr.open('POST', Alloy.Globals.BETKAMPENCOINSANDROIDURL + '?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
 				xhr.setRequestHeader("content-type", "application/json");
 				xhr.setTimeout(Alloy.Globals.TIMEOUT);
 

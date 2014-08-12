@@ -46,7 +46,7 @@ function getChallengesAndStart() {
 	};
 
 	try {
-		xhr.open('GET', Alloy.Globals.BETKAMPENCHALLENGESURL + '/?uid=' + Alloy.Globals.BETKAMPENUID);
+		xhr.open('GET', Alloy.Globals.BETKAMPENCHALLENGESURL + '/?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
 		xhr.setRequestHeader("content-type", "application/json");
 		xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
 		xhr.setTimeout(Alloy.Globals.TIMEOUT);
@@ -216,7 +216,7 @@ function loginAuthenticated(fb) {
 					xhr.open('POST', Alloy.Globals.BETKAMPENLOGINURL);
 					xhr.setRequestHeader("content-type", "application/json");
 					xhr.setTimeout(Alloy.Globals.TIMEOUT);
-					var param = '{"auth_token" : "' + fb.accessToken + '"}';
+					var param = '{"auth_token" : "' + fb.accessToken + '", "lang" : "' + Alloy.Globals.LOCALE +'"}';
 					xhr.send(param);
 				} catch(e) {
 					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.internetMayBeOffErrorTxt);

@@ -178,7 +178,7 @@ function performFacebookPost(fb) {
 							xhr.setTimeout(Alloy.Globals.TIMEOUT);
 
 							// build the json string
-							var param = '{"betkampen_id":"' + Alloy.Globals.BETKAMPENUID + '"}';
+							var param = '{"betkampen_id":"' + Alloy.Globals.BETKAMPENUID + '", "lang":"' + Alloy.Globals.LOCALE +'"}';
 
 							xhr.send(param);
 						} catch(e) {

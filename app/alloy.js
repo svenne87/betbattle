@@ -30,27 +30,37 @@ Alloy.Globals.OPEN = true;
 Alloy.Globals.CLOSE = true;
 Alloy.Globals.FBERROR = true;
 Alloy.Globals.PHRASES = {};
-Alloy.Globals.LOCALE = Titanium.Locale.getCurrentLanguage().toLowerCase();
+
+// try to get stored language
+var lang = JSON.parse(Ti.App.Properties.getString('language'));
+lang = lang.language;
+
+if(typeof lang == 'undefined' || lang == '' || lang == null) {
+	Alloy.Globals.LOCALE = Titanium.Locale.getCurrentLanguage().toLowerCase();
+} else {
+	Alloy.Globals.LOCALE = lang;
+}
+
 
 // urls. Everything live needs to be done over SSL
 Alloy.Globals.INVITEURL = 'https://apps.facebook.com/betkampen';
-Alloy.Globals.BETKAMPENURL = 'http://secure.jimdavislabs.se/secure/betkampen_vm';
-Alloy.Globals.BETKAMPENLOGINURL = Alloy.Globals.BETKAMPENURL + '/api/login.php';
-Alloy.Globals.BETKAMPENCHALLENGESURL = Alloy.Globals.BETKAMPENURL + '/api/challenges_v2.php';
-Alloy.Globals.BETKAMPENUSERURL = Alloy.Globals.BETKAMPENURL + '/api/user_stats.php';
-Alloy.Globals.BETKAMPENGAMESURL = Alloy.Globals.BETKAMPENURL + '/api/get_challenge_game.php';
-Alloy.Globals.BETKAMPENANSWERURL = Alloy.Globals.BETKAMPENURL + '/api/answer_challenge.php';
-Alloy.Globals.BETKAMPENGETGAMESURL = Alloy.Globals.BETKAMPENURL + '/api/get_available_games.php';
-Alloy.Globals.BETKAMPENGETGAMESFORCHALLENGEURL = Alloy.Globals.BETKAMPENURL + '/api/get_game_and_types_for_challenge.php';
-Alloy.Globals.BETKAMPENGETGAMESFORTOURNAMENT = Alloy.Globals.BETKAMPENURL + '/api/get_tournament_game.php';
-Alloy.Globals.BETKAMPENGETGROUPSURL = Alloy.Globals.BETKAMPENURL + '/api/get_groups.php';
-Alloy.Globals.BETKAMPENCHALLENGEDONEURL = Alloy.Globals.BETKAMPENURL + '/api/challenge_done.php';
-Alloy.Globals.BETKAMPENDEVICETOKENURL = Alloy.Globals.BETKAMPENURL + '/api/store_device_token.php';
+Alloy.Globals.BETKAMPENURL = 'http://secure.jimdavislabs.se/secure/betkampen_vm';   //
+Alloy.Globals.BETKAMPENLOGINURL = Alloy.Globals.BETKAMPENURL + '/api/login.php';    //
+Alloy.Globals.BETKAMPENCHALLENGESURL = Alloy.Globals.BETKAMPENURL + '/api/challenges_v2.php';  //
+Alloy.Globals.BETKAMPENUSERURL = Alloy.Globals.BETKAMPENURL + '/api/user_stats.php'; //
+Alloy.Globals.BETKAMPENGAMESURL = Alloy.Globals.BETKAMPENURL + '/api/get_challenge_game.php';  //
+Alloy.Globals.BETKAMPENANSWERURL = Alloy.Globals.BETKAMPENURL + '/api/answer_challenge.php';   //
+Alloy.Globals.BETKAMPENGETGAMESURL = Alloy.Globals.BETKAMPENURL + '/api/get_available_games.php'; //
+Alloy.Globals.BETKAMPENGETGAMESFORCHALLENGEURL = Alloy.Globals.BETKAMPENURL + '/api/get_game_and_types_for_challenge.php';  //
+Alloy.Globals.BETKAMPENGETGAMESFORTOURNAMENT = Alloy.Globals.BETKAMPENURL + '/api/get_tournament_game.php'; //
+Alloy.Globals.BETKAMPENGETGROUPSURL = Alloy.Globals.BETKAMPENURL + '/api/get_groups.php';   //
+Alloy.Globals.BETKAMPENCHALLENGEDONEURL = Alloy.Globals.BETKAMPENURL + '/api/challenge_done.php';   //
+Alloy.Globals.BETKAMPENDEVICETOKENURL = Alloy.Globals.BETKAMPENURL + '/api/store_device_token.php';  //
 Alloy.Globals.BETKAMPENCOINSURL = Alloy.Globals.BETKAMPENURL + '/api/get_coins.php';
-Alloy.Globals.BETKAMPENCHECKCOINSURL = Alloy.Globals.BETKAMPENURL + '/api/check_coins.php';
+Alloy.Globals.BETKAMPENCHECKCOINSURL = Alloy.Globals.BETKAMPENURL + '/api/check_coins.php';   //
 Alloy.Globals.BETKAMPENCOINSANDROIDURL = Alloy.Globals.BETKAMPENURL + '/api/get_coins_android.php';
-Alloy.Globals.BETKAMPENSHAREURL = Alloy.Globals.BETKAMPENURL + '/api/share.php';
-Alloy.Globals.GETLANGUAGE = Alloy.Globals.BETKAMPENURL + '/api/get_language.php';
+Alloy.Globals.BETKAMPENSHAREURL = Alloy.Globals.BETKAMPENURL + '/api/share.php';  //
+Alloy.Globals.GETLANGUAGE = Alloy.Globals.BETKAMPENURL + '/api/get_language.php'; //
 
 Alloy.Globals.performTimeout = function(func) {
 	if (OS_ANDROID) {
@@ -148,8 +158,8 @@ Alloy.Globals.postDeviceToken = function(deviceToken) {
 			xhr.setTimeout(Alloy.Globals.TIMEOUT);
 
 			// build the json string
-			var param = '{"device_token":"' + deviceToken + '", "device_type":"' + Ti.Platform.osname + '"}';
-
+			var param = '{"device_token":"' + deviceToken + '", "device_type":"' + Ti.Platform.osname + '", "lang":"' + Alloy.Globals.LOCALE +'"}';
+	
 			xhr.send(param);
 		} catch(e) {
 			//
@@ -188,7 +198,7 @@ Alloy.Globals.checkCoins = function() {
 		};
 
 		try {
-			xhr.open('POST', Alloy.Globals.BETKAMPENCHECKCOINSURL + '?uid=' + Alloy.Globals.BETKAMPENUID);
+			xhr.open('POST', Alloy.Globals.BETKAMPENCHECKCOINSURL + '?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
 			xhr.setRequestHeader("content-type", "application/json");
 			xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
 			xhr.setTimeout(Alloy.Globals.TIMEOUT);

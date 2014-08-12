@@ -127,7 +127,7 @@ function Controller() {
         var args8 = {
             title: Alloy.Globals.PHRASES.settingsTxt,
             customView: "settings",
-            image: "/images/Logga_Ut.png"
+            image: "/images/settings.png"
         };
         section.add(Alloy.createController("menurow", args8).getView());
         var args9 = {
