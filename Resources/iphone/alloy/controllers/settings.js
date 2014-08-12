@@ -33,8 +33,6 @@ function Controller() {
         var data = [];
         var currentLocale = JSON.parse(Ti.App.Properties.getString("language"));
         var currentLanguage;
-        Ti.API.log(currentLocale);
-        Ti.API.log(currentLocale.language);
         for (var lang in Alloy.Globals.AVAILABLELANGUAGES) {
             currentLocale.language == Alloy.Globals.AVAILABLELANGUAGES[lang].name && (currentLanguage = Alloy.Globals.AVAILABLELANGUAGES[lang].description);
             data.push(Titanium.UI.createPickerRow({
