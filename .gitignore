@@ -1,6 +1,11 @@
-.DS_Store
-build.log
-build
-npm-debug.log
 tmp
+.DS_Store
+build/iphone/*
+!build/iphone/.gitignore
+build/android/*
+!build/android/.gitignore
+.settings
+build.log
+.fastdev.lock
+npm-debug.log
 .map
