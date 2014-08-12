@@ -2,9 +2,9 @@ var args = arguments[0] || {};
 var top_view = Ti.UI.createView({
 	id: "top_view",
 	backgroundColor: "white",
-	height: "65%",
+	height: "75%",
 	width: "100%",
-	top: "10%",
+	//top: "10%",
 	layout: "vertical"
 });
 
@@ -222,6 +222,19 @@ profileBtn.add(Ti.UI.createLabel({
 	color: "#FFF",
 	text: "DIN PROFIL"
 }));
+
+profileBtn.addEventListener("click", function(e){
+	var win = Alloy.createController('profile').getView();
+		if (OS_IOS) {
+			Alloy.Globals.NAV.openWindow(win, {
+				animated : true
+			});
+		} else {
+			win.open({
+				fullScreen : true
+			});
+		}
+});
 
 inviteBtn.add(Ti.UI.createLabel({
 	height:"20%",
