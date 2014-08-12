@@ -7,7 +7,7 @@ var RegisterWindow = Ti.UI.createWindow({
 });
 
 var regist = Titanium.UI.TextView({
-	title: 'Register to join BetBattle'
+	title: 'Register to join BetBattle',
 });
  
 var username = Titanium.UI.createTextField({
