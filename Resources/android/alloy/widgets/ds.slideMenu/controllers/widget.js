@@ -4,18 +4,31 @@ function WPATH(s) {
     return true && 0 !== path.indexOf("/") ? "/" + path : path;
 }
 
+function __processArg(obj, key) {
+    var arg = null;
+    if (obj) {
+        arg = obj[key] || null;
+        delete obj[key];
+    }
+    return arg;
+}
+
 function Controller() {
     new (require("alloy/widget"))("ds.slideMenu");
     this.__widgetId = "ds.slideMenu";
     require("alloy/controllers/BaseController").apply(this, Array.prototype.slice.call(arguments));
     this.__controllerPath = "widget";
-    arguments[0] ? arguments[0]["__parentSymbol"] : null;
-    arguments[0] ? arguments[0]["$model"] : null;
-    arguments[0] ? arguments[0]["__itemTemplate"] : null;
+    if (arguments[0]) {
+        __processArg(arguments[0], "__parentSymbol");
+        __processArg(arguments[0], "$model");
+        __processArg(arguments[0], "__itemTemplate");
+    }
     var $ = this;
     var exports = {};
     $.__views.containerview = Ti.UI.createView({
-        id: "containerview"
+        apiName: "Ti.UI.View",
+        id: "containerview",
+        classes: []
     });
     $.__views.containerview && $.addTopLevelView($.__views.containerview);
     $.__views.leftMenu = Ti.UI.createView({
@@ -24,11 +37,15 @@ function Controller() {
         width: "250dp",
         zIndex: "2",
         backgroundColor: "#303030",
-        id: "leftMenu"
+        apiName: "Ti.UI.View",
+        id: "leftMenu",
+        classes: []
     });
     $.__views.containerview.add($.__views.leftMenu);
     $.__views.leftTableView = Ti.UI.createTableView({
-        id: "leftTableView"
+        apiName: "Ti.UI.TableView",
+        id: "leftTableView",
+        classes: []
     });
     $.__views.leftMenu.add($.__views.leftTableView);
     $.__views.rightMenu = Ti.UI.createView({
@@ -37,18 +54,24 @@ function Controller() {
         width: "250dp",
         zIndex: "1",
         backgroundColor: "#303030",
-        id: "rightMenu"
+        apiName: "Ti.UI.View",
+        id: "rightMenu",
+        classes: []
     });
     $.__views.containerview.add($.__views.rightMenu);
     $.__views.rightTableView = Ti.UI.createTableView({
-        id: "rightTableView"
+        apiName: "Ti.UI.TableView",
+        id: "rightTableView",
+        classes: []
     });
     $.__views.rightMenu.add($.__views.rightTableView);
     $.__views.movableview = Ti.UI.createView({
         left: "0",
         zIndex: "3",
         width: Ti.Platform.displayCaps.platformWidth,
-        id: "movableview"
+        apiName: "Ti.UI.View",
+        id: "movableview",
+        classes: []
     });
     $.__views.containerview.add($.__views.movableview);
     $.__views.shadowview = Ti.UI.createView({
@@ -58,7 +81,9 @@ function Controller() {
             y: "0"
         },
         shadowRadius: "2.5",
-        id: "shadowview"
+        apiName: "Ti.UI.View",
+        id: "shadowview",
+        classes: []
     });
     $.__views.movableview.add($.__views.shadowview);
     $.__views.navview = Ti.UI.createView({
@@ -67,7 +92,9 @@ function Controller() {
         width: Ti.Platform.displayCaps.platformWidth,
         height: "0dp",
         backgroundImage: "/ds.slideMenu/NavBackground.png",
-        id: "navview"
+        apiName: "Ti.UI.View",
+        id: "navview",
+        classes: []
     });
     $.__views.shadowview.add($.__views.navview);
     $.__views.leftButton = Ti.UI.createButton({
@@ -78,7 +105,9 @@ function Controller() {
         width: "60",
         height: "44",
         style: "none",
-        id: "leftButton"
+        apiName: "Ti.UI.Button",
+        id: "leftButton",
+        classes: []
     });
     $.__views.navview.add($.__views.leftButton);
     $.__views.rightButton = Ti.UI.createButton({
@@ -89,7 +118,9 @@ function Controller() {
         width: "60",
         height: "44",
         style: "none",
-        id: "rightButton"
+        apiName: "Ti.UI.Button",
+        id: "rightButton",
+        classes: []
     });
     $.__views.navview.add($.__views.rightButton);
     $.__views.contentview = Ti.UI.createView({
@@ -98,7 +129,9 @@ function Controller() {
         height: Ti.UI.Fill,
         top: "0dp",
         backgroundColor: "#303030",
-        id: "contentview"
+        apiName: "Ti.UI.View",
+        id: "contentview",
+        classes: []
     });
     $.__views.shadowview.add($.__views.contentview);
     exports.destroy = function() {};

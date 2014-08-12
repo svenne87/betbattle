@@ -1,9 +1,20 @@
+function __processArg(obj, key) {
+    var arg = null;
+    if (obj) {
+        arg = obj[key] || null;
+        delete obj[key];
+    }
+    return arg;
+}
+
 function Controller() {
     require("alloy/controllers/BaseController").apply(this, Array.prototype.slice.call(arguments));
     this.__controllerPath = "topplistan";
-    arguments[0] ? arguments[0]["__parentSymbol"] : null;
-    arguments[0] ? arguments[0]["$model"] : null;
-    arguments[0] ? arguments[0]["__itemTemplate"] : null;
+    if (arguments[0]) {
+        __processArg(arguments[0], "__parentSymbol");
+        __processArg(arguments[0], "$model");
+        __processArg(arguments[0], "__itemTemplate");
+    }
     var $ = this;
     var exports = {};
     $.__views.scoreView = Ti.UI.createWindow({
@@ -11,6 +22,8 @@ function Controller() {
         width: Ti.UI.FILL,
         height: Ti.UI.FILL,
         backgroundColor: "#303030",
+        apiName: "Ti.UI.Window",
+        classes: [ "container" ],
         id: "scoreView"
     });
     $.__views.scoreView && $.addTopLevelView($.__views.scoreView);
@@ -18,7 +31,8 @@ function Controller() {
     _.extend($, $.__views);
     var uie = require("lib/IndicatorWindow");
     var indicator = uie.createIndicatorWindow({
-        top: 200
+        top: 200,
+        text: Alloy.Globals.PHRASES.loadingTxt
     });
     var url = Alloy.Globals.BETKAMPENURL + "/webviews/scoreboard_wv.php";
     var win = $.scoreView;
@@ -29,7 +43,7 @@ function Controller() {
             $.scoreView = null;
         };
         $.scoreView.activity.actionBar.displayHomeAsUp = true;
-        $.scoreView.activity.actionBar.title = "Betkampen";
+        $.scoreView.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
         indicator.openIndicator();
     });
     var extwebview;

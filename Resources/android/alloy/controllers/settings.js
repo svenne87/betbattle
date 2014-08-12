@@ -8,31 +8,64 @@ function __processArg(obj, key) {
 }
 
 function Controller() {
-    function openLogin() {
-        var login;
-        var login = Alloy.createController("login").getView();
-        login.open({
-            closeOnExit: true,
-            fullScreen: true,
-            navBarHidden: true
-        });
-        login.orientationModes = [ Titanium.UI.PORTRAIT ];
-        Alloy.Globals.INDEXWIN = login;
-        login = null;
-    }
-    function doError() {
-        indicator.closeIndicator();
+    function changeLanguageConfirm(lang) {
+        var languageDescription = Alloy.Globals.AVAILABLELANGUAGES[lang].description;
         var alertWindow = Titanium.UI.createAlertDialog({
-            title: "Something went wrong!",
-            message: "An error occured while trying to fetch your local language files. Please try again.",
-            buttonNames: [ "Retry", "Cancel" ]
+            title: Alloy.Globals.PHRASES.betbattleTxt,
+            message: Alloy.Globals.PHRASES.confirmLanguageChangeTxt + ' "' + languageDescription + '"?',
+            buttonNames: [ Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtnTxt ]
         });
         alertWindow.addEventListener("click", function(e) {
             switch (e.index) {
               case 0:
                 alertWindow.hide();
-                indicator.openIndicator();
+                Alloy.Globals.LOCALE = Alloy.Globals.AVAILABLELANGUAGES[lang].name;
                 getLanguage();
+                break;
+
+              case 1:
+                alertWindow.hide();
+            }
+        });
+        alertWindow.show();
+    }
+    function createPickers() {
+        var data = [];
+        var currentLocale = JSON.parse(Ti.App.Properties.getString("language"));
+        var currentLanguage;
+        for (var lang in Alloy.Globals.AVAILABLELANGUAGES) {
+            currentLocale.language == Alloy.Globals.AVAILABLELANGUAGES[lang].name && (currentLanguage = Alloy.Globals.AVAILABLELANGUAGES[lang].description);
+            data.push(Titanium.UI.createPickerRow({
+                title: Alloy.Globals.AVAILABLELANGUAGES[lang].description,
+                value: lang
+            }));
+        }
+        picker = Titanium.UI.createPicker({
+            type: Titanium.UI.PICKER_TYPE_PLAIN,
+            width: Ti.UI.SIZE,
+            top: 20,
+            height: Ti.UI.SIZE
+        });
+        picker.addEventListener("change", function(e) {
+            changeLanguageConfirm(e.selectedValue[0].replace(/ /g, ""));
+        });
+        picker.add(data);
+        picker.columns[0].width = Ti.UI.SIZE;
+        picker.columns[0].height = Ti.UI.SIZE;
+        picker.selectionIndicator = true;
+        $.settingsView.add(picker);
+    }
+    function showAlertWithRestartNote() {
+        var alertWindow = Titanium.UI.createAlertDialog({
+            title: Alloy.Globals.PHRASES.betbattleTxt,
+            message: Alloy.Globals.PHRASES.appRestartTxt,
+            buttonNames: [ Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtnTxt ]
+        });
+        alertWindow.addEventListener("click", function(e) {
+            switch (e.index) {
+              case 0:
+                alertWindow.hide();
+                Ti.App._restart();
                 break;
 
               case 1:
@@ -69,7 +102,7 @@ function Controller() {
                         Ti.App.Properties.setString("languageSelected", JSON.stringify({
                             languageSelected: true
                         }));
-                        openLogin();
+                        showAlertWithRestartNote();
                     }
                     indicator.closeIndicator();
                 } else {
@@ -93,7 +126,7 @@ function Controller() {
         }
     }
     require("alloy/controllers/BaseController").apply(this, Array.prototype.slice.call(arguments));
-    this.__controllerPath = "index";
+    this.__controllerPath = "settings";
     if (arguments[0]) {
         __processArg(arguments[0], "__parentSymbol");
         __processArg(arguments[0], "$model");
@@ -101,30 +134,50 @@ function Controller() {
     }
     var $ = this;
     var exports = {};
-    $.__views.index = Ti.UI.createWindow({
+    $.__views.settingsWindow = Ti.UI.createWindow({
         layout: "vertical",
         width: Ti.UI.FILL,
         height: Ti.UI.FILL,
-        backgroundColor: "transparent",
+        backgroundColor: "#303030",
         apiName: "Ti.UI.Window",
         classes: [ "container" ],
-        id: "index"
+        id: "settingsWindow"
     });
-    $.__views.index && $.addTopLevelView($.__views.index);
+    $.__views.settingsWindow && $.addTopLevelView($.__views.settingsWindow);
+    $.__views.settingsView = Ti.UI.createView({
+        layout: "vertical",
+        width: Ti.UI.FILL,
+        height: Ti.UI.FILL,
+        apiName: "Ti.UI.View",
+        id: "settingsView",
+        classes: []
+    });
+    $.__views.settingsWindow.add($.__views.settingsView);
     exports.destroy = function() {};
     _.extend($, $.__views);
     var uie = require("lib/IndicatorWindow");
     var indicator = uie.createIndicatorWindow({
-        top: 200
+        top: 200,
+        text: Alloy.Globals.PHRASES.loadingTxt
     });
-    var language = Ti.App.Properties.getString("languageSelected");
-    if (language) try {
-        var file1 = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory, "language.json");
-        Alloy.Globals.PHRASES = JSON.parse(file1.read().text);
-        openLogin();
-    } catch (e) {
-        getLanguage();
-    } else getLanguage();
+    var picker;
+    $.settingsWindow.addEventListener("close", function() {
+        indicator.closeIndicator();
+    });
+    $.settingsView.add(Ti.UI.createLabel({
+        height: 20,
+        top: 20,
+        width: "100%",
+        textAlign: "center",
+        backgroundColor: "#303030",
+        color: "#FFF",
+        text: Alloy.Globals.PHRASES.changeLanguageTxt,
+        font: {
+            fontFamily: Alloy.Globals.getFont(),
+            fontSize: Alloy.Globals.getFontSize(2)
+        }
+    }));
+    createPickers();
     _.extend($, exports);
 }
 

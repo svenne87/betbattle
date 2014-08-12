@@ -1,9 +1,18 @@
+function __processArg(obj, key) {
+    var arg = null;
+    if (obj) {
+        arg = obj[key] || null;
+        delete obj[key];
+    }
+    return arg;
+}
+
 function Controller() {
     function getGroups() {
         var xhr = Titanium.Network.createHTTPClient();
         xhr.onerror = function(e) {
             indicator.closeIndicator();
-            Alloy.Globals.showFeedbackDialog("Något gick fel! Försök igen.");
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             Ti.API.error("Bad Sever =>" + e.error);
         };
         try {
@@ -14,7 +23,7 @@ function Controller() {
             xhr.send();
         } catch (e) {
             indicator.closeIndicator();
-            Alloy.Globals.showFeedbackDialog("Något gick fel, försök igen!");
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
         }
         xhr.onload = function() {
             if ("200" == this.status) {
@@ -54,11 +63,11 @@ function Controller() {
                             indicator.closeIndicator();
                         }, 1500);
                     }
-                } else Alloy.Globals.showFeedbackDialog("Något gick fel!");
+                } else Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                 indicator.closeIndicator();
             } else {
                 indicator.closeIndicator();
-                Alloy.Globals.showFeedbackDialog("Server svarar med felkod" + this.status + " " + JSON.parse(this.responseText));
+                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                 Ti.API.error("Error =>" + this.response);
             }
         };
@@ -75,7 +84,7 @@ function Controller() {
                     var alertWindow = Titanium.UI.createAlertDialog({
                         title: "Betkampen",
                         message: JSON.parse(this.responseText),
-                        buttonNames: [ "OK", "Butik" ]
+                        buttonNames: [ Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.storeTxt ]
                     });
                     alertWindow.addEventListener("click", function(e) {
                         switch (e.index) {
@@ -113,7 +122,7 @@ function Controller() {
             } catch (e) {
                 indicator.closeIndicator();
                 submitButton.touchEnabled = true;
-                Alloy.Globals.showFeedbackDialog("Något gick fel! Försök igen.");
+                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             }
             xhr.onload = function() {
                 if ("200" == this.status) {
@@ -124,15 +133,15 @@ function Controller() {
                             var fb = Alloy.Globals.FACEBOOK;
                             fb.appid = Ti.App.Properties.getString("ti.facebook.appid");
                             fb.dialog("apprequests", {
-                                message: response.from + " har utmanat dig på Betkampen " + Alloy.Globals.INVITEURL,
+                                message: response.from + " " + Alloy.Globals.PHRASES.hasChallengedYouBetBattleTxt + " " + Alloy.Globals.INVITEURL,
                                 to: response.to
                             }, function(responseFb) {
                                 if (responseFb.result || "undefined" == typeof responseFb.result) {
                                     response.message = response.message.replace(/(<br \/>)+/g, "\n");
                                     var alertWindow = Titanium.UI.createAlertDialog({
-                                        title: "Betkampen",
+                                        title: Alloy.Globals.PHRASES.betbattleTxt,
                                         message: response.message,
-                                        buttonNames: [ "OK" ]
+                                        buttonNames: [ Alloy.Globals.PHRASES.okConfirmTxt ]
                                     });
                                     alertWindow.addEventListener("click", function() {
                                         submitButton.touchEnabled = true;
@@ -152,9 +161,9 @@ function Controller() {
                         } else {
                             response = response.replace(/(<br \/>)+/g, "\n");
                             var alertWindow = Titanium.UI.createAlertDialog({
-                                title: "Betkampen",
+                                title: Alloy.Globals.PHRASES.betbattleTxt,
                                 message: response,
-                                buttonNames: [ "OK" ]
+                                buttonNames: [ Alloy.Globals.PHRASES.okConfirmTxt ]
                             });
                             alertWindow.addEventListener("click", function() {
                                 submitButton.touchEnabled = true;
@@ -174,7 +183,7 @@ function Controller() {
                             alertWindow.show();
                         }
                     } else {
-                        Alloy.Globals.showFeedbackDialog("Något gick fel!");
+                        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                         submitButton.touchEnabled = true;
                     }
                 } else {
@@ -184,7 +193,7 @@ function Controller() {
                     Ti.API.error("Error =>" + this.response);
                 }
             };
-        } else Alloy.Globals.showFeedbackDialog("Ingen anslutning!");
+        } else Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
     }
     function createSubmitButtons() {
         var buttonHeight = 40;
@@ -208,7 +217,7 @@ function Controller() {
             top: -1,
             width: "70%",
             id: "submitButton",
-            backgroundColor: "#58B101",
+            backgroundColor: Alloy.Globals.themeColor(),
             borderRadius: 6,
             font: {
                 fontFamily: Alloy.Globals.getFont(),
@@ -222,7 +231,7 @@ function Controller() {
             top: -1,
             width: "70%",
             id: "submitButton",
-            backgroundColor: "#58B101",
+            backgroundColor: Alloy.Globals.themeColor(),
             borderRadius: 6,
             font: {
                 fontFamily: Alloy.Globals.getFont(),
@@ -232,14 +241,14 @@ function Controller() {
             backgroundImage: "none"
         });
         submitButton.addEventListener("click", function() {
-            1 === selectedGroupIds.length ? challengeGroup(selectedGroupIds, params) : Alloy.Globals.showFeedbackDialog("Du kan bara välja en grupp att utmana!");
+            1 === selectedGroupIds.length ? challengeGroup(selectedGroupIds, params) : Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.groupChallengeErrorTxt);
         });
         friendsButton = 7 > iOSVersion ? Ti.UI.createButton({
-            title: "Visa vänner",
+            title: Alloy.Globals.PHRASES.showFriendsTxt,
             height: 30,
             width: "70%",
             id: "submitButton",
-            backgroundColor: "#58B101",
+            backgroundColor: Alloy.Globals.themeColor(),
             borderRadius: 6,
             font: {
                 fontFamily: Alloy.Globals.getFont(),
@@ -248,11 +257,11 @@ function Controller() {
             color: "#FFF",
             backgroundImage: "none"
         }) : Ti.UI.createButton({
-            title: "Visa vänner",
+            title: Alloy.Globals.PHRASES.showFriendsTxt,
             height: buttonHeight,
             width: "70%",
             id: "submitButton",
-            backgroundColor: "#58B101",
+            backgroundColor: Alloy.Globals.themeColor(),
             borderRadius: 6,
             font: {
                 fontFamily: Alloy.Globals.getFont(),
@@ -300,7 +309,7 @@ function Controller() {
             width: "100%",
             textAlign: "center",
             top: 50,
-            text: "Välj en grupp",
+            text: Alloy.Globals.PHRASES.chooseGroupTxt,
             font: {
                 fontSize: Alloy.Globals.getFontSize(3),
                 fontWeight: "normal",
@@ -363,31 +372,13 @@ function Controller() {
             subRowArray.push(subRow);
             var hasChild;
             hasChild = false;
-            var row = Ti.UI.createTableViewRow({
+            var row = $.UI.create("TableViewRow", {
+                classes: [ "challengesSectionDefault" ],
                 id: array[i].attributes.id,
                 hasChild: hasChild,
                 isparent: true,
                 opened: false,
-                sub: subRowArray,
-                backgroundColor: "#242424",
-                backgroundGradient: {
-                    type: "linear",
-                    startPoint: {
-                        x: "0%",
-                        y: "0%"
-                    },
-                    endPoint: {
-                        x: "0%",
-                        y: "100%"
-                    },
-                    colors: [ {
-                        color: "#2E2E2E",
-                        offset: 0
-                    }, {
-                        color: "#151515",
-                        offset: 1
-                    } ]
-                }
+                sub: subRowArray
             });
             row.add(Ti.UI.createLabel({
                 text: array[i].attributes.name,
@@ -401,7 +392,7 @@ function Controller() {
                 color: "#FFF"
             }));
             row.add(Ti.UI.createLabel({
-                text: "Antal medlemmar: " + array[i].attributes.members.length,
+                text: Alloy.Globals.PHRASES.nrOfMembersTxt + ": " + array[i].attributes.members.length,
                 top: 26,
                 left: 60,
                 font: {
@@ -490,7 +481,7 @@ function Controller() {
                         } ]
                     };
                 }
-                e.row.setBackgroundColor("#58B101");
+                e.row.setBackgroundColor(Alloy.Globals.themeColor());
                 e.row.backgroundGradient = {};
                 selectedGroupIds[0] = e.row.id;
             }
@@ -500,9 +491,11 @@ function Controller() {
     }
     require("alloy/controllers/BaseController").apply(this, Array.prototype.slice.call(arguments));
     this.__controllerPath = "groupSelect";
-    arguments[0] ? arguments[0]["__parentSymbol"] : null;
-    arguments[0] ? arguments[0]["$model"] : null;
-    arguments[0] ? arguments[0]["__itemTemplate"] : null;
+    if (arguments[0]) {
+        __processArg(arguments[0], "__parentSymbol");
+        __processArg(arguments[0], "$model");
+        __processArg(arguments[0], "__itemTemplate");
+    }
     var $ = this;
     var exports = {};
     $.__views.groupSelectWindow = Ti.UI.createWindow({
@@ -510,6 +503,8 @@ function Controller() {
         width: Ti.UI.FILL,
         height: Ti.UI.FILL,
         backgroundColor: "#303030",
+        apiName: "Ti.UI.Window",
+        classes: [ "container" ],
         id: "groupSelectWindow"
     });
     $.__views.groupSelectWindow && $.addTopLevelView($.__views.groupSelectWindow);
@@ -517,7 +512,9 @@ function Controller() {
         height: "100%",
         width: "100%",
         layout: "vertical",
-        id: "groupSelect"
+        apiName: "Ti.UI.View",
+        id: "groupSelect",
+        classes: []
     });
     $.__views.groupSelectWindow.add($.__views.groupSelect);
     exports.destroy = function() {};
@@ -540,7 +537,8 @@ function Controller() {
     var refresher;
     var uie = require("lib/IndicatorWindow");
     var indicator = uie.createIndicatorWindow({
-        top: 200
+        top: 200,
+        text: Alloy.Globals.PHRASES.loadingTxt
     });
     $.groupSelectWindow.addEventListener("close", function() {
         indicator.closeIndicator();
@@ -557,11 +555,11 @@ function Controller() {
             $.groupSelectWindow = null;
         };
         $.groupSelectWindow.activity.actionBar.displayHomeAsUp = true;
-        $.groupSelectWindow.activity.title = "Betkampen";
+        $.groupSelectWindow.activity.title = Alloy.Globals.PHRASES.betbattleTxt;
         indicator.openIndicator();
     });
     var iOSVersion;
-    Alloy.Globals.checkConnection() ? getGroups() : Alloy.Globals.showFeedbackDialog("Ingen anslutning!");
+    Alloy.Globals.checkConnection() ? getGroups() : Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
     _.extend($, exports);
 }
 

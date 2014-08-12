@@ -1,3 +1,12 @@
+function __processArg(obj, key) {
+    var arg = null;
+    if (obj) {
+        arg = obj[key] || null;
+        delete obj[key];
+    }
+    return arg;
+}
+
 function Controller() {
     function challengeFriends(groupName) {
         if (Alloy.Globals.checkConnection()) {
@@ -11,7 +20,7 @@ function Controller() {
                     var alertWindow = Titanium.UI.createAlertDialog({
                         title: "Betkampen",
                         message: JSON.parse(this.responseText),
-                        buttonNames: [ "OK", "Butik" ]
+                        buttonNames: [ Alloy.Globals.PHRASES.okConfirmBtnTxt, Alloy.Globals.PHRASES.storeTxt ]
                     });
                     alertWindow.addEventListener("click", function(e) {
                         switch (e.index) {
@@ -49,7 +58,7 @@ function Controller() {
             } catch (e) {
                 indicator.closeIndicator();
                 submitButton.touchEnabled = true;
-                Alloy.Globals.showFeedbackDialog("Något gick fel! Försök igen.");
+                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             }
             xhr.onload = function() {
                 if ("200" == this.status) {
@@ -61,15 +70,15 @@ function Controller() {
                             var fb = Alloy.Globals.FACEBOOK;
                             fb.appid = Ti.App.Properties.getString("ti.facebook.appid");
                             fb.dialog("apprequests", {
-                                message: response.from + " har utmanat dig på Betkampen " + Alloy.Globals.INVITEURL,
+                                message: response.from + " " + Alloy.Globals.PHRASES.hasChallengedYouBetBattleTxt + " " + Alloy.Globals.INVITEURL,
                                 to: response.to
                             }, function(responseFb) {
                                 if (responseFb.result || "undefined" == typeof responseFb.result) {
                                     response.message = response.message.replace(/(<br \/>)+/g, "\n");
                                     var alertWindow = Titanium.UI.createAlertDialog({
-                                        title: "Betkampen",
+                                        title: Alloy.Globals.PHRASES.betbattleTxt,
                                         message: response.message,
-                                        buttonNames: [ "OK" ]
+                                        buttonNames: [ Alloy.Globals.PHRASES.okConfirmTxt ]
                                     });
                                     alertWindow.addEventListener("click", function() {
                                         submitButton.touchEnabled = true;
@@ -92,9 +101,9 @@ function Controller() {
                         } else {
                             response = response.replace(/(<br \/>)+/g, "\n");
                             var alertWindow = Titanium.UI.createAlertDialog({
-                                title: "Betkampen",
+                                title: Alloy.Globals.PHRASES.betbattleTxt,
                                 message: response,
-                                buttonNames: [ "OK" ]
+                                buttonNames: [ Alloy.Globals.PHRASES.okConfirmTxt ]
                             });
                             alertWindow.addEventListener("click", function() {
                                 submitButton.touchEnabled = true;
@@ -112,7 +121,7 @@ function Controller() {
                         }
                     } else {
                         submitButton.touchEnabled = true;
-                        Alloy.Globals.showFeedbackDialog("Något gick fel!");
+                        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                     }
                 } else {
                     indicator.closeIndicator();
@@ -121,7 +130,7 @@ function Controller() {
                     Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
                 }
             };
-        } else Alloy.Globals.showFeedbackDialog("Ingen anslutning!");
+        } else Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
     }
     function getFacebookFriends() {
         var children = $.friendSelect.children;
@@ -143,7 +152,7 @@ function Controller() {
                 createFriendsView(facebookFriendsObjects);
             } else {
                 indicator.closeIndicator();
-                Alloy.Globals.showFeedbackDialog("Något gick fel! Vänligen försök igen.");
+                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             }
         });
     }
@@ -161,7 +170,7 @@ function Controller() {
             width: "70%",
             id: "submitButton",
             borderRadius: 6,
-            backgroundColor: "#58B101",
+            backgroundColor: Alloy.Globals.themeColor(),
             font: {
                 fontSize: Alloy.Globals.getFontSize(2),
                 fontWeight: "normal",
@@ -175,20 +184,20 @@ function Controller() {
                 var dialog;
                 var textfield = Ti.UI.createTextField();
                 dialog = Ti.UI.createAlertDialog({
-                    title: "Ange gruppnamn",
-                    message: "En grupp skapas automatiskt för varje utmaning med vänner, vänligen ange namn på gruppen.",
+                    title: Alloy.Globals.PHRASES.stateGroupNameTxt,
+                    message: Alloy.Globals.PHRASES.groupCreationInfoTxt,
                     androidView: textfield,
-                    buttonNames: [ "OK", "Cancel" ]
+                    buttonNames: [ Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtnTxt ]
                 });
                 dialog.addEventListener("click", function(e) {
                     if (0 == e.index) {
                         var text;
                         text = textfield.value;
-                        text.length > 2 && 16 > text.length ? challengeFriends(text) : Alloy.Globals.showFeedbackDialog("Namnet måste var mellan 2 - 15 tecken");
+                        text.length > 2 && 16 > text.length ? challengeFriends(text) : Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.groupNameErrorTxt);
                     } else dialog.hide();
                 });
                 dialog.show();
-            } else Alloy.Globals.showFeedbackDialog("Du måste välja minst en vän att utmana!");
+            } else Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.friendChallengeErrorTxt);
         });
         marginView = Titanium.UI.createView({
             id: "marginView",
@@ -255,7 +264,7 @@ function Controller() {
             barColor: "#303030",
             showCancel: true,
             height: 43,
-            hintText: "Sök vänner",
+            hintText: Alloy.Globals.PHRASES.searchFriendsTxt,
             top: 0,
             color: "#FFF",
             backgroundColor: "#303030"
@@ -291,7 +300,7 @@ function Controller() {
             width: "100%",
             textAlign: "center",
             top: 50,
-            text: "Välj vänner",
+            text: Alloy.Globals.PHRASES.showFriendsTxt,
             font: {
                 fontSize: Alloy.Globals.getFontSize(3),
                 fontWeight: "normal",
@@ -361,9 +370,11 @@ function Controller() {
     }
     require("alloy/controllers/BaseController").apply(this, Array.prototype.slice.call(arguments));
     this.__controllerPath = "friendSelect";
-    arguments[0] ? arguments[0]["__parentSymbol"] : null;
-    arguments[0] ? arguments[0]["$model"] : null;
-    arguments[0] ? arguments[0]["__itemTemplate"] : null;
+    if (arguments[0]) {
+        __processArg(arguments[0], "__parentSymbol");
+        __processArg(arguments[0], "$model");
+        __processArg(arguments[0], "__itemTemplate");
+    }
     var $ = this;
     var exports = {};
     $.__views.friendSelectWindow = Ti.UI.createWindow({
@@ -371,6 +382,8 @@ function Controller() {
         width: Ti.UI.FILL,
         height: Ti.UI.FILL,
         backgroundColor: "#303030",
+        apiName: "Ti.UI.Window",
+        classes: [ "container" ],
         id: "friendSelectWindow"
     });
     $.__views.friendSelectWindow && $.addTopLevelView($.__views.friendSelectWindow);
@@ -378,7 +391,9 @@ function Controller() {
         layout: "vertical",
         width: Ti.UI.FILL,
         height: Ti.UI.FILL,
-        id: "friendSelect"
+        apiName: "Ti.UI.View",
+        id: "friendSelect",
+        classes: []
     });
     $.__views.friendSelectWindow.add($.__views.friendSelect);
     exports.destroy = function() {};
@@ -394,7 +409,8 @@ function Controller() {
     var param = args.param || null;
     var uie = require("lib/IndicatorWindow");
     var indicator = uie.createIndicatorWindow({
-        top: 200
+        top: 200,
+        text: Alloy.Globals.PHRASES.loadingTxt
     });
     $.friendSelectWindow.orientationModes = [ Titanium.UI.PORTRAIT ];
     $.friendSelectWindow.addEventListener("open", function() {
@@ -403,13 +419,13 @@ function Controller() {
             $.friendSelectWindow = null;
         };
         $.friendSelectWindow.activity.actionBar.displayHomeAsUp = true;
-        $.friendSelectWindow.activity.actionBar.title = "Betkampen";
+        $.friendSelectWindow.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
         indicator.openIndicator();
     });
     $.friendSelectWindow.addEventListener("close", function() {
         indicator.closeIndicator();
     });
-    Alloy.Globals.checkConnection() ? getFacebookFriends() : Alloy.Globals.showFeedbackDialog("Ingen anslutning!");
+    Alloy.Globals.checkConnection() ? getFacebookFriends() : Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
     _.extend($, exports);
 }
 

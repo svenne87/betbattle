@@ -1,3 +1,5 @@
+var Alloy = require("alloy"), _ = require("alloy/underscore")._, model, collection;
+
 exports.definition = {
     config: {},
     extendModel: function(Model) {
@@ -29,8 +31,6 @@ exports.definition = {
         return Collection;
     }
 };
-
-var Alloy = require("alloy"), _ = require("alloy/underscore")._, model, collection;
 
 model = Alloy.M("facebook", exports.definition, []);
 

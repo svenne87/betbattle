@@ -475,7 +475,7 @@ var signInBtn = Titanium.UI.createButton({
 	backgroundColor: '#000',
 	color: '#fff',
 	borderRadius: 3,
-	title: 'Sign in'
+	title: Alloy.Globals.PHRASES.signInTxt
 });
 LoginWindow.add(signInBtn);
 
@@ -487,7 +487,7 @@ var cancelBtn = Titanium.UI.createButton({
 	backgroundColor: '#000',
 	color: '#fff',
 	borderRadius: 3,
-	title: 'Cancel'
+	title: Alloy.Globals.PHRASES.abortBtnTxt
 });
 LoginWindow.add(cancelBtn);
 
@@ -495,8 +495,6 @@ $.loginBtn.addEventListener('click', function(e)
 {
 	
 	LoginWindow.open({modal:true});
-	
-	//alert('du får inte logga in :P');
 });
 cancelBtn.addEventListener('click', function(e)
 {
