@@ -1,0 +1,12 @@
+<Alloy>
+	<Window class="container">
+		<View id="main">
+			<View id="cover">
+				<TextField id="loginEmail"></TextField>
+				<TextField id="loginPass"></TextField>
+				<Button id="signInBtn">Log in</Button>
+				<Button id="abortLoginBtn"></Button>
+			</View>
+		</View>
+	</Window>
+</Alloy>
