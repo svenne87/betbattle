@@ -129,7 +129,3 @@ Resources/iphone/alloy/styles/profile.js
 Resources/iphone/alloy/controllers/profile.js
 
 Resources/iphone/alloy/controllers/login.js
-
-app/styles/loginView.tss
-
-app/controllers/registerView.js
