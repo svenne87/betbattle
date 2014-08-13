@@ -7,7 +7,7 @@ loginReq.onload = function()
 	var response = JSON.parse(json);
 	if (response.logged == true)
 	{
-		alert("Welcome " + response.name + ". Your email is: " + response.email);
+		alert("Welcome " + response.username + ". Your email is: " + response.email);
 	}
 	else
 	{

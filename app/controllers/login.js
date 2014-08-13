@@ -451,8 +451,13 @@ $.registerBtn.addEventListener('click', function(e)
 {
 	
 	var regWindow = Alloy.createController('registrationView').getView();
+	if (OS_IOS) {
+		regWindow.open({transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT});
+	} else{
+		regWindow.open();
+	}
 	$.login.close();
-	regWindow.open();
+
 });
 
 $.registerBtnText.text = Alloy.Globals.PHRASES.registerTxt;
