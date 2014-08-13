@@ -1,8 +1,8 @@
 var args = arguments[0] || {};
 
-function getProfile(){
-	
-}
+//variables to use in class
+var userInfo = null;
+
 
 function buildProfile(){
 	
@@ -27,10 +27,10 @@ var botView = Ti.UI.createView({
 	layout: "vertical"
 });
 
-
 //create the top of the profile
+
 var profileName = Ti.UI.createLabel({
-	text: "Giacomo Palma",
+	text: ""+Alloy.Globals.FACEBOOKOBJECT.attributes.fullName,
 	textAlign: "center",
 	top:0,
 	font: {
@@ -66,7 +66,7 @@ var profilePositionIcon = Ti.UI.createImageView({
 profilePositionView.add(profilePositionIcon);
 
 var profilePosition = Ti.UI.createLabel({
-	text: "3",
+	text: Alloy.Globals.PHRASES.loadingTxt,
 	top: 5,
 	textAlign: "center",
 	font: {
@@ -84,7 +84,7 @@ var profilePictureView = Ti.UI.createView({
 profileTopView.add(profilePictureView);
 
 var profilePic = Ti.UI.createImageView({
-	image : "https://graph.facebook.com/678845345/picture?type=large",
+	image : "https://graph.facebook.com/"+Alloy.Globals.FACEBOOKOBJECT.id+"/picture?type=large",
 	width: 90,
 	height: 90,
 	borderRadius : 45
@@ -99,17 +99,16 @@ var profileLevelView = Ti.UI.createView({
 });
 profileTopView.add(profileLevelView);
 
-var level = 4;
 var profileLevelIcon = Ti.UI.createImageView({
-	image: "https://secure.jimdavislabs.se/betkampen_vm/levels/shirt"+level+".png",
+	//image: "https://secure.jimdavislabs.se/betkampen_vm/levels/shirt"+level+".png",
 	width: 35,
 	height: 35,
 	top: 25,
 });
 profileLevelView.add(profileLevelIcon);
-
+					
 var profileLevel = Ti.UI.createLabel({
-	text : "DRIBBLAREN",
+	text : Alloy.Globals.PHRASES.loadingTxt,
 	textAlign: "center",
 	color:"c5c5c5",
 	top: 5,
@@ -158,7 +157,7 @@ var profileCoinsView = Ti.UI.createView({
 profileStatsView.add(profileCoinsView);
 
 var coins = Ti.UI.createLabel({
-	text: "1235",
+	text: "",
 	textAlign: "center",
 	font:{
 		fontSize: 22,
@@ -168,7 +167,7 @@ var coins = Ti.UI.createLabel({
 });
 
 var coinsText = Ti.UI.createLabel({
-	text: "Coins",
+	text: Alloy.Globals.PHRASES.loadingTxt,
 	textAlign:"center",
 	font:{
 		fontSize:14,
@@ -196,7 +195,7 @@ var profilePointsView = Ti.UI.createView({
 profileStatsView.add(profilePointsView);
 
 var points = Ti.UI.createLabel({
-	text: "2204",
+	text: "",
 	textAlign: "center",
 	color:"c5c5c5",
 	font:{
@@ -206,7 +205,7 @@ var points = Ti.UI.createLabel({
 });
 
 var pointsText = Ti.UI.createLabel({
-	text: "Poäng",
+	text: Alloy.Globals.PHRASES.loadingTxt,
 	textAlign: "center",
 	color: "c5c5c5",
 	font:{
@@ -234,7 +233,7 @@ var profileWinsView = Ti.UI.createView({
 profileStatsView.add(profileWinsView);
 
 var wins = Ti.UI.createLabel({
-	text: "210",
+	text: "",
 	textAlign: "center",
 	color: "c5c5c5",
 	font:{
@@ -244,7 +243,7 @@ var wins = Ti.UI.createLabel({
 });
 
 var winsText = Ti.UI.createLabel({
-	text: "Vinster",
+	text: Alloy.Globals.PHRASES.loadingTxt,
 	textAlign: "center",
 	color: "c5c5c5",
 	font:{
@@ -265,7 +264,7 @@ profileBotView.add(LongGreyBorderBot);
 
 //Create the list of Achievements
 var achievementsLabel = Ti.UI.createLabel({
-	text: "UTMÄRKELSER",
+	text: Alloy.Globals.PHRASES.profileAchievements,
 	textAlign: "center",
 	color: "c5c5c5",
 	font:{
@@ -306,6 +305,69 @@ $.profile.add(achievementsView);
 	}
 achievementsView.add(scrollView);	
 
+//Get the user info
+function getProfile(){
+	var xhr = Titanium.Network.createHTTPClient();
+	xhr.onerror = function(e) {
+		userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
+		userInfoWinsLabel.setText('');
+		Ti.API.error('Bad Sever =>' + e.error);
+	};
+
+	try {
+		xhr.open('POST', Alloy.Globals.BETKAMPENUSERURL + '?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
+		xhr.setRequestHeader("content-type", "application/json");
+		xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
+		xhr.setTimeout(Alloy.Globals.TIMEOUT);
+
+		xhr.send();
+	} catch(e) {
+		coinsText.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
+		coins.setText('');
+	}
+
+	xhr.onload = function() {
+		if (this.status == '200') {
+			if (this.readyState == 4) {
+					userInfo = null;
+				try {
+					userInfo = JSON.parse(this.responseText);
+				} catch (e) {
+					userInfo = null;
+					Ti.API.info("UserInfo NULL");
+				}
+
+				if (userInfo !== null) {
+					coins.setText(userInfo.totalCoins);
+					coinsText.setText(Alloy.Globals.PHRASES.coinsInfoTxt);
+					
+					points.setText(userInfo.totalPoints);
+					pointsText.setText(Alloy.Globals.PHRASES.scoreInfoTxt);
+					
+					wins.setText(userInfo.totalWins);
+					winsText.setText(Alloy.Globals.PHRASES.winsInfoTxt);
+					
+					profilePosition.setText(userInfo.position);
+					Ti.API.info("Position :"+userInfo.position);
+					var level = userInfo.level.level;
+					
+					profileLevelIcon.setImage("https://secure.jimdavislabs.se/betkampen_vm/levels/shirt"+level+".png");
+					profileLevel.setText(Alloy.Globals.PHRASES.levels[level]);
+					
+					//userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.coinsInfoTxt + ": " + userInfo.totalCoins);
+					//userInfoWinsLabel.setText(Alloy.Globals.PHRASES.winningsInfoTxt + ": " + userInfo.points);
+				}
+			}
+		} else {
+			winsText.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
+			coins.setText('');
+			Ti.API.error("Error =>" + this.response);
+		}
+	};
+}
+ 
+
 $.profile.add(topView);
 $.profile.add(botView);
+getProfile();
 

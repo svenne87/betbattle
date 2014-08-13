@@ -40,9 +40,10 @@ Alloy.Globals.PHRASES = {};
 
 var lang = JSON.parse(Ti.App.Properties.getString("language"));
 
-lang = lang.language;
-
-Alloy.Globals.LOCALE = "undefined" == typeof lang || "" == lang || null == lang ? Titanium.Locale.getCurrentLanguage().toLowerCase() : lang;
+if ("undefined" == typeof lang || "" == lang || null == lang) Alloy.Globals.LOCALE = Titanium.Locale.getCurrentLanguage().toLowerCase(); else {
+    lang = lang.language;
+    Alloy.Globals.LOCALE = lang;
+}
 
 Alloy.Globals.INVITEURL = "https://apps.facebook.com/betkampen";
 
@@ -135,7 +136,7 @@ Alloy.Globals.postDeviceToken = function(deviceToken) {
             xhr.setRequestHeader("content-type", "application/json");
             xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
             xhr.setTimeout(Alloy.Globals.TIMEOUT);
-            var param = '{"device_token":"' + deviceToken + '", "device_type":"' + Ti.Platform.osname + '"}';
+            var param = '{"device_token":"' + deviceToken + '", "device_type":"' + Ti.Platform.osname + '", "lang":"' + Alloy.Globals.LOCALE + '"}';
             xhr.send(param);
         } catch (e) {}
         xhr.onload = function() {
@@ -157,7 +158,7 @@ Alloy.Globals.checkCoins = function() {
             Ti.API.error("Bad Sever =>" + e.error);
         };
         try {
-            xhr.open("POST", Alloy.Globals.BETKAMPENCHECKCOINSURL + "?uid=" + Alloy.Globals.BETKAMPENUID);
+            xhr.open("POST", Alloy.Globals.BETKAMPENCHECKCOINSURL + "?uid=" + Alloy.Globals.BETKAMPENUID + "&lang=" + Alloy.Globals.LOCALE);
             xhr.setRequestHeader("content-type", "application/json");
             xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
             xhr.setTimeout(Alloy.Globals.TIMEOUT);

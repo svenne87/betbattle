@@ -33,11 +33,12 @@ Alloy.Globals.PHRASES = {};
 
 // try to get stored language
 var lang = JSON.parse(Ti.App.Properties.getString('language'));
-lang = lang.language;
+
 
 if(typeof lang == 'undefined' || lang == '' || lang == null) {
 	Alloy.Globals.LOCALE = Titanium.Locale.getCurrentLanguage().toLowerCase();
 } else {
+	lang = lang.language;	
 	Alloy.Globals.LOCALE = lang;
 }
 

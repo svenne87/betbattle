@@ -45,9 +45,8 @@ function Controller() {
     var top_view = Ti.UI.createView({
         id: "top_view",
         backgroundColor: "white",
-        height: "65%",
+        height: "75%",
         width: "100%",
-        top: "10%",
         layout: "vertical"
     });
     var bot_view = Ti.UI.createView({
@@ -112,7 +111,7 @@ function Controller() {
         bottom: 2
     });
     top_img.add(Ti.UI.createLabel({
-        text: "HALVA POTTEN",
+        text: Alloy.Globals.PHRASES.landingPageHalfPot,
         zIndex: "100",
         height: "25%",
         width: "60%",
@@ -125,7 +124,7 @@ function Controller() {
         }
     }));
     top_img.add(Ti.UI.createLabel({
-        text: "INSATS 20kr",
+        text: Alloy.Globals.PHRASES.landingPageHalfPotBtn,
         zIndex: "100",
         height: "25%",
         width: "30%",
@@ -147,7 +146,7 @@ function Controller() {
         bottom: 10
     }));
     mid_img.add(Ti.UI.createLabel({
-        text: "BLI MATCHENS MÄSTARE",
+        text: Alloy.Globals.PHRASES.landingPageMatch,
         zIndex: "100",
         height: "25%",
         width: "60%",
@@ -160,7 +159,7 @@ function Controller() {
         }
     }));
     mid_img.add(Ti.UI.createLabel({
-        text: "SPELA NU",
+        text: Alloy.Globals.PHRASES.landingPageMatchBtn,
         zIndex: "100",
         height: "25%",
         width: "30%",
@@ -184,7 +183,7 @@ function Controller() {
     var custom_font = "Base02";
     "Android" == Ti.Platform.osname && (custom_font = "Base-02");
     bot_img.add(Ti.UI.createLabel({
-        text: "CHALLENGE ZONE",
+        text: Alloy.Globals.PHRASES.landingPageZone,
         zIndex: "100",
         height: "25%",
         width: "60%",
@@ -197,7 +196,7 @@ function Controller() {
         }
     }));
     bot_img.add(Ti.UI.createLabel({
-        text: "UTMANA",
+        text: Alloy.Globals.PHRASES.landingPageZoneBtn,
         zIndex: "100",
         height: "25%",
         width: "30%",
@@ -240,8 +239,14 @@ function Controller() {
             fontFamily: "Impact"
         },
         color: "#FFF",
-        text: "DIN PROFIL"
+        text: Alloy.Globals.PHRASES.landingPageProfileBtn
     }));
+    profileBtn.addEventListener("click", function() {
+        var win = Alloy.createController("profile").getView();
+        Alloy.Globals.NAV.openWindow(win, {
+            animated: true
+        });
+    });
     inviteBtn.add(Ti.UI.createLabel({
         height: "20%",
         width: "100%",
@@ -252,7 +257,7 @@ function Controller() {
             fontFamily: "Impact"
         },
         color: "#FFF",
-        text: "DINA VÄNNER"
+        text: Alloy.Globals.PHRASES.landingPageInviteBtnBot
     }));
     inviteBtn.add(Ti.UI.createLabel({
         height: "20%",
@@ -265,7 +270,7 @@ function Controller() {
             fontFamily: "Impact"
         },
         color: "#FFF",
-        text: "BJUD IN"
+        text: Alloy.Globals.PHRASES.landingPageInviteBtnTop
     }));
     bot_img.addEventListener("click", function() {
         var loginSuccessWindow;

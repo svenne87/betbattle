@@ -192,14 +192,14 @@ function loginAuthenticated(fb) {
 
 				Alloy.Globals.FACEBOOKOBJECT = Alloy.createModel('facebook', {
 					id : result.id,
-					bithday : result.birthday,
+					//bithday : result.birthday,
 					locale : result.locale,
-					location : result.location['name'],
+					//location : result.location['name'],
 					username : result.username,
 					fullName : result.name,
 					firstName : result.first_name,
 					lastName : result.last_name,
-					gender : result.gender,
+					//gender : result.gender,
 					email : result.email
 				});
 

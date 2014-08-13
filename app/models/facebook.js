@@ -7,7 +7,7 @@ exports.definition = {
 			// extended functions and properties go here
 			
 			// Implement the validate method						
-            validate: function (attrs) {
+           /* validate: function (attrs) {
     	        for (var key in attrs) {
                     var value = attrs[key];
                     if (key === "id") {
@@ -61,7 +61,7 @@ exports.definition = {
                         }	
                     }	
                 }
-            },
+            },*/
             // Extend Backbone.Model
             customProperty: 'facebook',
             customFunction: function() {

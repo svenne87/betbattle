@@ -16,7 +16,7 @@ function Controller() {
             Ti.API.error("Bad Sever =>" + e.error);
         };
         try {
-            xhr.open("POST", Alloy.Globals.BETKAMPENUSERURL + "?uid=" + Alloy.Globals.BETKAMPENUID);
+            xhr.open("POST", Alloy.Globals.BETKAMPENUSERURL + "?uid=" + Alloy.Globals.BETKAMPENUID + "&lang=" + Alloy.Globals.LOCALE);
             xhr.setRequestHeader("content-type", "application/json");
             xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
             xhr.setTimeout(Alloy.Globals.TIMEOUT);
@@ -36,7 +36,7 @@ function Controller() {
                     }
                     if (null !== userInfo) {
                         userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.coinsInfoTxt + ": " + userInfo.totalCoins);
-                        userInfoWinsLabel.setText(Alloy.Globals.PHRASES.winningsInfoTxt + ": " + userInfo.points);
+                        userInfoWinsLabel.setText(Alloy.Globals.PHRASES.scoreInfoTxt + ": " + userInfo.totalPoints);
                     }
                 }
             } else {
@@ -572,7 +572,7 @@ function Controller() {
             indicator.closeIndicator();
         };
         try {
-            xhr.open("GET", Alloy.Globals.BETKAMPENCHALLENGESURL + "/?uid=" + Alloy.Globals.BETKAMPENUID);
+            xhr.open("GET", Alloy.Globals.BETKAMPENCHALLENGESURL + "/?uid=" + Alloy.Globals.BETKAMPENUID + "&lang=" + Alloy.Globals.LOCALE);
             xhr.setRequestHeader("challengesView-type", "application/json");
             xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
             xhr.setTimeout(Alloy.Globals.TIMEOUT);

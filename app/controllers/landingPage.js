@@ -83,7 +83,7 @@ var blackLabelBot = Ti.UI.createView({
 
 
 top_img.add(Ti.UI.createLabel({
-	text: "HALVA POTTEN",
+	text: Alloy.Globals.PHRASES.landingPageHalfPot,
 	zIndex:"100",
 	height:"25%",
 	width:"60%",
@@ -97,7 +97,7 @@ top_img.add(Ti.UI.createLabel({
 }));
 
 top_img.add(Ti.UI.createLabel({
-	text:"INSATS 20kr",
+	text:Alloy.Globals.PHRASES.landingPageHalfPotBtn,
 	zIndex : "100",
 	height:"25%",
 	width: "30%",
@@ -120,7 +120,7 @@ top_img.add(Ti.UI.createView({
 }));
 
 mid_img.add(Ti.UI.createLabel({
-	text: "BLI MATCHENS MÄSTARE",
+	text: Alloy.Globals.PHRASES.landingPageMatch,
 	zIndex:"100",
 	height:"25%",
 	width:"60%",
@@ -133,7 +133,7 @@ mid_img.add(Ti.UI.createLabel({
 	}
 }));
 mid_img.add(Ti.UI.createLabel({
-	text:"SPELA NU",
+	text:Alloy.Globals.PHRASES.landingPageMatchBtn,
 	zIndex : "100",
 	height:"25%",
 	width: "30%",
@@ -160,7 +160,7 @@ if(Ti.Platform.osname == "Android"){
 	custom_font = "Base-02";
 }
 bot_img.add(Ti.UI.createLabel({
-	text: "CHALLENGE ZONE",
+	text: Alloy.Globals.PHRASES.landingPageZone,
 	zIndex:"100",
 	height:"25%",
 	width:"60%",
@@ -173,7 +173,7 @@ bot_img.add(Ti.UI.createLabel({
 	}
 }));
 bot_img.add(Ti.UI.createLabel({
-	text:"UTMANA",
+	text:Alloy.Globals.PHRASES.landingPageZoneBtn,
 	zIndex : "100",
 	height:"25%",
 	width: "30%",
@@ -220,7 +220,7 @@ profileBtn.add(Ti.UI.createLabel({
 		fontFamily: 'Impact'
 	},
 	color: "#FFF",
-	text: "DIN PROFIL"
+	text: Alloy.Globals.PHRASES.landingPageProfileBtn
 }));
 
 profileBtn.addEventListener("click", function(e){
@@ -246,7 +246,7 @@ inviteBtn.add(Ti.UI.createLabel({
 		fontFamily: 'Impact'
 	},
 	color:"#FFF",
-	text: "DINA VÄNNER"
+	text: Alloy.Globals.PHRASES.landingPageInviteBtnBot
 }));
 
 inviteBtn.add(Ti.UI.createLabel({
@@ -260,7 +260,7 @@ inviteBtn.add(Ti.UI.createLabel({
 		fontFamily: 'Impact'
 	},
 	color:"#FFF",
-	text: "BJUD IN"
+	text: Alloy.Globals.PHRASES.landingPageInviteBtnTop
 }));
 
 bot_img.addEventListener("click", function(e){

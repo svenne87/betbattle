@@ -18,7 +18,7 @@ function Controller() {
             Ti.API.error("Bad Sever =>" + e.error);
         };
         try {
-            xhr.open("GET", Alloy.Globals.BETKAMPENGETGROUPSURL);
+            xhr.open("GET", Alloy.Globals.BETKAMPENGETGROUPSURL + "/?lang=" + Alloy.Globals.LOCALE);
             xhr.setRequestHeader("content-type", "application/json");
             xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
             xhr.setTimeout(Alloy.Globals.TIMEOUT);
