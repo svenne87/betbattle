@@ -1,0 +1,14 @@
+<Alloy>
+	<Window class="container">
+		<View id="main">
+			<View id="cover">
+				<TextField id="regUsername"></TextField>
+				<TextField id="regPass"></TextField>
+				<TextField id="regPassAgain"></TextField>
+				<TextField id="regEmail"></TextField>
+				<Button id="signUpBtn">Log in</Button>
+				<Button id="abortRegBtn"></Button>
+			</View>
+		</View>
+	</Window>
+</Alloy>
