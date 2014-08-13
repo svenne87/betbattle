@@ -512,9 +512,42 @@ cancelBtn.addEventListener('click', function(e)
 	LoginWindow.close();
 });
 
+var loginReq = Titanium.Network.createHTTPClient();
+loginReq.onload = function()
+{
+	var json = this.responseText;
+	var response = JSON.parse(json);
+	if (response.logged == true)
+	{
+		alert("Welcome " + response.name + ". Your email is: " + response.email);
+	}
+	else
+	{
+		alert(response.message);
+	}
+};
+
+loginReq.onerror = function()
+{
+	alert("Network error");
+};
+
 signInBtn.addEventListener('click', function(e)
 {
-	alert("Username and Password are required");
+	if (username.value != '' && password.value != '')
+	{
+		loginReq.open("POST","http://secure.jimdavislabs.se/secure/betkampen_vm/api/email_login.php");
+		var params = {
+			username: username.value,
+			password: password.value
+			//password: Ti.Utils.md5HexDigest(password.value)
+		};
+		loginReq.send(params);
+	}
+	else
+	{
+		alert("Username/Password are required");
+	}
 });
 
 

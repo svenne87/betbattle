@@ -9,3 +9,11 @@ build.log
 .fastdev.lock
 npm-debug.log
 .map
+
+Resources/iphone/alloy/controllers/main.js
+
+Resources/iphone/alloy/controllers/registerView.js
+
+Resources/iphone/alloy/controllers/store.js
+
+Resources/iphone/alloy/styles/login.js
