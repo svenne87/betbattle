@@ -129,9 +129,12 @@ Resources/iphone/alloy/styles/profile.js
 Resources/iphone/alloy/controllers/profile.js
 
 Resources/iphone/alloy/controllers/login.js
+<<<<<<< HEAD
 
 app/styles/loginView.tss
 
 app/controllers/registerView.js
 
 Resources/iphone/app.js
+=======
+>>>>>>> FETCH_HEAD
