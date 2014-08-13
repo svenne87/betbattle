@@ -431,233 +431,25 @@ if (OS_ANDROID) {
 	});
 }
 
-// email login --> creating login modal
-var LoginWindow = Ti.UI.createWindow({
-	backgroundColor: 'white',
-	width: 300,
-	height: 300,
-	opacity: 0.8,
-	borderRadius: 20
-});
-var loginTitle = Titanium.UI.createTextField({
-	borderstyle: Ti.UI.INPUT_BORDERSTYLE_ROUNDED,
-	color: 'black',
-	top: 10,
-	title: 'Logga in med din e-postadress'
-});
-LoginWindow.add(loginTitle);
- 
-var username = Titanium.UI.createTextField({
-    color:'#336699',
-    top:80,
-    left:25,
-    width:250,
-    height:40,
-    hintText: Alloy.Globals.PHRASES.emailTxt,
-    keyboardType:Titanium.UI.KEYBOARD_DEFAULT,
-    returnKeyType:Titanium.UI.RETURNKEY_DEFAULT,
-    borderStyle:Titanium.UI.INPUT_BORDERSTYLE_ROUNDED
-});
-LoginWindow.add(username);
- 
-var password = Titanium.UI.createTextField({
-    color:'#336699',
-    top:130,
-    left:25,
-    width:250,
-    height:40,
-    hintText: Alloy.Globals.PHRASES.passwordTxt,
-    passwordMask:true,
-    keyboardType:Titanium.UI.KEYBOARD_DEFAULT,
-    returnKeyType:Titanium.UI.RETURNKEY_DEFAULT,
-    borderStyle:Titanium.UI.INPUT_BORDERSTYLE_ROUNDED
-});
-LoginWindow.add(password);
- 
-var signInBtn = Titanium.UI.createButton({
-    top: 190,
-	height: '14%',
-	width: '68.5%',
-	left: '15%',
-	backgroundColor: '#000',
-	color: '#fff',
-	borderRadius: 3,
-	title: Alloy.Globals.PHRASES.signInTxt
-});
-LoginWindow.add(signInBtn);
+//----------------- email login 
 
-var cancelBtn = Titanium.UI.createButton({
-    top: 240,
-	height: '14%',
-	width: '68.5%',
-	left: '15%',
-	backgroundColor: '#000',
-	color: '#fff',
-	borderRadius: 3,
-	title: Alloy.Globals.PHRASES.abortBtnTxt
-});
-LoginWindow.add(cancelBtn);
 
-// opening login modal
+// opening login view
 $.loginBtn.addEventListener('click', function(e)
 {
-	
-	LoginWindow.open({modal:true});
+	var loginWindow = Alloy.createController('loginView').getView();
+	$.login.close();
+	loginWindow.open();
 });
 
-//handle buttons in login modal
-cancelBtn.addEventListener('click', function(e)
-{
-	
-	LoginWindow.close();
-});
-
-var loginReq = Titanium.Network.createHTTPClient();
-loginReq.onload = function()
-{
-	var json = this.responseText;
-	var response = JSON.parse(json);
-	if (response.logged == true)
-	{
-		alert("Welcome " + response.name + ". Your email is: " + response.email);
-	}
-	else
-	{
-		alert(response.message);
-	}
-};
-
-loginReq.onerror = function()
-{
-	alert("Network error");
-};
-
-signInBtn.addEventListener('click', function(e)
-{
-	if (username.value != '' && password.value != '')
-	{
-		loginReq.open("POST","http://secure.jimdavislabs.se/secure/betkampen_vm/api/email_login.php");
-		var params = {
-			username: username.value,
-			password: password.value
-			//password: Ti.Utils.md5HexDigest(password.value)
-		};
-		loginReq.send(params);
-	}
-	else
-	{
-		alert("Username/Password are required");
-	}
-});
-
-
-
-// creating register view
-var RegisterWindow = Ti.UI.createWindow({
-	backgroundColor: 'white',
-	width: 300,
-	height: 400,
-	opacity: 0.8,
-	borderRadius: 20
-});
-
-var email = Titanium.UI.createTextField({
-    color:'#336699',
-    top:80,
-    left:25,
-    width:250,
-    height:40,
-    hintText: Alloy.Globals.PHRASES.emailTxt,
-    keyboardType:Titanium.UI.KEYBOARD_DEFAULT,
-    returnKeyType:Titanium.UI.RETURNKEY_DEFAULT,
-    borderStyle:Titanium.UI.INPUT_BORDERSTYLE_ROUNDED
-});
-RegisterWindow.add(email);
-
-var username = Titanium.UI.createTextField({
-    color:'#336699',
-    top:130,
-    left:25,
-    width:250,
-    height:40,
-    hintText: Alloy.Globals.PHRASES.usernameTxt,
-    keyboardType:Titanium.UI.KEYBOARD_DEFAULT,
-    returnKeyType:Titanium.UI.RETURNKEY_DEFAULT,
-    borderStyle:Titanium.UI.INPUT_BORDERSTYLE_ROUNDED
-});
-RegisterWindow.add(username);
- 
-var password = Titanium.UI.createTextField({
-    color:'#336699',
-    top:180,
-    left:25,
-    width:250,
-    height:40,
-    hintText: Alloy.Globals.PHRASES.passwordTxt,
-    passwordMask:true,
-    keyboardType:Titanium.UI.KEYBOARD_DEFAULT,
-    returnKeyType:Titanium.UI.RETURNKEY_DEFAULT,
-    borderStyle:Titanium.UI.INPUT_BORDERSTYLE_ROUNDED
-});
-RegisterWindow.add(password);
-
-var passwordAgain = Titanium.UI.createTextField({
-    color:'#336699',
-    top:230,
-    left:25,
-    width:250,
-    height:40,
-    hintText: Alloy.Globals.PHRASES.passwordTxt,
-    passwordMask:true,
-    keyboardType:Titanium.UI.KEYBOARD_DEFAULT,
-    returnKeyType:Titanium.UI.RETURNKEY_DEFAULT,
-    borderStyle:Titanium.UI.INPUT_BORDERSTYLE_ROUNDED
-});
-RegisterWindow.add(passwordAgain);
- 
-var signUpBtn = Titanium.UI.createButton({
-    top: 290,
-	height: '10%',
-	width: '68.5%',
-	left: '15%',
-	backgroundColor: '#000',
-	color: '#fff',
-	borderRadius: 3,
-	title: Alloy.Globals.PHRASES.regTxt
-});
-RegisterWindow.add(signUpBtn);
-
-var cancelRegBtn = Titanium.UI.createButton({
-    top: 340,
-	height: '10%',
-	width: '68.5%',
-	left: '15%',
-	backgroundColor: '#000',
-	color: '#fff',
-	borderRadius: 3,
-	title: Alloy.Globals.PHRASES.abortBtnTxt
-});
-RegisterWindow.add(cancelRegBtn);
-
-// opening login modal
+//open rigistration view
 $.registerBtn.addEventListener('click', function(e)
 {
 	
-	RegisterWindow.open({modal:true});
+	var regWindow = Alloy.createController('registrationView').getView();
+	$.login.close();
+	regWindow.open();
 });
-
-//handle buttons in login modal
-cancelRegBtn.addEventListener('click', function(e)
-{
-	
-	RegisterWindow.close();
-});
-
-signUpBtn.addEventListener('click', function(e)
-{
-	alert("Username and Password are required");
-});
-
 
 $.registerBtnText.text = Alloy.Globals.PHRASES.registerTxt;
 $.loginBtnText.text = Alloy.Globals.PHRASES.signInTxt;
