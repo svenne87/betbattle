@@ -28,7 +28,6 @@ $.signInBtn.addEventListener('click', function(e)
 		loginReq.open("POST","http://secure.jimdavislabs.se/secure/betkampen_vm/api/email_login.php");
 		var params = {
 			email: $.loginEmail.value,
-			//password: password.value
 			password: Ti.Utils.md5HexDigest($.loginPass.value)
 		};
 		loginReq.send(params);
@@ -41,7 +40,7 @@ $.signInBtn.addEventListener('click', function(e)
 
 $.abortLoginBtn.addEventListener('click', function(e){
 	var login = Alloy.createController('login').getView();
-	$.loginView.close();
 	login.open();
+	$.loginView.close();
 	
 });

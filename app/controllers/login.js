@@ -438,8 +438,12 @@ if (OS_ANDROID) {
 $.loginBtn.addEventListener('click', function(e)
 {
 	var loginWindow = Alloy.createController('loginView').getView();
+	if (OS_IOS) {
+		loginWindow.open({transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT});
+	} else{
+		loginWindow.open();
+	}
 	$.login.close();
-	loginWindow.open();
 });
 
 //open rigistration view
