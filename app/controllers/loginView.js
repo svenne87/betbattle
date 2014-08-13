@@ -1,5 +1,11 @@
 var win = Titanium.UI.currentWindow;
 
+var uie = require('lib/IndicatorWindow');
+var indicator = uie.createIndicatorWindow({
+	top : 200,
+	text : Alloy.Globals.PHRASES.loadingTxt
+});
+
 var loginReq = Titanium.Network.createHTTPClient();
 loginReq.onload = function()
 {
@@ -7,7 +13,29 @@ loginReq.onload = function()
 	var response = JSON.parse(json);
 	if (response.logged == true)
 	{
-		alert("Welcome " + response.username + ". Your email is: " + response.email);
+		var args = {
+					dialog : indicator
+				};
+
+		if (OS_IOS) {
+					var loginSuccessWindow = Alloy.createController('landingPage', args).getView();
+					loginSuccessWindow.open({
+						fullScreen : true,
+						transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
+					});
+					loginSuccessWindow = null;
+
+				} else if (OS_ANDROID) {
+					var loginSuccessWindow = Alloy.createController('landingPage', args).getView();
+					loginSuccessWindow.open({
+						fullScreen : true,
+						navBarHidden : false,
+						orientationModes : [Titanium.UI.PORTRAIT]
+					});
+					loginSuccessWindow = null;
+				}
+		//win.close();
+		$.loginView.close();
 	}
 	else
 	{

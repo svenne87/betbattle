@@ -63,7 +63,7 @@ $.signUpBtn.addEventListener('click',function(e)
 				$.signUpBtn.opacity = 0.3;
 				createReq.open("POST","http://secure.jimdavislabs.se/secure/betkampen_vm/api/email_registration.php");
 				var params = {
-					username: $.regUsername.value,
+					name: $.regUsername.value,
 					password: Ti.Utils.md5HexDigest($.regPass.value),
 					email: $.regEmail.value
 				};
