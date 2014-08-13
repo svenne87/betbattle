@@ -293,24 +293,15 @@ $.profile.add(achievementsView);
 		layout:"horizontal",
 	});
 
-	for (var i = 0; i < 20; i++){
-		var achievement = Ti.UI.createImageView({
-			image : "https://secure.jimdavislabs.se/betkampen_vm/achievements/en_vinst.png",
-			width: 60,
-			height: 60,
-			left: 10,
-			top: 10,
-		});
-		scrollView.add(achievement);
-	}
+	
 achievementsView.add(scrollView);	
 
 //Get the user info
 function getProfile(){
 	var xhr = Titanium.Network.createHTTPClient();
 	xhr.onerror = function(e) {
-		userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
-		userInfoWinsLabel.setText('');
+		profileLevel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
+		profilePosition.setText('');
 		Ti.API.error('Bad Sever =>' + e.error);
 	};
 
@@ -354,13 +345,65 @@ function getProfile(){
 					profileLevelIcon.setImage("https://secure.jimdavislabs.se/betkampen_vm/levels/shirt"+level+".png");
 					profileLevel.setText(Alloy.Globals.PHRASES.levels[level]);
 					
+					//userInfoCoinsLabel.setTexst(Alloy.Globals.PHRASES.coinsInfoTxt + ": " + userInfo.totalCoins);
+					//userInfoWinsLabel.setText(Alloy.Globals.PHRASES.winningsInfoTxt + ": " + userInfo.points);
+				}
+			}
+			
+		} else {
+			winsText.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
+			coins.setText('');
+			Ti.API.error("Error =>" + this.response);
+		}
+	};
+}
+
+function getAchievements(){
+	var xhr = Titanium.Network.createHTTPClient();
+	xhr.onerror = function(e) {
+		achievementsLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
+		Ti.API.error('Bad Sever =>' + JSON.stringify(e));
+	};
+
+	try {
+		xhr.open('GET', Alloy.Globals.BETKAMPENACHIEVEMENTSURL + '?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
+		//xhr.setRequestHeader("content-type", "application/json");
+		xhr.setTimeout(Alloy.Globals.TIMEOUT);
+
+		xhr.send();
+	} catch(e) {
+		achievementsLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
+	}
+
+	xhr.onload = function() {
+		if (this.status == '200') {
+			if (this.readyState == 4) {
+					var achievements = null;
+				try {
+					achievements = JSON.parse(this.responseText);
+				} catch (e) {
+					achievements = null;
+					Ti.API.info("Achievements NULL");
+				}
+
+				if (achievements !== null) {
+					Ti.API.info(JSON.stringify(achievements[2]));
+					for (var i = 0; i < achievements.length; i++){
+						var achievement = Ti.UI.createImageView({
+							image : Alloy.Globals.BETKAMPENURL + "/achievements/"+achievements[i].image,
+							width: 60,
+							height: 60,
+							left: 10,
+							top: 10,
+						});
+						scrollView.add(achievement);
+					}
 					//userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.coinsInfoTxt + ": " + userInfo.totalCoins);
 					//userInfoWinsLabel.setText(Alloy.Globals.PHRASES.winningsInfoTxt + ": " + userInfo.points);
 				}
 			}
 		} else {
-			winsText.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
-			coins.setText('');
+			achievementsLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
 			Ti.API.error("Error =>" + this.response);
 		}
 	};
@@ -370,4 +413,5 @@ function getProfile(){
 $.profile.add(topView);
 $.profile.add(botView);
 getProfile();
+getAchievements();
 
