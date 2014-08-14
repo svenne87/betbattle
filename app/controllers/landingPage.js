@@ -1,4 +1,6 @@
 var args = arguments[0] || {};
+
+
 var top_view = Ti.UI.createView({
 	id: "top_view",
 	backgroundColor: "white",
@@ -118,6 +120,20 @@ top_img.add(Ti.UI.createView({
 	right:10,
 	bottom:10
 }));
+
+top_img.addEventListener("click", function(e){
+	
+		var win = Alloy.createController('halfPot').getView();
+		if (OS_IOS) {
+			Alloy.Globals.NAV.openWindow(win, {
+				animated : true
+			});
+		} else {
+			win.open({
+				fullScreen : true
+			});
+		}
+});
 
 mid_img.add(Ti.UI.createLabel({
 	text: Alloy.Globals.PHRASES.landingPageMatch,
@@ -318,6 +334,84 @@ if(OS_IOS){
 	
 	
 }
+
+
+///Get the match for "Matchens Mästare"
+var matchWrapperView = Ti.UI.createView({
+	width: "100%",
+	height: "70%",
+	layout: "horizontal",
+	top: 0,
+});
+
+var team1Logo = Ti.UI.createImageView({
+	width: "30%",
+	height: "100%",
+});
+matchWrapperView.add(team1Logo);
+
+var versusLabel = Ti.UI.createLabel({
+	width: "30%",
+	height: "100%",
+	text: "VS",
+	textAlign: "center",
+	font:{
+		fontSize: 22,
+		fontFamily: "Impact",
+	}
+});
+matchWrapperView(versusLabel);
+
+var team2Logo = Ti.UI.createImageView({
+	width: "30%",
+	height: "100%",
+});
+matchWrapperView.add(team2Logo);
+
+
+mid_img.add(matchWrapperView);
+
+function getMatchOfTheDay(){
+	var xhr = Titanium.Network.createHTTPClient();
+	xhr.onerror = function(e) {
+		versusLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
+		Ti.API.error('Bad Sever =>' + e.error);
+	};
+
+	try {
+		xhr.open('GET', Alloy.Globals.BETKAMPENUSERURL + '?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
+		xhr.setRequestHeader("content-type", "application/json");
+		xhr.setTimeout(Alloy.Globals.TIMEOUT);
+
+		xhr.send();
+	} catch(e) {
+		versusLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
+	}
+
+	xhr.onload = function() {
+		if (this.status == '200') {
+			if (this.readyState == 4) {
+					var match = null;
+				try {
+					match = JSON.parse(this.responseText);
+				} catch (e) {
+					match = null;
+					Ti.API.info("Match NULL");
+				}
+
+				if (match !== null) {
+					team1Logo.image = Alloy.Globals.BETKAMPENURL + match.team1_image;
+					team2Logo.image = Alloy.Globals.BETKAMPENURL + match.team2_image;
+				}
+			}
+			
+		} else {
+			versusLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
+			Ti.API.error("Error =>" + this.response);
+		}
+	};
+	
+};
 
 top_img.add(border1);
 mid_img.add(border2);
