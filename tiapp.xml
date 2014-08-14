@@ -117,6 +117,8 @@
         <module platform="android" version="0.2">net.iamyellow.gcmjs</module>
         <module platform="android">ti.inappbilling</module>
         <module platform="iphone">com.logicallabs.inappproducts</module>
+        <module platform="iphone">bencoding.blur</module>
+        <module platform="android">bencoding.blur</module>
     </modules>
     <deployment-targets>
         <target device="android">true</target>
