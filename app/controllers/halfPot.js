@@ -26,7 +26,7 @@ var potAmountLabelTop = Ti.UI.createLabel({
 	height: "100%",
 	width: "100%",
 	top: -30,
-	text: "Potten just nu",
+	text: Alloy.Globals.PHRASES.halfPotCurrentLabel,
 	textAlign : "center",
 	color: "#FFFFFF",
 	zIndex : "100",
@@ -41,7 +41,7 @@ var potAmountLabelBottom = Ti.UI.createLabel({
 	height: "100%",
 	width: "100%",
 	top: 30,
-	text: "134 000 kr",
+	text: "134 000 "+Alloy.Globals.PHRASES.currency,
 	textAlign: "center",
 	color: "#FFFFFF",
 	zIndex: "100",
@@ -51,13 +51,22 @@ var potAmountLabelBottom = Ti.UI.createLabel({
 	}
 });
 topView.add(potAmountLabelBottom);
+var tickets = 5;
+if(tickets < 1){
+	var infoText = Alloy.Globals.PHRASES.halfPotInfoTextFirst + tickets + Alloy.Globals.PHRASES.halfPotInfoTextMoreTickets + Alloy.Globals.PHRASES.halfPotBuyText;	
+}else if(tickets == 1){
+	var infoText = Alloy.Globals.PHRASES.halfPotInfoTextFirst + tickets + Alloy.Globals.PHRASES.halfPotInfoTextOneTicket + Alloy.Globals.PHRASES.halfPotBuyMoreText;
+}else{
+	var infoText = Alloy.Globals.PHRASES.halfPotInfoTextFirst + tickets + Alloy.Globals.PHRASES.halfPotInfoTextMoreTickets + Alloy.Globals.PHRASES.halfPotBuyMoreText;
+}
+
 
 var lotteryInfoLabel = Ti.UI.createLabel({
 	height:"30%",
 	width: "100%",
 	//backgroundColor: "",
 	top: 0,
-	text: "Du har just nu 0 aktiva lotter. Köp lotter för chansen att vinna stora summor pengar!",
+	text: infoText,
 	textAlign: "center",
 	color: "#FFFFFF",
 });
@@ -91,7 +100,7 @@ yourTicketsBtn.addEventListener("click", function(e){
 });
 
 var yourTicketsLabel = Ti.UI.createLabel({
-	text: "Dina Lotter",
+	text: Alloy.Globals.PHRASES.yourTicketsBtn,
 	textAlign: "center",
 	color: "#FFFFFF",
 	font:{
@@ -133,7 +142,7 @@ buyTicketsBtn.addEventListener("click", function(e){
 });
 
 var buyTicketsLabel = Ti.UI.createLabel({
-	text: "Köp Lotter",
+	text: Alloy.Globals.PHRASES.buyTicketsBtn,
 	textAlign: "center",
 	color: "#FFFFFF",
 	font:{

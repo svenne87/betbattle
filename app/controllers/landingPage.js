@@ -171,6 +171,7 @@ mid_img.add(Ti.UI.createView({
 	bottom:10
 }));
 
+
 var custom_font = "Base02";
 if(Ti.Platform.osname == "Android"){
 	custom_font = "Base-02";
@@ -338,15 +339,15 @@ if(OS_IOS){
 
 ///Get the match for "Matchens Mästare"
 var matchWrapperView = Ti.UI.createView({
-	width: "100%",
+	width: "50%",
 	height: "70%",
 	layout: "horizontal",
 	top: 0,
 });
 
 var team1Logo = Ti.UI.createImageView({
-	width: "30%",
-	height: "100%",
+	width: 50,
+	height: 50,
 });
 matchWrapperView.add(team1Logo);
 
@@ -355,16 +356,17 @@ var versusLabel = Ti.UI.createLabel({
 	height: "100%",
 	text: "VS",
 	textAlign: "center",
+	color: "#FFFFFF",
 	font:{
 		fontSize: 22,
 		fontFamily: "Impact",
 	}
 });
-matchWrapperView(versusLabel);
+matchWrapperView.add(versusLabel);
 
 var team2Logo = Ti.UI.createImageView({
-	width: "30%",
-	height: "100%",
+	width: 50,
+	height: 50,
 });
 matchWrapperView.add(team2Logo);
 
@@ -379,7 +381,7 @@ function getMatchOfTheDay(){
 	};
 
 	try {
-		xhr.open('GET', Alloy.Globals.BETKAMPENUSERURL + '?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
+		xhr.open('GET', Alloy.Globals.BETKAMPENGETMOTDINFO + '?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
 		xhr.setRequestHeader("content-type", "application/json");
 		xhr.setTimeout(Alloy.Globals.TIMEOUT);
 
@@ -402,6 +404,27 @@ function getMatchOfTheDay(){
 				if (match !== null) {
 					team1Logo.image = Alloy.Globals.BETKAMPENURL + match.team1_image;
 					team2Logo.image = Alloy.Globals.BETKAMPENURL + match.team2_image;
+					
+					mid_img.addEventListener("click", function(e){
+						var arg = {
+							round : match.roundID,
+							leagueName : match.leagueName,
+							leagueId : match.leagueID
+						};
+					
+						var win = Alloy.createController('challenge', arg).getView();
+						Alloy.Globals.WINDOWS.push(win);
+					
+						if (OS_IOS) {
+							Alloy.Globals.NAV.openWindow(win, {
+								animated : true
+							});
+						} else if (OS_ANDROID) {
+							win.open({
+								fullScreen : true
+							});
+						}
+					});
 				}
 			}
 			
@@ -427,6 +450,6 @@ top_view.add(bot_img);
 
 bot_view.add(profileBtn);
 bot_view.add(inviteBtn);
-
+getMatchOfTheDay();
 $.landingPage.add(top_view);
 $.landingPage.add(bot_view);

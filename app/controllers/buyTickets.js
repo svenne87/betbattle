@@ -1,7 +1,7 @@
 var args = arguments[0] || {};
 
 var topLabel = Ti.UI.createLabel({
-	text: "Köp Lotter",
+	text: Alloy.Globals.PHRASES.buyTicketsBtn,
 	textAlign: "center",
 	color: "#FFFFFF",
 	font:{
@@ -33,7 +33,7 @@ var oneTicketBtn = Ti.UI.createView({
 topBtnView.add(oneTicketBtn);
 
 var oneTicketLabel = Ti.UI.createLabel({
-	text: "Köp 1 Lott för 20kr",
+	text: Alloy.Globals.PHRASES.buyOneTicket,
 	textAlign: "center",
 	color: "#FFFFFF",
 	font:{
@@ -65,7 +65,7 @@ var twoTicketBtn = Ti.UI.createView({
 midBtnView.add(twoTicketBtn);
 
 var twoTicketLabel = Ti.UI.createLabel({
-	text: "Köp 2 Lotter för 40 kr",
+	text: Alloy.Globals.PHRASES.buyTwoTickets,
 	textAlign: "center",
 	color: "#FFFFFF",
 	font:{
@@ -97,7 +97,7 @@ var fiveTicketBtn = Ti.UI.createView({
 botBtnView.add(fiveTicketBtn);
 
 var fiveTicketLabel = Ti.UI.createLabel({
-	text: "Köp 5 Lotter för 100kr",
+	text: Alloy.Globals.PHRASES.buyFiveTickets,
 	textAlign: "center",
 	color: "#FFFFFF",
 	font:{
@@ -129,7 +129,7 @@ var subscribeBtn = Ti.UI.createView({
 subBtnView.add(subscribeBtn);
 
 var subscribeLabel = Ti.UI.createLabel({
-	text: "Köp prenumeration",
+	text: Alloy.Globals.PHRASES.buySubscription,
 	textAlign: "center",
 	color: "#FFFFFF",
 	font:{

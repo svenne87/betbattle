@@ -1004,7 +1004,7 @@ function createLayout() {
 		height : 142,
 		backgroundImage : '/images/header.png'
 	});
-
+	//Ti.API.info("LOGGGA: "+ JSON.stringify(args));
 	// fetch league name, if not set
 	if (leagueName.length === 0) {
 		for (var i in Alloy.Globals.LEAGUES) {

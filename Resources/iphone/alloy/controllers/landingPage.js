@@ -8,6 +8,53 @@ function __processArg(obj, key) {
 }
 
 function Controller() {
+    function getMatchOfTheDay() {
+        var xhr = Titanium.Network.createHTTPClient();
+        xhr.onerror = function(e) {
+            versusLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
+            Ti.API.error("Bad Sever =>" + e.error);
+        };
+        try {
+            xhr.open("GET", Alloy.Globals.BETKAMPENGETMOTDINFO + "?uid=" + Alloy.Globals.BETKAMPENUID + "&lang=" + Alloy.Globals.LOCALE);
+            xhr.setRequestHeader("content-type", "application/json");
+            xhr.setTimeout(Alloy.Globals.TIMEOUT);
+            xhr.send();
+        } catch (e) {
+            versusLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
+        }
+        xhr.onload = function() {
+            if ("200" == this.status) {
+                if (4 == this.readyState) {
+                    var match = null;
+                    try {
+                        match = JSON.parse(this.responseText);
+                    } catch (e) {
+                        match = null;
+                        Ti.API.info("Match NULL");
+                    }
+                    if (null !== match) {
+                        team1Logo.image = Alloy.Globals.BETKAMPENURL + match.team1_image;
+                        team2Logo.image = Alloy.Globals.BETKAMPENURL + match.team2_image;
+                        mid_img.addEventListener("click", function() {
+                            var arg = {
+                                round: match.roundID,
+                                leagueName: match.leagueName,
+                                leagueId: match.leagueID
+                            };
+                            var win = Alloy.createController("challenge", arg).getView();
+                            Alloy.Globals.WINDOWS.push(win);
+                            Alloy.Globals.NAV.openWindow(win, {
+                                animated: true
+                            });
+                        });
+                    }
+                }
+            } else {
+                versusLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
+                Ti.API.error("Error =>" + this.response);
+            }
+        };
+    }
     require("alloy/controllers/BaseController").apply(this, Array.prototype.slice.call(arguments));
     this.__controllerPath = "landingPage";
     if (arguments[0]) {
@@ -145,6 +192,12 @@ function Controller() {
         right: 10,
         bottom: 10
     }));
+    top_img.addEventListener("click", function() {
+        var win = Alloy.createController("halfPot").getView();
+        Alloy.Globals.NAV.openWindow(win, {
+            animated: true
+        });
+    });
     mid_img.add(Ti.UI.createLabel({
         text: Alloy.Globals.PHRASES.landingPageMatch,
         zIndex: "100",
@@ -295,6 +348,35 @@ function Controller() {
     }) : $.nav.add($.UI.create("ImageView", {
         classes: [ "navLogo" ]
     }));
+    var matchWrapperView = Ti.UI.createView({
+        width: "50%",
+        height: "70%",
+        layout: "horizontal",
+        top: 0
+    });
+    var team1Logo = Ti.UI.createImageView({
+        width: 50,
+        height: 50
+    });
+    matchWrapperView.add(team1Logo);
+    var versusLabel = Ti.UI.createLabel({
+        width: "30%",
+        height: "100%",
+        text: "VS",
+        textAlign: "center",
+        color: "#FFFFFF",
+        font: {
+            fontSize: 22,
+            fontFamily: "Impact"
+        }
+    });
+    matchWrapperView.add(versusLabel);
+    var team2Logo = Ti.UI.createImageView({
+        width: 50,
+        height: 50
+    });
+    matchWrapperView.add(team2Logo);
+    mid_img.add(matchWrapperView);
     top_img.add(border1);
     mid_img.add(border2);
     bot_img.add(border3);
@@ -306,6 +388,7 @@ function Controller() {
     top_view.add(bot_img);
     bot_view.add(profileBtn);
     bot_view.add(inviteBtn);
+    getMatchOfTheDay();
     $.landingPage.add(top_view);
     $.landingPage.add(bot_view);
     _.extend($, exports);
