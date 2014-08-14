@@ -2,7 +2,7 @@ var args = arguments[0] || {};
 
 //variables to use in class
 var userInfo = null;
-
+var mod = require('bencoding.blur');
 
 function buildProfile(){
 	
@@ -390,12 +390,105 @@ function getAchievements(){
 					Ti.API.info(JSON.stringify(achievements[2]));
 					for (var i = 0; i < achievements.length; i++){
 						var achievement = Ti.UI.createImageView({
+							id: achievements[i].id,
 							image : Alloy.Globals.BETKAMPENURL + "/achievements/"+achievements[i].image,
 							width: 60,
 							height: 60,
 							left: 10,
 							top: 10,
 						});
+						
+						
+						var achID = achievement.id;
+						achievement.addEventListener("click", function(e){
+							var t = Titanium.UI.create2DMatrix();
+							t = t.scale(0);
+						
+							var w = Titanium.UI.createWindow({
+								backgroundColor:'transparent',
+								//borderWidth:8,
+								//borderColor:'#999',
+								height:150,
+								width:150,
+								borderRadius:10,
+								opacity:1,
+								transform:t
+							});
+						
+							// create first transform to go beyond normal size
+							var t1 = Titanium.UI.create2DMatrix();
+							t1 = t1.scale(1.1);
+							var a = Titanium.UI.createAnimation();
+							a.transform = t1;
+							a.duration = 200;
+						
+							// when this animation completes, scale to normal size
+							a.addEventListener('complete', function()
+							{
+								Titanium.API.info('here in complete');
+								var t2 = Titanium.UI.create2DMatrix();
+								t2 = t2.scale(1.0);
+								w.animate({transform:t2, duration:200});
+						
+							});
+						
+							var blur = mod.createBasicBlurView({
+								width: 150,
+								height: 150,
+								image : e.source.image,
+								blurRadius : 15,
+							});
+							
+							w.add(blur);
+							
+							var greyGlass = Ti.UI.createView({
+								width: 150,
+								height: 150,
+								backgroundColor: "c5c5c5",
+								opacity: 0.5,
+								
+							});
+							
+							w.add(greyGlass);
+							
+							
+							// create a button to close window
+							var b = Titanium.UI.createButton({
+								title:'Close',
+								height:30,
+								width:150,
+								top: 0,
+							});
+							w.add(b);
+							
+							var achievementTitle = Ti.UI.createLabel({
+								text: Alloy.Globals.PHRASES.achievements[e.source.id].title,
+								textAlign: "center",
+								color: "#FFFFFF",
+								top:25,
+							});
+							w.add(achievementTitle);
+							
+							var achievementDescription = Ti.UI.createLabel({
+								text: Alloy.Globals.PHRASES.achievements[e.source.id].description,
+								textAlign: "center",
+								color: "#FFFFFF",
+								width: "90%",
+								top: 50,
+							});
+							w.add(achievementDescription);
+							
+							b.addEventListener('click', function()
+							{
+								var t3 = Titanium.UI.create2DMatrix();
+								t3 = t3.scale(0);
+								w.close({transform:t3,duration:300});
+							});
+						
+							w.open(a);
+						});
+						
+						
 						scrollView.add(achievement);
 					}
 					//userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.coinsInfoTxt + ": " + userInfo.totalCoins);
