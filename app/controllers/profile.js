@@ -84,7 +84,7 @@ var profilePictureView = Ti.UI.createView({
 profileTopView.add(profilePictureView);
 
 var profilePic = Ti.UI.createImageView({
-	image : "https://graph.facebook.com/"+Alloy.Globals.FACEBOOKOBJECT.id+"/picture?type=large",
+	image : "https://graph.facebook.com/"+Alloy.Globals.FACEBOOKOBJECT.id+"/picture?type=large", 
 	width: 90,
 	height: 90,
 	borderRadius : 45
