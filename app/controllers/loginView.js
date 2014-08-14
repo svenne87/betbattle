@@ -53,7 +53,7 @@ $.signInBtn.addEventListener('click', function(e)
 {
 	if ($.loginEmail.value != '' && $.loginPass.value != '')
 	{
-		loginReq.open("POST","http://secure.jimdavislabs.se/secure/betkampen_vm/api/email_login.php");
+		loginReq.open("POST", Alloy.Globals.BETKAMPENEMAILLOGIN);
 		var params = {
 			email: $.loginEmail.value,
 			password: Ti.Utils.md5HexDigest($.loginPass.value)
