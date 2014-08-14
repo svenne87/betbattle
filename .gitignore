@@ -113,3 +113,23 @@ Resources/android/images/header.png
 Resources/android/images/m.png
 
 Resources/android/images/p.png
+
+app/controllers/profile.js
+
+Resources/iphone/alloy/controllers/login.js
+
+Resources/iphone/alloy/controllers/profile.js
+
+Resources/iphone/alloy/styles/profile.js
+
+Resources/iphone/alloy/styles/registerView.js
+
+Resources/iphone/alloy/styles/settings.js
+
+Resources/iphone/alloy/styles/store.js
+
+Resources/iphone/alloy/styles/terms.js
+
+Resources/iphone/alloy/styles/topplistan.js
+
+Resources/iphone/app.js
