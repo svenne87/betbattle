@@ -45,7 +45,7 @@ loginReq.onload = function()
 
 loginReq.onerror = function()
 {
-	alert("Network error");
+	alert(Alloy.Globals.PHRASES.internetMayBeOffErrorTxt);
 };
 var error = Alloy.Globals.PHRASES.loginError;
 

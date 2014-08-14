@@ -24,20 +24,20 @@ createReq.onload = function()
 	{
 		$.signUpBtn.enabled = true;
 		$.signUpBtn.opacity = 1;
-		alert(this.responseText);
+		alert(Alloy.Globals.PHRASES.commonErrorTxt);
 	} 
 	else
 	{
 		var alertDialog = Titanium.UI.createAlertDialog({
 		    title: 'Alert',
-		    message: this.responseText,
+		    message: Alloy.Globals.PHRASES.regComplete,
 		    buttonNames: ['OK']
 		});
 		alertDialog.show();
 		alertDialog.addEventListener('click',function(e)
 		{
-			var login = Alloy.createController('login').getView();
-			login.open();
+			var loginWindow = Alloy.createController('loginView').getView();
+			loginWindow.open();
 			$.registrationView.close();
 		});
 	}
@@ -49,13 +49,13 @@ $.signUpBtn.addEventListener('click',function(e)
 	{
 		if ($.regPass.value != $.regPassAgain.value)
 		{
-			alert("Your passwords do not match");
+			alert(Alloy.Globals.PHRASES.noMatchPass);
 		}
 		else
 		{
 			if (!checkemail($.regEmail.value))
 			{
-				alert("Please enter a valid email");
+				alert(Alloy.Globals.PHRASES.validEmail);
 			}
 			else
 			{
@@ -73,7 +73,7 @@ $.signUpBtn.addEventListener('click',function(e)
 	}
 	else
 	{
-		alert("All fields are required");
+		alert(Alloy.Globals.PHRASES.allFields);
 	}
 });
 
