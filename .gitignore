@@ -114,6 +114,7 @@ Resources/android/images/m.png
 
 Resources/android/images/p.png
 
+<<<<<<< HEAD
 app/controllers/profile.js
 
 Resources/iphone/alloy/controllers/login.js
@@ -133,3 +134,52 @@ Resources/iphone/alloy/styles/terms.js
 Resources/iphone/alloy/styles/topplistan.js
 
 Resources/iphone/app.js
+=======
+Resources/iphone/alloy/styles/topplistan.js
+
+Resources/iphone/alloy/styles/terms.js
+
+Resources/iphone/alloy/styles/store.js
+
+Resources/iphone/alloy/styles/settings.js
+
+Resources/iphone/alloy/styles/registerView.js
+
+Resources/iphone/alloy/styles/profile.js
+
+Resources/iphone/alloy/controllers/profile.js
+
+Resources/iphone/alloy/controllers/login.js
+
+Resources/iphone/app.js
+
+Resources/iphone/lib/push_notifications_apns.js
+
+Resources/iphone/lib/ModalPicker.js
+
+Resources/iphone/lib/IndicatorWindow.js
+
+Resources/iphone/lib/IconicFont.js
+
+Resources/iphone/lib/FontAwesome.js
+
+Resources/iphone/alloy/widgets/ds.slideMenu/styles/widget.js
+
+Resources/iphone/alloy/sync/sql.js
+
+Resources/iphone/alloy/sync/properties.js
+
+Resources/iphone/alloy/sync/localStorage.js
+
+Resources/iphone/alloy/models/Group.js
+
+Resources/iphone/alloy/models/GameListObject.js
+
+Resources/iphone/alloy/models/Game.js
+
+Resources/iphone/alloy/models/Facebook.js
+
+Resources/iphone/alloy/models/Challenge.js
+
+Resources/iphone/alloy.js
+>>>>>>> FETCH_HEAD
