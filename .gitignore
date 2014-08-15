@@ -190,3 +190,22 @@ Resources/iphone/alloy/controllers/menurow.js
 Resources/android/alloy/controllers/menurow.js
 
 Resources/android/alloy/controllers/menuview.js
+
+Resources/iphone/alloy/controllers/challengesView.js
+
+Resources/iphone/alloy/controllers/index.js
+
+Resources/iphone/alloy/controllers/newChallengeLeague.js
+
+
+Resources/iphone/alloy/styles/challenge.js
+
+Resources/iphone/alloy/styles/challengesView.js
+
+Resources/iphone/alloy/styles/friendSelect.js
+
+Resources/iphone/alloy/styles/groupSelect.js
+
+Resources/iphone/alloy/styles/index.js
+
+Resources/iphone/alloy/styles/landingPage.js
