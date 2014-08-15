@@ -33,12 +33,10 @@
 				x : "0%",
 				y : "100%"
 			},
-			colors : [{
-				color : "#D85000",
-				offset : 0.0
-			}, {
+			colors : [ {
 				color : "#F09C00",
-				offset : 1.0
+			},{
+				color : "#D85000",
 			}]
 		},
 }

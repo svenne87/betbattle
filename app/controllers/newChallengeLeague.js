@@ -45,6 +45,7 @@ var leagues = Alloy.Globals.LEAGUES;
 var tableHeaderView = Ti.UI.createView({
 	height : '142dp',
 	backgroundImage : '/images/header.png'
+	//backgroundColor: 'transparent',
 });
 
 tableHeaderView.add(Ti.UI.createLabel({
@@ -53,7 +54,7 @@ tableHeaderView.add(Ti.UI.createLabel({
 	font : {
 		fontSize : Alloy.Globals.getFontSize(3),
 		fontWeight : 'normal',
-		fontFamily : Alloy.Globals.getFont()
+		fontFamily : 'Impact',
 	},
 	color : '#FFF'
 }));
@@ -63,7 +64,8 @@ table = Titanium.UI.createTableView({
 	left : 0,
 	headerView : tableHeaderView,
 	height : '100%',
-	backgroundColor : '#303030',
+	backgroundImage: 'images/profileBG.jpg',
+	backgroundColor : 'transparent',
 	separatorColor : '#6d6d6d'
 });
 

@@ -119,6 +119,9 @@
         <module platform="iphone">com.logicallabs.inappproducts</module>
         <module platform="iphone">bencoding.blur</module>
         <module platform="android">bencoding.blur</module>
+        <module platform="iphone">bencoding.sms</module>
+        <module platform="android">miga.tibeacon</module>
+        <module platform="iphone">org.beuckman.tibeacons</module>
     </modules>
     <deployment-targets>
         <target device="android">true</target>

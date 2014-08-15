@@ -8,7 +8,7 @@ table.touchEnabled = true;
 }
 }
 });*/
-
+var mod = require('bencoding.blur');
 // update coins
 Ti.App.addEventListener('updateCoins', function(coins) {
 	var currentCoins = -1;
@@ -251,7 +251,7 @@ function createSectionsForTable(sectionText) {
 		font : {
 			fontSize : Alloy.Globals.getFontSize(2),
 			fontWeight : 'normal',
-			fontFamily : Alloy.Globals.getFont()
+			fontFamily : 'Impact',
 		},
 		color : '#FFF'
 	}));
@@ -621,13 +621,15 @@ function constructTableView(array) {
 
 	var tableHeaderView = Ti.UI.createView({
 		height : 212,
-		backgroundColor : '#303030'
+		backgroundColor : 'transparent'
 	});
 
 	var tableImageView = Ti.UI.createView({
 		top : 0,
 		height : 142,
-		backgroundImage : '/images/header.png'
+		width: "100%",
+		//blurRadius: 15,
+		//image : '/images/header.png'
 	});
 
 	tableImageView.add(Ti.UI.createLabel({
@@ -636,7 +638,7 @@ function constructTableView(array) {
 		font : {
 			fontSize : Alloy.Globals.getFontSize(3),
 			fontWeight : 'normal',
-			fontFamily : Alloy.Globals.getFont()
+			fontFamily : 'Impact',
 		},
 		color : '#FFF'
 	}));
@@ -651,14 +653,15 @@ function constructTableView(array) {
 		top : 0,
 		height : 35,
 		layout : 'horizontal',
-		backgrounColor : '#303030'
+		//backgrounColor : '#000000',
+		//opacity: "0.7"
 	});
 
 	var userInfoViewBottom = Ti.UI.createView({
 		top : 35,
 		height : 35,
 		layout : 'horizontal',
-		backgrounColor : '#303030'
+		//backgrounColor : '#000000'
 	});
 
 	userInfoViewTop.add(Ti.UI.createImageView({
@@ -713,6 +716,7 @@ function constructTableView(array) {
 		left : 10,
 		height : 40,
 		width : 40,
+		borderRadius: 20,
 		image : 'https://graph.facebook.com/' + Alloy.Globals.FACEBOOKOBJECT.id + '/picture'
 	});
 
@@ -756,12 +760,12 @@ function constructTableView(array) {
 	userInfoView.add(rightInfoLabel);
 	userInfoView.add(leftImageView);
 
-	userInfoView.add(Ti.UI.createView({
+	/*userInfoView.add(Ti.UI.createView({
 		top : 68,
 		height : 0.5,
 		width : '100%',
 		backgroundColor : '#6d6d6d'
-	}));
+	}));*/
 	tableHeaderView.add(userInfoView);
 
 	if (OS_IOS) {
@@ -777,11 +781,13 @@ function constructTableView(array) {
 		}
 
 		table = Titanium.UI.createTableView({
-			width : Ti.UI.FILL,
+			//width : Ti.UI.FILL,
 			left : 0,
 			headerView : tableHeaderView,
 			height : '100%',
-			backgroundColor : '#303030',
+			width: '100%',
+			backgroundImage: 'images/profileBG.jpg',
+			backgroundColor : 'transparent',
 			style : Ti.UI.iPhone.TableViewStyle.GROUPED,
 			separatorInsets : {
 				left : 0,
@@ -798,7 +804,7 @@ function constructTableView(array) {
 			left : 0,
 			headerView : tableHeaderView,
 			height : '100%',
-			backgroundColor : '#303030',
+			//backgroundColor : '#303030',
 			separatorColor : '#6d6d6d',
 			id : 'challengeTable'
 		});
