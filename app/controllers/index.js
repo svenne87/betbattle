@@ -8,47 +8,49 @@ var indicator = uie.createIndicatorWindow({
 
 function enterRegion(e) {
 	alert(e);
+	if(e.identifier == 'conference'){
+		alert("Du är nära Konferensrummet. Ska jag sätta på TV:n ?")
+	}else if(e.identifier == 'hall'){
+		alert("Du är nära hallen nu);
+	}else if(e.identifier == 'kitchen'){
+		alert("Du är nära köket.");
+	}
 	
 	TiBeacons.startRangingForBeacons(e);
 }
 
+function updateInformation(e){
+	if (e.identifier == 'conference' && e.proximity == "near"){
+		alert("Du är i konferensrummet nu. Grattis!");
+	}else if (e.identifier == 'hall' && e.proximity == "near"){
+		alert("Du är i hallen nu. Grattis!");
+	}else if (e.identifier == 'kitchen' && e.proximity == "near"){
+		alert("Du är i köket! Glöm inte kaffet!");
+	}
+}
+
 TiBeacons.addEventListener("enteredRegion", enterRegion);
+TiBeacons.addEventListener("beaconProximity", updateInformation);
 
         TiBeacons.startMonitoringForRegion({
             uuid : "B9407F30-F5F8-466E-AFF9-25556B57FE6D",
-            identifier : "Test Region 1",
+            identifier : "conference",
             major: 25458,
             minor: 53209
         });
         TiBeacons.startMonitoringForRegion({
         	uuid : "B9407F30-F5F8-466E-AFF9-25556B57FE6D",
-        	identifier: "blue",
+        	identifier: "hall",
         	major: 41796, 
         	minor: 19133,
         });
         TiBeacons.startMonitoringForRegion({
         	uuid: "B9407F30-F5F8-466E-AFF9-25556B57FE6D",
-        	identifier: "lightBlue",
+        	identifier: "kitchen",
         	major: 51092,
         	minor: 34572,
         });
-        TiBeacons.startMonitoringForRegion({
-            uuid : "00000000-0000-0000-0000-000000000001",
-            major: 1,
-            identifier : "Test Region 2"
-        });
-        TiBeacons.startMonitoringForRegion({
-            uuid : "00000000-0000-0000-0000-000000000002",
-            major: 1,
-            minor: 2,
-            identifier : "Test Region 3"
-        });
-
-        TiBeacons.startMonitoringForRegion({
-            uuid : "B9407F30-F5F8-466E-AFF9-25556B57FE6D",
-            identifier : "Estimote"
-        });
-
+       
 
 function openLogin() {
 	if (OS_IOS) {
