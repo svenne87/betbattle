@@ -229,7 +229,7 @@ instaBtn.addEventListener('click', function(e){
 
 // --------------------------------------------------------------- Share to TWITTER  -------------------------------------------------------------------------------
 if(OS_IOS){
-	if(Titanium.Platform.canOpenURL('twitter://app')){
+	if(Titanium.Platform.canOpenURL('twitter://')){
 		twitter = false;
 	} else {
 		twitter = true;
@@ -256,7 +256,7 @@ twitterBtn.addEventListener('click', function(e){
 		if(twitter == true){
 		alert('du har inte installerat twitter');
 	} else {
-		alert('Du har twitter :):):)');
+		Titanium.Platform.openURL('twitter://post?message=hej%20hej%20betkampen');
 	}
 		
 	}else if(OS_ANDROID){
