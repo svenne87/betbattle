@@ -1,9 +1,74 @@
 /* This is the app's entry point */
-
+var TiBeacons = require('org.beuckman.tibeacons');
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({
 	top : 200
 });
+
+function ensureModel(e) {
+	
+	var atts = {
+		id: e.uuid+" "+e.major+" "+e.minor,
+		identifier: e.identifier,
+		uuid: e.uuid,
+		major: parseInt(e.major),
+		minor: parseInt(e.minor),
+		proximity: e.proximity
+	};
+	
+	var model;
+	var models = Alloy.Collections.iBeacon.where({id:atts.id});
+	
+	if (models.length == 0) {
+		model = Alloy.createModel("iBeacon", atts);
+		Alloy.Collections.iBeacon.add(model);
+	}
+	else {
+		model = models[0];
+Ti.API.info("found model "+models[0].get("identifier"));	
+	}
+
+	return model;
+}
+
+function enterRegion(e) {
+	alert(e);
+	var model = ensureModel(e);
+	
+	TiBeacons.startRangingForBeacons(e);
+}
+
+TiBeacons.addEventListener("enteredRegion", enterRegion);
+
+        TiBeacons.startMonitoringForRegion({
+            uuid : "25458-53209",
+            identifier : "Test Region 1"
+        });
+        TiBeacons.startMonitoringForRegion({
+        	uuid : "41796-1933",
+        	identifier: "blue",
+        });
+        TiBeacons.startMonitoringForRegion({
+        	uuid: "51092-34572",
+        	identifier: "lightBlue",
+        });
+        TiBeacons.startMonitoringForRegion({
+            uuid : "00000000-0000-0000-0000-000000000001",
+            major: 1,
+            identifier : "Test Region 2"
+        });
+        TiBeacons.startMonitoringForRegion({
+            uuid : "00000000-0000-0000-0000-000000000002",
+            major: 1,
+            minor: 2,
+            identifier : "Test Region 3"
+        });
+
+        TiBeacons.startMonitoringForRegion({
+            uuid : "B9407F30-F5F8-466E-AFF9-25556B57FE6D",
+            identifier : "Estimote"
+        });
+
 
 function openLogin() {
 	if (OS_IOS) {
