@@ -186,3 +186,7 @@ Resources/iphone/alloy.js
 Resources/iphone/alloy/controllers/menuview.js
 
 Resources/iphone/alloy/controllers/menurow.js
+
+Resources/android/alloy/controllers/menurow.js
+
+Resources/android/alloy/controllers/menuview.js
