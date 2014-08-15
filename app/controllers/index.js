@@ -7,7 +7,7 @@ var indicator = uie.createIndicatorWindow({
 
 
 function enterRegion(e) {
-	alert(e);
+	
 	if(e.identifier == 'conference'){
 		alert("Du är nära Konferensrummet. Ska jag sätta på TV:n ?");
 	}else if(e.identifier == 'hall'){
