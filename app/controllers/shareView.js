@@ -402,9 +402,15 @@ if(OS_ANDROID){
 		emailDialog.open();
 	});
 // --------------------------------------------------------------- Share to SMS ANDROID  ---------------------------------------------------------------------------
-
+	
+	var intent = Ti.Android.createIntent({
+		action: Ti.Android.ACTION_SENDTO,
+		data: 'smsto:'
+	});
+	intent.putExtra('sms_body', 'hej hej detta är betkampen');
+	
 	androidSmsBtn.addEventListener('click', function(e){
-		alert('Android SMS');
+		Ti.Android.currentActivity.startActivity(intent);
 	});
 }
 
