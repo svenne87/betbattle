@@ -41,16 +41,22 @@ function enterRegion(e) {
 TiBeacons.addEventListener("enteredRegion", enterRegion);
 
         TiBeacons.startMonitoringForRegion({
-            uuid : "25458-53209",
-            identifier : "Test Region 1"
+            uuid : "B9407F30-F5F8-466E-AFF9-25556B57FE6D",
+            identifier : "Test Region 1",
+            major: 25458,
+            minor: 53209
         });
         TiBeacons.startMonitoringForRegion({
-        	uuid : "41796-1933",
+        	uuid : "B9407F30-F5F8-466E-AFF9-25556B57FE6D",
         	identifier: "blue",
+        	major: 41796, 
+        	minor: 19133,
         });
         TiBeacons.startMonitoringForRegion({
-        	uuid: "51092-34572",
+        	uuid: "B9407F30-F5F8-466E-AFF9-25556B57FE6D",
         	identifier: "lightBlue",
+        	major: 51092,
+        	minor: 34572,
         });
         TiBeacons.startMonitoringForRegion({
             uuid : "00000000-0000-0000-0000-000000000001",
