@@ -1,5 +1,20 @@
 var args = arguments[0] || {};
-
+var isIos = false;
+if(OS_IOS){
+	if(Titanium.Platform.canOpenURL('fb://profile')){
+		Titanium.Facebook.forceDialogAuth = false;
+	} else {
+		Titanium.Facebook.forceDialogAuth = true;
+	}
+}
+var instagram;
+if(OS_IOS){
+	if(Titanium.Platform.canOpenURL('instagram://app')){
+		instagram = false;
+	} else {
+		instagram = true;
+	}
+}
 
 var mainView = Ti.UI.createView({
 	class : "topView",
@@ -16,7 +31,7 @@ var socialShareLabel = Ti.UI.createLabel({
 	textAlign: "center",
 	top:30,
 	font: {
-		fontSize: 18,
+		fontSize: 22,
 		fontFamily: "Impact"
 	},
 	color: "#FFF"
@@ -26,9 +41,9 @@ mainView.add(socialShareLabel);
 var fbBtn = Titanium.UI.createButton({
 	title: Alloy.Globals.PHRASES.shareOnTxt+ " Facebook  ",
 	top:40,
-	height: 40,
-	width: 220,
-	left: '15.5%',
+	height: 50,
+	width: 260,
+	left: '10%',
 	backgroundColor: '#3B5998',
 	color: '#fff',
 	borderRadius: 3
@@ -45,10 +60,10 @@ var fbIcon = Titanium.UI.createImageView({
 var instaBtn = Titanium.UI.createButton({
 	title: Alloy.Globals.PHRASES.shareOnTxt+ " Instagram  ",
 	top:5,
-	height: 40,
-	width: 220,
+	height: 50,
+	width: 260,
 	textAlign: "center",
-	left: '15.5%',
+	left: '10%',
 	backgroundColor: '#4E433C',
 	color: '#fff',
 	borderRadius: 3
@@ -65,10 +80,10 @@ var instaIcon = Titanium.UI.createImageView({
 var twitterBtn = Titanium.UI.createButton({
 	title: Alloy.Globals.PHRASES.shareOnTxt+ " Twitter  ",
 	top:5,
-	height: 40,
-	width: 220,
+	height: 50,
+	width: 260,
 	textAlign: "center",
-	left: '15.5%',
+	left: '10%',
 	backgroundColor: '#00ACED',
 	color: '#fff',
 	borderRadius: 3
@@ -82,33 +97,13 @@ var twitterIcon = Titanium.UI.createImageView({
 	});
 	twitterBtn.add(twitterIcon);
 
-var messengerBtn = Titanium.UI.createButton({
-	title: Alloy.Globals.PHRASES.shareOnTxt+ " Messenger  ",
-	top:5,
-	height: 40,
-	width: 220,
-	textAlign: "center",
-	left: '15.5%',
-	backgroundColor: '#0087FF',
-	color: '#fff',
-	borderRadius: 3
-});
-mainView.add(messengerBtn);
-var messIcon = Titanium.UI.createImageView({
-		image: "images/messenger.png",
-		height: 25,
-		width: 25,
-		left: 5
-	});
-	messengerBtn.add(messIcon);
-
 var googleBtn = Titanium.UI.createButton({
 	title: Alloy.Globals.PHRASES.shareOnTxt+ " Google+  ",
 	top:5,
-	height: 40,
-	width: 220,
+	height: 50,
+	width: 260,
 	textAlign: "center",
-	left: '15.5%',
+	left: '10%',
 	backgroundColor: '#DD4B39',
 	color: '#fff',
 	borderRadius: 3
@@ -126,10 +121,10 @@ if(OS_IOS){
 	var appleBtn = Titanium.UI.createButton({
 		title: Alloy.Globals.PHRASES.sendTxt+ " Apple Mail  ",
 		top:5,
-		height: 40,
-		width: 220,
+		height: 50,
+		width: 260,
 		textAlign: "center",
-		left: '15.5%',
+		left: '10%',
 		backgroundColor: '#fff',
 		color: '#000',
 		borderRadius: 3
@@ -147,10 +142,10 @@ if(OS_IOS){
 	var iphoneSmsBtn = Titanium.UI.createButton({
 		title: Alloy.Globals.PHRASES.sendTxt+ " SMS ",
 		top:5,
-		height: 40,
-		width: 220,
+		height: 50,
+		width: 260,
 		textAlign: "center",
-		left: '15.5%',
+		left: '10%',
 		backgroundColor: '#fff',
 		color: '#000',
 		borderRadius: 3
@@ -169,10 +164,10 @@ if(OS_IOS){
 	var gmailBtn = Titanium.UI.createButton({
 		title: Alloy.Globals.PHRASES.sendTxt+ " GMail  ",
 		top:5,
-		height: 40,
-		width: 220,
+		height: 50,
+		width: 260,
 		textAlign: "center",
-		left: '15.5%',
+		left: '10%',
 		backgroundColor: '#fff',
 		color: '#000',
 		borderRadius: 3
@@ -190,10 +185,10 @@ if(OS_IOS){
 	var androidSmsBtn = Titanium.UI.createButton({
 		title: Alloy.Globals.PHRASES.sendTxt+ " SMS ",
 		top:5,
-		height: 40,
-		width: 220,
+		height: 50,
+		width: 260,
 		textAlign: "center",
-		left: '15.5%',
+		left: '10%',
 		backgroundColor: '#fff',
 		color: '#000',
 		borderRadius: 3
@@ -214,160 +209,96 @@ if(OS_IOS){
 // --------------------------------------------------------------- Share to FACEBOOK  ------------------------------------------------------------------------------
 fbBtn.addEventListener('click', function(e){
 	
-	if (Alloy.Globals.checkConnection()) {	
-		var facebookModuleError = true;		
-		var fb = Alloy.Globals.FACEBOOK;
-		
-		if(OS_IOS) {
-			var permissions = fb.getPermissions();
-			
-			if(permissions.indexOf('publish_actions') > -1){
-				// already have permission
-				facebookModuleError = false;
-				performFacebookPost(fb);
-			} else {
-				fb.reauthorize(['publish_actions'], 'friends', function(e){
-					facebookModuleError = false;
-					
-					if(e.success) {
-						performFacebookPost(fb);
-					} else {
-						if(e.error && !e.cancelled){
-							Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.facebookConnectionErrorTxt);
-						} else {
-						
-						}
-					}
-				});	
-			}
-		} else {
-			facebookModuleError = false;
-			performFacebookPost(fb);
-		}
-		
-		if(facebookModuleError){
-			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.unknownFacebookErrorTxt);
-		}
+	if(Titanium.Facebook.forceDialogAuth == true){
+		alert('du har inte installerat fb');
 	} else {
-		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
-	}	
-	
-});
-var uie = require('lib/IndicatorWindow');
-var indicator = uie.createIndicatorWindow({
-	top : 200,
-	text : Alloy.Globals.PHRASES.loadingTxt
-});
- 
-function performFacebookPost(fb) {
-	var data = {
-		link : Alloy.Globals.BETKAMPENURL,
-    	name : Alloy.Globals.PHRASES.fbPostNameTxt,
-    	caption : Alloy.Globals.PHRASES.fbPostCaptionTxt,
-  		picture : Alloy.Globals.BETKAMPENURL + '/images/log_bk.png',
-   		description: Alloy.Globals.PHRASES.fbPostDescriptionTxt
-    };
-	
-	indicator.openIndicator();
-				
-	// share
-	fb.dialog('feed',
-		data,
-		function(event) {
-			if(event.success && event.result) {
-				// shared success
-				
-					// check connection
-					if (Alloy.Globals.checkConnection()) {
-						var xhr = Titanium.Network.createHTTPClient();
-						xhr.onerror = function(e) {
-							Ti.API.error('Bad Sever =>' + e.error);
-							indicator.closeIndicator();
-							Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-						};
-
-						try {
-							xhr.open('POST', Alloy.Globals.BETKAMPENSHAREURL);
-							xhr.setRequestHeader("content-type", "application/json");
-							xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
-							xhr.setTimeout(Alloy.Globals.TIMEOUT);
-
-							// build the json string
-							var param = '{"betkampen_id":"' + Alloy.Globals.BETKAMPENUID + '", "lang":"' + Alloy.Globals.LOCALE +'"}';
-
-							xhr.send(param);
-						} catch(e) {
-							indicator.closeIndicator();
-							Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-						}
-
-						xhr.onload = function() {
-							if (this.status == '200') {
-								indicator.closeIndicator();
-								
-								if (this.readyState == 4) {
-									var response = '';
-									try {
-										response = JSON.parse(this.responseText);
-									} catch(e) {
-	
-									}
-								
-								if(response.indexOf('100 coins') > -1){
-									Ti.App.fireEvent('updateCoins', {"coins" : 100});
-								}
-								Alloy.Globals.showFeedbackDialog(response);
-								
-								Ti.API.log(response);
-								} else {
-									Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
-								}
-							} else {
-								indicator.closeIndicator();
-								Ti.API.error("Error =>" + JSON.parse(this.responseText));
-								Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
-							}
-						};
-	} else {
-		indicator.closeIndicator();
-		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionError);
+		alert('Du har fb :):):)');
 	}
-				
-				
-			} else {
-				indicator.closeIndicator();
-				if(event.error && !event.cancelled){
-					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.facebookConnectionErrorTxt);
-				} else {
-					// cancel
-				}
-			}
-		}
-	);			
-}
+	
+});
 
 // --------------------------------------------------------------- Share to INSTAGRAM  -----------------------------------------------------------------------------
 
 instaBtn.addEventListener('click', function(e){
-	Titanium.Platform.openURL('SMS:');
+	if(instagram == true){
+		alert('du har inte installerat instagram');
+	} else {
+		alert('Du har instagram :):):)');
+	}
 });
 
 // --------------------------------------------------------------- Share to TWITTER  -------------------------------------------------------------------------------
-
+if(OS_IOS){
+	if(Titanium.Platform.canOpenURL('twitter://app')){
+		twitter = false;
+	} else {
+		twitter = true;
+	}
+}else if(OS_ANDROID){
+	function shareToTwitter(){
+		try{
+			var intTwitter = Ti.Android.createIntent({
+				action: Ti.Android.ACTION_SEND,
+				packageName: 'com.twitter.android',
+				className: 'com.twitter.android.PostActivity',
+				flags: Ti.Android.FLAG_ACTIVITY_NEW_TASK,
+				type: 'text/plain'
+			});
+			intTwitter.putExtra(Ti.Android.EXTRA_TEXT, 'hej hej detta är betkampen');
+			Ti.Android.currentActivity.startActivity(intTwitter);
+		}catch(x){
+			alert('Hittar inte Twitters app. Har du den installerad?');
+		}
+	}
+}
 twitterBtn.addEventListener('click', function(e){
-	alert('Twitter');
-});
-
-// --------------------------------------------------------------- Share to MESSENGER  -----------------------------------------------------------------------------
-
-messengerBtn.addEventListener('click', function(e){
-	alert('Messenger');
+	if(OS_IOS){
+		if(twitter == true){
+		alert('du har inte installerat twitter');
+	} else {
+		alert('Du har twitter :):):)');
+	}
+		
+	}else if(OS_ANDROID){
+		shareToTwitter();
+	}
+	
 });
 
 // --------------------------------------------------------------- Share to GOOGLE+  -------------------------------------------------------------------------------
+function gplus(){
+var win = Ti.UI.createWindow({
+    barColor: '#000',
+    navBarHidden: true
+});
+var textToShare = encodeURIComponent('hej hej betkampen');
+var webView = Ti.UI.createWebView({
+    url: 'https://plus.google.com/share?text='+textToShare        
+});
+win.add(webView);
+var close = Ti.UI.createButton({
+    title: 'Close'
+});
+close.addEventListener('click', function () {
+    win.close();
+});
+win.open({modal: true});
+ 
+webView.addEventListener('load', function (e) {
+    if (e.url.indexOf('https://accounts.google.com') == -1) {
+        win.hideNavBar();
+    } else {
+        win.showNavBar();
+        win.setLeftNavButton(close);
+    }
+});
+webView.addEventListener('error', function (e) {
+    win.close();
+});
+}
 
 googleBtn.addEventListener('click', function(e){
-	alert('Google+');
+	gplus();
 });
 
 // iPhone buttons
