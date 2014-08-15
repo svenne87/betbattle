@@ -48,13 +48,13 @@
                     <string>/fonts/fontawesome-webfont.ttf</string>
                 </array>
                 <key>UIBackgroundModes</key>
-				  <array>
-				    <string>location</string>
-				  </array>
-				  <key>UIRequiredDeviceCapabilities</key>
-  					<array>
-  						<string>bluetooth-le</string>
-  					</array>
+                <array>
+                    <string>location</string>
+                </array>
+                <key>UIRequiredDeviceCapabilities</key>
+                <array>
+                    <string>bluetooth-le</string>
+                </array>
             </dict>
         </plist>
     </ios>
@@ -63,6 +63,11 @@
             <uses-sdk android:minSdkVersion="14" android:targetSdkVersion="16"/>
             <supports-screens android:anyDensity="false"
                 android:largeScreens="true" android:normalScreens="true" android:smallScreens="false"/>
+                <uses-permission
+               		android:name="android.permission.BLUETOOTH"/>
+	            <uses-permission
+	                android:name="android.permission.BLUETOOTH_ADMIN"/>
+	            <application>
             <application android:hardwareAccelerated="true"
                 android:icon="@drawable/appicon"
                 android:label="Betkampen" android:largeHeap="true"
@@ -99,6 +104,21 @@
                 <service android:exported="false" android:name="org.appcelerator.titanium.analytics.TiAnalyticsService"/>
                 <service android:name="net.iamyellow.gcmjs.GCMIntentService"/>
                 <service android:name="net.iamyellow.gcmjs.GcmjsService"/>
+                <service    android:enabled="true"
+                            android:exported="true"
+                            android:isolatedProcess="false"
+                            android:label="iBeacon"
+                            android:name="com.radiusnetworks.ibeacon.service.IBeaconService">
+                </service>
+                <service    android:enabled="true" 
+                            android:name="com.radiusnetworks.ibeacon.IBeaconIntentProcessor">
+                            <meta-data android:name="background" android:value="true" />
+                    <intent-filter 
+                        android:priority="1" >
+                        <action android:name="BetkampenApplication.DID_RANGING"/>
+                        <action android:name="BetkampenApplication.DID_MONITORING"/>
+                    </intent-filter>
+                </service>
                 <receiver
                     android:name="net.iamyellow.gcmjs.GCMBroadcastReceiver" android:permission="com.google.android.c2dm.permission.SEND">
                     <intent-filter>
@@ -130,6 +150,7 @@
         <module platform="iphone">bencoding.sms</module>
         <module platform="android">miga.tibeacon</module>
         <module platform="iphone">org.beuckman.tibeacons</module>
+        <module platform="android">com.liferay.beacons</module>
     </modules>
     <deployment-targets>
         <target device="android">true</target>
