@@ -182,4 +182,7 @@ Resources/iphone/alloy/models/Facebook.js
 Resources/iphone/alloy/models/Challenge.js
 
 Resources/iphone/alloy.js
->>>>>>> FETCH_HEAD
+
+Resources/iphone/alloy/controllers/menuview.js
+
+Resources/iphone/alloy/controllers/menurow.js
