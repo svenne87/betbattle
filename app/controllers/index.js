@@ -5,35 +5,9 @@ var indicator = uie.createIndicatorWindow({
 	top : 200
 });
 
-function ensureModel(e) {
-	
-	var atts = {
-		id: e.uuid+" "+e.major+" "+e.minor,
-		identifier: e.identifier,
-		uuid: e.uuid,
-		major: parseInt(e.major),
-		minor: parseInt(e.minor),
-		proximity: e.proximity
-	};
-	
-	var model;
-	var models = Alloy.Collections.iBeacon.where({id:atts.id});
-	
-	if (models.length == 0) {
-		model = Alloy.createModel("iBeacon", atts);
-		Alloy.Collections.iBeacon.add(model);
-	}
-	else {
-		model = models[0];
-Ti.API.info("found model "+models[0].get("identifier"));	
-	}
-
-	return model;
-}
 
 function enterRegion(e) {
 	alert(e);
-	var model = ensureModel(e);
 	
 	TiBeacons.startRangingForBeacons(e);
 }
