@@ -209,13 +209,137 @@ if(OS_IOS){
 // --------------------------------------------------------------- Share to FACEBOOK  ------------------------------------------------------------------------------
 fbBtn.addEventListener('click', function(e){
 	
-	if(Titanium.Facebook.forceDialogAuth == true){
-		alert('du har inte installerat fb');
+	if (Alloy.Globals.checkConnection()) {	
+		var facebookModuleError = true;		
+		var fb = Alloy.Globals.FACEBOOK;
+		
+		if(OS_IOS) {
+			var permissions = fb.getPermissions();
+			
+			if(permissions.indexOf('publish_actions') > -1){
+				// already have permission
+				facebookModuleError = false;
+				performFacebookPost(fb);
+			} else {
+				fb.reauthorize(['publish_actions'], 'friends', function(e){
+					facebookModuleError = false;
+					
+					if(e.success) {
+						performFacebookPost(fb);
+					} else {
+						if(e.error && !e.cancelled){
+							Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.facebookConnectionErrorTxt);
+						} else {
+						
+						}
+					}
+				});	
+			}
+		} else {
+			facebookModuleError = false;
+			performFacebookPost(fb);
+		}
+		
+		if(facebookModuleError){
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.unknownFacebookErrorTxt);
+		}
 	} else {
-		alert('Du har fb :):):)');
-	}
+		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+	}	
 	
 });
+var uie = require('lib/IndicatorWindow');
+var indicator = uie.createIndicatorWindow({
+	top : 200,
+	text : Alloy.Globals.PHRASES.loadingTxt
+});
+ 
+function performFacebookPost(fb) {
+	var data = {
+		link : Alloy.Globals.BETKAMPENURL,
+    	name : Alloy.Globals.PHRASES.fbPostNameTxt,
+    	caption : Alloy.Globals.PHRASES.fbPostCaptionTxt,
+  		picture : Alloy.Globals.BETKAMPENURL + '/images/log_bk.png',
+   		description: Alloy.Globals.PHRASES.fbPostDescriptionTxt
+    };
+	
+	indicator.openIndicator();
+				
+	// share
+	fb.dialog('feed',
+		data,
+		function(event) {
+			if(event.success && event.result) {
+				// shared success
+				
+					// check connection
+					if (Alloy.Globals.checkConnection()) {
+						var xhr = Titanium.Network.createHTTPClient();
+						xhr.onerror = function(e) {
+							Ti.API.error('Bad Sever =>' + e.error);
+							indicator.closeIndicator();
+							Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+						};
+
+						try {
+							xhr.open('POST', Alloy.Globals.BETKAMPENSHAREURL);
+							xhr.setRequestHeader("content-type", "application/json");
+							xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
+							xhr.setTimeout(Alloy.Globals.TIMEOUT);
+
+							// build the json string
+							var param = '{"betkampen_id":"' + Alloy.Globals.BETKAMPENUID + '", "lang":"' + Alloy.Globals.LOCALE +'"}';
+
+							xhr.send(param);
+						} catch(e) {
+							indicator.closeIndicator();
+							Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+						}
+
+						xhr.onload = function() {
+							if (this.status == '200') {
+								indicator.closeIndicator();
+								
+								if (this.readyState == 4) {
+									var response = '';
+									try {
+										response = JSON.parse(this.responseText);
+									} catch(e) {
+	
+									}
+								
+								if(response.indexOf('100 coins') > -1){
+									Ti.App.fireEvent('updateCoins', {"coins" : 100});
+								}
+								Alloy.Globals.showFeedbackDialog(response);
+								
+								Ti.API.log(response);
+								} else {
+									Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
+								}
+							} else {
+								indicator.closeIndicator();
+								Ti.API.error("Error =>" + JSON.parse(this.responseText));
+								Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
+							}
+						};
+	} else {
+		indicator.closeIndicator();
+		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionError);
+	}
+				
+				
+			} else {
+				indicator.closeIndicator();
+				if(event.error && !event.cancelled){
+					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.facebookConnectionErrorTxt);
+				} else {
+					// cancel
+				}
+			}
+		}
+	);			
+}
 
 // --------------------------------------------------------------- Share to INSTAGRAM  -----------------------------------------------------------------------------
 
@@ -223,7 +347,7 @@ instaBtn.addEventListener('click', function(e){
 	if(instagram == true){
 		alert('du har inte installerat instagram');
 	} else {
-		alert('Du har instagram :):):)');
+		Titanium.Platform.openURL('instagram://app');
 	}
 });
 
@@ -266,35 +390,24 @@ twitterBtn.addEventListener('click', function(e){
 });
 
 // --------------------------------------------------------------- Share to GOOGLE+  -------------------------------------------------------------------------------
-function gplus(){
-var win = Ti.UI.createWindow({
-    barColor: '#000',
-    navBarHidden: true
-});
-var textToShare = encodeURIComponent('hej hej betkampen');
-var webView = Ti.UI.createWebView({
-    url: 'https://plus.google.com/share?text='+textToShare        
-});
-win.add(webView);
-var close = Ti.UI.createButton({
-    title: 'Close'
-});
-close.addEventListener('click', function () {
-    win.close();
-});
-win.open({modal: true});
- 
-webView.addEventListener('load', function (e) {
-    if (e.url.indexOf('https://accounts.google.com') == -1) {
-        win.hideNavBar();
-    } else {
-        win.showNavBar();
-        win.setLeftNavButton(close);
-    }
-});
-webView.addEventListener('error', function (e) {
-    win.close();
-});
+if(OS_IOS){
+	
+}else if(OS_ANDROID){
+	function gplus(){
+		try{
+			var intGoogleplus = Ti.Android.createIntent({
+				action: Ti.Android.ACTION_SEND,
+				packageName: 'com.google.android.apps.plus-1',
+				className: 'com.twitter.android.PostActivity',
+				flags: Ti.Android.FLAG_ACTIVITY_NEW_TASK,
+				type: 'text/plain'
+			});
+			intTwitter.putExtra(Ti.Android.EXTRA_TEXT, 'hej hej detta är betkampen');
+			Ti.Android.currentActivity.startActivity(intTwitter);
+		}catch(x){
+			alert('Hittar inte Google+ app. Har du den installerad?');
+		}
+	}
 }
 
 googleBtn.addEventListener('click', function(e){
