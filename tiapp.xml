@@ -47,6 +47,14 @@
                 <array>
                     <string>/fonts/fontawesome-webfont.ttf</string>
                 </array>
+                <key>UIBackgroundModes</key>
+				  <array>
+				    <string>location</string>
+				  </array>
+				  <key>UIRequiredDeviceCapabilities</key>
+  					<array>
+  						<string>bluetooth-le</string>
+  					</array>
             </dict>
         </plist>
     </ios>
