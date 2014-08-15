@@ -67,7 +67,6 @@
                		android:name="android.permission.BLUETOOTH"/>
 	            <uses-permission
 	                android:name="android.permission.BLUETOOTH_ADMIN"/>
-	            <application>
             <application android:hardwareAccelerated="true"
                 android:icon="@drawable/appicon"
                 android:label="Betkampen" android:largeHeap="true"
