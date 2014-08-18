@@ -66,6 +66,7 @@ Alloy.Globals.BETKAMPENACHIEVEMENTSURL = Alloy.Globals.BETKAMPENURL + '/api/get_
 Alloy.Globals.BETKAMPENEMAILLOGIN = Alloy.Globals.BETKAMPENURL + '/api/email_login.php'; //Email login
 Alloy.Globals.BETKAMPENEMAILREG = Alloy.Globals.BETKAMPENURL + '/api/email_registration.php'; //Email registration
 Alloy.Globals.BETKAMPENGETMOTDINFO = Alloy.Globals.BETKAMPENURL + '/api/get_match_day_info.php'; //matchens mästare
+Alloy.Globals.BETKAMPENGETTICKETS = Alloy.Globals.BETKAMPENURL + '/api/get_user_tickets.php';
 
 Alloy.Globals.performTimeout = function(func) {
 	if (OS_ANDROID) {

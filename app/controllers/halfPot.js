@@ -1,4 +1,6 @@
 var args = arguments[0] || {};
+var tickets = null;
+
 
 var topView = Ti.UI.createView({
 	height: "50%",
@@ -51,26 +53,70 @@ var potAmountLabelBottom = Ti.UI.createLabel({
 	}
 });
 topView.add(potAmountLabelBottom);
-var tickets = 5;
-if(tickets < 1){
-	var infoText = Alloy.Globals.PHRASES.halfPotInfoTextFirst + tickets + Alloy.Globals.PHRASES.halfPotInfoTextMoreTickets + Alloy.Globals.PHRASES.halfPotBuyText;	
-}else if(tickets == 1){
-	var infoText = Alloy.Globals.PHRASES.halfPotInfoTextFirst + tickets + Alloy.Globals.PHRASES.halfPotInfoTextOneTicket + Alloy.Globals.PHRASES.halfPotBuyMoreText;
-}else{
-	var infoText = Alloy.Globals.PHRASES.halfPotInfoTextFirst + tickets + Alloy.Globals.PHRASES.halfPotInfoTextMoreTickets + Alloy.Globals.PHRASES.halfPotBuyMoreText;
-}
+function getUserTickets(){
+	
+	var xhr = Titanium.Network.createHTTPClient();
+	xhr.onerror = function(e) {
+		//scrollView.add(Ti.UI.createLabel).setText(Alloy.Globals.PHRASES.unknownErrorTxt);
+		Ti.API.error('Bad Sever =>' + e.error);
+	};
 
+	try {
+		xhr.open('GET', Alloy.Globals.BETKAMPENGETTICKETS + '?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
+		xhr.setRequestHeader("content-type", "application/json");
+		xhr.setTimeout(Alloy.Globals.TIMEOUT);
 
-var lotteryInfoLabel = Ti.UI.createLabel({
-	height:"30%",
-	width: "100%",
-	//backgroundColor: "",
-	top: 0,
-	text: infoText,
-	textAlign: "center",
-	color: "#FFFFFF",
-});
-botView.add(lotteryInfoLabel);
+		xhr.send();
+	} catch(e) {
+		//versusLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
+		Ti.API.error("catch error" + e.error);
+	}
+
+	xhr.onload = function() {
+		if (this.status == '200') {
+			if (this.readyState == 4) {
+					var ticketsDB = null;
+				try {
+					ticketsDB = JSON.parse(this.responseText);
+				} catch (e) {
+					ticketsDB = null;
+					Ti.API.info("Tickets NULL");
+				}
+
+				if (ticketsDB !== null) {
+					Ti.API.info("tickets: " + JSON.stringify(ticketsDB));
+					tickets = ticketsDB;
+					
+					if(tickets ==  0){
+						var infoText = Alloy.Globals.PHRASES.halfPotInfoTextFirst + tickets + Alloy.Globals.PHRASES.halfPotInfoTextMoreTickets + Alloy.Globals.PHRASES.halfPotBuyText;	
+					}else if(tickets.length == 1){
+						var infoText = Alloy.Globals.PHRASES.halfPotInfoTextFirst + tickets.length + Alloy.Globals.PHRASES.halfPotInfoTextOneTicket + Alloy.Globals.PHRASES.halfPotBuyMoreText;
+					}else{
+						var infoText = Alloy.Globals.PHRASES.halfPotInfoTextFirst + tickets.length + Alloy.Globals.PHRASES.halfPotInfoTextMoreTickets + Alloy.Globals.PHRASES.halfPotBuyMoreText;
+					}
+					
+					
+					var lotteryInfoLabel = Ti.UI.createLabel({
+						height:"30%",
+						width: "100%",
+						//backgroundColor: "",
+						top: 0,
+						text: infoText,
+						textAlign: "center",
+						color: "#FFFFFF",
+					});
+					botView.add(lotteryInfoLabel);
+				}
+			}
+			
+		} else {
+			//versusLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
+			Ti.API.error("Error =>" + this.response);
+		}
+	};
+	
+};
+
 
 var yourTicketsBtn = Ti.UI.createView({
 	left: 10,
@@ -86,8 +132,12 @@ var yourTicketsBtn = Ti.UI.createView({
     }
 });
 
+getUserTickets();
 yourTicketsBtn.addEventListener("click", function(e){
-	var win = Alloy.createController('yourTickets').getView();
+	var args = {
+		Tickets : tickets,
+	};
+	var win = Alloy.createController('yourTickets', args).getView();
 		if (OS_IOS) {
 			Alloy.Globals.NAV.openWindow(win, {
 				animated : true
