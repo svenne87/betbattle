@@ -114,7 +114,6 @@ Resources/android/images/m.png
 
 Resources/android/images/p.png
 
-<<<<<<< HEAD
 app/controllers/profile.js
 
 Resources/iphone/alloy/controllers/login.js
@@ -134,7 +133,7 @@ Resources/iphone/alloy/styles/terms.js
 Resources/iphone/alloy/styles/topplistan.js
 
 Resources/iphone/app.js
-=======
+
 Resources/iphone/alloy/styles/topplistan.js
 
 Resources/iphone/alloy/styles/terms.js
