@@ -65,8 +65,12 @@
                 android:largeScreens="true" android:normalScreens="true" android:smallScreens="false"/>
             <uses-permission android:name="android.permission.BLUETOOTH"/>
             <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+<<<<<<< HEAD
             <application android:debuggable="true"
                 android:hardwareAccelerated="true"
+=======
+            <application android:hardwareAccelerated="true"
+>>>>>>> 4a302e46c759f50e98dc6675a0376da3848ce852
                 android:icon="@drawable/appicon"
                 android:label="Betkampen" android:largeHeap="true"
                 android:name="BetkampenApplication"
@@ -140,8 +144,12 @@
         <module platform="iphone">com.logicallabs.inappproducts</module>
         <module platform="iphone">bencoding.blur</module>
         <module platform="android">bencoding.blur</module>
-        <module platform="iphone">bencoding.sms</module>
         <module platform="iphone">org.beuckman.tibeacons</module>
+<<<<<<< HEAD
+=======
+        <module platform="android">com.liferay.beacons</module>
+        <module platform="iphone">bencoding.sms</module>
+>>>>>>> 4a302e46c759f50e98dc6675a0376da3848ce852
     </modules>
     <deployment-targets>
         <target device="android">true</target>
