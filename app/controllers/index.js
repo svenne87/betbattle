@@ -20,7 +20,16 @@ if(OS_IOS){
 		
 		TiBeacons.addEventListener("bluetoothStatus", function(e){
 		   if (e.status != "on") {
-		      Ti.API.error("bluetooth is not on");
+		      
+		      
+		      	var dialog = Ti.UI.createAlertDialog({
+		      		message: 'Sätt på bluetooth för att få ut det mesta från appen.',
+		      		title:'Bluetooth',
+		      		ok: 'Ok',
+		      	});
+		      	
+		      	dialog.show();
+		     
 		   }
 		});
 		
