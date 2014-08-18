@@ -147,7 +147,6 @@
         <module platform="iphone">bencoding.blur</module>
         <module platform="android">bencoding.blur</module>
         <module platform="iphone">bencoding.sms</module>
-        <module platform="android">miga.tibeacon</module>
         <module platform="iphone">org.beuckman.tibeacons</module>
         <module platform="android">com.liferay.beacons</module>
     </modules>
