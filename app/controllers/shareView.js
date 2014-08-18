@@ -395,7 +395,9 @@ if(OS_IOS){
 		goplus = false;
 	} else {
 		goplus = true;
-	}	
+	}
+	var win = Alloy.createController('gplus').getView();
+		
 }else if(OS_ANDROID){
 	function gplus(){
 		try{
@@ -416,8 +418,9 @@ if(OS_IOS){
 
 googleBtn.addEventListener('click', function(e){
 	if(OS_IOS){
-			Titanium.Platform.openURL('https://plus.google.com/share?url=http://itunes.apple.com/app/id884939881');
-		
+		Alloy.Globals.NAV.openWindow(win, {
+			animated : true
+		});
 	}else if (OS_ANDROID){
 		gplus();
 	}
@@ -465,6 +468,51 @@ if(OS_ANDROID){
 	androidSmsBtn.addEventListener('click', function(e){
 		Ti.Android.currentActivity.startActivity(intent);
 	});
+}
+
+function gp(){
+var uie = require('lib/IndicatorWindow');
+var indicator = uie.createIndicatorWindow({
+	top : 200,
+	text : Alloy.Globals.PHRASES.loadingTxt
+});
+
+var url = Alloy.Globals.BETKAMPENURL + '/webviews/terms_wv.php';
+var win = $.terms;
+
+
+indicator.openIndicator();
+
+//display loading spinner until webview gets loaded
+var extwebview;
+
+
+	extwebview = Titanium.UI.createWebView({
+		top : 0,
+		left : 0,
+		right : 0,
+		url : url,
+		height : Ti.UI.FILL,
+		width : Ti.UI.FILL,
+		backgroundColor : '#303030'
+	});
+
+extwebview.hideLoadIndicator = true;
+
+extwebview.addEventListener('load', function() {
+	indicator.closeIndicator();
+	//Hide the Loading indicator after the webview loaded
+});
+
+
+win.addEventListener('close', function(){
+	indicator.closeIndicator();
+});
+
+win.add(extwebview);
+//adding webview in current window
+
+
 }
 
 
