@@ -156,7 +156,7 @@ Alloy.Globals.postDeviceToken = function(deviceToken) {
 			Ti.API.error('Bad Sever =>' + e.error);
 		};
 
-		try {
+		try { 
 			xhr.open('POST', Alloy.Globals.BETKAMPENDEVICETOKENURL);
 			xhr.setRequestHeader("content-type", "application/json");
 			xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
@@ -164,7 +164,7 @@ Alloy.Globals.postDeviceToken = function(deviceToken) {
 
 			// build the json string
 			var param = '{"device_token":"' + deviceToken + '", "device_type":"' + Ti.Platform.osname + '", "lang":"' + Alloy.Globals.LOCALE +'"}';
-	
+			
 			xhr.send(param);
 		} catch(e) {
 			//
@@ -175,7 +175,7 @@ Alloy.Globals.postDeviceToken = function(deviceToken) {
 				if (this.readyState == 4) {
 					var response = '';
 					try {
-						response = this.response;
+						response = JSON.parse(this.responseText);
 					} catch(e) {
 
 					}
