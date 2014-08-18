@@ -9,7 +9,7 @@
 	borderRadius: 3
 },
 ".navLogo":{
-	image : 'images/lakers_header.png',
+	image : '/images/lakers_header.png',
 	left : 99,
 	width: 130,
 	height : 40

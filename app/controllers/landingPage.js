@@ -1,5 +1,11 @@
 var args = arguments[0] || {};
 
+if(OS_ANDROID) {
+	$.landingPage.addEventListener('open', function(){	
+		$.landingPage.activity.actionBar.hide();
+	});
+}
+
 
 var top_view = Ti.UI.createView({
 	id: "top_view",
@@ -342,10 +348,6 @@ if(OS_IOS){
     });
 	
 	$.landingPage.orientationModes = [Titanium.UI.PORTRAIT];	
-	$.landingPage.addEventListener('open', function(){	
-	
-	});
-	
 }
 
 

@@ -1,20 +1,4 @@
 var args = arguments[0] || {};
-var isIos = false;
-if(OS_IOS){
-	if(Titanium.Platform.canOpenURL('fb://profile')){
-		Titanium.Facebook.forceDialogAuth = false;
-	} else {
-		Titanium.Facebook.forceDialogAuth = true;
-	}
-}
-var instagram;
-if(OS_IOS){
-	if(Titanium.Platform.canOpenURL('instagram://app')){
-		instagram = false;
-	} else {
-		instagram = true;
-	}
-}
 
 var mainView = Ti.UI.createView({
 	class : "topView",
@@ -90,7 +74,7 @@ var twitterBtn = Titanium.UI.createButton({
 });
 mainView.add(twitterBtn);
 var twitterIcon = Titanium.UI.createImageView({
-		image: "images/twitter.png",
+		image: "/images/twitter.png",
 		height: 25,
 		width: 25,
 		left: 5
@@ -132,7 +116,7 @@ if(OS_IOS){
 
 	mainView.add(appleBtn);
 	var appleIcon = Titanium.UI.createImageView({
-		image: "/images/iosmail.png",
+		image: "/images/iosmail.PNG",
 		height: 25,
 		width: 25,
 		left: 5
@@ -175,7 +159,7 @@ if(OS_IOS){
 
 	mainView.add(gmailBtn);
 	var gmailIcon = Titanium.UI.createImageView({
-		image: "/images/gmail.png",
+		image: "/images/gmail.PNG",
 		height: 25,
 		width: 25,
 		left: 5
@@ -364,7 +348,6 @@ if(OS_IOS){
 			var intTwitter = Ti.Android.createIntent({
 				action: Ti.Android.ACTION_SEND,
 				packageName: 'com.twitter.android',
-				className: 'com.twitter.android.PostActivity',
 				flags: Ti.Android.FLAG_ACTIVITY_NEW_TASK,
 				type: 'text/plain'
 			});
@@ -390,36 +373,19 @@ twitterBtn.addEventListener('click', function(e){
 });
 
 // --------------------------------------------------------------- Share to GOOGLE+  -------------------------------------------------------------------------------
-if(OS_IOS){
-	if(Titanium.Platform.canOpenURL('gplus://')){
-		goplus = false;
-	} else {
-		goplus = true;
-	}	
-}else if(OS_ANDROID){
-	function gplus(){
-		try{
-			var intGoogleplus = Ti.Android.createIntent({
-				action: Ti.Android.ACTION_SEND,
-				packageName: 'com.google.android.apps.plus-1',
-				className: 'com.twitter.android.PostActivity',
-				flags: Ti.Android.FLAG_ACTIVITY_NEW_TASK,
-				type: 'text/plain',
-				text: 'hej hej detta är betkampen'
-			});
-			Ti.Android.currentActivity.startActivity(intGoogleplus);
-		}catch(x){
-			alert('Hittar inte Google+ app. Har du den installerad?');
-		}
-	}
-}
+
+var goWin = Alloy.createController('gplus').getView();
+
 
 googleBtn.addEventListener('click', function(e){
 	if(OS_IOS){
-			Titanium.Platform.openURL('https://plus.google.com/share?url=http://itunes.apple.com/app/id884939881');
-		
+		Alloy.Globals.NAV.openWindow(goWin, {
+			animated : true
+		});
 	}else if (OS_ANDROID){
-		gplus();
+		goWin.open({
+			fullScreen : true
+		});
 	}
 });
 
