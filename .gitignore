@@ -208,3 +208,19 @@ Resources/iphone/alloy/styles/groupSelect.js
 Resources/iphone/alloy/styles/index.js
 
 Resources/iphone/alloy/styles/landingPage.js
+
+Resources/android/alloy/controllers/index.js
+
+Resources/android/alloy/controllers/newChallengeLeague.js
+
+Resources/android/alloy/styles/challenge.js
+
+Resources/android/alloy/styles/challengesView.js
+
+Resources/android/alloy/styles/friendSelect.js
+
+Resources/android/alloy/styles/groupSelect.js
+
+Resources/android/alloy/styles/index.js
+
+Resources/android/alloy/widgets/ds.slideMenu/styles/widget.js
