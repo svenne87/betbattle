@@ -413,9 +413,15 @@ function getAchievements(){
 								width:150,
 								borderRadius:10,
 								opacity:1,
+								zIndex : 1000,
 								transform:t
 							});
-						
+							if(OS_ANDROID){
+								w.addEventListener('open', function(){
+								    // Grab the window's action bar instance and call the hide method
+									w.activity.actionBar.hide();
+								});
+							}
 							// create first transform to go beyond normal size
 							var t1 = Titanium.UI.create2DMatrix();
 							t1 = t1.scale(1.1);
