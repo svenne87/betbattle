@@ -1,4 +1,7 @@
 <Alloy>
+	<Window class="container" id="landingPage" platform="android">
+		<Require type="widget" src="ds.slideMenu" id="ds"/> 
+	</Window>
 	<NavigationWindow id="nav" platform="ios">
 	<Window class="container" id="landingPage">
 		
