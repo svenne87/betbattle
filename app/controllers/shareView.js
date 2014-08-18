@@ -378,10 +378,10 @@ if(OS_IOS){
 twitterBtn.addEventListener('click', function(e){
 	if(OS_IOS){
 		if(twitter == true){
-		alert('du har inte installerat twitter');
-	} else {
-		Titanium.Platform.openURL('twitter://post?message=hej%20hej%20betkampen');
-	}
+			alert('du har inte installerat twitter');
+		} else {
+			Titanium.Platform.openURL('twitter://post?message=hej%20hej%20betkampen');
+		}
 		
 	}else if(OS_ANDROID){
 		shareToTwitter();
@@ -391,7 +391,11 @@ twitterBtn.addEventListener('click', function(e){
 
 // --------------------------------------------------------------- Share to GOOGLE+  -------------------------------------------------------------------------------
 if(OS_IOS){
-	
+	if(Titanium.Platform.canOpenURL('gplus://')){
+		goplus = false;
+	} else {
+		goplus = true;
+	}	
 }else if(OS_ANDROID){
 	function gplus(){
 		try{
@@ -400,10 +404,10 @@ if(OS_IOS){
 				packageName: 'com.google.android.apps.plus-1',
 				className: 'com.twitter.android.PostActivity',
 				flags: Ti.Android.FLAG_ACTIVITY_NEW_TASK,
-				type: 'text/plain'
+				type: 'text/plain',
+				text: 'hej hej detta är betkampen'
 			});
-			intTwitter.putExtra(Ti.Android.EXTRA_TEXT, 'hej hej detta är betkampen');
-			Ti.Android.currentActivity.startActivity(intTwitter);
+			Ti.Android.currentActivity.startActivity(intGoogleplus);
 		}catch(x){
 			alert('Hittar inte Google+ app. Har du den installerad?');
 		}
@@ -411,7 +415,12 @@ if(OS_IOS){
 }
 
 googleBtn.addEventListener('click', function(e){
-	gplus();
+	if(OS_IOS){
+			Titanium.Platform.openURL('https://plus.google.com/share?url=http://itunes.apple.com/app/id884939881');
+		
+	}else if (OS_ANDROID){
+		gplus();
+	}
 });
 
 // iPhone buttons

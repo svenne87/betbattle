@@ -224,3 +224,5 @@ Resources/android/alloy/styles/groupSelect.js
 Resources/android/alloy/styles/index.js
 
 Resources/android/alloy/widgets/ds.slideMenu/styles/widget.js
+
+Resources/iphone/alloy/controllers/landingPage.js

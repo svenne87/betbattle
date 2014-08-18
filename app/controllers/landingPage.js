@@ -280,6 +280,19 @@ inviteBtn.add(Ti.UI.createLabel({
 	text: Alloy.Globals.PHRASES.landingPageInviteBtnTop
 }));
 
+inviteBtn.addEventListener("click", function(e){
+	var win = Alloy.createController('shareView').getView();
+		if (OS_IOS) {
+			Alloy.Globals.NAV.openWindow(win, {
+				animated : true
+			});
+		} else {
+			win.open({
+				fullScreen : true
+			});
+		}
+});
+
 bot_img.addEventListener("click", function(e){
 				if (OS_IOS) {
 					var loginSuccessWindow = Alloy.createController('main', args).getView();
