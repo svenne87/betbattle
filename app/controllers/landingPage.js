@@ -20,19 +20,19 @@ var bot_view = Ti.UI.createView({
 
 
 var top_img = Ti.UI.createView({
-	backgroundImage: "images/top_img.png",
+	backgroundImage: "/images/top_img.png",
 	height: "33.33%",
 	width:"100%"
 });
 
 var mid_img = Ti.UI.createView({
-	backgroundImage: "images/mid_img.png",
+	backgroundImage: "/images/mid_img.png",
 	height: "33.33%",
 	width:"100%"
 });
 
 var bot_img = Ti.UI.createView({
-	backgroundImage: "images/bot_img.png",
+	backgroundImage: "/images/bot_img.png",
 	height: "33.33%",
 	width:"100%"
 });
@@ -116,7 +116,7 @@ top_img.add(Ti.UI.createView({
 	width:8,
 	height:8,
 	zIndex: "110",
-	backgroundImage: "images/arrow.png",
+	backgroundImage: "/images/arrow.png",
 	right:10,
 	bottom:10
 }));
@@ -166,7 +166,7 @@ mid_img.add(Ti.UI.createView({
 	width:8,
 	height:8,
 	zIndex: "110",
-	backgroundImage: "images/arrow.png",
+	backgroundImage: "/images/arrow.png",
 	right:10,
 	bottom:10
 }));
@@ -207,7 +207,7 @@ bot_img.add(Ti.UI.createView({
 	width:8,
 	height:8,
 	zIndex: "110",
-	backgroundImage: "images/arrow.png",
+	backgroundImage: "/images/arrow.png",
 	right:10,
 	bottom:10
 }));
@@ -216,14 +216,14 @@ bot_img.add(Ti.UI.createView({
 var inviteBtn = Ti.UI.createView({
 	width:"50%",
 	height:"100%",
-	backgroundImage: "images/inviteBtn.png",
+	backgroundImage: "/images/inviteBtn.png",
 	left: "0px"
 });
 
 var profileBtn = Ti.UI.createView({
 	width:"50%",
 	height:"100%",
-	backgroundImage: "images/profileBtn.png",
+	backgroundImage: "/images/profileBtn.png",
 	left: "0px"
 });
 
@@ -345,7 +345,6 @@ if(OS_IOS){
 	$.landingPage.addEventListener('open', function(){	
 	
 	});
-	
 	
 }
 

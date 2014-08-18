@@ -60,7 +60,7 @@
     </ios>
     <android xmlns:android="http://schemas.android.com/apk/res/android">
         <manifest android:versionCode="125" android:versionName="1.2.5">
-            <uses-sdk android:minSdkVersion="14" android:targetSdkVersion="19"/>
+            <uses-sdk android:minSdkVersion="14" android:targetSdkVersion="16"/>
             <supports-screens android:anyDensity="false"
                 android:largeScreens="true" android:normalScreens="true" android:smallScreens="false"/>
             <uses-permission android:name="android.permission.BLUETOOTH"/>
@@ -87,7 +87,7 @@
                 <activity
                     android:configChanges="keyboardHidden|screenSize"
                     android:name="org.appcelerator.titanium.TiTranslucentActivity"
-                    android:screenOrientation="portrait" android:theme="@android:style/Theme.Translucent"/>
+                    android:screenOrientation="portrait" android:theme="@style/Theme.AppCompat.Translucent"/>
                 <activity android:configChanges="screenSize"
                     android:name="ti.modules.titanium.ui.android.TiPreferencesActivity" android:screenOrientation="portrait"/>
                 <activity android:configChanges="screenSize"
@@ -152,7 +152,7 @@
         <target device="mobileweb">false</target>
         <target device="tizen">false</target>
     </deployment-targets>
-    <sdk-version>3.2.3.GA</sdk-version>
+    <sdk-version>3.3.0.GA</sdk-version>
     <plugins>
         <plugin version="1.0">ti.alloy</plugin>
     </plugins>

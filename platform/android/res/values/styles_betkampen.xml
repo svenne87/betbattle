@@ -19,62 +19,64 @@
 
 <resources>
 
-    <style name="Theme.Betkampen" parent="@android:style/Theme.Holo">
-        <item name="android:actionBarItemBackground">@drawable/selectable_background_betkampen</item>
-        <item name="android:popupMenuStyle">@style/PopupMenu.Betkampen</item>
-        <item name="android:dropDownListViewStyle">@style/DropDownListView.Betkampen</item>
-        <item name="android:actionBarTabStyle">@style/ActionBarTabStyle.Betkampen</item>
-        <item name="android:actionDropDownStyle">@style/DropDownNav.Betkampen</item>
-        <item name="android:actionBarStyle">@style/ActionBar.Transparent.Betkampen</item>
-        <item name="android:actionModeBackground">@drawable/cab_background_top_betkampen</item>
-        <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_betkampen</item>
-        <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Betkampen</item>
-        
-        
+    <style name="Theme.Betkampen" parent="@style/Theme.AppCompat.Light.DarkActionBar">
+        <item name="actionBarItemBackground">@drawable/selectable_background_betkampen</item>
+        <item name="popupMenuStyle">@style/PopupMenu.Betkampen</item>
+        <item name="dropDownListViewStyle">@style/DropDownListView.Betkampen</item>
+        <item name="actionBarTabStyle">@style/ActionBarTabStyle.Betkampen</item>
+        <item name="actionDropDownStyle">@style/DropDownNav.Betkampen</item>
+        <item name="actionBarStyle">@style/ActionBar.Solid.Betkampen</item>
+        <item name="actionModeBackground">@drawable/cab_background_top_betkampen</item>
+        <item name="actionModeSplitBackground">@drawable/cab_background_bottom_betkampen</item>
+        <item name="actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Betkampen</item>
+
+                <!-- Light.DarkActionBar specific -->
+        <item name="actionBarWidgetTheme">@style/Theme.Betkampen.Widget</item>
+
     </style>
 
-    <style name="ActionBar.Solid.Betkampen" parent="@android:style/Widget.Holo.ActionBar.Solid">
-        <item name="android:background">@drawable/ab_solid_betkampen</item>
-        <item name="android:backgroundStacked">@drawable/ab_stacked_solid_betkampen</item>
-        <item name="android:backgroundSplit">@drawable/ab_bottom_solid_betkampen</item>
-        <item name="android:progressBarStyle">@style/ProgressBar.Betkampen</item>
+    <style name="ActionBar.Solid.Betkampen" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <item name="background">@drawable/ab_solid_betkampen</item>
+        <item name="backgroundStacked">@drawable/ab_stacked_solid_betkampen</item>
+        <item name="backgroundSplit">@drawable/ab_bottom_solid_betkampen</item>
+        <item name="progressBarStyle">@style/ProgressBar.Betkampen</item>
     </style>
 
-    <style name="ActionBar.Transparent.Betkampen" parent="@android:style/Widget.Holo.ActionBar">
-        <item name="android:background">@drawable/ab_transparent_betkampen</item>
-        <item name="android:progressBarStyle">@style/ProgressBar.Betkampen</item>
+    <style name="ActionBar.Transparent.Betkampen" parent="@style/Widget.AppCompat.ActionBar">
+        <item name="background">@drawable/ab_transparent_betkampen</item>
+        <item name="progressBarStyle">@style/ProgressBar.Betkampen</item>
     </style>
-
-    <style name="PopupMenu.Betkampen" parent="@android:style/Widget.Holo.ListPopupWindow">
+	
+    <style name="PopupMenu.Betkampen" parent="@style/Widget.AppCompat.PopupMenu">	
         <item name="android:popupBackground">@drawable/menu_dropdown_panel_betkampen</item>	
     </style>
-
-    <style name="DropDownListView.Betkampen" parent="@android:style/Widget.Holo.ListView.DropDown">
+	
+    <style name="DropDownListView.Betkampen" parent="@style/Widget.AppCompat.ListView.DropDown">
         <item name="android:listSelector">@drawable/selectable_background_betkampen</item>
     </style>
 
-    <style name="ActionBarTabStyle.Betkampen" parent="@android:style/Widget.Holo.ActionBar.TabView">
+    <style name="ActionBarTabStyle.Betkampen" parent="@style/Widget.AppCompat.ActionBar.TabView">
         <item name="android:background">@drawable/tab_indicator_ab_betkampen</item>
     </style>
-
-    <style name="DropDownNav.Betkampen" parent="@android:style/Widget.Holo.Spinner">
+	
+    <style name="DropDownNav.Betkampen" parent="@style/Widget.AppCompat.Spinner.DropDown.ActionBar">
         <item name="android:background">@drawable/spinner_background_ab_betkampen</item>
         <item name="android:popupBackground">@drawable/menu_dropdown_panel_betkampen</item>
         <item name="android:dropDownSelector">@drawable/selectable_background_betkampen</item>
     </style>
     
-    <style name="ProgressBar.Betkampen" parent="@android:style/Widget.Holo.ProgressBar.Horizontal">
+    <style name="ProgressBar.Betkampen" parent="@style/Widget.AppCompat.ProgressBar.Horizontal">
         <item name="android:progressDrawable">@drawable/progress_horizontal_betkampen</item>
     </style>
     
-    <style name="ActionButton.CloseMode.Betkampen" parent="@android:style/Widget.Holo.ActionButton.CloseMode">
+    <style name="ActionButton.CloseMode.Betkampen" parent="@style/Widget.AppCompat.ActionButton.CloseMode">
         <item name="android:background">@drawable/btn_cab_done_betkampen</item>
     </style>
-
+    
     <!-- this style is only referenced in a Light.DarkActionBar based theme -->
-    <style name="Theme.Betkampen.Widget" parent="@android:style/Theme.Holo">
-        <item name="android:popupMenuStyle">@style/PopupMenu.Betkampen</item>
-        <item name="android:dropDownListViewStyle">@style/DropDownListView.Betkampen</item>
+    <style name="Theme.Betkampen.Widget" parent="@style/Theme.AppCompat">
+        <item name="popupMenuStyle">@style/PopupMenu.Betkampen</item>
+        <item name="dropDownListViewStyle">@style/DropDownListView.Betkampen</item>
     </style>
 
 </resources>

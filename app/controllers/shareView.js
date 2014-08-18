@@ -50,7 +50,7 @@ var fbBtn = Titanium.UI.createButton({
 });
 mainView.add(fbBtn);
 var fbIcon = Titanium.UI.createImageView({
-		image: "images/fb.png",
+		image: "/images/fb.png",
 		height: 25,
 		width: 25,
 		left: 3
@@ -70,7 +70,7 @@ var instaBtn = Titanium.UI.createButton({
 });
 mainView.add(instaBtn);
 var instaIcon = Titanium.UI.createImageView({
-		image: "images/insta.png",
+		image: "/images/insta.png",
 		height: 25,
 		width: 25,
 		left: 5
@@ -110,7 +110,7 @@ var googleBtn = Titanium.UI.createButton({
 });
 mainView.add(googleBtn);
 var googleIcon = Titanium.UI.createImageView({
-		image: "images/googleplus.png",
+		image: "/images/googleplus.png",
 		height: 25,
 		width: 25,
 		left: 5
@@ -132,7 +132,7 @@ if(OS_IOS){
 
 	mainView.add(appleBtn);
 	var appleIcon = Titanium.UI.createImageView({
-		image: "images/iosmail.png",
+		image: "/images/iosmail.png",
 		height: 25,
 		width: 25,
 		left: 5
@@ -153,7 +153,7 @@ if(OS_IOS){
 	mainView.add(iphoneSmsBtn);
 	
 	var iossmsIcon = Titanium.UI.createImageView({
-		image: "images/iossms.PNG",
+		image: "/images/iossms.PNG",
 		height: 25,
 		width: 25,
 		left: 5
@@ -175,7 +175,7 @@ if(OS_IOS){
 
 	mainView.add(gmailBtn);
 	var gmailIcon = Titanium.UI.createImageView({
-		image: "images/gmail.png",
+		image: "/images/gmail.png",
 		height: 25,
 		width: 25,
 		left: 5
@@ -195,7 +195,7 @@ if(OS_IOS){
 	});
 	mainView.add(androidSmsBtn);
 	var androidIcon = Titanium.UI.createImageView({
-		image: "images/androidsms.png",
+		image: "/images/androidsms.png",
 		height: 25,
 		width: 25,
 		left: 5

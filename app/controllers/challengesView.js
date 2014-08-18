@@ -786,7 +786,7 @@ function constructTableView(array) {
 			headerView : tableHeaderView,
 			height : '100%',
 			width: '100%',
-			backgroundImage: 'images/profileBG.jpg',
+			backgroundImage: '/images/profileBG.jpg',
 			backgroundColor : 'transparent',
 			style : Ti.UI.iPhone.TableViewStyle.GROUPED,
 			separatorInsets : {

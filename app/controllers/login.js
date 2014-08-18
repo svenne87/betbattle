@@ -92,7 +92,7 @@ function getChallengesAndStart() {
 					var loginSuccessWindow = Alloy.createController('landingPage', args).getView();
 					loginSuccessWindow.open({
 						fullScreen : true,
-						navBarHidden : false,
+						navBarHidden : true,
 						orientationModes : [Titanium.UI.PORTRAIT]
 					});
 					loginSuccessWindow = null;
