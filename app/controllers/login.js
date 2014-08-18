@@ -92,7 +92,6 @@ function getChallengesAndStart() {
 					var loginSuccessWindow = Alloy.createController('landingPage', args).getView();
 					loginSuccessWindow.open({
 						fullScreen : true,
-						navBarHidden : true,
 						orientationModes : [Titanium.UI.PORTRAIT]
 					});
 					loginSuccessWindow = null;
@@ -424,6 +423,10 @@ $.login.addEventListener('close', function() {
 });
 
 if (OS_ANDROID) {
+	$.login.addEventListener('open', function(){
+		$.login.activity.actionBar.hide();
+	});
+	
 	$.login.addEventListener('android:back', function() {
 		$.login.close();
 		var activity = Titanium.Android.currentActivity;

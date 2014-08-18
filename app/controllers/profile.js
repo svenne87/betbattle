@@ -59,7 +59,7 @@ profileTopView.add(profilePositionView);
 
 var profilePositionIcon = Ti.UI.createImageView({
 	top : 25,
-	image : "images/Topplista.png",
+	image : "/images/Topplista.png",
 	width:35,
 	height:35,
 });
@@ -110,7 +110,7 @@ profileLevelView.add(profileLevelIcon);
 var profileLevel = Ti.UI.createLabel({
 	text : Alloy.Globals.PHRASES.loadingTxt,
 	textAlign: "center",
-	color:"c5c5c5",
+	color:"#c5c5c5",
 	top: 5,
 	font:{
 		fontSize: 16,
@@ -129,7 +129,7 @@ var profileBotView = Ti.UI.createView({
 topView.add(profileBotView);
 
 var longGreyBorder = Ti.UI.createImageView({
-	image: "images/grey-border.png",
+	image: "/images/grey-border.png",
 	top:0,
 	width:"100%",
 	//height:2,
@@ -163,7 +163,7 @@ var coins = Ti.UI.createLabel({
 		fontSize: 22,
 		fontFamily: "Impact",
 	},
-	color: "c5c5c5",
+	color: "#c5c5c5",
 });
 
 var coinsText = Ti.UI.createLabel({
@@ -173,14 +173,14 @@ var coinsText = Ti.UI.createLabel({
 		fontSize:14,
 		fontFamily: "Impact",
 	},
-	color: "c5c5c5",
+	color: "#c5c5c5",
 });
 
 profileCoinsView.add(coins);
 profileCoinsView.add(coinsText);
 
 var smallGreyBorderLeft = Ti.UI.createImageView({
-	image: "images/grey-border-small.png",
+	image: "/images/grey-border-small.png",
 	right: 0,
 	height: "100%",
 });
@@ -197,7 +197,7 @@ profileStatsView.add(profilePointsView);
 var points = Ti.UI.createLabel({
 	text: "",
 	textAlign: "center",
-	color:"c5c5c5",
+	color:"#c5c5c5",
 	font:{
 		fontSize:22,
 		fontFamily:"Impact",
@@ -207,7 +207,7 @@ var points = Ti.UI.createLabel({
 var pointsText = Ti.UI.createLabel({
 	text: Alloy.Globals.PHRASES.loadingTxt,
 	textAlign: "center",
-	color: "c5c5c5",
+	color: "#c5c5c5",
 	font:{
 		fontSize: 14,
 		fontFamily: "Impact",
@@ -218,7 +218,7 @@ profilePointsView.add(points);
 profilePointsView.add(pointsText);
 
 var smallGreyBorderRight = Ti.UI.createImageView({
-	image: "images/grey-border-small.png",
+	image: "/images/grey-border-small.png",
 	left: 0,
 	height: "100%",	
 });
@@ -235,7 +235,7 @@ profileStatsView.add(profileWinsView);
 var wins = Ti.UI.createLabel({
 	text: "",
 	textAlign: "center",
-	color: "c5c5c5",
+	color: "#c5c5c5",
 	font:{
 		fontSize: 22,
 		fontFamily: "Impact",
@@ -245,7 +245,7 @@ var wins = Ti.UI.createLabel({
 var winsText = Ti.UI.createLabel({
 	text: Alloy.Globals.PHRASES.loadingTxt,
 	textAlign: "center",
-	color: "c5c5c5",
+	color: "#c5c5c5",
 	font:{
 		fontSize: 14,
 		fontFamily: "Impact",
@@ -256,17 +256,18 @@ profileWinsView.add(wins);
 profileWinsView.add(winsText);
 
 var LongGreyBorderBot = Ti.UI.createImageView({
-	image: "images/grey-border.png",
+	image: "/images/grey-border.png",
 	bottom: 0,
 	width:"100%",
 });
 profileBotView.add(LongGreyBorderBot);
 
+
 //Create the list of Achievements
 var achievementsLabel = Ti.UI.createLabel({
 	text: Alloy.Globals.PHRASES.profileAchievements,
 	textAlign: "center",
-	color: "c5c5c5",
+	color: "#c5c5c5",
 	font:{
 		fontSize: 22,
 		fontFamily: "Impact",
@@ -444,7 +445,7 @@ function getAchievements(){
 							var greyGlass = Ti.UI.createView({
 								width: 150,
 								height: 150,
-								backgroundColor: "c5c5c5",
+								backgroundColor: "#c5c5c5",
 								opacity: 0.5,
 								
 							});
