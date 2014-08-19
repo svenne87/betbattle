@@ -134,6 +134,17 @@ if(OS_IOS){
 			
 			function onFound(e){
 				Ti.API.info("FOUND : " + JSON.stringify(e));
+				if(e.uuid == "B9407F30F5F8466EAFF925556B57FE6D"){
+					if(e.major == "25458" && e.minor == "53209"){
+						createBeaconDialog("Välkommen till JimDavis!", "Välkommen", "http://www.jimdavislabs.se", Alloy.Globals.AcceptedBeacon1);
+					}
+					if(e.major == "41796" && e.minor == "19133"){
+						createBeaconDialog("Glöm inte toapappret", "Toaletten", "link", Alloy.Globals.AcceptedBeacon2);
+					}
+					if(e.major == "51092" && e.minor == "34572"){
+						createBeaconDialog("Sätt gärna på kaffet i köket", "Köket", "kitchen", Alloy.Globals.AcceptedBeacon3);
+					}
+				}
 			}
 			
 			function onError(e){
