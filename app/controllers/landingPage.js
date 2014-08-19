@@ -31,18 +31,16 @@ if(OS_IOS){
 		   }
 		});
 		
+		var dialogShown = false;
 		Alloy.Globals.TiBeacon.addEventListener("bluetoothStatus", function(e){
-		   if (e.status != "on") {
-		      
-		      
+		   if (e.status != "on" && !dialogShown) {
+		      dialogShown =  true;   
 		      	var dialog = Ti.UI.createAlertDialog({
 		      		message: 'Sätt på bluetooth för att få ut det mesta från appen.',
 		      		title:'Bluetooth',
 		      		ok: 'Ok',
 		      	});
-		      	
 		      	dialog.show();
-		     
 		   }
 		});
 		

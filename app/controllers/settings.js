@@ -77,9 +77,9 @@ function createPickers() {
 			height : Ti.UI.SIZE,
 		});
 
-		// on first picker change
+		// on picker change
 		picker.addEventListener('change', function(e) {
-			changeLanguageConfirm(e.selectedValue[0].replace(/ /g, ''));
+			changeLanguageConfirm(e.selectedValue[0]);  //.replace(/ /g, '')
 		});
 
 		picker.add(data);

@@ -47,7 +47,7 @@ function Controller() {
             height: Ti.UI.SIZE
         });
         picker.addEventListener("change", function(e) {
-            changeLanguageConfirm(e.selectedValue[0].replace(/ /g, ""));
+            changeLanguageConfirm(e.selectedValue[0]);
         });
         picker.add(data);
         picker.columns[0].width = Ti.UI.SIZE;
