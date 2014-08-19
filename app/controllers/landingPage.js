@@ -451,6 +451,7 @@ inviteBtn.addEventListener("click", function(e){
 			win.open({
 				fullScreen : true
 			});
+			win = null;
 		}
 });
 
