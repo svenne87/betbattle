@@ -179,7 +179,7 @@ mid_img.add(Ti.UI.createView({
 
 
 var custom_font = "Base02";
-if(Ti.Platform.osname == "Android"){
+if(OS_ANDROID){
 	custom_font = "Base-02";
 }
 bot_img.add(Ti.UI.createLabel({
@@ -263,7 +263,7 @@ inviteBtn.add(Ti.UI.createLabel({
 	height:"20%",
 	width:"100%",
 	textAlign: "center",
-	bottom:20,
+	bottom:"20%",
 	font:{
 		fontSize:'20',
 		fontFamily: 'Impact'
@@ -276,8 +276,8 @@ inviteBtn.add(Ti.UI.createLabel({
 	height:"20%",
 	width:"100%",
 	textAlign: "left",
-	bottom:45,
-	left: 28,
+	bottom:"40%",
+	left: "20%",
 	font:{
 		fontSize:'20',
 		fontFamily: 'Impact'
