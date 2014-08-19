@@ -88,6 +88,9 @@
                     android:configChanges="keyboardHidden|screenSize"
                     android:name="org.appcelerator.titanium.TiTranslucentActivity"
                     android:screenOrientation="portrait" android:theme="@style/Theme.AppCompat.Translucent"/>
+                    <activity
+                    	android:name="org.appcelerator.titanium.TiModalActivity"
+                    	android:theme="@style/Theme.AppCompat.Translucent" />
                 <activity android:configChanges="screenSize"
                     android:name="ti.modules.titanium.ui.android.TiPreferencesActivity" android:screenOrientation="portrait"/>
                 <activity android:configChanges="screenSize"
