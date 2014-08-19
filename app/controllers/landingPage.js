@@ -6,6 +6,19 @@ if(OS_ANDROID) {
 	});
 }
 
+if(OS_IOS){
+	Alloy.Globals.TiBeacon.addEventListener("enteredRegion", enterRegion);
+	Alloy.Globals.TiBeacon.addEventListener("beaconProximity", updateInformation);
+	Alloy.Globals.TiBeacon.addEventListener("exitedRegion", exitRegion);
+}else{
+	if(Alloy.Globals.TiBeacon.checkAvailability()){
+		Alloy.Globals.TiBeacon.addEventListener("enteredRegion", enterRegion);
+		Alloy.Globals.TiBeacon.addEventListener("beaconProximity", updateInformation);
+		Alloy.Globals.TiBeacon.addEventListener("exitedRegion", exitRegion);
+	}
+}
+	
+
 
 var top_view = Ti.UI.createView({
 	id: "top_view",

@@ -1,12 +1,11 @@
 /* This is the app's entry point */
 if(OS_IOS){
 	var TiBeacons = require('org.beuckman.tibeacons');
+	Alloy.Globals.TiBeacon = TiBeacons;
 }else if(OS_ANDROID){
-	/*var android_version = Ti.Platform.version;
-	if(android_version >= 4.3){
-		Ti.API.info("aaaandroid Version :" + android_version);
+	
 		var TiBeacons = require('com.liferay.beacons');
-	}*/
+	Alloy.Globals.TiBeacon = TiBeacons;
 }
 
 var uie = require('lib/IndicatorWindow');
@@ -14,15 +13,34 @@ var indicator = uie.createIndicatorWindow({
 	top : 200
 });
 
+
+function createBeaconDialog(msg, title, link, beacon){
+	var dialog = Ti.UI.createAlertDialog({
+	    cancel: 1,
+	    buttonNames: ['Confirm', 'Cancel'],
+	    message: msg,
+	    title: title,
+	});
+	dialog.addEventListener('click', function(e){
+	    if (e.index === e.source.cancel){
+	      	Ti.API.info('The cancel button was clicked');
+	    }else{
+	    	Ti.API.info(link);	
+	    	beacon = true;
+	    }
+	});
+  	dialog.show();
+}
+
 ///BEACONS IOS
 if(OS_IOS){
-		TiBeacons.addEventListener("changeAuthorizationStatus", function(e){
+		Alloy.Globals.TiBeacon.addEventListener("changeAuthorizationStatus", function(e){
 		   if (e.status != "authorized") {
 		      Ti.API.error("not authorized");
 		   }
 		});
 		
-		TiBeacons.addEventListener("bluetoothStatus", function(e){
+		Alloy.Globals.TiBeacon.addEventListener("bluetoothStatus", function(e){
 		   if (e.status != "on") {
 		      
 		      
@@ -37,19 +55,19 @@ if(OS_IOS){
 		   }
 		});
 		
-		TiBeacons.requestBluetoothStatus();
+		Alloy.Globals.TiBeacon.requestBluetoothStatus();
 		
 		function enterRegion(e) {
 			
 			if(e.identifier == 'conference'){
-				alert("Du är nära Konferensrummet. Ska jag sätta på TV:n ?");
+				createBeaconDialog("Välkommen till JimDavis!", "Välkommen", "http://www.jimdavislabs.se", Alloy.Globals.AcceptedBeacon1);
 			}else if(e.identifier == 'hall'){
-				alert("Du är nära hallen nu");
+				createBeaconDialog("Glöm inte toapappret", "Toaletten", "link", Alloy.Globals.AcceptedBeacon2);
 			}else if(e.identifier == 'kitchen'){
-				alert("Du är nära köket.");
+				createBeaconDialog("Sätt gärna på kaffet i köket", "Köket", "kitchen", Alloy.Globals.AcceptedBeacon3);
 			}
 			
-			TiBeacons.startRangingForBeacons(e);
+			Alloy.Globals.TiBeacon.startRangingForBeacons(e);
 		}
 		
 		function exitRegion(e){
@@ -60,60 +78,56 @@ if(OS_IOS){
 		
 		function updateInformation(e){
 			if (e.identifier == 'conference' && e.proximity == "near"){
-				alert("Du är i konferensrummet nu. Grattis!");
+				//alert("Du är i konferensrummet nu. Grattis!");
 			}else if (e.identifier == 'hall' && e.proximity == "near"){
-				alert("Du är i hallen nu. Grattis!");
+				//alert("Du är i hallen nu. Grattis!");
 			}else if (e.identifier == 'kitchen' && e.proximity == "near"){
-				alert("Du är i köket! Glöm inte kaffet!");
+				//alert("Du är i köket! Glöm inte kaffet!");
 			}
 		}
-		
-		TiBeacons.addEventListener("enteredRegion", enterRegion);
-		TiBeacons.addEventListener("beaconProximity", updateInformation);
-		TiBeacons.addEventListener("exitedRegion", exitRegion);
 
 
-        TiBeacons.startMonitoringForRegion({
+        Alloy.Globals.TiBeacon.startMonitoringForRegion({
             uuid : "B9407F30-F5F8-466E-AFF9-25556B57FE6D",
             identifier : "conference",
             major: 25458,
             minor: 53209
         });
-        TiBeacons.startMonitoringForRegion({
+        Alloy.Globals.TiBeacon.startMonitoringForRegion({
         	uuid : "B9407F30-F5F8-466E-AFF9-25556B57FE6D",
         	identifier: "hall",
         	major: 41796, 
         	minor: 19133,
         });
-        TiBeacons.startMonitoringForRegion({
+       Alloy.Globals.TiBeacon.startMonitoringForRegion({
         	uuid: "B9407F30-F5F8-466E-AFF9-25556B57FE6D",
         	identifier: "kitchen",
         	major: 51092,
         	minor: 34572,
         });
 }else if(OS_ANDROID){
-
-	/*if(android_version >= 4.3){
-		//if(TiBeacons.checkAvailability()){
-			TiBeacons.setAutoRange(true);
+	var resp = Alloy.Globals.TiBeacon.checkAvailability();
+	Ti.API.info("AVAILABLE" + resp);
+		if(Alloy.Globals.TiBeacon.checkAvailability()){
+			Alloy.Globals.TiBeacon.setAutoRange(true);
 			
-			TiBeacons.addEventListener("enteredRegion", enterRegion);
-			TiBeacons.addEventListener("beaconProximity", updateInformation);
-			TiBeacons.addEventListener("exitedRegion", exitRegion);
+			//Alloy.Globals.TiBeacon.addEventListener("enteredRegion", enterRegion);
+			//Alloy.Globals.TiBeacon.addEventListener("beaconProximity", updateInformation);
+			//Alloy.Globals.TiBeacon.addEventListener("exitedRegion", exitRegion);
 			
-			TiBeacons.startMonitoringForRegion({
+			Alloy.Globals.TiBeacon.startMonitoringForRegion({
 	            uuid : "B9407F30-F5F8-466E-AFF9-25556B57FE6D",
 	            identifier : "conference",
 	            major: 25458,
 	            minor: 53209
 	        });
-	        TiBeacons.startMonitoringForRegion({
+	        Alloy.Globals.TiBeacon.startMonitoringForRegion({
 	        	uuid : "B9407F30-F5F8-466E-AFF9-25556B57FE6D",
 	        	identifier: "hall",
 	        	major: 41796, 
 	        	minor: 19133,
 	        });
-	        TiBeacons.startMonitoringForRegion({
+	        Alloy.Globals.TiBeacon.startMonitoringForRegion({
 	        	uuid: "B9407F30-F5F8-466E-AFF9-25556B57FE6D",
 	        	identifier: "kitchen",
 	        	major: 51092,
@@ -123,11 +137,11 @@ if(OS_IOS){
 	        function enterRegion(e) {
 				
 				if(e.identifier == 'conference'){
-					alert("Du är nära Konferensrummet. Ska jag sätta på TV:n ?");
+					createBeaconDialog("Välkommen till JimDavis!", "Välkommen", "http://www.jimdavislabs.se", Alloy.Globals.AcceptedBeacon1);
 				}else if(e.identifier == 'hall'){
-					alert("Du är nära hallen nu");
+					createBeaconDialog("Glöm inte toapappret", "Toaletten", "link", Alloy.Globals.AcceptedBeacon2);
 				}else if(e.identifier == 'kitchen'){
-					alert("Du är nära köket.");
+					createBeaconDialog("Sätt gärna på kaffet i köket", "Köket", "kitchen", Alloy.Globals.AcceptedBeacon3);
 				}
 			}
 			
@@ -139,17 +153,16 @@ if(OS_IOS){
 			
 			function updateInformation(e){
 				if (e.identifier == 'conference' && e.proximity == "near"){
-					alert("Du är i konferensrummet nu. Grattis!");
+					//alert("Du är i konferensrummet nu. Grattis!");
 				}else if (e.identifier == 'hall' && e.proximity == "near"){
-					alert("Du är i hallen nu. Grattis!");
+					//alert("Du är i hallen nu. Grattis!");
 				}else if (e.identifier == 'kitchen' && e.proximity == "near"){
-					alert("Du är i köket! Glöm inte kaffet!");
+					//alert("Du är i köket! Glöm inte kaffet!");
 				}
 			}
-		//}else{
-			//alert("Din enhet har inte stöd för iBeacon-teknologi. Du kan inte få positionsbaserade meddelanden.");
-		//}
-	}*/	
+		}else{
+			alert("Din enhet har inte stöd för iBeacon-teknologi. Du kan inte få positionsbaserade meddelanden.");
+		}
 }
 
 function openLogin() {

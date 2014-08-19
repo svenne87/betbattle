@@ -30,6 +30,10 @@ Alloy.Globals.OPEN = true;
 Alloy.Globals.CLOSE = true;
 Alloy.Globals.FBERROR = true;
 Alloy.Globals.PHRASES = {};
+Alloy.Globals.TiBeacon = null;
+Alloy.Globals.AcceptedBeacon1 = false;
+Alloy.Globals.AcceptedBeacon2 = false;
+Alloy.Globals.AcceptedBeacon3 = false;
 
 // try to get stored language
 var lang = JSON.parse(Ti.App.Properties.getString('language'));
