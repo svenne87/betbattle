@@ -102,7 +102,7 @@ if(OS_IOS){
         });
 }else if(OS_ANDROID){
 	
-		
+		if(Ti.Platform.version >= 4.3){
 			Alloy.Globals.TiBeacon.initBeacon({
 				success: onSuccess,
 				error: onError,
@@ -144,7 +144,7 @@ if(OS_IOS){
 				Alloy.Globals.TiBeacon.startScanning();
 			}
 			
-			
+		}
 		
 }
 	
