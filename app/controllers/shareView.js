@@ -34,32 +34,12 @@ var fbBtn = Titanium.UI.createButton({
 });
 mainView.add(fbBtn);
 var fbIcon = Titanium.UI.createImageView({
-		image: "/images/fb.png",
+		image: "/images/fb.PNG",
 		height: 25,
 		width: 25,
 		left: 3
 	});
 	fbBtn.add(fbIcon);
-
-var instaBtn = Titanium.UI.createButton({
-	title: Alloy.Globals.PHRASES.shareOnTxt+ " Instagram  ",
-	top:5,
-	height: 50,
-	width: 260,
-	textAlign: "center",
-	left: '10%',
-	backgroundColor: '#4E433C',
-	color: '#fff',
-	borderRadius: 3
-});
-mainView.add(instaBtn);
-var instaIcon = Titanium.UI.createImageView({
-		image: "/images/insta.png",
-		height: 25,
-		width: 25,
-		left: 5
-	});
-	instaBtn.add(instaIcon);
 
 var twitterBtn = Titanium.UI.createButton({
 	title: Alloy.Globals.PHRASES.shareOnTxt+ " Twitter  ",
@@ -74,7 +54,7 @@ var twitterBtn = Titanium.UI.createButton({
 });
 mainView.add(twitterBtn);
 var twitterIcon = Titanium.UI.createImageView({
-		image: "/images/twitter.png",
+		image: "/images/twitter.PNG",
 		height: 25,
 		width: 25,
 		left: 5
@@ -94,7 +74,7 @@ var googleBtn = Titanium.UI.createButton({
 });
 mainView.add(googleBtn);
 var googleIcon = Titanium.UI.createImageView({
-		image: "/images/googleplus.png",
+		image: "/images/googleplus.PNG",
 		height: 25,
 		width: 25,
 		left: 5
@@ -103,7 +83,7 @@ var googleIcon = Titanium.UI.createImageView({
 
 if(OS_IOS){
 	var appleBtn = Titanium.UI.createButton({
-		title: Alloy.Globals.PHRASES.sendTxt+ " Apple Mail  ",
+		title: Alloy.Globals.PHRASES.sendTxt+ " Mail  ",
 		top:5,
 		height: 50,
 		width: 260,
@@ -116,7 +96,7 @@ if(OS_IOS){
 
 	mainView.add(appleBtn);
 	var appleIcon = Titanium.UI.createImageView({
-		image: "/images/iosmail.PNG",
+		image: "/images/iosmail.png",
 		height: 25,
 		width: 25,
 		left: 5
@@ -137,7 +117,7 @@ if(OS_IOS){
 	mainView.add(iphoneSmsBtn);
 	
 	var iossmsIcon = Titanium.UI.createImageView({
-		image: "/images/iossms.PNG",
+		image: "/images/iossms.png",
 		height: 25,
 		width: 25,
 		left: 5
@@ -146,7 +126,7 @@ if(OS_IOS){
 	
 } else if(OS_ANDROID){
 	var gmailBtn = Titanium.UI.createButton({
-		title: Alloy.Globals.PHRASES.sendTxt+ " GMail  ",
+		title: Alloy.Globals.PHRASES.sendTxt+ " Mail  ",
 		top:5,
 		height: 50,
 		width: 260,
@@ -324,16 +304,6 @@ function performFacebookPost(fb) {
 		}
 	);			
 }
-
-// --------------------------------------------------------------- Share to INSTAGRAM  -----------------------------------------------------------------------------
-
-instaBtn.addEventListener('click', function(e){
-	if(instagram == true){
-		alert('du har inte installerat instagram');
-	} else {
-		Titanium.Platform.openURL('instagram://app');
-	}
-});
 
 // --------------------------------------------------------------- Share to TWITTER  -------------------------------------------------------------------------------
 if(OS_IOS){

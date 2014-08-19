@@ -23,7 +23,7 @@ if(OS_ANDROID){
 	});
 */	
 } else {
-	indicator.openIndicator();
+	//indicator.openIndicator();
 }
 
 //display loading spinner until webview gets loaded
