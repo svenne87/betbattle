@@ -34,7 +34,7 @@ var fbBtn = Titanium.UI.createButton({
 });
 mainView.add(fbBtn);
 var fbIcon = Titanium.UI.createImageView({
-		image: "/images/fb.PNG",
+		image: "/images/fb.png",
 		height: 25,
 		width: 25,
 		left: 3
@@ -54,7 +54,7 @@ var twitterBtn = Titanium.UI.createButton({
 });
 mainView.add(twitterBtn);
 var twitterIcon = Titanium.UI.createImageView({
-		image: "/images/twitter.PNG",
+		image: "/images/twitter.png",
 		height: 25,
 		width: 25,
 		left: 5
@@ -74,7 +74,7 @@ var googleBtn = Titanium.UI.createButton({
 });
 mainView.add(googleBtn);
 var googleIcon = Titanium.UI.createImageView({
-		image: "/images/googleplus.PNG",
+		image: "/images/googleplus.png",
 		height: 25,
 		width: 25,
 		left: 5
@@ -139,7 +139,7 @@ if(OS_IOS){
 
 	mainView.add(gmailBtn);
 	var gmailIcon = Titanium.UI.createImageView({
-		image: "/images/gmail.PNG",
+		image: "/images/gmail.png",
 		height: 25,
 		width: 25,
 		left: 5
