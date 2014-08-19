@@ -39,7 +39,7 @@ Alloy.Globals.AcceptedBeacon3 = false;
 if(OS_IOS){
 	Alloy.Globals.TiBeacon = require('org.beuckman.tibeacons');
 }else if(OS_ANDROID){
-	Alloy.Globals.TiBeacon = require('com.liferay.beacons');
+	Alloy.Globals.TiBeacon = require('miga.tibeacon');
 }
 
 // try to get stored language

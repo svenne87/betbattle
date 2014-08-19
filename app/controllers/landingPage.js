@@ -101,63 +101,51 @@ if(OS_IOS){
         	minor: 34572,
         });
 }else if(OS_ANDROID){
-	var resp = Alloy.Globals.TiBeacon.checkAvailability();
-	Ti.API.info("AVAILABLE" + resp);
-		if(Alloy.Globals.TiBeacon.checkAvailability()){
-			Alloy.Globals.TiBeacon.setAutoRange(true);
+	
+		
+			Alloy.Globals.TiBeacon.initBeacon({
+				success: onSuccess,
+				error: onError,
+				interval: 10,
+				region: onRegion,
+				found: onFound,
+			});
 			
-			Alloy.Globals.TiBeacon.addEventListener("enteredRegion", enterRegion);
-			Alloy.Globals.TiBeacon.addEventListener("beaconProximity", updateInformation);
-			Alloy.Globals.TiBeacon.addEventListener("exitedRegion", exitRegion);
+			function onSuccess(e){
+				Ti.API.info("SUCCESS : " + JSON.stringify(e));
+			}
 			
-			Alloy.Globals.TiBeacon.startMonitoringForRegion({
-	            uuid : "B9407F30-F5F8-466E-AFF9-25556B57FE6D",
-	            identifier : "conference",
-	            major: 25458,
-	            minor: 53209
-	        });
-	        Alloy.Globals.TiBeacon.startMonitoringForRegion({
-	        	uuid : "B9407F30-F5F8-466E-AFF9-25556B57FE6D",
-	        	identifier: "hall",
-	        	major: 41796, 
-	        	minor: 19133,
-	        });
-	        Alloy.Globals.TiBeacon.startMonitoringForRegion({
-	        	uuid: "B9407F30-F5F8-466E-AFF9-25556B57FE6D",
-	        	identifier: "kitchen",
-	        	major: 51092,
-	        	minor: 34572,
-	        });
-	        
-	        function enterRegion(e) {
+	
 				
-				if(e.identifier == 'conference'){
-					createBeaconDialog("Välkommen till JimDavis!", "Välkommen", "http://www.jimdavislabs.se", Alloy.Globals.AcceptedBeacon1);
-				}else if(e.identifier == 'hall'){
-					createBeaconDialog("Glöm inte toapappret", "Toaletten", "link", Alloy.Globals.AcceptedBeacon2);
-				}else if(e.identifier == 'kitchen'){
-					createBeaconDialog("Sätt gärna på kaffet i köket", "Köket", "kitchen", Alloy.Globals.AcceptedBeacon3);
+			function onRegion(e){
+				Ti.API.info("BEACON : "+ JSON.stringify(e));
+				if(e.uuid == "B9407F30-F5F8-466E-AFF9-25556B57FE6D"){
+					if(e.major == "25458" && e.minor == "53209"){
+						createBeaconDialog("Välkommen till JimDavis!", "Välkommen", "http://www.jimdavislabs.se", Alloy.Globals.AcceptedBeacon1);
+					}
+					if(e.major == "41796" && e.minor == "19133"){
+						createBeaconDialog("Glöm inte toapappret", "Toaletten", "link", Alloy.Globals.AcceptedBeacon2);
+					}
+					if(e.major == "51092" && e.minor == "34572"){
+						createBeaconDialog("Sätt gärna på kaffet i köket", "Köket", "kitchen", Alloy.Globals.AcceptedBeacon3);
+					}
 				}
 			}
 			
-			function exitRegion(e){
-				if(e.identifier == 'conference'){
-					alert("Du lämnar konferensrumemt nu. Tack för besöket!");
-				}
+			function onFound(e){
+				Ti.API.info("FOUND : " + JSON.stringify(e));
 			}
 			
-			function updateInformation(e){
-				if (e.identifier == 'conference' && e.proximity == "near"){
-					//alert("Du är i konferensrummet nu. Grattis!");
-				}else if (e.identifier == 'hall' && e.proximity == "near"){
-					//alert("Du är i hallen nu. Grattis!");
-				}else if (e.identifier == 'kitchen' && e.proximity == "near"){
-					//alert("Du är i köket! Glöm inte kaffet!");
-				}
+			function onError(e){
+				Ti.API.info("ERROR BEACON : " + JSON.stringify(e));
 			}
-		}else{
-			alert("Din enhet har inte stöd för iBeacon-teknologi. Du kan inte få positionsbaserade meddelanden.");
-		}
+			
+			if(Alloy.Globals.TiBeacon.isEnabled()){
+				Alloy.Globals.TiBeacon.startScanning();
+			}
+			
+			
+		
 }
 	
 
