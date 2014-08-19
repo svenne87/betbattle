@@ -111,8 +111,8 @@
                 <service android:enabled="true" android:name="com.radiusnetworks.ibeacon.IBeaconIntentProcessor">
                     <meta-data android:name="background" android:value="true"/>
                     <intent-filter android:priority="1">
-                        <action android:name="BetkampenApplication.DID_RANGING"/>
-                        <action android:name="BetkampenApplication.DID_MONITORING"/>
+                        <action android:name="apps.topgame.betkampen.DID_RANGING"/>
+                        <action android:name="apps.topgame.betkampen.DID_MONITORING"/>
                     </intent-filter>
                 </service>
                 <receiver

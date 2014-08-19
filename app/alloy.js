@@ -35,6 +35,13 @@ Alloy.Globals.AcceptedBeacon1 = false;
 Alloy.Globals.AcceptedBeacon2 = false;
 Alloy.Globals.AcceptedBeacon3 = false;
 
+//initialize beacons
+if(OS_IOS){
+	Alloy.Globals.TiBeacon = require('org.beuckman.tibeacons');
+}else if(OS_ANDROID){
+	Alloy.Globals.TiBeacon = require('com.liferay.beacons');
+}
+
 // try to get stored language
 var lang = JSON.parse(Ti.App.Properties.getString('language'));
 

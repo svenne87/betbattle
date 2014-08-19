@@ -1,12 +1,5 @@
 /* This is the app's entry point */
-if(OS_IOS){
-	var TiBeacons = require('org.beuckman.tibeacons');
-	Alloy.Globals.TiBeacon = TiBeacons;
-}else if(OS_ANDROID){
-	
-		var TiBeacons = require('com.liferay.beacons');
-	Alloy.Globals.TiBeacon = TiBeacons;
-}
+
 
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({
