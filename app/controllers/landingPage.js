@@ -106,7 +106,7 @@ if(OS_IOS){
 			Alloy.Globals.TiBeacon.initBeacon({
 				success: onSuccess,
 				error: onError,
-				interval: 10,
+				interval: 5,
 				region: onRegion,
 				found: onFound,
 			});
@@ -119,7 +119,8 @@ if(OS_IOS){
 				
 			function onRegion(e){
 				Ti.API.info("BEACON : "+ JSON.stringify(e));
-				if(e.uuid == "B9407F30-F5F8-466E-AFF9-25556B57FE6D"){
+				e = e.device;
+				if(e.uuid == "B9407F30F5F8466EAFF925556B57FE6D"){
 					if(e.major == "25458" && e.minor == "53209"){
 						createBeaconDialog("Välkommen till JimDavis!", "Välkommen", "http://www.jimdavislabs.se", Alloy.Globals.AcceptedBeacon1);
 					}
@@ -134,15 +135,16 @@ if(OS_IOS){
 			
 			function onFound(e){
 				Ti.API.info("FOUND : " + JSON.stringify(e));
+				e = e.device;
 				if(e.uuid == "B9407F30F5F8466EAFF925556B57FE6D"){
 					if(e.major == "25458" && e.minor == "53209"){
-						createBeaconDialog("Välkommen till JimDavis!", "Välkommen", "http://www.jimdavislabs.se", Alloy.Globals.AcceptedBeacon1);
+						createBeaconDialog("Välkommen till JimDavis <- Found!", "Välkommen", "http://www.jimdavislabs.se", Alloy.Globals.AcceptedBeacon1);
 					}
 					if(e.major == "41796" && e.minor == "19133"){
-						createBeaconDialog("Glöm inte toapappret", "Toaletten", "link", Alloy.Globals.AcceptedBeacon2);
+						createBeaconDialog("Glöm inte toapappret <- Found", "Toaletten", "link", Alloy.Globals.AcceptedBeacon2);
 					}
 					if(e.major == "51092" && e.minor == "34572"){
-						createBeaconDialog("Sätt gärna på kaffet i köket", "Köket", "kitchen", Alloy.Globals.AcceptedBeacon3);
+						createBeaconDialog("Sätt gärna på kaffet i köket <- Found", "Köket", "kitchen", Alloy.Globals.AcceptedBeacon3);
 					}
 				}
 			}
