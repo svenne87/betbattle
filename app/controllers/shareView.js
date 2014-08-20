@@ -31,65 +31,6 @@ var socialShareLabel = Ti.UI.createLabel({
 });
 mainView.add(socialShareLabel);
 
-var fbBtn = Titanium.UI.createButton({
-	title: Alloy.Globals.PHRASES.shareOnTxt+ " Facebook  ",
-	top:40,
-	height: 50,
-	width: 260,
-	left: '10%',
-	backgroundColor: '#3B5998',
-	color: '#fff',
-	borderRadius: 3
-});
-mainView.add(fbBtn);
-var fbIcon = Titanium.UI.createImageView({
-		image: "/images/fb.png",
-		height: 25,
-		width: 25,
-		left: 3
-	});
-	fbBtn.add(fbIcon);
-
-var twitterBtn = Titanium.UI.createButton({
-	title: Alloy.Globals.PHRASES.shareOnTxt+ " Twitter  ",
-	top:5,
-	height: 50,
-	width: 260,
-	textAlign: "center",
-	left: '10%',
-	backgroundColor: '#00ACED',
-	color: '#fff',
-	borderRadius: 3
-});
-mainView.add(twitterBtn);
-var twitterIcon = Titanium.UI.createImageView({
-		image: "/images/twitter.png",
-		height: 25,
-		width: 25,
-		left: 5
-	});
-	twitterBtn.add(twitterIcon);
-
-var googleBtn = Titanium.UI.createButton({
-	title: Alloy.Globals.PHRASES.shareOnTxt+ " Google+  ",
-	top:5,
-	height: 50,
-	width: 260,
-	textAlign: "center",
-	left: '10%',
-	backgroundColor: '#DD4B39',
-	color: '#fff',
-	borderRadius: 3
-});
-mainView.add(googleBtn);
-var googleIcon = Titanium.UI.createImageView({
-		image: "/images/googleplus.png",
-		height: 25,
-		width: 25,
-		left: 5
-	});
-	googleBtn.add(googleIcon);
-
 if(OS_IOS){
 	var appleBtn = Titanium.UI.createButton({
 		title: Alloy.Globals.PHRASES.sendTxt+ " Mail  ",
@@ -175,6 +116,67 @@ if(OS_IOS){
 	});
 	androidSmsBtn.add(androidIcon);
 }
+
+var fbBtn = Titanium.UI.createButton({
+	title: Alloy.Globals.PHRASES.shareOnTxt+ " Facebook  ",
+	top:40,
+	height: 50,
+	width: 260,
+	left: '10%',
+	backgroundColor: '#3B5998',
+	color: '#fff',
+	borderRadius: 3
+});
+mainView.add(fbBtn);
+var fbIcon = Titanium.UI.createImageView({
+		image: "/images/fb.png",
+		height: 25,
+		width: 25,
+		left: 3
+	});
+	fbBtn.add(fbIcon);
+
+var twitterBtn = Titanium.UI.createButton({
+	title: Alloy.Globals.PHRASES.shareOnTxt+ " Twitter  ",
+	top:5,
+	height: 50,
+	width: 260,
+	textAlign: "center",
+	left: '10%',
+	backgroundColor: '#00ACED',
+	color: '#fff',
+	borderRadius: 3
+});
+mainView.add(twitterBtn);
+var twitterIcon = Titanium.UI.createImageView({
+		image: "/images/twitter.png",
+		height: 25,
+		width: 25,
+		left: 5
+	});
+	twitterBtn.add(twitterIcon);
+
+var googleBtn = Titanium.UI.createButton({
+	title: Alloy.Globals.PHRASES.shareOnTxt+ " Google+  ",
+	top:5,
+	height: 50,
+	width: 260,
+	textAlign: "center",
+	left: '10%',
+	backgroundColor: '#DD4B39',
+	color: '#fff',
+	borderRadius: 3
+});
+mainView.add(googleBtn);
+var googleIcon = Titanium.UI.createImageView({
+		image: "/images/googleplus.png",
+		height: 25,
+		width: 25,
+		left: 5
+	});
+	googleBtn.add(googleIcon);
+
+
 
 // functions for the buttons
 
