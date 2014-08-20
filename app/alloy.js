@@ -25,6 +25,7 @@ Alloy.Globals.PREVIOUSVIEW;
 Alloy.Globals.NAV = null;
 Alloy.Globals.MAINVIEW;
 Alloy.Globals.MAINWIN = null;
+Alloy.Globals.LANDINGWIN = null;
 Alloy.Globals.WINDOWS = [];
 Alloy.Globals.OPEN = true;
 Alloy.Globals.CLOSE = true;

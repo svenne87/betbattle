@@ -217,7 +217,7 @@ function createSection() {
 
 function rowSelect(e) {
 	
-	if(OS_IOS && e.row.customView !== 'challengesView' && e.row.customView !== 'logout' && e.row.customView !== 'share'){	
+	if(OS_IOS && e.row.customView !== 'challengesView' && e.row.customView !== 'logout'){	
 		
 		if (Alloy.Globals.checkConnection()) {
 			// open these in window
@@ -237,7 +237,7 @@ function rowSelect(e) {
 			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionError);
 		}
 			
-	} else if(OS_ANDROID && e.row.customView !== 'challengesView' && e.row.customView !== 'logout' && e.row.customView !== 'share'){
+	} else if(OS_ANDROID && e.row.customView !== 'challengesView' && e.row.customView !== 'logout'){
 		if (Alloy.Globals.checkConnection()) {
 			// open these in window
 			var win =  Alloy.createController(e.row.customView).getView();
@@ -256,27 +256,36 @@ function rowSelect(e) {
 			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionError);
 		}
 	}
-	
-	if(e.row.customView === 'share') {
-		// share on facebook
-		shareOnFacebook();	
-	}
-	
-	
-	if(OS_ANDROID && e.row.customView === 'logout'){
-		if (Alloy.Globals.checkConnection()) {			
-			var fb = Alloy.Globals.FACEBOOK;
 
-			fb.addEventListener('logout', function(e) {
-				Ti.API.log('steg 3');
-				// this never get's called, might be a bug
+	if(OS_ANDROID && e.row.customView === 'logout'){
+		if (Alloy.Globals.checkConnection()) {	
+			var alertWindow = Titanium.UI.createAlertDialog({
+				title : Alloy.Globals.PHRASES.betbattleTxt,
+				message : Alloy.Globals.PHRASES.confirmLogoutDialogTxt,
+				buttonNames : [Alloy.Globals.PHRASES.signOutTxt, Alloy.Globals.PHRASES.abortBtnTxt]
 			});
 			
-			fb.logout();
-			
-			$.mainWin.close();
-			var activity = Titanium.Android.currentActivity;
-    		activity.finish();
+			alertWindow.addEventListener('click', function(e) {
+				switch (e.index) {
+					case 0:						
+						var fb = Alloy.Globals.FACEBOOK;
+
+						fb.addEventListener('logout', function(e) {
+							Ti.API.log('steg 3');
+							// this never get's called, might be a bug
+						});
+
+						fb.logout();
+						$.mainWin.close();
+						var activity = Titanium.Android.currentActivity;
+    					activity.finish();
+						break;
+					case 1:
+						alertWindow.hide();
+						break;
+				}
+			});
+			alertWindow.show();
 		} else {
 			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionError);
 		}
