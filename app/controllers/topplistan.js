@@ -21,12 +21,70 @@ var leaderboardLabel = Ti.UI.createLabel({
 });
 mainView.add(leaderboardLabel);
 
+var infoTxt = Ti.UI.createView({
+		backgroundColor : '#EA7337',
+		backgroundGradient : {
+			type : "linear",
+			startPoint : {
+				x : "0%",
+				y : "0%"
+			},
+			endPoint : {
+				x : "0%",
+				y : "100%"
+			},
+			colors : [ {
+				color : "#F09C00",
+			},{
+				color : "#D85000",
+			}]
+		},
+		width : "100%",
+		height : '5%'
+
+	});
+	mainView.add(infoTxt);
+	
+	var nrInfo = Ti.UI.createLabel({
+		text : Alloy.Globals.PHRASES.positionTxt,
+		left : '2%',
+		color: "#fff",
+		font : {
+			fontSize : 18,
+			fontFamily : "Impact"
+		},
+	});
+	infoTxt.add(nrInfo);
+	
+	var nameInfo = Ti.UI.createLabel({
+		text : Alloy.Globals.PHRASES.nameTxt,
+		left : '40%',
+		color: "#fff",
+		font : {
+			fontSize : 18,
+			fontFamily : "Impact"
+		},
+	});
+	infoTxt.add(nameInfo);
+	
+	var scoreInfo = Ti.UI.createLabel({
+		text : Alloy.Globals.PHRASES.pointsTxt,
+		left : '83%',
+		color: "#fff",
+		font : {
+			fontSize : 18,
+			fontFamily : "Impact"
+		},
+	});
+	infoTxt.add(scoreInfo);
+	
+
 function createGUI(obj, i) {
 	var totalLeader = Ti.UI.createView({
-		top : '0.03%',
+		top : '0.1%',
 		backgroundColor : '#fff',
 		width : "97%",
-		height : 40,
+		height : "8%",
 		opacity : 0.7,
 		borderRadius : 10
 
@@ -45,25 +103,25 @@ function createGUI(obj, i) {
 	if(i == 0){
 	var value = Titanium.UI.createImageView({
 		image : "/images/gold.png",
-		height : 25,
-		width : 25,
-		left : '4%'
+		height : 20,
+		width : 20,
+		left : '6%'
 	});
 	totalLeader.add(value);
 }else if(i == 1){
 	var value = Titanium.UI.createImageView({
 		image : "/images/silver.png",
-		height : 25,
-		width : 25,
-		left : '4%'
+		height : 20,
+		width : 20,
+		left : '6%'
 	});
 	totalLeader.add(value);
 }else if(i == 2){
 	var value = Titanium.UI.createImageView({
 		image : "/images/bronze.png",
-		height : 25,
-		width : 25,
-		left : '4%'
+		height : 20,
+		width : 20,
+		left : '6%'
 	});
 	totalLeader.add(value);
 }
@@ -72,7 +130,7 @@ function createGUI(obj, i) {
 		image : "/images/no_pic.png",
 		height : 25,
 		width : 25,
-		left : '13%'
+		left : '15%'
 	});
 	totalLeader.add(profilePic);
 	
@@ -82,7 +140,7 @@ if(boardName.length > 22){
 }
 if(i == 0){
 	var name = Ti.UI.createLabel({
-		text : "Chipleader\n" + boardName,
+		text : Alloy.Globals.PHRASES.chipleaderTxt + "\n" + boardName,
 		left : '27%',
 		font : {
 			fontSize : 14
@@ -90,7 +148,7 @@ if(i == 0){
 	});
 }else if(i == 1){
 	var name = Ti.UI.createLabel({
-		text : "Runner Up\n" + boardName,
+		text : Alloy.Globals.PHRASES.runnerUppTxt + "\n" + boardName,
 		left : '27%',
 		font : {
 			fontSize : 14
@@ -98,7 +156,7 @@ if(i == 0){
 	});
 }else if(i == 2){
 	var name = Ti.UI.createLabel({
-		text : "Third Place\n" + boardName,
+		text : Alloy.Globals.PHRASES.thirdPlaceTxt + "\n" + boardName,
 		left : '27%',
 		font : {
 			fontSize : 14
@@ -142,7 +200,7 @@ var client = Ti.Network.createHTTPClient({
 	// function called when an error occurs, including a timeout
 	onerror : function(e) {
 		Ti.API.debug(e.error);
-		alert('error');
+		//alert('error');
 	},
 	timeout : Alloy.Globals.TIMEOUT // in milliseconds
 });
