@@ -32,7 +32,7 @@ var botView = Ti.UI.createView({
 var profileName = Ti.UI.createLabel({
 	text: ""+Alloy.Globals.FACEBOOKOBJECT.attributes.fullName,
 	textAlign: "center",
-	top:0,
+	top:10,
 	font: {
 		fontSize: 18,
 		fontFamily: "Impact"
@@ -254,13 +254,22 @@ var winsText = Ti.UI.createLabel({
 
 profileWinsView.add(wins);
 profileWinsView.add(winsText);
-
-var LongGreyBorderBot = Ti.UI.createImageView({
+if(OS_IOS){
+	var LongGreyBorderBot = Ti.UI.createImageView({
+	image: "/images/grey-border.png",
+	bottom: 0,
+	width:"100%",
+});
+}
+if(OS_ANDROID){
+	var LongGreyBorderBot = Ti.UI.createImageView({
 	image: "/images/grey-border.png",
 	bottom: 0,
 	top:"85%",
 	width:"100%",
 });
+}
+
 profileBotView.add(LongGreyBorderBot);
 
 
