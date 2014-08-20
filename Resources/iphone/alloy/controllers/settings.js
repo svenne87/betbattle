@@ -67,6 +67,8 @@ function Controller() {
             switch (e.index) {
               case 0:
                 alertWindow.hide();
+                ;
+                ;
                 Ti.App._restart();
                 break;
 
