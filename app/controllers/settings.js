@@ -143,7 +143,6 @@ function showAlertWithRestartNote() {
 				
 				var activity = Titanium.Android.currentActivity;
     			activity.finish();
-		
 				
 				// start app again
 				var intent = Ti.Android.createIntent({

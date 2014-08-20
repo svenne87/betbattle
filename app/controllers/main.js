@@ -279,6 +279,16 @@ function rowSelect(e) {
 						$.mainWin.close();
 						var activity = Titanium.Android.currentActivity;
     					activity.finish();
+    					
+    					/*
+    					// start app again
+						var intent = Ti.Android.createIntent({
+							action : Ti.Android.ACTION_MAIN,
+							url : 'Betkampen.js'
+						});
+						intent.addCategory(Ti.Android.CATEGORY_LAUNCHER);
+						Ti.Android.currentActivity.startActivity(intent);
+    					*/
 						break;
 					case 1:
 						alertWindow.hide();
