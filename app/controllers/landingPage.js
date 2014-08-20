@@ -1,4 +1,5 @@
 var args = arguments[0] || {};
+Alloy.Globals.LANDINGWIN = $.landingPage;
 
 if(OS_ANDROID) {
 	$.landingPage.addEventListener('open', function(){	

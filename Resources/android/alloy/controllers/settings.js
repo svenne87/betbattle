@@ -46,8 +46,8 @@ function Controller() {
             top: 20,
             height: Ti.UI.SIZE
         });
-        picker.addEventListener("change", function(e) {
-            changeLanguageConfirm(e.selectedValue[0]);
+        picker.addEventListener("change", function() {
+            changeLanguageConfirm(picker.getSelectedRow(0).value);
         });
         picker.add(data);
         picker.columns[0].width = Ti.UI.SIZE;
@@ -65,7 +65,18 @@ function Controller() {
             switch (e.index) {
               case 0:
                 alertWindow.hide();
-                Ti.App._restart();
+                Alloy.Globals.MAINWIN.close();
+                Alloy.Globals.LANDINGWIN.close();
+                $.settingsWindow.exitOnClose = true;
+                $.settingsWindow.close();
+                var activity = Titanium.Android.currentActivity;
+                activity.finish();
+                var intent = Ti.Android.createIntent({
+                    action: Ti.Android.ACTION_MAIN,
+                    url: "Betkampen.js"
+                });
+                intent.addCategory(Ti.Android.CATEGORY_LAUNCHER);
+                Ti.Android.currentActivity.startActivity(intent);
                 break;
 
               case 1:
@@ -159,6 +170,15 @@ function Controller() {
     var indicator = uie.createIndicatorWindow({
         top: 200,
         text: Alloy.Globals.PHRASES.loadingTxt
+    });
+    $.settingsWindow.orientationModes = [ Titanium.UI.PORTRAIT ];
+    $.settingsWindow.addEventListener("open", function() {
+        $.settingsWindow.activity.actionBar.onHomeIconItemSelected = function() {
+            $.settingsWindow.close();
+            $.settingsWindow = null;
+        };
+        $.settingsWindow.activity.actionBar.displayHomeAsUp = true;
+        $.settingsWindow.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
     });
     var picker;
     $.settingsWindow.addEventListener("close", function() {

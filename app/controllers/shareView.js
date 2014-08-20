@@ -1,4 +1,13 @@
-var args = arguments[0] || {};
+
+if(OS_ANDROID){
+	$.share.orientationModes = [Titanium.UI.PORTRAIT];
+	
+	$.share.addEventListener('open', function(){
+		$.share.activity.actionBar.onHomeIconItemSelected = function() { $.share.close(); $.share = null; };
+   		$.share.activity.actionBar.displayHomeAsUp = true;
+   		$.share.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
+	});
+}
 
 var mainView = Ti.UI.createView({
 	class : "topView",
