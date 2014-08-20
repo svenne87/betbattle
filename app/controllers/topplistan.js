@@ -23,7 +23,7 @@ mainView.add(leaderboardLabel);
 
 function createGUI(obj, i) {
 	var totalLeader = Ti.UI.createView({
-		top : '0.1%',
+		top : '0.03%',
 		backgroundColor : '#fff',
 		width : "97%",
 		height : 40,
@@ -41,22 +41,78 @@ function createGUI(obj, i) {
 		},
 	});
 	totalLeader.add(nr);
-
-	var profilePic = Titanium.UI.createImageView({
-		image : "/images/insta.PNG",
+	
+	if(i == 0){
+	var value = Titanium.UI.createImageView({
+		image : "/images/gold.png",
 		height : 25,
 		width : 25,
-		left : '10%'
+		left : '4%'
+	});
+	totalLeader.add(value);
+}else if(i == 1){
+	var value = Titanium.UI.createImageView({
+		image : "/images/silver.png",
+		height : 25,
+		width : 25,
+		left : '4%'
+	});
+	totalLeader.add(value);
+}else if(i == 2){
+	var value = Titanium.UI.createImageView({
+		image : "/images/bronze.png",
+		height : 25,
+		width : 25,
+		left : '4%'
+	});
+	totalLeader.add(value);
+}
+
+	var profilePic = Titanium.UI.createImageView({
+		image : "/images/no_pic.png",
+		height : 25,
+		width : 25,
+		left : '13%'
 	});
 	totalLeader.add(profilePic);
-
+	
+	boardName = obj.name.toString();
+if(boardName.length > 22){
+	boardName = boardName.substring(0,22);
+}
+if(i == 0){
 	var name = Ti.UI.createLabel({
-		text : obj.name,
-		left : '20%',
+		text : "Chipleader\n" + boardName,
+		left : '27%',
 		font : {
 			fontSize : 14
 		},
 	});
+}else if(i == 1){
+	var name = Ti.UI.createLabel({
+		text : "Runner Up\n" + boardName,
+		left : '27%',
+		font : {
+			fontSize : 14
+		},
+	});
+}else if(i == 2){
+	var name = Ti.UI.createLabel({
+		text : "Third Place\n" + boardName,
+		left : '27%',
+		font : {
+			fontSize : 14
+		},
+	});
+}else{
+	var name = Ti.UI.createLabel({
+		text : boardName,
+		left : '27%',
+		font : {
+			fontSize : 14
+		},
+	});
+}
 	totalLeader.add(name);
 
 	var coins = Ti.UI.createLabel({
