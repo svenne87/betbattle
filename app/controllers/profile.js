@@ -532,16 +532,7 @@ function getAchievements(){
 								
 								w.add(greyGlass);
 								
-								
-								// create a button to close window
-								var b = Titanium.UI.createButton({
-									title:'Close',
-									height:30,
-									width:150,
-									top: 0,
-								});
-								w.add(b);
-								
+							
 								var achievementTitle = Ti.UI.createLabel({
 									text: Alloy.Globals.PHRASES.achievements[e.source.id].title,
 									textAlign: "center",
@@ -563,7 +554,7 @@ function getAchievements(){
 								});
 								w.add(achievementDescription);
 								
-								b.addEventListener('click', function()
+								w.addEventListener('click', function()
 								{
 									var t3 = Titanium.UI.create2DMatrix();
 									t3 = t3.scale(0);
