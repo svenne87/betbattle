@@ -178,7 +178,7 @@ var shareBtn = Titanium.UI.createButton({
 		fontFamily : font,
 		fontSize: 22
 	},
-	title: fontawesome.icon('fa-share-alt-square'),
+	title: fontawesome.icon('fa-share-alt'),
 	backgroundColor: '#fff',
 	color: '#000',
 	textAlign: "left",
