@@ -731,7 +731,7 @@ function FontAwesome() {
         "fa-vimeo-square": 61844,
         "fa-try": 61845,
         "fa-plus-square-o": 61846,
-        "fa-share-alt": 61920
+        "fa-share-alt": 61540
     };
 }
 
