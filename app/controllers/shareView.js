@@ -9,7 +9,17 @@ if(OS_ANDROID){
 	});
 }
 
-var mainView = Ti.UI.createView({
+var fontawesome = require('lib/IconicFont').IconicFont({
+	font : 'lib/FontAwesome'
+});
+
+var font = 'FontAwesome';
+
+if (OS_ANDROID) {
+	font = 'fontawesome-webfont';
+}
+
+var mainView = Ti.UI.createScrollView({
 	class : "topView",
 	height:"100%",
 	width: "100%",
@@ -30,153 +40,141 @@ var socialShareLabel = Ti.UI.createLabel({
 	color: "#FFF"
 });
 mainView.add(socialShareLabel);
-
-if(OS_IOS){
-	var appleBtn = Titanium.UI.createButton({
-		title: Alloy.Globals.PHRASES.sendTxt+ " Mail  ",
-		top:5,
-		height: 50,
-		width: 260,
-		textAlign: "center",
-		left: '10%',
-		backgroundColor: '#fff',
-		color: '#000',
-		borderRadius: 3
-});
-
-	mainView.add(appleBtn);
-	var appleIcon = Titanium.UI.createImageView({
-		image: "/images/iosmail.png",
-		height: 25,
-		width: 25,
-		left: 5
-	});
-	appleBtn.add(appleIcon);
-
-	var iphoneSmsBtn = Titanium.UI.createButton({
-		title: Alloy.Globals.PHRASES.sendTxt+ " SMS ",
-		top:5,
-		height: 50,
-		width: 260,
-		textAlign: "center",
-		left: '10%',
-		backgroundColor: '#fff',
-		color: '#000',
-		borderRadius: 3
-});
-	mainView.add(iphoneSmsBtn);
-	
-	var iossmsIcon = Titanium.UI.createImageView({
-		image: "/images/iossms.png",
-		height: 25,
-		width: 25,
-		left: 5
-	});
-	iphoneSmsBtn.add(iossmsIcon);
-	
-} else if(OS_ANDROID){
-	var gmailBtn = Titanium.UI.createButton({
-		title: Alloy.Globals.PHRASES.sendTxt+ " Mail  ",
-		top:5,
-		height: 50,
-		width: 260,
-		textAlign: "center",
-		left: '10%',
-		backgroundColor: '#fff',
-		color: '#000',
-		borderRadius: 3
-	});
-
-	mainView.add(gmailBtn);
-	var gmailIcon = Titanium.UI.createImageView({
-		image: "/images/gmail.png",
-		height: 25,
-		width: 25,
-		left: 5
-	});
-	gmailBtn.add(gmailIcon);
-
-	var androidSmsBtn = Titanium.UI.createButton({
-		title: Alloy.Globals.PHRASES.sendTxt+ " SMS ",
-		top:5,
-		height: 50,
-		width: 260,
-		textAlign: "center",
-		left: '10%',
-		backgroundColor: '#fff',
-		color: '#000',
-		borderRadius: 3
-	});
-	mainView.add(androidSmsBtn);
-	var androidIcon = Titanium.UI.createImageView({
-		image: "/images/androidsms.png",
-		height: 25,
-		width: 25,
-		left: 5
-	});
-	androidSmsBtn.add(androidIcon);
-}
-
-var fbBtn = Titanium.UI.createButton({
-	title: Alloy.Globals.PHRASES.shareOnTxt+ " Facebook  ",
-	top:40,
-	height: 50,
-	width: 260,
+//----------------------------------------------------------------------EMAIL-----------------------------------------------------------------------------
+var mailBtn = Titanium.UI.createButton({
+	top:"4%",
+	height: '11%',
+	width: '80%',
 	left: '10%',
+	font : {
+		fontFamily : font,
+		fontSize: 22
+	},
+	title: fontawesome.icon('fa-file-text-o'),
+	backgroundColor: '#fff',
+	color: '#000',
+	textAlign: "left",
+	borderRadius: 5
+});
+mainView.add(mailBtn);
+
+mailLabel = Titanium.UI.createLabel({
+	text: Alloy.Globals.PHRASES.sendMailTxt,
+	font: {
+		fontSize: 18,
+		fontFamily: "Impact"
+	},
+	color: "#000000"
+});
+mailBtn.add(mailLabel);
+//----------------------------------------------------------------------SMS-----------------------------------------------------------------------------
+var smsBtn = Titanium.UI.createButton({
+	top:"2%",
+	height: '11%',
+	width: '80%',
+	left: '10%',
+	font : {
+		fontFamily : font,
+		fontSize: 22
+	},
+	title: fontawesome.icon('fa-mobile'),
+	backgroundColor: '#fff',
+	color: '#000',
+	textAlign: "left",
+	borderRadius: 5
+});
+mainView.add(smsBtn);
+
+smsLabel = Titanium.UI.createLabel({
+	text: Alloy.Globals.PHRASES.sendSMSTxt,
+	font: {
+		fontSize: 18,
+		fontFamily: "Impact"
+	},
+	color: "#000000"
+});
+smsBtn.add(smsLabel);
+//----------------------------------------------------------------------FACEBOOK-----------------------------------------------------------------------------
+var fbBtn = Titanium.UI.createButton({
+	top:"2%",
+	height: '11%',
+	width: '80%',
+	left: '10%',
+	font : {
+		fontFamily : font,
+		fontSize: 22
+	},
+	title: fontawesome.icon('fa-facebook'),
 	backgroundColor: '#3B5998',
-	color: '#fff',
-	borderRadius: 3
+	color: '#FFF',
+	textAlign: "left",
+	borderRadius: 5
 });
 mainView.add(fbBtn);
-var fbIcon = Titanium.UI.createImageView({
-		image: "/images/fb.png",
-		height: 25,
-		width: 25,
-		left: 3
-	});
-	fbBtn.add(fbIcon);
 
+fbLabel = Titanium.UI.createLabel({
+	text: Alloy.Globals.PHRASES.shareFBTxt,
+	font: {
+		fontSize: 18,
+		fontFamily: "Impact"
+	},
+	color: "#FFF"
+});
+fbBtn.add(fbLabel);
+//-------------------------------------------------------------------TWITTER--------------------------------------------------------------------------------
 var twitterBtn = Titanium.UI.createButton({
-	title: Alloy.Globals.PHRASES.shareOnTxt+ " Twitter  ",
-	top:5,
-	height: 50,
-	width: 260,
-	textAlign: "center",
+	top:"2%",
+	height: '11%',
+	width: '80%',
 	left: '10%',
+	font : {
+		fontFamily : font,
+		fontSize: 22
+	},
+	title: fontawesome.icon('fa-twitter'),
 	backgroundColor: '#00ACED',
-	color: '#fff',
-	borderRadius: 3
+	color: '#FFF',
+	textAlign: "left",
+	borderRadius: 5
 });
 mainView.add(twitterBtn);
-var twitterIcon = Titanium.UI.createImageView({
-		image: "/images/twitter.png",
-		height: 25,
-		width: 25,
-		left: 5
-	});
-	twitterBtn.add(twitterIcon);
 
+twitterLabel = Titanium.UI.createLabel({
+	text: Alloy.Globals.PHRASES.shareTwitterTxt,
+	font: {
+		fontSize: 18,
+		fontFamily: "Impact"
+	},
+	color: "#FFF"
+});
+twitterBtn.add(twitterLabel);
+//---------------------------------------------------------------------------------------------------------------------------------------------------
 var googleBtn = Titanium.UI.createButton({
-	title: Alloy.Globals.PHRASES.shareOnTxt+ " Google+  ",
-	top:5,
-	height: 50,
-	width: 260,
-	textAlign: "center",
+	top:"2%",
+	height: '11%',
+	width: '80%',
 	left: '10%',
+	font : {
+		fontFamily : font,
+		fontSize: 22
+	},
+	title: fontawesome.icon('fa-google-plus'),
 	backgroundColor: '#DD4B39',
-	color: '#fff',
-	borderRadius: 3
+	color: '#FFF',
+	textAlign: "left",
+	borderRadius: 5
 });
 mainView.add(googleBtn);
-var googleIcon = Titanium.UI.createImageView({
-		image: "/images/googleplus.png",
-		height: 25,
-		width: 25,
-		left: 5
-	});
-	googleBtn.add(googleIcon);
 
-
+googleLabel = Titanium.UI.createLabel({
+	text: Alloy.Globals.PHRASES.shareGoogleTxt,
+	font: {
+		fontSize: 18,
+		fontFamily: "Impact"
+	},
+	color: "#FFF"
+});
+googleBtn.add(googleLabel);
 
 // functions for the buttons
 
@@ -371,48 +369,42 @@ googleBtn.addEventListener('click', function(e){
 });
 
 // iPhone buttons
-if(OS_IOS){
-// --------------------------------------------------------------- Share to APPLE MAIL  ----------------------------------------------------------------------------
+
+// --------------------------------------------------------------- Send EMAIL  ----------------------------------------------------------------------------
+
 	var emailDialog = Titanium.UI.createEmailDialog();
 	emailDialog.subject = 'Testa betkampen';
 	emailDialog.messageBody = 'hej hej betkampen här';
 	
-	appleBtn.addEventListener('click', function(e){
+	mailBtn.addEventListener('click', function(e){
 		emailDialog.open();
 	});
 
-// --------------------------------------------------------------- Share to IOS SMS  -------------------------------------------------------------------------------
+// --------------------------------------------------------------- Send SMS  -------------------------------------------------------------------------------
+if(OS_IOS){
 	var sms = require('bencoding.sms').createSMSDialog({ barColor:'#336699'
 	});
 	 sms.setMessageBody('hej hej betkampen här');
 	 
-	iphoneSmsBtn.addEventListener('click', function(e){
+	smsBtn.addEventListener('click', function(e){
 		sms.open();
-	});
+	});	
 	
-}
-// Android Buttons
-if(OS_ANDROID){
-// --------------------------------------------------------------- Share to GMAIL  ---------------------------------------------------------------------------------
-	var emailDialog = Titanium.UI.createEmailDialog();
-	emailDialog.subject = 'Testa betkampen';
-	emailDialog.messageBody = 'hej hej betkampen här';
-	
-	gmailBtn.addEventListener('click', function(e){
-		emailDialog.open();
-	});
-// --------------------------------------------------------------- Share to SMS ANDROID  ---------------------------------------------------------------------------
-	
+}else if(OS_ANDROID){
+
 	var intent = Ti.Android.createIntent({
 		action: Ti.Android.ACTION_SENDTO,
 		data: 'smsto:'
 	});
 	intent.putExtra('sms_body', 'hej hej detta är betkampen');
 	
-	androidSmsBtn.addEventListener('click', function(e){
+	smsBtn.addEventListener('click', function(e){
 		Ti.Android.currentActivity.startActivity(intent);
 	});
+	
 }
+	
+
 
 
 $.share.add(mainView);

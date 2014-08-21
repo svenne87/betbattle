@@ -10,7 +10,7 @@ if (OS_ANDROID) {
 	font = 'fontawesome-webfont';
 }
 
-var mainView = Ti.UI.createView({
+var mainView = Ti.UI.createScrollView({
 	height:"100%",
 	width: "100%",
 	top:0,
@@ -35,8 +35,8 @@ mainView.add(friendZoneLabel);
 var fbFriendBtn = Titanium.UI.createButton({
 	//title: Alloy.Globals.PHRASES.fbFriendsTxt,
 	top:"5%",
-	height: 50,
-	width: 260,
+	height: '10%',
+	width: '80%',
 	left: '10%',
 	font : {
 		fontFamily : font,
@@ -62,8 +62,8 @@ fbFriendBtn.add(fbLabel);
 
 var myFriendBtn = Titanium.UI.createButton({
 	top:"1%",
-	height: 50,
-	width: 260,
+	height: '10%',
+	width: '80%',
 	left: '10%',
 	font : {
 		fontFamily : font,
@@ -90,8 +90,8 @@ myFriendBtn.add(mFriendLabel);
 
 var myGroupsBtn = Titanium.UI.createButton({
 	top:"1%",
-	height: 50,
-	width: 260,
+	height: '10%',
+	width: '80%',
 	left: '10%',
 	font : {
 		fontFamily : font,
@@ -117,8 +117,8 @@ myGroupsBtn.add(mGroupLabel);
 
 var addFriendsBtn = Titanium.UI.createButton({
 	top:"10%",
-	height: 50,
-	width: 260,
+	height: '10%',
+	width: '80%',
 	left: '10%',
 	font : {
 		fontFamily : font,
@@ -144,8 +144,8 @@ addFriendsBtn.add(aFriendLabel);
 
 var createGroupBtn = Titanium.UI.createButton({
 	top:"1%",
-	height: 50,
-	width: 260,
+	height: '10%',
+	width: '80%',
 	left: '10%',
 	font : {
 		fontFamily : font,
@@ -171,8 +171,8 @@ createGroupBtn.add(cGroupLabel);
 
 var shareBtn = Titanium.UI.createButton({
 	top:"1%",
-	height: 50,
-	width: 260,
+	height: '10%',
+	width: '80%',
 	left: '10%',
 	font : {
 		fontFamily : font,
@@ -196,7 +196,88 @@ shareLabel = Titanium.UI.createLabel({
 });
 shareBtn.add(shareLabel);
 
+fbFriendBtn.addEventListener('click', function(e){
+	var win = Alloy.createController('shareView').getView();
+		if (OS_IOS) {
+			Alloy.Globals.NAV.openWindow(win, {
+				animated : true
+			});
+		} else {
+			win.open({
+				fullScreen : true
+			});
+			win = null;
+		}
+});
+myFriendBtn.addEventListener('click', function(e){
+	var win = Alloy.createController('myFriends').getView();
+		if (OS_IOS) {
+			Alloy.Globals.NAV.openWindow(win, {
+				animated : true
+			});
+		} else {
+			win.open({
+				fullScreen : true
+			});
+			win = null;
+		}
+});
 
+myGroupsBtn.addEventListener('click', function(e){
+	var win = Alloy.createController('myGroups').getView();
+		if (OS_IOS) {
+			Alloy.Globals.NAV.openWindow(win, {
+				animated : true
+			});
+		} else {
+			win.open({
+				fullScreen : true
+			});
+			win = null;
+		}
+});
+
+addFriendsBtn.addEventListener('click', function(e){
+	var win = Alloy.createController('friendSearch').getView();
+		if (OS_IOS) {
+			Alloy.Globals.NAV.openWindow(win, {
+				animated : true
+			});
+		} else {
+			win.open({
+				fullScreen : true
+			});
+			win = null;
+		}
+});
+
+createGroupBtn.addEventListener('click', function(e){
+	var win = Alloy.createController('createGroup').getView();
+		if (OS_IOS) {
+			Alloy.Globals.NAV.openWindow(win, {
+				animated : true
+			});
+		} else {
+			win.open({
+				fullScreen : true
+			});
+			win = null;
+		}
+});
+
+shareBtn.addEventListener('click', function(e){
+	var win = Alloy.createController('shareView').getView();
+		if (OS_IOS) {
+			Alloy.Globals.NAV.openWindow(win, {
+				animated : true
+			});
+		} else {
+			win.open({
+				fullScreen : true
+			});
+			win = null;
+		}
+});
 
 
 
