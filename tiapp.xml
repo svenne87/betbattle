@@ -145,6 +145,7 @@
         <module platform="iphone">org.beuckman.tibeacons</module>
         <module platform="iphone">bencoding.sms</module>
         <module platform="android">miga.tibeacon</module>
+        <module platform="android">com.yydigital.realswitch</module>
     </modules>
     <deployment-targets>
         <target device="android">true</target>

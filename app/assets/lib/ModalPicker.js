@@ -1,4 +1,4 @@
-function ModalPicker(prefs, data, text) {
+function ModalPicker(prefs, data, selectTxt, closeTxt) {
 
     var self = Ti.UI.createLabel(prefs);
 
@@ -15,7 +15,15 @@ function ModalPicker(prefs, data, text) {
 
 
     var select = Ti.UI.createButton({
-        title: text,
+        title: selectTxt,
+        style: Ti.UI.iPhone.SystemButtonStyle.PLAIN,
+        color : '#FFF',
+        backgroundImage : 'none',
+        width : 100
+    });
+    
+    var close = Ti.UI.createButton({
+    	title: closeTxt,
         style: Ti.UI.iPhone.SystemButtonStyle.PLAIN,
         color : '#FFF',
         backgroundImage : 'none',
@@ -29,13 +37,12 @@ function ModalPicker(prefs, data, text) {
 
 
     var toolbar = Ti.UI.iOS.createToolbar({
-        items: [flexSpace, select],
+        items: [close, flexSpace, select],
         top: 0,
         borderTop: true,
         borderBottom: false,
         barColor: '#303030'
     });
-
 
     select.addEventListener('click', function () {
         self.text = picker.getSelectedRow(0).title;
@@ -44,7 +51,12 @@ function ModalPicker(prefs, data, text) {
         subWin.animate({
             top: Ti.Platform.displayCaps.platformHeight
         });
-
+    });
+    
+    close.addEventListener('click', function() {
+    	subWin.animate({
+            top: Ti.Platform.displayCaps.platformHeight
+        });
     });
 
     subWin.add(toolbar);

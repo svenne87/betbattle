@@ -126,31 +126,19 @@ function createAndShowTableView(league, array) {
 	}
 
 	var tableHeaderView = Ti.UI.createView({
-		height : '142dp',
-		backgroundImage : '/images/header.png'
+		height : "10%",
+		width : Ti.UI.FILL,
+		backgroundColor : "transparent",
 	});
 
-	var nameFont = Alloy.Globals.getFontSize(3);
-
-	if (leagueName.length > 13) {
-		if (OS_ANDROID) {
-			nameFont = 36;
-		} else if (OS_IOS) {
-			nameFont = 32;
-		}
-	}
-
 	tableHeaderView.add(Ti.UI.createLabel({
-		width : '100%',
-		textAlign : 'center',
-		top : 50,
-		text : leagueName,
+		text : "Pick a match",						// TODO Should be phrase from server
+		textAlign : "center",
+		color : "#FFF",
 		font : {
-			fontSize : nameFont,
-			fontWeight : 'normal',
-			fontFamily : Alloy.Globals.getFont()
-		},
-		color : '#FFF'
+			fontSize : Alloy.Globals.getFontSize(2),
+			fontFamily : "Impact",
+		}
 	}));
 
 	if (OS_IOS) {
@@ -165,7 +153,6 @@ function createAndShowTableView(league, array) {
 				right : 0
 			}
 		});
-
 	} else {
 		// Table
 		table = Ti.UI.createTableView({
@@ -176,10 +163,17 @@ function createAndShowTableView(league, array) {
 
 	}
 
-	table.footerView = Ti.UI.createView({
-		height : 0.5,
-		backgroundColor : '#6d6d6d'
+	var footerView = Ti.UI.createView({
+		height : 20,
+		backgroundColor : 'transparent'
 	});
+	
+	footerView.add(Ti.UI.createLabel({
+		text : 'Test',
+		color : '#FFF'
+	}));
+
+	table.footerView = footerView;
 
 	var data = [];
 
@@ -190,68 +184,62 @@ function createAndShowTableView(league, array) {
 		var date = new Date(dateFix);
 
 		var dateString = date.toUTCString();
-		dateString = dateString.substring(5, (dateString.length - 3));
+		dateString = dateString.substring(5, (dateString.length - 7));
 
-		var subRow = Ti.UI.createTableViewRow({
-			layout : 'vertical',
-			selectionStyle : 'none',
-			backgroundColor : '#303030'
-		});
+		var child;
 
-		subRow.footerView = Ti.UI.createView({
-			height : 0.5,
-			backgroundColor : '#6d6d6d'
-		});
-
-		subRow.add(Ti.UI.createView({
-			height : 12
-		}));
-
-		for (var x = 0; x < array[i].attributes.game_values.length; x++) {
-
-			subRow.add(Ti.UI.createLabel({
-				text : array[i].attributes.game_values[x],
-				left : 60,
-				font : {
-					fontSize : Alloy.Globals.getFontSize(1),
-					fontWeight : 'normal',
-					fontFamily : Alloy.Globals.getFont()
-				},
-				color : '#FFF',
-				backgroundColor : '#303030'
-			}));
-		}
-
-		subRow.add(Ti.UI.createView({
-			height : 12
-		}));
-
-		// array with views for the sub in table row
-		var subRowArray = [];
-		subRowArray.push(subRow);
-
-		var rowChild;
 		if (OS_IOS) {
-			rowChild = true;
+			child = true;
 		} else if (OS_ANDROID) {
-			rowChild = false;
+			child = false;
 		}
 
 		var row = $.UI.create('TableViewRow', {
-			classes : ['challengesSectionDefault'], 
+			classes : ['challengesSectionDefault'],
 			id : array[i].attributes.round,
-			sub : subRowArray,
 			opened : false,
-			isparent : true
+			hasChild : child
 		});
 
+		// add custom icon on Android to symbol that the row has child
+		if (child != true) {
+			var fontawesome = require('lib/IconicFont').IconicFont({
+				font : 'lib/FontAwesome'
+			});
+
+			var font = 'FontAwesome';
+			var rightPercentage = '5%';
+
+			if (OS_ANDROID) {
+				font = 'fontawesome-webfont';
+
+				if (Titanium.Platform.displayCaps.platformWidth < 350) {
+					rightPercentage = '3%';
+				}
+			}
+
+			row.add(Ti.UI.createLabel({
+				font : {
+					fontFamily : font
+				},
+				text : fontawesome.icon('icon-chevron-right'),
+				right : rightPercentage,
+				color : '#FFF',
+				fontSize : 80,
+				height : 'auto',
+				width : 'auto'
+			}));
+		}
+
 		var themeColor = Alloy.Globals.themeColor();
-		if(Alloy.Globals.themeColor() === '#ea7337') { themeColor = "FFF";} // small fix for orange
+		if (Alloy.Globals.themeColor() === '#ea7337') {
+			themeColor = "FFF";
+		}// small fix for orange
 
 		row.add(Ti.UI.createLabel({
 			text : dateString,
 			top : 10,
-			left : 60,
+			left : 20,
 			font : {
 				fontSize : Alloy.Globals.getFontSize(1),
 				fontWeight : 'normal',
@@ -261,9 +249,9 @@ function createAndShowTableView(league, array) {
 		}));
 
 		row.add(Ti.UI.createLabel({
-			text : Alloy.Globals.PHRASES.nrOfGamesTxt + ' ' + array[i].attributes.game_values.length,
+			text : array[i].attributes.team_1.team_name + " - " + array[i].attributes.team_2.team_name,
 			top : 30,
-			left : 60,
+			left : 20,
 			font : {
 				fontSize : Alloy.Globals.getFontSize(1),
 				fontWeight : 'normal',
@@ -278,32 +266,6 @@ function createAndShowTableView(league, array) {
 			height : 12
 		}));
 
-		var detailsImg = Ti.UI.createImageView({
-			name : 'detailsBtn',
-			width : 35,
-			height : 35,
-			top : 11,
-			left : 5,
-			id : array[i].attributes.round,
-			image : '/images/p.png'
-		});
-
-		row.add(detailsImg);
-
-		if (OS_ANDROID) {
-			row.add(Ti.UI.createLabel({
-				font : {
-					fontFamily : font
-				},
-				text : fontawesome.icon('icon-chevron-right'),
-				right : '5%',
-				color : '#FFF',
-				fontSize : 80,
-				height : 'auto',
-				width : 'auto'
-			}));
-		}
-
 		row.className = date.toUTCString();
 		data.push(row);
 	}
@@ -316,73 +278,40 @@ function createAndShowTableView(league, array) {
 			return;
 		}
 
-		// check if we press the button on the row
-		if (e.source.name === 'detailsBtn') {
+		// open challenge view here, with arguments (roundId) for a new challenge
 
-			// change Image
-			if (e.source.image == '/images/p.png') {
-				e.source.image = '/images/m.png';
+		// e.rowData is null in android
+		if (OS_ANDROID) {
+			// fix for android
+			e.rowData = e.row;
+		}
+
+		if (e.rowData !== null && typeof e.rowData.id !== 'undefined') {
+			var matchDate = new Date(e.rowData.className);
+			matchDate.setHours(matchDate.getHours() - 2);
+			var now = new Date();
+
+			if (now.getTime() > matchDate.getTime()) {
+				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.roundHasStartedErrorTxt);
 			} else {
-				e.source.image = '/images/p.png';
-			}
+				var arg = {
+					round : e.row.id,
+					leagueName : leagueName,
+					leagueId : leagueId
+				};
 
-			// will show all matches
-			//Is this a parent cell?
-			if (e.row.isparent) {
-				//Is it opened?
-				if (e.row.opened) {
-					for (var i = e.row.sub.length; i > 0; i = i - 1) {
-						table.deleteRow(e.index + i);
-					}
-					e.row.opened = false;
-				} else {
-					//Add the children.
-					var currentIndex = e.index;
-					for (var i = 0; i < e.row.sub.length; i++) {
-						table.insertRowAfter(currentIndex, e.row.sub[i]);
-						currentIndex++;
-					}
-					e.row.opened = true;
+				var win = Alloy.createController('challenge', arg).getView();
+				Alloy.Globals.WINDOWS.push(win);
+
+				if (OS_IOS) {
+					Alloy.Globals.NAV.openWindow(win, {
+						animated : true
+					});
+				} else if (OS_ANDROID) {
+					win.open({
+						fullScreen : true
+					});
 				}
-			}
-
-		} else {
-			// open challenge view here, with arguments (roundId) for a new challenge
-
-			// e.rowData is null in android
-			if (OS_ANDROID) {
-				// fix for android
-				e.rowData = e.row;
-			}
-
-			if (e.rowData !== null && typeof e.rowData.id !== 'undefined') {
-				var matchDate = new Date(e.rowData.className);
-				matchDate.setHours(matchDate.getHours() - 2);
-				var now = new Date();
-
-				if (now.getTime() > matchDate.getTime()) {
-					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.roundHasStartedErrorTxt);
-				} else {
-					var arg = {
-						round : e.row.id,
-						leagueName : leagueName,
-						leagueId : leagueId
-					};
-
-					var win = Alloy.createController('challenge', arg).getView();
-					Alloy.Globals.WINDOWS.push(win);
-
-					if (OS_IOS) {
-						Alloy.Globals.NAV.openWindow(win, {
-							animated : true
-						});
-					} else if (OS_ANDROID) {
-						win.open({
-							fullScreen : true
-						});
-					}
-				}
-
 			}
 		}
 	});
@@ -464,7 +393,6 @@ function getGames(league) {
 }
 
 /* Flow */
-var sweMonths = ["Januari", "Februari", "Mars", "April", "Maj", "Juni", "Juli", "Augusti", "September", "Oktober", "November", "December"];
 var leagueName = '';
 var leagueId = -1;
 var table;

@@ -64,7 +64,7 @@ function Controller() {
     }
     function createGUI() {
         $.settingsView.add(Ti.UI.createLabel({
-            height: 20,
+            height: "auto",
             top: 20,
             width: "100%",
             textAlign: "center",
@@ -119,7 +119,8 @@ function Controller() {
         var pushEnabled;
         Ti.App.Properties.hasProperty("pushSetting") || Ti.App.Properties.setBool("pushSetting", true);
         pushEnabled = Ti.App.Properties.getBool("pushSetting");
-        var basicSwitch = Ti.UI.createSwitch({
+        var basicSwitch;
+        basicSwitch = Ti.UI.createSwitch({
             right: 60,
             top: 15,
             width: 40,
@@ -152,12 +153,14 @@ function Controller() {
             },
             color: "#000"
         }));
+        var rightPos = 60;
+        var font = "FontAwesome";
         thirdRow.add(Ti.UI.createLabel({
             font: {
-                fontFamily: "FontAwesome"
+                fontFamily: font
             },
             text: fontawesome.icon("icon-chevron-right"),
-            right: 60,
+            right: rightPos,
             color: "#000",
             fontSize: 80,
             height: "auto",
@@ -233,10 +236,10 @@ function Controller() {
         }));
         fourthRow.add(Ti.UI.createLabel({
             font: {
-                fontFamily: "FontAwesome"
+                fontFamily: font
             },
             text: fontawesome.icon("icon-chevron-right"),
-            right: 60,
+            right: rightPos,
             color: "#000",
             fontSize: 80,
             height: "auto",
@@ -290,17 +293,17 @@ function Controller() {
         }));
         fifthRow.add(Ti.UI.createLabel({
             font: {
-                fontFamily: "FontAwesome"
+                fontFamily: font
             },
             text: fontawesome.icon("icon-chevron-right"),
-            right: 60,
+            right: rightPos,
             color: "#000",
             fontSize: 80,
             height: "auto",
             width: "auto"
         }));
         fifthRow.addEventListener("click", function() {
-            Ti.API.log("cliiiick");
+            Ti.Platform.openURL("prefs:root=Brightness prefs:root=General&path=Bluetooth");
         });
         $.settingsView.add(fifthRow);
         var style = Titanium.UI.iPhone.ProgressBarStyle.PLAIN;
@@ -342,7 +345,7 @@ function Controller() {
             height: 40,
             textAlign: "center"
         };
-        picker = new ModalPicker(visualPrefs, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt);
+        picker = new ModalPicker(visualPrefs, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt, Alloy.Globals.PHRASES.closeBtnTxt);
         picker.text = currentLanguage;
         picker.self.addEventListener("change", function() {
             changeLanguageConfirm(picker.value);
