@@ -255,13 +255,15 @@ function createSubmitButtons() {
 	submitButton.addEventListener('click', function() {
 		if (facebookFriendsChallenge.length > 0) {
 			var dialog;
+			var confirm  = Alloy.Globals.PHRASES.okConfirmTxt;
+			var cancel = Alloy.Globals.PHRASES.abortBtnTxt;
 
 			if (OS_IOS) {
 				dialog = Ti.UI.createAlertDialog({
 					title : Alloy.Globals.PHRASES.stateGroupNameTxt,
 					message : Alloy.Globals.PHRASES.groupCreationInfoTxt,
 					style : Ti.UI.iPhone.AlertDialogStyle.PLAIN_TEXT_INPUT,
-					buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtntxt]
+					buttonNames : [confirm, cancel]
 				});
 
 			} else if (OS_ANDROID) {
@@ -270,7 +272,7 @@ function createSubmitButtons() {
 					title : Alloy.Globals.PHRASES.stateGroupNameTxt,
 					message : Alloy.Globals.PHRASES.groupCreationInfoTxt,
 					androidView : textfield,
-					buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtnTxt]
+					buttonNames : [confirm, cancel]
 				});
 			}
 

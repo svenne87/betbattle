@@ -39,7 +39,7 @@ function Controller() {
                 submitButton.touchEnabled = true;
                 if (-1 != JSON.parse(this.responseText).indexOf("coins")) {
                     var alertWindow = Titanium.UI.createAlertDialog({
-                        title: "Betkampen",
+                        title: Alloy.Globals.PHRASES.betbattleTxt,
                         message: JSON.parse(this.responseText),
                         buttonNames: [ Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.storeTxt ]
                     });
