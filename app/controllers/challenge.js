@@ -79,7 +79,7 @@ function postAnswer(betkampenId, cid, betAmount) {
 				// not enough coins
 				// show dialog with "link" to the store
 				var alertWindow = Titanium.UI.createAlertDialog({
-					title : 'Betkampen',
+					title : Alloy.Globals.PHRASES.betbattleTxt,
 					message : JSON.parse(this.responseText),
 					buttonNames : [Alloy.Globals.PHRASES .okConfirmTxt, Alloy.Globals.PHRASES.storeTxt]
 				});

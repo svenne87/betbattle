@@ -29,6 +29,298 @@ function Controller() {
         });
         alertWindow.show();
     }
+    function sendSettingsServer(param, type, valueToStore) {
+        if (Alloy.Globals.checkConnection()) {
+            indicator.openIndicator();
+            var xhr = Titanium.Network.createHTTPClient();
+            xhr.onerror = function(e) {
+                indicator.closeIndicator();
+                Ti.API.error("Bad Sever =>" + e.error);
+            };
+            try {
+                xhr.open("POST", Alloy.Globals.BETKAMPENSETTINGURL);
+                xhr.setRequestHeader("content-type", "application/json");
+                xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
+                xhr.setTimeout(Alloy.Globals.TIMEOUT);
+                xhr.send(param);
+            } catch (e) {
+                indicator.closeIndicator();
+                Alloy.Globals.showFeedbackDialog(JSON.parse(this.response));
+            }
+            xhr.onload = function() {
+                if ("200" == this.status) {
+                    if (4 == this.readyState) {
+                        0 === type ? Ti.App.Properties.setBool("pushSetting", valueToStore) : 1 === type && Ti.App.Properties.setString("profileNameSetting", valueToStore);
+                        Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
+                    } else Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
+                    indicator.closeIndicator();
+                } else {
+                    indicator.closeIndicator();
+                    Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
+                    Ti.API.error("Error =>" + this.response);
+                }
+            };
+        } else Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+    }
+    function createGUI() {
+        $.settingsView.add(Ti.UI.createLabel({
+            height: 20,
+            top: 20,
+            width: "100%",
+            textAlign: "center",
+            backgroundColor: "transparent",
+            color: "#FFF",
+            text: "Settings",
+            font: {
+                fontFamily: "Impact",
+                fontSize: Alloy.Globals.getFontSize(2)
+            }
+        }));
+        var row = Ti.UI.createView({
+            top: 20,
+            backgroundColor: "#FFF",
+            width: "97%",
+            height: 60,
+            opacity: .7,
+            borderRadius: 10
+        });
+        row.add(Ti.UI.createLabel({
+            text: Alloy.Globals.PHRASES.changeLanguageTxt,
+            textAlign: "center",
+            top: 20,
+            left: 5,
+            font: {
+                fontSize: Alloy.Globals.getFontSize(1),
+                fontFamily: "Impact"
+            },
+            color: "#000"
+        }));
+        row.add(createPickers());
+        $.settingsView.add(row);
+        var secondRow = Ti.UI.createView({
+            top: 20,
+            backgroundColor: "#FFF",
+            width: "97%",
+            height: 60,
+            opacity: .7,
+            borderRadius: 10
+        });
+        secondRow.add(Ti.UI.createLabel({
+            text: Alloy.Globals.PHRASES.settingsPushTxt,
+            textAlign: "center",
+            top: 20,
+            left: 5,
+            font: {
+                fontSize: Alloy.Globals.getFontSize(1),
+                fontFamily: "Impact"
+            },
+            color: "#000"
+        }));
+        var pushEnabled;
+        Ti.App.Properties.hasProperty("pushSetting") || Ti.App.Properties.setBool("pushSetting", true);
+        pushEnabled = Ti.App.Properties.getBool("pushSetting");
+        var basicSwitch = Ti.UI.createSwitch({
+            right: 60,
+            top: 15,
+            width: 40,
+            titleOn: Alloy.Globals.PHRASES.onTxt,
+            titleOff: Alloy.Globals.PHRASES.offTxt,
+            value: pushEnabled
+        });
+        basicSwitch.addEventListener("change", function() {
+            var param = '{"push_status":"' + basicSwitch.value + '", "app_identifier":"' + Alloy.Globals.APPID + '", "lang":"' + Alloy.Globals.LOCALE + '"}';
+            sendSettingsServer(param, 0, basicSwitch.value);
+        });
+        secondRow.add(basicSwitch);
+        $.settingsView.add(secondRow);
+        var thirdRow = Ti.UI.createView({
+            top: 20,
+            backgroundColor: "#FFF",
+            width: "97%",
+            height: 60,
+            opacity: .7,
+            borderRadius: 10
+        });
+        thirdRow.add(Ti.UI.createLabel({
+            text: Alloy.Globals.PHRASES.settingsPicTxt,
+            textAlign: "center",
+            top: 20,
+            left: 5,
+            font: {
+                fontSize: Alloy.Globals.getFontSize(1),
+                fontFamily: "Impact"
+            },
+            color: "#000"
+        }));
+        thirdRow.add(Ti.UI.createLabel({
+            font: {
+                fontFamily: "FontAwesome"
+            },
+            text: fontawesome.icon("icon-chevron-right"),
+            right: 60,
+            color: "#000",
+            fontSize: 80,
+            height: "auto",
+            width: "auto"
+        }));
+        thirdRow.addEventListener("click", function() {
+            Ti.Media.openPhotoGallery({
+                success: function(event) {
+                    if (Alloy.Globals.checkConnection()) {
+                        var image = event.media;
+                        uploadIndicator.show();
+                        var xhr = Titanium.Network.createHTTPClient();
+                        xhr.onerror = function(e) {
+                            Ti.API.error("Bad Sever =>" + e.error);
+                            uploadIndicator.hide();
+                        };
+                        xhr.onsendstream = function(e) {
+                            uploadIndicator.value = e.progress;
+                        };
+                        try {
+                            xhr.open("POST", Alloy.Globals.BETKAMPENIMAGEUPLOADURL + "?lang=" + Alloy.Globals.LOCALE);
+                            xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
+                            xhr.setRequestHeader("Content-Type", "multipart/form-data");
+                            xhr.setTimeout(Alloy.Globals.TIMEOUT);
+                            xhr.send({
+                                media: image,
+                                filename: "profile_image_" + Alloy.Globals.BETKAMPENUID + ".png"
+                            });
+                        } catch (e) {
+                            uploadIndicator.hide();
+                        }
+                        xhr.onload = function() {
+                            if ("200" == this.status) {
+                                if (4 == this.readyState) {
+                                    var response = JSON.parse(this.responseText);
+                                    Alloy.Globals.showFeedbackDialog(response);
+                                } else Ti.API.log(this.response);
+                                uploadIndicator.hide();
+                            } else {
+                                uploadIndicator.hide();
+                                Ti.API.error("Error =>" + this.response);
+                            }
+                        };
+                    } else Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+                },
+                cancel: function() {},
+                error: function() {
+                    Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+                },
+                allowEditing: true,
+                mediaTypes: [ Ti.Media.MEDIA_TYPE_PHOTO ]
+            });
+        });
+        $.settingsView.add(thirdRow);
+        var fourthRow = Ti.UI.createView({
+            top: 20,
+            backgroundColor: "#FFF",
+            width: "97%",
+            height: 60,
+            opacity: .7,
+            borderRadius: 10
+        });
+        fourthRow.add(Ti.UI.createLabel({
+            text: Alloy.Globals.PHRASES.settingsProfileTxt,
+            textAlign: "center",
+            top: 20,
+            left: 5,
+            font: {
+                fontSize: Alloy.Globals.getFontSize(1),
+                fontFamily: "Impact"
+            },
+            color: "#000"
+        }));
+        fourthRow.add(Ti.UI.createLabel({
+            font: {
+                fontFamily: "FontAwesome"
+            },
+            text: fontawesome.icon("icon-chevron-right"),
+            right: 60,
+            color: "#000",
+            fontSize: 80,
+            height: "auto",
+            width: "auto"
+        }));
+        fourthRow.addEventListener("click", function() {
+            var dialog;
+            var profileName = Ti.App.Properties.getString("profileNameSetting");
+            var confirm = Alloy.Globals.PHRASES.okConfirmTxt;
+            var cancel = Alloy.Globals.PHRASES.abortBtnTxt;
+            var titleTxt = Alloy.Globals.PHRASES.profileNameTitleTxt;
+            var messageTxt = Alloy.Globals.PHRASES.profileNameMessageTxt + ": " + profileName;
+            dialog = Ti.UI.createAlertDialog({
+                title: titleTxt,
+                message: messageTxt,
+                style: Ti.UI.iPhone.AlertDialogStyle.PLAIN_TEXT_INPUT,
+                buttonNames: [ confirm, cancel ]
+            });
+            dialog.addEventListener("click", function(e) {
+                if (0 == e.index) {
+                    var text;
+                    text = e.text;
+                    if (text.length > 2 && 16 > text.length) {
+                        profileName = text;
+                        var param = '{"profile_name":"' + profileName + '", "app_identifier":"' + Alloy.Globals.APPID + '", "lang":"' + Alloy.Globals.LOCALE + '"}';
+                        sendSettingsServer(param, 1, profileName);
+                    } else Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.groupNameErrorTxt);
+                } else dialog.hide();
+            });
+            dialog.show();
+        });
+        $.settingsView.add(fourthRow);
+        var fifthRow = Ti.UI.createView({
+            top: 20,
+            backgroundColor: "#FFF",
+            width: "97%",
+            height: 60,
+            opacity: .7,
+            borderRadius: 10
+        });
+        fifthRow.add(Ti.UI.createLabel({
+            text: Alloy.Globals.PHRASES.settingsBluetoothTxt,
+            textAlign: "center",
+            top: 20,
+            left: 5,
+            font: {
+                fontSize: Alloy.Globals.getFontSize(1),
+                fontFamily: "Impact"
+            },
+            color: "#000"
+        }));
+        fifthRow.add(Ti.UI.createLabel({
+            font: {
+                fontFamily: "FontAwesome"
+            },
+            text: fontawesome.icon("icon-chevron-right"),
+            right: 60,
+            color: "#000",
+            fontSize: 80,
+            height: "auto",
+            width: "auto"
+        }));
+        fifthRow.addEventListener("click", function() {
+            Ti.API.log("cliiiick");
+        });
+        $.settingsView.add(fifthRow);
+        var style = Titanium.UI.iPhone.ProgressBarStyle.PLAIN;
+        var uploadIndicator = Titanium.UI.createProgressBar({
+            width: 200,
+            height: 50,
+            min: 0,
+            max: 1,
+            value: 0,
+            style: style,
+            top: 10,
+            message: Alloy.Globals.PHRASES.imageUploadTxt + "...",
+            font: {
+                fontSize: Alloy.Globals.getFontSize(1),
+                fontWeight: "bold"
+            },
+            color: "#888"
+        });
+        $.settingsView.add(uploadIndicator);
+    }
     function createPickers() {
         var data = [];
         var currentLocale = JSON.parse(Ti.App.Properties.getString("language"));
@@ -42,8 +334,8 @@ function Controller() {
         }
         var ModalPicker = require("lib/ModalPicker");
         var visualPrefs = {
-            top: 5,
-            opacity: .85,
+            top: 10,
+            right: 10,
             borderRadius: 3,
             backgroundColor: "#FFF",
             width: 140,
@@ -55,7 +347,7 @@ function Controller() {
         picker.self.addEventListener("change", function() {
             changeLanguageConfirm(picker.value);
         });
-        $.settingsView.add(picker);
+        return picker;
     }
     function showAlertWithRestartNote() {
         var alertWindow = Titanium.UI.createAlertDialog({
@@ -142,7 +434,7 @@ function Controller() {
         layout: "vertical",
         width: Ti.UI.FILL,
         height: Ti.UI.FILL,
-        backgroundColor: "#303030",
+        backgroundImage: "/images/profileBG.jpg",
         apiName: "Ti.UI.Window",
         classes: [ "container" ],
         id: "settingsWindow"
@@ -152,6 +444,7 @@ function Controller() {
         layout: "vertical",
         width: Ti.UI.FILL,
         height: Ti.UI.FILL,
+        backgroundColor: "transparent",
         apiName: "Ti.UI.View",
         id: "settingsView",
         classes: []
@@ -164,25 +457,15 @@ function Controller() {
         top: 200,
         text: Alloy.Globals.PHRASES.loadingTxt
     });
+    var fontawesome = require("lib/IconicFont").IconicFont({
+        font: "lib/FontAwesome"
+    });
     var picker;
     $.settingsWindow.addEventListener("close", function() {
         indicator.closeIndicator();
         picker.close();
     });
-    $.settingsView.add(Ti.UI.createLabel({
-        height: 20,
-        top: 20,
-        width: "100%",
-        textAlign: "center",
-        backgroundColor: "#303030",
-        color: "#FFF",
-        text: Alloy.Globals.PHRASES.changeLanguageTxt,
-        font: {
-            fontFamily: Alloy.Globals.getFont(),
-            fontSize: Alloy.Globals.getFontSize(2)
-        }
-    }));
-    createPickers();
+    createGUI();
     _.extend($, exports);
 }
 

@@ -11,6 +11,14 @@ function addEvent() {
 	$.facebookBtn.addEventListener('click', listener);
 }
 
+function storeProfileName(name) {
+	// TODO right now facebook name is store, handle if no facebook name and then take first part of email, until profile name is set???
+	
+	if (!Ti.App.Properties.hasProperty("profileNameSetting")) {
+		Ti.App.Properties.setString("profileNameSetting", name);
+	}
+}
+
 function createLeagueAndUidObj(response) {
 	Alloy.Globals.BETKAMPENUID = response.betkampen_uid;
 	Alloy.Globals.LEAGUES = [];
@@ -188,6 +196,9 @@ function loginAuthenticated(fb) {
 						}
 					}
 				}
+				
+				// store profile name
+				storeProfileName(result.name);
 
 				Alloy.Globals.FACEBOOKOBJECT = Alloy.createModel('facebook', {
 					id : result.id,

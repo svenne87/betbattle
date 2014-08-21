@@ -179,11 +179,13 @@ function Controller() {
         submitButton.addEventListener("click", function() {
             if (facebookFriendsChallenge.length > 0) {
                 var dialog;
+                var confirm = Alloy.Globals.PHRASES.okConfirmTxt;
+                var cancel = Alloy.Globals.PHRASES.abortBtnTxt;
                 dialog = Ti.UI.createAlertDialog({
                     title: Alloy.Globals.PHRASES.stateGroupNameTxt,
                     message: Alloy.Globals.PHRASES.groupCreationInfoTxt,
                     style: Ti.UI.iPhone.AlertDialogStyle.PLAIN_TEXT_INPUT,
-                    buttonNames: [ Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtntxt ]
+                    buttonNames: [ confirm, cancel ]
                 });
                 dialog.addEventListener("click", function(e) {
                     if (0 == e.index) {
