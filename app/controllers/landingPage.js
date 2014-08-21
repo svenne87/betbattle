@@ -442,7 +442,7 @@ inviteBtn.add(Ti.UI.createLabel({
 }));
 
 inviteBtn.addEventListener("click", function(e){
-	var win = Alloy.createController('shareView').getView();
+	var win = Alloy.createController('friendZone').getView();
 		if (OS_IOS) {
 			Alloy.Globals.NAV.openWindow(win, {
 				animated : true
