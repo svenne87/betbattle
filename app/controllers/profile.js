@@ -484,7 +484,18 @@ function getAchievements(){
 							}else{
 								var t = Titanium.UI.create2DMatrix();
 								t = t.scale(0);
-							
+								
+								//create a transparent overlay that fills the screen to prevent openingen multiple windows
+								var transparent_overlay = Ti.UI.createView({
+									width: Ti.UI.FILL,
+									height: Ti.UI.FILL,
+									backgroundColor : 'transparent',
+									top: 0, 
+									left: 0,
+									zIndex: 100,
+								});
+								$.profile.add(transparent_overlay);
+								
 								var w = Titanium.UI.createWindow({
 									backgroundColor:'transparent',
 									//borderWidth:8,
@@ -559,9 +570,12 @@ function getAchievements(){
 									var t3 = Titanium.UI.create2DMatrix();
 									t3 = t3.scale(0);
 									w.close({transform:t3,duration:300});
+									transparent_overlay.hide();
+									transparent_overlay = null;
 								});
-							
-								w.open(a);
+								
+								transparent_overlay.add(w.open(a));
+								//w.open(a);
 								
 							}
 							
