@@ -193,7 +193,7 @@ function createSection() {
 	
 	var args7 = {
 		title : Alloy.Globals.PHRASES.shareTxt,
-		customView : 'shareView',
+		customView : 'friendZone',
 		image : '/images/share.png'
 	};
 	section.add(Alloy.createController('menurow', args7).getView());

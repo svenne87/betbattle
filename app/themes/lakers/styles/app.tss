@@ -21,22 +21,28 @@
 	backgroundColor : 'none',
 	backgroundGradient : 'none'
 },
-".challengesSection": {
-	backgroundColor : '#EA7337',
-		backgroundGradient : {
-			type : "linear",
-			startPoint : {
-				x : "0%",
-				y : "0%"
-			},
-			endPoint : {
-				x : "0%",
-				y : "100%"
-			},
-			colors : [ {
-				color : "#F09C00",
-			},{
-				color : "#D85000",
-			}]
+".challengesSection":{
+	height : 60,
+	backgroundColor : '#000000',
+	opacity: 0.6,
+	/*backgroundGradient : {
+		type : "linear",
+		startPoint : {
+			x : "0%",
+			y : "0%"
 		},
+		endPoint : {
+			x : "0%",
+			y : "100%"
+		},
+		colors : [{
+			color : "#151515",
+			
+		},{
+			color : "#2E2E2E",
+			
+		}]
+	},*/
+	layout : 'vertical'
+
 }

@@ -742,6 +742,7 @@ function FontAwesome(options) {
 		"fa-vimeo-square" : 0xf194,
 		"fa-try" : 0xf195,
 		"fa-plus-square-o" : 0xf196,
+		"fa-share-alt" : 0xf064,
 	};
 
 }
