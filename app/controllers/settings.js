@@ -186,7 +186,7 @@ function createGUI() {
 			value : pushEnabled
 		});
 	} else if (OS_ANDROID) {
-		var RealSwitch = require("com.yydigital.realswitch");
+		var RealSwitch = require('com.yydigital.realswitch');
 		
 		basicSwitch = RealSwitch.createRealSwitch({
 			right : 40,
@@ -466,6 +466,7 @@ function createGUI() {
 		min : 0,
 		max : 1,
 		value : 0,
+		visible  : false,
 		style : style,
 		top : 10,
 		message : Alloy.Globals.PHRASES.imageUploadTxt + "...",
@@ -473,15 +474,10 @@ function createGUI() {
 			fontSize : Alloy.Globals.getFontSize(1),
 			fontWeight : 'bold'
 		},
-		color : '#888'
+		color : '#FFF'
 	});
 
 	$.settingsView.add(uploadIndicator);
-	
-	if(OS_ANDROID){		
-		// TODO don't know why it's shown...
-		uploadIndicator.hide();
-	}
 }
 
 function createPickers() {

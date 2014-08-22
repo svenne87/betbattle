@@ -55,6 +55,66 @@ function Controller() {
             color: "#FFF"
         }));
     }
+    function createTableRow(obj) {
+        var dateFix = parseInt(obj.attributes.game_date + "000");
+        var date = new Date(dateFix);
+        var dateString = date.toUTCString();
+        dateString = dateString.substring(5, dateString.length - 7);
+        var child;
+        child = true;
+        var row = $.UI.create("TableViewRow", {
+            classes: [ "challengesSectionDefault" ],
+            id: obj.attributes.round,
+            hasChild: child
+        });
+        if (true != child) {
+            var fontawesome = require("lib/IconicFont").IconicFont({
+                font: "lib/FontAwesome"
+            });
+            var font = "FontAwesome";
+            var rightPercentage = "5%";
+            row.add(Ti.UI.createLabel({
+                font: {
+                    fontFamily: font
+                },
+                text: fontawesome.icon("icon-chevron-right"),
+                right: rightPercentage,
+                color: "#FFF",
+                fontSize: 80,
+                height: "auto",
+                width: "auto"
+            }));
+        }
+        row.add(Ti.UI.createLabel({
+            text: dateString,
+            top: 10,
+            left: 20,
+            font: {
+                fontSize: Alloy.Globals.getFontSize(1),
+                fontWeight: "normal",
+                fontFamily: Alloy.Globals.getFont()
+            },
+            color: "#FFF"
+        }));
+        row.add(Ti.UI.createLabel({
+            text: obj.attributes.team_1.team_name + " - " + obj.attributes.team_2.team_name,
+            top: 30,
+            left: 20,
+            font: {
+                fontSize: Alloy.Globals.getFontSize(1),
+                fontWeight: "normal",
+                fontFamily: Alloy.Globals.getFont()
+            },
+            color: "#FFF"
+        }));
+        row.add(Ti.UI.createView({
+            top: 50,
+            layout: "vertical",
+            height: 12
+        }));
+        row.className = date.toUTCString();
+        return row;
+    }
     function createAndShowTableView(league, array) {
         var children = $.newChallenge.children;
         for (var i = 0; children.length > i; i++) "newChallengeTable" === children[i].id && $.newChallenge.remove(children[i]);
@@ -100,75 +160,35 @@ function Controller() {
             }
         });
         var footerView = Ti.UI.createView({
-            height: 20,
-            backgroundColor: "transparent"
+            height: 60,
+            backgroundColor: "transparent",
+            layout: "vertical"
         });
         footerView.add(Ti.UI.createLabel({
-            text: "Test",
-            color: "#FFF"
+            text: Alloy.Globals.PHRASES.showningMatchesTxt + ": 1-10",
+            textAlign: "center",
+            color: Alloy.Globals.themeColor(),
+            font: {
+                fontSize: 10,
+                fontFamily: Alloy.Globals.getFont()
+            }
         }));
+        footerView.add(Ti.UI.createLabel({
+            text: Alloy.Globals.PHRASES.loadMoreTxt + "...",
+            textAlign: "center",
+            color: Alloy.Globals.themeColor(),
+            font: {
+                fontSize: 10,
+                fontFamily: Alloy.Globals.getFont()
+            }
+        }));
+        footerView.addEventListener("click", function() {
+            Ti.API.log("load more...");
+            table.appendRow(createTableRow(array[0]));
+        });
         table.footerView = footerView;
         var data = [];
-        for (var i = 0; array.length > i; i++) {
-            var dateFix = parseInt(array[i].attributes.game_date + "000");
-            var date = new Date(dateFix);
-            var dateString = date.toUTCString();
-            dateString = dateString.substring(5, dateString.length - 7);
-            var child;
-            child = true;
-            var row = $.UI.create("TableViewRow", {
-                classes: [ "challengesSectionDefault" ],
-                id: array[i].attributes.round,
-                hasChild: child
-            });
-            if (true != child) {
-                var fontawesome = require("lib/IconicFont").IconicFont({
-                    font: "lib/FontAwesome"
-                });
-                var font = "FontAwesome";
-                var rightPercentage = "5%";
-                row.add(Ti.UI.createLabel({
-                    font: {
-                        fontFamily: font
-                    },
-                    text: fontawesome.icon("icon-chevron-right"),
-                    right: rightPercentage,
-                    color: "#FFF",
-                    fontSize: 80,
-                    height: "auto",
-                    width: "auto"
-                }));
-            }
-            row.add(Ti.UI.createLabel({
-                text: dateString,
-                top: 10,
-                left: 20,
-                font: {
-                    fontSize: Alloy.Globals.getFontSize(1),
-                    fontWeight: "normal",
-                    fontFamily: Alloy.Globals.getFont()
-                },
-                color: "#FFF"
-            }));
-            row.add(Ti.UI.createLabel({
-                text: array[i].attributes.team_1.team_name + " - " + array[i].attributes.team_2.team_name,
-                top: 30,
-                left: 20,
-                font: {
-                    fontSize: Alloy.Globals.getFontSize(1),
-                    fontWeight: "normal",
-                    fontFamily: Alloy.Globals.getFont()
-                },
-                color: "#FFF"
-            }));
-            row.add(Ti.UI.createView({
-                top: 50,
-                layout: "vertical",
-                height: 12
-            }));
-            row.className = date.toUTCString();
-            data.push(row);
-        }
+        for (var i = 0; array.length > i; i++) data.push(createTableRow(array[i]));
         table.setData(data);
         table.addEventListener("click", function(e) {
             if (2 == Alloy.Globals.SLIDERZINDEX) return;

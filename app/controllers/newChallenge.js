@@ -14,17 +14,6 @@ Ti.App.addEventListener("newChallengeRefresh", function(e) {
 	getGames(leagueId);
 });
 
-// change english months to swedish
-function changeMonth(month) {
-	var returnMonth = month;
-
-	if (month != -1) {
-		returnMonth = sweMonths[month];
-	}
-
-	return returnMonth;
-}
-
 // create gameListObject
 function createGameListObject(response) {
 	var array = [];
@@ -80,6 +69,93 @@ function createNoGamesView() {
 		},
 		color : '#FFF'
 	}));
+}
+
+// create sinle table row
+function createTableRow(obj) {
+	// error in json sent, date in milliseconds is missing 000 at the end?
+	var dateFix = parseInt(obj.attributes.game_date + '000');
+	var date = new Date(dateFix);
+
+	var dateString = date.toUTCString();
+	dateString = dateString.substring(5, (dateString.length - 7));
+
+	var child;
+
+	if (OS_IOS) {
+		child = true;
+	} else if (OS_ANDROID) {
+		child = false;
+	}
+
+	var row = $.UI.create('TableViewRow', {
+		classes : ['challengesSectionDefault'],
+		id : obj.attributes.round,
+		hasChild : child
+	});
+
+	// add custom icon on Android to symbol that the row has child
+	if (child != true) {
+		var fontawesome = require('lib/IconicFont').IconicFont({
+			font : 'lib/FontAwesome'
+		});
+
+		var font = 'FontAwesome';
+		var rightPercentage = '5%';
+
+		if (OS_ANDROID) {
+			font = 'fontawesome-webfont';
+
+			if (Titanium.Platform.displayCaps.platformWidth < 350) {
+				rightPercentage = '3%';
+			}
+		}
+
+		row.add(Ti.UI.createLabel({
+			font : {
+				fontFamily : font
+			},
+			text : fontawesome.icon('icon-chevron-right'),
+			right : rightPercentage,
+			color : '#FFF',
+			fontSize : 80,
+			height : 'auto',
+			width : 'auto'
+		}));
+	}
+
+	row.add(Ti.UI.createLabel({
+		text : dateString,
+		top : 10,
+		left : 20,
+		font : {
+			fontSize : Alloy.Globals.getFontSize(1),
+			fontWeight : 'normal',
+			fontFamily : Alloy.Globals.getFont()
+		},
+		color : '#FFF'
+	}));
+
+	row.add(Ti.UI.createLabel({
+		text : obj.attributes.team_1.team_name + " - " + obj.attributes.team_2.team_name,
+		top : 30,
+		left : 20,
+		font : {
+			fontSize : Alloy.Globals.getFontSize(1),
+			fontWeight : 'normal',
+			fontFamily : Alloy.Globals.getFont()
+		},
+		color : '#FFF'
+	}));
+
+	row.add(Ti.UI.createView({
+		top : 50,
+		layout : 'vertical',
+		height : 12
+	}));
+
+	row.className = date.toUTCString();
+	return row;
 }
 
 // show the tableView
@@ -164,14 +240,36 @@ function createAndShowTableView(league, array) {
 	}
 
 	var footerView = Ti.UI.createView({
-		height : 20,
-		backgroundColor : 'transparent'
+		height : 60,
+		backgroundColor : 'transparent',
+		layout : 'vertical'
 	});
 	
 	footerView.add(Ti.UI.createLabel({
-		text : 'Test',
-		color : '#FFF'
+		text : Alloy.Globals.PHRASES.showningMatchesTxt + ': 1-10',
+		textAlign : "center",
+		color : Alloy.Globals.themeColor(),
+		font : {
+			fontSize : 10,
+			fontFamily : Alloy.Globals.getFont(),
+		}
 	}));
+	
+	footerView.add(Ti.UI.createLabel({
+		text : Alloy.Globals.PHRASES.loadMoreTxt + '...',
+		textAlign : "center",
+		color : Alloy.Globals.themeColor(),
+		font : {
+			fontSize : 10,
+			fontFamily : Alloy.Globals.getFont(),
+		}
+	}));
+
+	footerView.addEventListener('click', function() {
+		Ti.API.log('load more...');
+		// TODO
+		table.appendRow(createTableRow(array[0]));
+	});
 
 	table.footerView = footerView;
 
@@ -179,89 +277,8 @@ function createAndShowTableView(league, array) {
 
 	// Rows
 	for (var i = 0; i < array.length; i++) {
-		// error in json sent, date in milliseconds is missing 000 at the end?
-		var dateFix = parseInt(array[i].attributes.game_date + '000');
-		var date = new Date(dateFix);
-
-		var dateString = date.toUTCString();
-		dateString = dateString.substring(5, (dateString.length - 7));
-
-		var child;
-
-		if (OS_IOS) {
-			child = true;
-		} else if (OS_ANDROID) {
-			child = false;
-		}
-
-		var row = $.UI.create('TableViewRow', {
-			classes : ['challengesSectionDefault'],
-			id : array[i].attributes.round,
-			hasChild : child
-		});
-
-		// add custom icon on Android to symbol that the row has child
-		if (child != true) {
-			var fontawesome = require('lib/IconicFont').IconicFont({
-				font : 'lib/FontAwesome'
-			});
-
-			var font = 'FontAwesome';
-			var rightPercentage = '5%';
-
-			if (OS_ANDROID) {
-				font = 'fontawesome-webfont';
-
-				if (Titanium.Platform.displayCaps.platformWidth < 350) {
-					rightPercentage = '3%';
-				}
-			}
-
-			row.add(Ti.UI.createLabel({
-				font : {
-					fontFamily : font
-				},
-				text : fontawesome.icon('icon-chevron-right'),
-				right : rightPercentage,
-				color : '#FFF',
-				fontSize : 80,
-				height : 'auto',
-				width : 'auto'
-			}));
-		}
-		
-		row.add(Ti.UI.createLabel({
-			text : dateString,
-			top : 10,
-			left : 20,
-			font : {
-				fontSize : Alloy.Globals.getFontSize(1),
-				fontWeight : 'normal',
-				fontFamily : Alloy.Globals.getFont()
-			},
-			color : '#FFF'
-		}));
-
-		row.add(Ti.UI.createLabel({
-			text : array[i].attributes.team_1.team_name + " - " + array[i].attributes.team_2.team_name,
-			top : 30,
-			left : 20,
-			font : {
-				fontSize : Alloy.Globals.getFontSize(1),
-				fontWeight : 'normal',
-				fontFamily : Alloy.Globals.getFont()
-			},
-			color : '#FFF'
-		}));
-
-		row.add(Ti.UI.createView({
-			top : 50,
-			layout : 'vertical',
-			height : 12
-		}));
-
-		row.className = date.toUTCString();
-		data.push(row);
+		// each row is created
+		data.push(createTableRow(array[i]));
 	}
 
 	table.setData(data);

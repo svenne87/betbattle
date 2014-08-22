@@ -320,7 +320,7 @@ function Controller() {
                 fontSize: Alloy.Globals.getFontSize(1),
                 fontWeight: "bold"
             },
-            color: "#888"
+            color: "#FFF"
         });
         $.settingsView.add(uploadIndicator);
     }

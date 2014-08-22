@@ -998,12 +998,13 @@ function validate() {
 
 // create the layout views
 function createLayout() {
-
+	
 	var image = Ti.UI.createView({
 		width : '100%',
 		height : 142,
 		backgroundImage : '/images/header.png'
 	});
+	
 	//Ti.API.info("LOGGGA: "+ JSON.stringify(args));
 	// fetch league name, if not set
 	if (leagueName.length === 0) {

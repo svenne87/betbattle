@@ -322,6 +322,7 @@ function Controller() {
             min: 0,
             max: 1,
             value: 0,
+            visible: false,
             style: style,
             top: 10,
             message: Alloy.Globals.PHRASES.imageUploadTxt + "...",
@@ -329,10 +330,9 @@ function Controller() {
                 fontSize: Alloy.Globals.getFontSize(1),
                 fontWeight: "bold"
             },
-            color: "#888"
+            color: "#FFF"
         });
         $.settingsView.add(uploadIndicator);
-        uploadIndicator.hide();
     }
     function createPickers() {
         var data = [];
