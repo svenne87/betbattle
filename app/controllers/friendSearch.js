@@ -31,21 +31,81 @@ var searchLabel = Ti.UI.createLabel({
 });
 mainView.add(searchLabel);
 
-var search = Ti.UI.createTextField({
-	top: 20,
-	hintText: Alloy.Globals.PHRASES.searchTxt,
-	width: "80%",
-	font: {
-		fontSize: 15
-	},
-	height: 50,
-	color:'#336699',
-    keyboardType:Titanium.UI.KEYBOARD_DEFAULT,
-    returnKeyType:Titanium.UI.RETURNKEY_DEFAULT,
-    borderStyle:Titanium.UI.INPUT_BORDERSTYLE_ROUNDED
-	
+var myData=[
+{'name':'Emil Knark-Ryssen Svensson', id:'7'},
+{'name':'Abbas Abubakar', id: '18'},
+{'name':'Erik Krig', id: '97'},
+{'name':'Giacomo Palma', id: '13'},
+{'name':'Victor Pettersson', id: '1234'},
+{'name':'Alhaji Gero', id: '2389'}
+];
+
+var searchBar=Ti.UI.createSearchBar({
+		showCancel:true,
+		hintText:'type to search'
 });
-mainView.add(search);
+searchBar.addEventListener('cancel',function(e){
+	searchBar.value="";
+});
+
+
+
+
+
+var url = Alloy.Globals.BETKAMPENURL + '/api/get_users_search.php';
+
+var respone = null;
+
+var client = Ti.Network.createHTTPClient({
+	// function called when the response data is available
+	onload : function(e) {
+		Ti.API.info("Received text: " + this.responseText);
+		response = JSON.parse(this.responseText);
+		var tabel= Ti.UI.createTableView({
+	search:searchBar,
+	filterCaseInsensitive:false,
+	filterAttribute: 'name'
+});
+alert(response.data.length);
+
+var rows=[];
+for(var item in response.data)
+{
+	var row=Ti.UI.createTableViewRow({
+		name:response.data[item].name.toLowerCase()
+	});
+	var img=Ti.UI.createImageView({
+		image:"/images/no_pic.png",
+		height:25,
+		width:25,
+		left:5
+	});
+	row.add(img);
+	var label= Ti.UI.createLabel({
+		text:" "+response.data[item].name,
+		left:40,
+	});
+	row.add(label);
+	
+	rows.push(row);
+}
+
+tabel.setData(rows);
+
+mainView.add(tabel);
+
+	},
+	// function called when an error occurs, including a timeout
+	onerror : function(e) {
+		Ti.API.debug(e.error);
+		//alert('error');
+	},
+	timeout : Alloy.Globals.TIMEOUT // in milliseconds
+});
+// Prepare the connection.
+client.open("GET", url);
+// Send the request.
+client.send();
 
 
 
