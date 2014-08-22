@@ -313,6 +313,7 @@ function Controller() {
             min: 0,
             max: 1,
             value: 0,
+            visible: false,
             style: style,
             top: 10,
             message: Alloy.Globals.PHRASES.imageUploadTxt + "...",

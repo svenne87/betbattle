@@ -238,49 +238,11 @@ function Controller() {
         submitButton.addEventListener("click", function() {
             1 === selectedGroupIds.length ? challengeGroup(selectedGroupIds, params) : Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.groupChallengeErrorTxt);
         });
-        friendsButton = 7 > iOSVersion ? Ti.UI.createButton({
-            title: Alloy.Globals.PHRASES.showFriendsTxt,
-            height: 30,
-            width: "70%",
-            id: "submitButton",
-            backgroundColor: Alloy.Globals.themeColor(),
-            borderRadius: 6,
-            font: {
-                fontFamily: Alloy.Globals.getFont(),
-                fontSize: Alloy.Globals.getFontSize(2)
-            },
-            color: "#FFF",
-            backgroundImage: "none"
-        }) : Ti.UI.createButton({
-            title: Alloy.Globals.PHRASES.showFriendsTxt,
-            height: buttonHeight,
-            width: "70%",
-            id: "submitButton",
-            backgroundColor: Alloy.Globals.themeColor(),
-            borderRadius: 6,
-            font: {
-                fontFamily: Alloy.Globals.getFont(),
-                fontSize: Alloy.Globals.getFontSize(2)
-            },
-            color: "#FFF",
-            backgroundImage: "none"
-        });
-        friendsButton.addEventListener("click", function() {
-            var arg = {
-                param: params
-            };
-            var win = Alloy.createController("friendSelect", arg).getView();
-            Alloy.Globals.WINDOWS.push(win);
-            Alloy.Globals.NAV.openWindow(win, {
-                animated: true
-            });
-        });
         submitButtonsView.add(Titanium.UI.createView({
             id: "marginView",
             layout: "vertical",
             height: 10
         }));
-        submitButtonsView.add(friendsButton);
         submitButtonsView.add(Titanium.UI.createView({
             id: "marginView",
             layout: "vertical",
@@ -290,9 +252,10 @@ function Controller() {
         $.groupSelect.add(submitButtonsView);
     }
     function createViews(array) {
-        var children = $.groupSelect.children;
+        var children = tableWrapper.children;
         for (var i = 0; children.length > i; i++) {
-            "groupsTable" === children[i].id && $.groupSelect.remove(children[i]);
+            Ti.API.info("children : " + JSON.stringify(children[i]));
+            "groupsTable" === children[i].id && tableWrapper.remove(children[i]);
             "submitButtonsView" === children[i].id && $.groupSelect.remove(children[i]);
             children[i] = null;
         }
@@ -305,25 +268,8 @@ function Controller() {
                 refresher.endRefreshing();
             }
         });
-        var tableHeaderView = Ti.UI.createView({
-            height: "142dp",
-            backgroundImage: "/images/header.png"
-        });
-        tableHeaderView.add(Ti.UI.createLabel({
-            width: "100%",
-            textAlign: "center",
-            top: 50,
-            text: Alloy.Globals.PHRASES.chooseGroupTxt,
-            font: {
-                fontSize: Alloy.Globals.getFontSize(3),
-                fontWeight: "normal",
-                fontFamily: Alloy.Globals.getFont()
-            },
-            color: "#FFF"
-        }));
         table = Ti.UI.createTableView({
-            headerView: tableHeaderView,
-            height: "80%",
+            height: "100%",
             id: "groupsTable",
             refreshControl: refresher,
             backgroundColor: "#303030"
@@ -483,7 +429,8 @@ function Controller() {
                 selectedGroupIds[0] = e.row.id;
             }
         });
-        $.groupSelect.add(table);
+        tableWrapper.removeAllChildren();
+        tableWrapper.add(table);
         createSubmitButtons();
     }
     require("alloy/controllers/BaseController").apply(this, Array.prototype.slice.call(arguments));
@@ -519,6 +466,10 @@ function Controller() {
     Ti.App.addEventListener("sliderToggled", function(e) {
         "undefined" != typeof table && (table.touchEnabled = e.hasSlided ? false : true);
     });
+    var tableWrapper = Ti.UI.createView({
+        height: "75%",
+        width: Ti.UI.FILL
+    });
     Ti.App.addEventListener("groupSelectRefresh", function() {
         indicator.openIndicator();
         getGroups();
@@ -530,7 +481,6 @@ function Controller() {
     var submitButton;
     var buttonsPushed = [];
     var table;
-    var friendsButton;
     var refresher;
     var uie = require("lib/IndicatorWindow");
     var indicator = uie.createIndicatorWindow({
@@ -547,6 +497,52 @@ function Controller() {
     }
     var iOSVersion;
     iOSVersion = parseInt(Ti.Platform.version);
+    var topView = Ti.UI.createView({
+        height: 40,
+        width: Ti.UI.FILL,
+        layout: "horizontal"
+    });
+    var tab_groups = Ti.UI.createView({
+        height: 40,
+        width: "50%",
+        backgroundColor: "blue"
+    });
+    tab_groups.add(Ti.UI.createLabel({
+        text: "Grupper",
+        textAlign: "center",
+        color: "#FFFFFF",
+        font: {
+            fontSize: 14,
+            fontFamily: "Impact"
+        }
+    }));
+    var tab_friends = Ti.UI.createView({
+        height: 40,
+        width: "50%",
+        backgroundColor: "black"
+    });
+    tab_friends.add(Ti.UI.createLabel({
+        text: "Vänner",
+        textAlign: "center",
+        color: "#c5c5c5",
+        font: {
+            fontSize: 14,
+            fontFamily: "Impact"
+        }
+    }));
+    topView.add(tab_groups);
+    topView.add(tab_friends);
+    $.groupSelect.add(topView);
+    tab_groups.addEventListener("click", function() {
+        tab_groups.setBackgroundColor = "blue";
+        tab_friends.setBackgroundColor = "black";
+        getGroups();
+    });
+    tab_friends.addEventListener("click", function() {
+        tab_groups.setBackgroundColor = "black";
+        tab_friends.setBackgroundColor = "blue";
+    });
+    $.groupSelect.add(tableWrapper);
     Alloy.Globals.checkConnection() ? getGroups() : Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
     _.extend($, exports);
 }

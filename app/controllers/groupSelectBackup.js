@@ -10,11 +10,6 @@ Ti.App.addEventListener("sliderToggled", function(e) {
 	}
 });
 
-var tableWrapper = Ti.UI.createView({
-	height: "75%",
-	width: Ti.UI.FILL,
-		
-});
 // refresh this view
 Ti.App.addEventListener("groupSelectRefresh", function(e) {
 	indicator.openIndicator();
@@ -381,7 +376,67 @@ function createSubmitButtons() {
 		}
 
 	});
-	
+
+	if (iOSVersion < 7) {
+		friendsButton = Ti.UI.createButton({
+			title : Alloy.Globals.PHRASES.showFriendsTxt,
+			height : 30,
+			width : '70%',
+			id : 'submitButton',
+			backgroundColor : Alloy.Globals.themeColor(),
+			borderRadius : 6,
+			font : {
+				fontFamily : Alloy.Globals.getFont(),
+				fontSize : Alloy.Globals.getFontSize(2)
+			},
+			color : '#FFF',
+			backgroundImage : 'none'
+		});
+	} else {
+		friendsButton = Ti.UI.createButton({
+			title : Alloy.Globals.PHRASES.showFriendsTxt,
+			height : buttonHeight,
+			width : '70%',
+			id : 'submitButton',
+			backgroundColor : Alloy.Globals.themeColor(),
+			borderRadius : 6,
+			font : {
+				fontFamily : Alloy.Globals.getFont(),
+				fontSize : Alloy.Globals.getFontSize(2)
+			},
+			color : '#FFF',
+			backgroundImage : 'none'
+		});
+	}
+
+	friendsButton.addEventListener('click', function() {
+		var arg = {
+			param : params
+		};
+
+		/*
+		 // change view
+		 var obj = {
+		 controller : 'friendSelect',
+		 arg : arg
+		 };
+		 Ti.App.fireEvent('app:updateView', obj);
+		 TODO ANDROID
+		 */
+
+		var win = Alloy.createController('friendSelect', arg).getView();
+		Alloy.Globals.WINDOWS.push(win);
+
+		if (OS_IOS) {
+			Alloy.Globals.NAV.openWindow(win, {
+				animated : true
+			});
+		} else if (OS_ANDROID) {
+			win.open({
+				fullScreen : true
+			});
+		}
+	});
 
 	submitButtonsView.add(Titanium.UI.createView({
 		id : 'marginView',
@@ -389,6 +444,7 @@ function createSubmitButtons() {
 		height : 10
 	}));
 
+	submitButtonsView.add(friendsButton);
 
 	submitButtonsView.add(Titanium.UI.createView({
 		id : 'marginView',
@@ -402,11 +458,10 @@ function createSubmitButtons() {
 
 function createViews(array) {
 	// check if table exists, and if it does simply remove it
-	var children = tableWrapper.children;
+	var children = $.groupSelect.children;
 	for (var i = 0; i < children.length; i++) {
-		Ti.API.info("children : "+ JSON.stringify(children[i]));
 		if (children[i].id === 'groupsTable') {
-			tableWrapper.remove(children[i]);
+			$.groupSelect.remove(children[i]);
 		}
 		if (children[i].id === 'submitButtonsView') {
 			$.groupSelect.remove(children[i]);
@@ -430,11 +485,28 @@ function createViews(array) {
 		});
 	}
 
+	var tableHeaderView = Ti.UI.createView({
+		height : '142dp',
+		backgroundImage : '/images/header.png'
+	});
 
-	
+	tableHeaderView.add(Ti.UI.createLabel({
+		width : '100%',
+		textAlign : 'center',
+		top : 50,
+		text : Alloy.Globals.PHRASES.chooseGroupTxt,
+		font : {
+			fontSize : Alloy.Globals.getFontSize(3),
+			fontWeight : 'normal',
+			fontFamily : Alloy.Globals.getFont()
+		},
+		color : '#FFF'
+	}));
+
 	// Table
 	table = Ti.UI.createTableView({
-		height : '100%',
+		headerView : tableHeaderView,
+		height : '80%',
 		id : 'groupsTable',
 		refreshControl : refresher,
 		backgroundColor : '#303030'
@@ -674,8 +746,8 @@ function createViews(array) {
 			selectedGroupIds[0] = e.row.id;
 		}
 	});
-	tableWrapper.removeAllChildren();
-	tableWrapper.add(table);
+
+	$.groupSelect.add(table);
 	createSubmitButtons();
 }
 
@@ -733,62 +805,6 @@ var iOSVersion;
 if (OS_IOS) {
 	iOSVersion = parseInt(Ti.Platform.version);
 }
-
-var topView = Ti.UI.createView({
-	height: 40,
-	width: Ti.UI.FILL,
-	layout: 'horizontal',
-});
-
-var tab_groups = Ti.UI.createView({
-		height: 40,
-		width: "50%",
-		backgroundColor: "blue",
-	});
-	
-	tab_groups.add(Ti.UI.createLabel({
-		text: "Grupper",
-		textAlign: "center",
-		color: "#FFFFFF",
-		font:{
-			fontSize: 14,
-			fontFamily: "Impact",
-		}
-	}));
-	
-	var tab_friends = Ti.UI.createView({
-		height: 40,
-		width: "50%",
-		backgroundColor : "black",
-	});
-	
-	tab_friends.add(Ti.UI.createLabel({
-		text: "Vänner",
-		textAlign: "center",
-		color: "#c5c5c5",
-		font: {
-			fontSize: 14,
-			fontFamily: "Impact",
-		}
-	}));
-
-topView.add(tab_groups);
-topView.add(tab_friends);
-
-$.groupSelect.add(topView);
-
-	tab_groups.addEventListener("click", function(e){
-		tab_groups.setBackgroundColor = "blue";
-		tab_friends.setBackgroundColor = "black";
-		getGroups();
-	});
-	
-	tab_friends.addEventListener("click", function(e){
-		tab_groups.setBackgroundColor = "black";
-		tab_friends.setBackgroundColor = "blue";
-	});
-
-$.groupSelect.add(tableWrapper);
 
 // check connection
 if (Alloy.Globals.checkConnection()) {
