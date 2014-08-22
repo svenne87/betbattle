@@ -232,3 +232,5 @@ Resources/iphone/alloy/controllers/topplistan.js
 Resources/android/alloy/controllers/topplistan.js
 
 Resources/android/lib/FontAwesome.js
+
+Resources/android/alloy/controllers/settings.js
