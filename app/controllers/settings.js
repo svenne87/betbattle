@@ -108,7 +108,7 @@ function sendSettingsServer(param, type, valueToStore) {
 
 function createGUI() {
 	$.settingsView.add(Ti.UI.createLabel({
-		height : 20,
+		height : 'auto',
 		top : 20,
 		width : '100%',
 		textAlign : 'center',
@@ -133,7 +133,7 @@ function createGUI() {
 	row.add(Ti.UI.createLabel({
 		text : Alloy.Globals.PHRASES.changeLanguageTxt,
 		textAlign : "center",
-		top : 20,
+		height : 'auto',
 		left : 5,
 		font : {
 			fontSize : Alloy.Globals.getFontSize(1),
@@ -157,7 +157,7 @@ function createGUI() {
 	secondRow.add(Ti.UI.createLabel({
 		text : Alloy.Globals.PHRASES.settingsPushTxt,
 		textAlign : "center",
-		top : 20,
+		height : 'auto',
 		left : 5,
 		font : {
 			fontSize : Alloy.Globals.getFontSize(1),
@@ -174,16 +174,28 @@ function createGUI() {
 	}
 
 	pushEnabled = Ti.App.Properties.getBool('pushSetting');
+	var basicSwitch;
 
-	var basicSwitch = Ti.UI.createSwitch({
-		right : 60,
-		top : 15,
-		width : 40,
-		titleOn : Alloy.Globals.PHRASES.onTxt,
-		titleOff : Alloy.Globals.PHRASES.offTxt,
-		value : pushEnabled
-	});
-
+	if (OS_IOS) {
+		basicSwitch = Ti.UI.createSwitch({
+			right : 60,
+			top : 15,
+			width : 40,
+			titleOn : Alloy.Globals.PHRASES.onTxt,
+			titleOff : Alloy.Globals.PHRASES.offTxt,
+			value : pushEnabled
+		});
+	} else if (OS_ANDROID) {
+		var RealSwitch = require("com.yydigital.realswitch");
+		
+		basicSwitch = RealSwitch.createRealSwitch({
+			right : 40,
+			top : 15,
+			width : 90,
+			value : pushEnabled
+		});
+	}
+	
 	basicSwitch.addEventListener('change', function(e) {
 		// build the json string
 		var param = '{"push_status":"' + basicSwitch.value + '", "app_identifier":"' + Alloy.Globals.APPID + '", "lang":"' + Alloy.Globals.LOCALE + '"}';
@@ -206,7 +218,7 @@ function createGUI() {
 	thirdRow.add(Ti.UI.createLabel({
 		text : Alloy.Globals.PHRASES.settingsPicTxt,
 		textAlign : "center",
-		top : 20,
+		height : 'auto',
 		left : 5,
 		font : {
 			fontSize : Alloy.Globals.getFontSize(1),
@@ -215,12 +227,20 @@ function createGUI() {
 		color : "#000"
 	}));
 
+	var rightPos = 60;
+	var font = 'FontAwesome';
+	
+	if(OS_ANDROID) {
+		rightPos = 40;
+		font = 'fontawesome-webfont';
+	}
+
 	thirdRow.add(Ti.UI.createLabel({
 		font : {
-			fontFamily : 'FontAwesome'
+			fontFamily : font
 		},
 		text : fontawesome.icon('icon-chevron-right'),
-		right : 60,
+		right : rightPos,
 		color : '#000',
 		fontSize : 80,
 		height : 'auto',
@@ -241,19 +261,19 @@ function createGUI() {
 						Ti.API.error('Bad Sever =>' + e.error);
 						uploadIndicator.hide();
 					};
-					
+
 					xhr.onsendstream = function(e) {
 						// upload progress
 						uploadIndicator.value = e.progress;
 					};
 
 					try {
-						xhr.open('POST', Alloy.Globals.BETKAMPENIMAGEUPLOADURL  + '?lang=' + Alloy.Globals.LOCALE);
+						xhr.open('POST', Alloy.Globals.BETKAMPENIMAGEUPLOADURL + '?lang=' + Alloy.Globals.LOCALE);
 						xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
-						xhr.setRequestHeader("Content-Type","multipart/form-data");
-        				//xhr.setRequestHeader("Content-Type", "image/png");
-        				xhr.setTimeout(Alloy.Globals.TIMEOUT);
-        				
+						xhr.setRequestHeader("Content-Type", "multipart/form-data");
+						//xhr.setRequestHeader("Content-Type", "image/png");
+						xhr.setTimeout(Alloy.Globals.TIMEOUT);
+
 						xhr.send({
 							media : image,
 							filename : 'profile_image_' + Alloy.Globals.BETKAMPENUID + '.png'
@@ -307,7 +327,7 @@ function createGUI() {
 	fourthRow.add(Ti.UI.createLabel({
 		text : Alloy.Globals.PHRASES.settingsProfileTxt,
 		textAlign : "center",
-		top : 20,
+		height : 'auto',
 		left : 5,
 		font : {
 			fontSize : Alloy.Globals.getFontSize(1),
@@ -318,10 +338,10 @@ function createGUI() {
 
 	fourthRow.add(Ti.UI.createLabel({
 		font : {
-			fontFamily : 'FontAwesome'
+			fontFamily : font
 		},
 		text : fontawesome.icon('icon-chevron-right'),
-		right : 60,
+		right : rightPos,
 		color : '#000',
 		fontSize : 80,
 		height : 'auto',
@@ -398,7 +418,7 @@ function createGUI() {
 	fifthRow.add(Ti.UI.createLabel({
 		text : Alloy.Globals.PHRASES.settingsBluetoothTxt,
 		textAlign : "center",
-		top : 20,
+		height : 'auto',
 		left : 5,
 		font : {
 			fontSize : Alloy.Globals.getFontSize(1),
@@ -409,10 +429,10 @@ function createGUI() {
 
 	fifthRow.add(Ti.UI.createLabel({
 		font : {
-			fontFamily : 'FontAwesome'
+			fontFamily : font
 		},
 		text : fontawesome.icon('icon-chevron-right'),
-		right : 60,
+		right : rightPos,
 		color : '#000',
 		fontSize : 80,
 		height : 'auto',
@@ -420,21 +440,16 @@ function createGUI() {
 	}));
 
 	fifthRow.addEventListener('click', function() {
-		Ti.API.log("cliiiick");
-
-		// går ej över ios 5.1 Ti.Platform.openURL('prefs:root=Brightness prefs:root=General&path=Bluetooth');
-
-		/* Testa
-		 if (OS_ANDROID) {
-		 var intent = Ti.Android.createIntent({
-		 className : 'com.android.settings.wifi.WifiSettings',
-		 packageName : 'com.android.settings',
-		 action : Ti.Android.ACTION_MAIN,
-		 });
-		 Ti.Android.currentActivity.startActivity(intent);
-		 // TYP
-		 }
-		 */
+		if (OS_IOS) {
+			Ti.Platform.openURL('prefs:root=Brightness prefs:root=General&path=Bluetooth');
+		} else if (OS_ANDROID) {
+			var intent = Ti.Android.createIntent({
+				className : 'com.android.settings.bluetooth.BluetoothSettings',
+				packageName : 'com.android.settings',
+				action : Ti.Android.ACTION_MAIN,
+			});
+			Ti.Android.currentActivity.startActivity(intent);
+		}
 	});
 
 	$.settingsView.add(fifthRow);
@@ -462,7 +477,11 @@ function createGUI() {
 	});
 
 	$.settingsView.add(uploadIndicator);
-
+	
+	if(OS_ANDROID){		
+		// TODO don't know why it's shown...
+		uploadIndicator.hide();
+	}
 }
 
 function createPickers() {
@@ -485,8 +504,8 @@ function createPickers() {
 		picker = Titanium.UI.createPicker({
 			type : Titanium.UI.PICKER_TYPE_PLAIN,
 			width : Ti.UI.SIZE,
-			top : 20,
 			height : Ti.UI.SIZE,
+			right : 40
 		});
 
 		// on picker change
@@ -512,7 +531,7 @@ function createPickers() {
 			textAlign : 'center'
 		};
 
-		picker = new ModalPicker(visualPrefs, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt);
+		picker = new ModalPicker(visualPrefs, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt, Alloy.Globals.PHRASES.closeBtnTxt);
 
 		picker.text = currentLanguage;
 
@@ -635,10 +654,7 @@ function getLanguage() {
 // run it
 createGUI();
 
-
-
 // TODO handle it in backend!!!!! test and fix all php files
 // TODO images are forced as .png right now..
 // TODO fix so we can notify clients about a language change in phrases.
-
 

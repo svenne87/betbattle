@@ -76,22 +76,18 @@ function Controller() {
             }
         });
         var tableHeaderView = Ti.UI.createView({
-            height: "142dp",
-            backgroundImage: "/images/header.png"
+            height: "10%",
+            width: Ti.UI.FILL,
+            backgroundColor: "transparent"
         });
-        var nameFont = Alloy.Globals.getFontSize(3);
-        leagueName.length > 13 && (nameFont = 32);
         tableHeaderView.add(Ti.UI.createLabel({
-            width: "100%",
+            text: Alloy.Globals.PHRASES.pickMatchTxt,
             textAlign: "center",
-            top: 50,
-            text: leagueName,
+            color: "#FFF",
             font: {
-                fontSize: nameFont,
-                fontWeight: "normal",
-                fontFamily: Alloy.Globals.getFont()
-            },
-            color: "#FFF"
+                fontSize: Alloy.Globals.getFontSize(2),
+                fontFamily: "Impact"
+            }
         }));
         table = Ti.UI.createTableView({
             headerView: tableHeaderView,
@@ -103,70 +99,61 @@ function Controller() {
                 right: 0
             }
         });
-        table.footerView = Ti.UI.createView({
-            height: .5,
-            backgroundColor: "#6d6d6d"
+        var footerView = Ti.UI.createView({
+            height: 20,
+            backgroundColor: "transparent"
         });
+        footerView.add(Ti.UI.createLabel({
+            text: "Test",
+            color: "#FFF"
+        }));
+        table.footerView = footerView;
         var data = [];
         for (var i = 0; array.length > i; i++) {
             var dateFix = parseInt(array[i].attributes.game_date + "000");
             var date = new Date(dateFix);
             var dateString = date.toUTCString();
-            dateString = dateString.substring(5, dateString.length - 3);
-            var subRow = Ti.UI.createTableViewRow({
-                layout: "vertical",
-                selectionStyle: "none",
-                backgroundColor: "#303030"
-            });
-            subRow.footerView = Ti.UI.createView({
-                height: .5,
-                backgroundColor: "#6d6d6d"
-            });
-            subRow.add(Ti.UI.createView({
-                height: 12
-            }));
-            for (var x = 0; array[i].attributes.game_values.length > x; x++) subRow.add(Ti.UI.createLabel({
-                text: array[i].attributes.game_values[x],
-                left: 60,
-                font: {
-                    fontSize: Alloy.Globals.getFontSize(1),
-                    fontWeight: "normal",
-                    fontFamily: Alloy.Globals.getFont()
-                },
-                color: "#FFF",
-                backgroundColor: "#303030"
-            }));
-            subRow.add(Ti.UI.createView({
-                height: 12
-            }));
-            var subRowArray = [];
-            subRowArray.push(subRow);
-            var rowChild;
-            rowChild = true;
+            dateString = dateString.substring(5, dateString.length - 7);
+            var child;
+            child = true;
             var row = $.UI.create("TableViewRow", {
                 classes: [ "challengesSectionDefault" ],
                 id: array[i].attributes.round,
-                sub: subRowArray,
-                opened: false,
-                isparent: true
+                hasChild: child
             });
-            var themeColor = Alloy.Globals.themeColor();
-            "#ea7337" === Alloy.Globals.themeColor() && (themeColor = "FFF");
+            if (true != child) {
+                var fontawesome = require("lib/IconicFont").IconicFont({
+                    font: "lib/FontAwesome"
+                });
+                var font = "FontAwesome";
+                var rightPercentage = "5%";
+                row.add(Ti.UI.createLabel({
+                    font: {
+                        fontFamily: font
+                    },
+                    text: fontawesome.icon("icon-chevron-right"),
+                    right: rightPercentage,
+                    color: "#FFF",
+                    fontSize: 80,
+                    height: "auto",
+                    width: "auto"
+                }));
+            }
             row.add(Ti.UI.createLabel({
                 text: dateString,
                 top: 10,
-                left: 60,
+                left: 20,
                 font: {
                     fontSize: Alloy.Globals.getFontSize(1),
                     fontWeight: "normal",
                     fontFamily: Alloy.Globals.getFont()
                 },
-                color: themeColor
+                color: "#FFF"
             }));
             row.add(Ti.UI.createLabel({
-                text: Alloy.Globals.PHRASES.nrOfGamesTxt + " " + array[i].attributes.game_values.length,
+                text: array[i].attributes.team_1.team_name + " - " + array[i].attributes.team_2.team_name,
                 top: 30,
-                left: 60,
+                left: 20,
                 font: {
                     fontSize: Alloy.Globals.getFontSize(1),
                     fontWeight: "normal",
@@ -179,36 +166,13 @@ function Controller() {
                 layout: "vertical",
                 height: 12
             }));
-            var detailsImg = Ti.UI.createImageView({
-                name: "detailsBtn",
-                width: 35,
-                height: 35,
-                top: 11,
-                left: 5,
-                id: array[i].attributes.round,
-                image: "/images/p.png"
-            });
-            row.add(detailsImg);
             row.className = date.toUTCString();
             data.push(row);
         }
         table.setData(data);
         table.addEventListener("click", function(e) {
             if (2 == Alloy.Globals.SLIDERZINDEX) return;
-            if ("detailsBtn" === e.source.name) {
-                e.source.image = "/images/p.png" == e.source.image ? "/images/m.png" : "/images/p.png";
-                if (e.row.isparent) if (e.row.opened) {
-                    for (var i = e.row.sub.length; i > 0; i -= 1) table.deleteRow(e.index + i);
-                    e.row.opened = false;
-                } else {
-                    var currentIndex = e.index;
-                    for (var i = 0; e.row.sub.length > i; i++) {
-                        table.insertRowAfter(currentIndex, e.row.sub[i]);
-                        currentIndex++;
-                    }
-                    e.row.opened = true;
-                }
-            } else if (null !== e.rowData && "undefined" != typeof e.rowData.id) {
+            if (null !== e.rowData && "undefined" != typeof e.rowData.id) {
                 var matchDate = new Date(e.rowData.className);
                 matchDate.setHours(matchDate.getHours() - 2);
                 var now = new Date();
@@ -304,11 +268,9 @@ function Controller() {
         top: 200,
         text: Alloy.Globals.PHRASES.loadingTxt
     });
-    {
-        require("lib/IconicFont").IconicFont({
-            font: "lib/FontAwesome"
-        });
-    }
+    require("lib/IconicFont").IconicFont({
+        font: "lib/FontAwesome"
+    });
     $.newChallenge.addEventListener("close", function() {
         indicator.closeIndicator();
     });

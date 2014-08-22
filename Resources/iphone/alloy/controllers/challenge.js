@@ -386,7 +386,7 @@ function Controller() {
             height: 40,
             textAlign: "center"
         };
-        var numberPicker = new ModalPicker(visualPrefs, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt);
+        var numberPicker = new ModalPicker(visualPrefs, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt, Alloy.Globals.PHRASES.closeBtnTxt);
         modalPickersToHide.push(numberPicker);
         numberPicker.text = "0";
         numberPicker.self.addEventListener("change", function() {
@@ -468,7 +468,7 @@ function Controller() {
             height: 40,
             textAlign: "center"
         };
-        var teamOnePicker = new ModalPicker(visualPrefsOne, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt);
+        var teamOnePicker = new ModalPicker(visualPrefsOne, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt, Alloy.Globals.PHRASES.closeBtnTxt);
         modalPickersToHide.push(teamOnePicker);
         teamOnePicker.text = "0";
         teamOnePicker.self.addEventListener("change", function() {
@@ -484,7 +484,7 @@ function Controller() {
             height: 40,
             textAlign: "center"
         };
-        var teamTwoPicker = new ModalPicker(visualPrefsTwo, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt);
+        var teamTwoPicker = new ModalPicker(visualPrefsTwo, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt, Alloy.Globals.PHRASES.closeBtnTxt);
         modalPickersToHide.push(teamTwoPicker);
         teamTwoPicker.text = "0";
         teamTwoPicker.self.addEventListener("change", function() {
@@ -566,7 +566,7 @@ function Controller() {
             height: 40,
             textAlign: "center"
         };
-        var betPicker = new ModalPicker(visualPrefs, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt);
+        var betPicker = new ModalPicker(visualPrefs, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt, Alloy.Globals.PHRASES.closeBtnTxt);
         modalPickersToHide.push(betPicker);
         betPicker.text = Alloy.Globals.PHRASES.chooseConfirmBtnTxt;
         betPicker.self.addEventListener("change", function() {

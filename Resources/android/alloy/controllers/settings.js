@@ -120,12 +120,11 @@ function Controller() {
         Ti.App.Properties.hasProperty("pushSetting") || Ti.App.Properties.setBool("pushSetting", true);
         pushEnabled = Ti.App.Properties.getBool("pushSetting");
         var basicSwitch;
-        basicSwitch = Ti.UI.createSwitch({
-            right: 60,
+        var RealSwitch = require("com.yydigital.realswitch");
+        basicSwitch = RealSwitch.createRealSwitch({
+            right: 40,
             top: 15,
-            width: 40,
-            titleOn: Alloy.Globals.PHRASES.onTxt,
-            titleOff: Alloy.Globals.PHRASES.offTxt,
+            width: 90,
             value: pushEnabled
         });
         basicSwitch.addEventListener("change", function() {
@@ -155,6 +154,8 @@ function Controller() {
         }));
         var rightPos = 60;
         var font = "FontAwesome";
+        rightPos = 40;
+        font = "fontawesome-webfont";
         thirdRow.add(Ti.UI.createLabel({
             font: {
                 fontFamily: font
@@ -252,16 +253,18 @@ function Controller() {
             var cancel = Alloy.Globals.PHRASES.abortBtnTxt;
             var titleTxt = Alloy.Globals.PHRASES.profileNameTitleTxt;
             var messageTxt = Alloy.Globals.PHRASES.profileNameMessageTxt + ": " + profileName;
+            var textfield = Ti.UI.createTextField();
+            textfield.value = profileName;
             dialog = Ti.UI.createAlertDialog({
                 title: titleTxt,
                 message: messageTxt,
-                style: Ti.UI.iPhone.AlertDialogStyle.PLAIN_TEXT_INPUT,
+                androidView: textfield,
                 buttonNames: [ confirm, cancel ]
             });
             dialog.addEventListener("click", function(e) {
                 if (0 == e.index) {
                     var text;
-                    text = e.text;
+                    text = textfield.value;
                     if (text.length > 2 && 16 > text.length) {
                         profileName = text;
                         var param = '{"profile_name":"' + profileName + '", "app_identifier":"' + Alloy.Globals.APPID + '", "lang":"' + Alloy.Globals.LOCALE + '"}';
@@ -303,10 +306,16 @@ function Controller() {
             width: "auto"
         }));
         fifthRow.addEventListener("click", function() {
-            Ti.Platform.openURL("prefs:root=Brightness prefs:root=General&path=Bluetooth");
+            var intent = Ti.Android.createIntent({
+                className: "com.android.settings.bluetooth.BluetoothSettings",
+                packageName: "com.android.settings",
+                action: Ti.Android.ACTION_MAIN
+            });
+            Ti.Android.currentActivity.startActivity(intent);
         });
         $.settingsView.add(fifthRow);
         var style = Titanium.UI.iPhone.ProgressBarStyle.PLAIN;
+        style = Titanium.UI.Android.PROGRESS_INDICATOR_STATUS_BAR;
         var uploadIndicator = Titanium.UI.createProgressBar({
             width: 200,
             height: 50,
@@ -323,6 +332,7 @@ function Controller() {
             color: "#888"
         });
         $.settingsView.add(uploadIndicator);
+        uploadIndicator.hide();
     }
     function createPickers() {
         var data = [];
@@ -335,21 +345,19 @@ function Controller() {
                 value: lang
             }));
         }
-        var ModalPicker = require("lib/ModalPicker");
-        var visualPrefs = {
-            top: 10,
-            right: 10,
-            borderRadius: 3,
-            backgroundColor: "#FFF",
-            width: 140,
-            height: 40,
-            textAlign: "center"
-        };
-        picker = new ModalPicker(visualPrefs, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt, Alloy.Globals.PHRASES.closeBtnTxt);
-        picker.text = currentLanguage;
-        picker.self.addEventListener("change", function() {
-            changeLanguageConfirm(picker.value);
+        picker = Titanium.UI.createPicker({
+            type: Titanium.UI.PICKER_TYPE_PLAIN,
+            width: Ti.UI.SIZE,
+            height: Ti.UI.SIZE,
+            right: 40
         });
+        picker.addEventListener("change", function() {
+            changeLanguageConfirm(picker.getSelectedRow(0).value);
+        });
+        picker.add(data);
+        picker.columns[0].width = Ti.UI.SIZE;
+        picker.columns[0].height = Ti.UI.SIZE;
+        picker.selectionIndicator = true;
         return picker;
     }
     function showAlertWithRestartNote() {
@@ -362,9 +370,18 @@ function Controller() {
             switch (e.index) {
               case 0:
                 alertWindow.hide();
-                ;
-                ;
-                Ti.App._restart();
+                Alloy.Globals.MAINWIN.close();
+                Alloy.Globals.LANDINGWIN.close();
+                $.settingsWindow.exitOnClose = true;
+                $.settingsWindow.close();
+                var activity = Titanium.Android.currentActivity;
+                activity.finish();
+                var intent = Ti.Android.createIntent({
+                    action: Ti.Android.ACTION_MAIN,
+                    url: "Betkampen.js"
+                });
+                intent.addCategory(Ti.Android.CATEGORY_LAUNCHER);
+                Ti.Android.currentActivity.startActivity(intent);
                 break;
 
               case 1:
@@ -463,10 +480,18 @@ function Controller() {
     var fontawesome = require("lib/IconicFont").IconicFont({
         font: "lib/FontAwesome"
     });
+    $.settingsWindow.orientationModes = [ Titanium.UI.PORTRAIT ];
+    $.settingsWindow.addEventListener("open", function() {
+        $.settingsWindow.activity.actionBar.onHomeIconItemSelected = function() {
+            $.settingsWindow.close();
+            $.settingsWindow = null;
+        };
+        $.settingsWindow.activity.actionBar.displayHomeAsUp = true;
+        $.settingsWindow.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
+    });
     var picker;
     $.settingsWindow.addEventListener("close", function() {
         indicator.closeIndicator();
-        picker.close();
     });
     createGUI();
     _.extend($, exports);
