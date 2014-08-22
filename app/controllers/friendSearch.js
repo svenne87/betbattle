@@ -31,14 +31,6 @@ var searchLabel = Ti.UI.createLabel({
 });
 mainView.add(searchLabel);
 
-var myData=[
-{'name':'Emil Knark-Ryssen Svensson', id:'7'},
-{'name':'Abbas Abubakar', id: '18'},
-{'name':'Erik Krig', id: '97'},
-{'name':'Giacomo Palma', id: '13'},
-{'name':'Victor Pettersson', id: '1234'},
-{'name':'Alhaji Gero', id: '2389'}
-];
 
 var searchBar=Ti.UI.createSearchBar({
 		showCancel:true,
