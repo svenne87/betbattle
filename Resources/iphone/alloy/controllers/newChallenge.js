@@ -81,7 +81,7 @@ function Controller() {
             backgroundColor: "transparent"
         });
         tableHeaderView.add(Ti.UI.createLabel({
-            text: "Pick a match",
+            text: Alloy.Globals.PHRASES.pickMatchTxt,
             textAlign: "center",
             color: "#FFF",
             font: {
@@ -119,7 +119,6 @@ function Controller() {
             var row = $.UI.create("TableViewRow", {
                 classes: [ "challengesSectionDefault" ],
                 id: array[i].attributes.round,
-                opened: false,
                 hasChild: child
             });
             if (true != child) {
@@ -140,8 +139,6 @@ function Controller() {
                     width: "auto"
                 }));
             }
-            var themeColor = Alloy.Globals.themeColor();
-            "#ea7337" === Alloy.Globals.themeColor() && (themeColor = "FFF");
             row.add(Ti.UI.createLabel({
                 text: dateString,
                 top: 10,
@@ -151,7 +148,7 @@ function Controller() {
                     fontWeight: "normal",
                     fontFamily: Alloy.Globals.getFont()
                 },
-                color: themeColor
+                color: "#FFF"
             }));
             row.add(Ti.UI.createLabel({
                 text: array[i].attributes.team_1.team_name + " - " + array[i].attributes.team_2.team_name,

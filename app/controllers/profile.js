@@ -1,5 +1,16 @@
 var args = arguments[0] || {};
 
+if (OS_ANDROID) {
+	$.profile.addEventListener('open', function() {
+		$.profile.activity.actionBar.onHomeIconItemSelected = function() {
+			$.profile.close();
+			$.profile = null;
+		};
+		$.profile.activity.actionBar.displayHomeAsUp = true;
+		$.profile.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
+	});
+}
+
 //variables to use in class
 var userInfo = null;
 var mod = require('bencoding.blur');

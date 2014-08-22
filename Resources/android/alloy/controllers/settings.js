@@ -87,7 +87,7 @@ function Controller() {
         row.add(Ti.UI.createLabel({
             text: Alloy.Globals.PHRASES.changeLanguageTxt,
             textAlign: "center",
-            top: 20,
+            height: "auto",
             left: 5,
             font: {
                 fontSize: Alloy.Globals.getFontSize(1),
@@ -108,7 +108,7 @@ function Controller() {
         secondRow.add(Ti.UI.createLabel({
             text: Alloy.Globals.PHRASES.settingsPushTxt,
             textAlign: "center",
-            top: 20,
+            height: "auto",
             left: 5,
             font: {
                 fontSize: Alloy.Globals.getFontSize(1),
@@ -144,7 +144,7 @@ function Controller() {
         thirdRow.add(Ti.UI.createLabel({
             text: Alloy.Globals.PHRASES.settingsPicTxt,
             textAlign: "center",
-            top: 20,
+            height: "auto",
             left: 5,
             font: {
                 fontSize: Alloy.Globals.getFontSize(1),
@@ -227,7 +227,7 @@ function Controller() {
         fourthRow.add(Ti.UI.createLabel({
             text: Alloy.Globals.PHRASES.settingsProfileTxt,
             textAlign: "center",
-            top: 20,
+            height: "auto",
             left: 5,
             font: {
                 fontSize: Alloy.Globals.getFontSize(1),
@@ -286,7 +286,7 @@ function Controller() {
         fifthRow.add(Ti.UI.createLabel({
             text: Alloy.Globals.PHRASES.settingsBluetoothTxt,
             textAlign: "center",
-            top: 20,
+            height: "auto",
             left: 5,
             font: {
                 fontSize: Alloy.Globals.getFontSize(1),
@@ -348,7 +348,6 @@ function Controller() {
         picker = Titanium.UI.createPicker({
             type: Titanium.UI.PICKER_TYPE_PLAIN,
             width: Ti.UI.SIZE,
-            top: 20,
             height: Ti.UI.SIZE,
             right: 40
         });
