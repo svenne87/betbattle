@@ -522,7 +522,7 @@ function Controller() {
     var tab_groups = Ti.UI.createView({
         height: 40,
         width: "50%",
-        backgroundColor: "blue"
+        backgroundColor: Alloy.Globals.themeColor()
     });
     tab_groups.add(Ti.UI.createLabel({
         text: "Grupper",
@@ -551,13 +551,13 @@ function Controller() {
     topView.add(tab_friends);
     $.groupSelect.add(topView);
     tab_groups.addEventListener("click", function() {
-        tab_groups.setBackgroundColor("blue");
+        tab_groups.setBackgroundColor(Alloy.Globals.themeColor());
         tab_friends.setBackgroundColor("black");
         getGroups();
     });
     tab_friends.addEventListener("click", function() {
         tab_groups.setBackgroundColor("black");
-        tab_friends.setBackgroundColor("blue");
+        tab_friends.setBackgroundColor(Alloy.Globals.themeColor());
         getFriends();
     });
     $.groupSelect.add(tableWrapper);
