@@ -82,6 +82,7 @@ Alloy.Globals.BETKAMPENGETMOTDINFO = Alloy.Globals.BETKAMPENURL + '/api/get_matc
 Alloy.Globals.BETKAMPENGETTICKETS = Alloy.Globals.BETKAMPENURL + '/api/get_user_tickets.php';
 Alloy.Globals.BETKAMPENSETTINGURL = Alloy.Globals.BETKAMPENURL + '/api/settings.php';
 Alloy.Globals.BETKAMPENIMAGEUPLOADURL = Alloy.Globals.BETKAMPENURL + '/api/image_upload.php';
+Alloy.Globals.BETKAMPENGETFRIENDSURL = Alloy.Globals.BETKAMPENURL + '/api/get_friends.php';
 
 Alloy.Globals.performTimeout = function(func) {
 	if (OS_ANDROID) {

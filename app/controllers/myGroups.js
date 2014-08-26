@@ -32,7 +32,7 @@ var groupLabel = Ti.UI.createLabel({
 mainView.add(groupLabel);
 
 var infoTxt = Ti.UI.createView({
-	top: 20,
+	top : 20,
 	backgroundColor : '#EA7337',
 	backgroundGradient : {
 		type : "linear",
@@ -54,7 +54,7 @@ var infoTxt = Ti.UI.createView({
 	height : 30
 
 });
-mainView.add(infoTxt); 
+mainView.add(infoTxt);
 
 var nameInfo = Ti.UI.createLabel({
 	text : Alloy.Globals.PHRASES.groupNameTxt,
@@ -68,7 +68,7 @@ var nameInfo = Ti.UI.createLabel({
 infoTxt.add(nameInfo);
 
 var scoreInfo = Ti.UI.createLabel({
-	text : Alloy.Globals.PHRASES.editTxt+"/"+Alloy.Globals.PHRASES.deleteTxt,
+	text : Alloy.Globals.PHRASES.editTxt + "/" + Alloy.Globals.PHRASES.deleteTxt,
 	left : '64%',
 	color : "#fff",
 	font : {
@@ -78,22 +78,14 @@ var scoreInfo = Ti.UI.createLabel({
 });
 infoTxt.add(scoreInfo);
 
-for (var i = 0; i < 10; i++) {
+function createGUI(obj, i) {
 
-		if(OS_ANDROID){
 	var group = Ti.UI.createView({
-		top : '0.4%',
-		width : "100%",
-		height : 50,
+	top : '0.4%',
+	width : "100%",
+	height : 40
 	});
-} else {
-	var group = Ti.UI.createView({
-		top : '0.4%',
-		width : "100%",
-		height : '8%',
-	});
-}
-
+	
 	mainView.add(group);
 
 	var groupInfo = Ti.UI.createView({
@@ -107,14 +99,15 @@ for (var i = 0; i < 10; i++) {
 	group.add(groupInfo);
 
 	var name = Ti.UI.createLabel({
-		text : 'Min Grupp',
+		text : obj.gName,
 		left : '4%',
 		font : {
-			fontSize : 14
+			fontSize : 16,
+			fontFamily : "Impact"
 		},
 	});
 	groupInfo.add(name);
-
+	
 	var editBtn = Ti.UI.createButton({
 		top : "0.4%",
 		width : '15%',
@@ -131,21 +124,39 @@ for (var i = 0; i < 10; i++) {
 	});
 	group.add(editBtn);
 
-	var deleteBtn = Ti.UI.createButton({
-		top : "0.4%",
-		//height : '8%',
-		width : '15%',
-		left : '84%',
-		font : {
-			fontFamily : font,
-			fontSize : 27
-		},
-		title : fontawesome.icon('fa-trash-o'),
-		backgroundColor : '#fff',
-		color : '#000',
-		opacity : 0.7,
-		borderRadius : 10
-	});
+	if (obj.admin == Alloy.Globals.BETKAMPENUID) {
+		var deleteBtn = Ti.UI.createButton({
+			top : "0.4%",
+			//height : '8%',
+			width : '15%',
+			left : '84%',
+			font : {
+				fontFamily : font,
+				fontSize : 27
+			},
+			title : fontawesome.icon('fa-trash-o'),
+			backgroundColor : '#fff',
+			color : '#000',
+			opacity : 0.7,
+			borderRadius : 10
+		});
+	} else {
+		var deleteBtn = Ti.UI.createButton({
+			top : "0.4%",
+			//height : '8%',
+			width : '15%',
+			left : '84%',
+			font : {
+				fontFamily : font,
+				fontSize : 27
+			},
+			title : fontawesome.icon('fa-ban'),
+			backgroundColor : '#fff',
+			color : '#000',
+			opacity : 0.7,
+			borderRadius : 10
+		});
+	}
 	group.add(deleteBtn);
 
 	deleteBtn.addEventListener('click', function(e) {
@@ -154,7 +165,36 @@ for (var i = 0; i < 10; i++) {
 	editBtn.addEventListener('click', function(e) {
 		alert('editera mig');
 	});
+	
+	//name.addEventListener('click', function(e){
+		//alert('du klickade på' + obj.id);
+	//});
 
 }
+
+var url = Alloy.Globals.BETKAMPENURL + '/api/groups.php?uid=' + Alloy.Globals.BETKAMPENUID;
+var groups = null;
+var client = Ti.Network.createHTTPClient({
+	// function called when the response data is available
+	onload : function(e) {
+		Ti.API.info("Received text: " + this.responseText);
+		groups = JSON.parse(this.responseText);
+		//alert(groups.data);
+
+		for (var i = 0; i < groups.data.length; i++) {
+			createGUI(groups.data[i]);
+		}
+	},
+	// function called when an error occurs, including a timeout
+	onerror : function(e) {
+		Ti.API.debug(e.error);
+		//alert('error');
+	},
+	timeout : Alloy.Globals.TIMEOUT // in milliseconds
+});
+// Prepare the connection.
+client.open("GET", url);
+// Send the request.
+client.send();
 
 $.myGroups.add(mainView);
