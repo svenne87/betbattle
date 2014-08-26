@@ -1,5 +1,3 @@
-var args = arguments[0] || {};
-
 var fontawesome = require('lib/IconicFont').IconicFont({
 	font : 'lib/FontAwesome'
 });
@@ -9,7 +7,6 @@ var font = 'FontAwesome';
 if (OS_ANDROID) {
 	font = 'fontawesome-webfont';
 }
-
 var mainView = Ti.UI.createScrollView({
 	class : "topView",
 	height : "100%",
