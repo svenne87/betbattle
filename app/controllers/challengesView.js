@@ -155,68 +155,9 @@ function getDynamicLeftPos(oppCount) {
 // show pending and finished challenges and tournaments in a webview
 function showChallengeInWebView(challengeId, roundId, groupName) {
 	if (Alloy.Globals.checkConnection()) {
-		var url;
+		
 
-		if (groupName === null) {
-			groupName = '';
-		}
-
-		if (roundId == -1) {
-			url = Alloy.Globals.BETKAMPENURL + '/webviews/show_challenge_wv.php?fbid=' + Alloy.Globals.FACEBOOKOBJECT.id + '&uid=' + Alloy.Globals.BETKAMPENUID + '&cid=' + challengeId + '&group=' + groupName;
-		} else {
-			url = Alloy.Globals.BETKAMPENURL + '/webviews/show_challenge_wv.php?fbid=' + Alloy.Globals.FACEBOOKOBJECT.id + '&uid=' + Alloy.Globals.BETKAMPENUID + '&tid=' + challengeId + '&rid=' + roundId + '&group=' + groupName;
-		}
-
-		var win = Ti.UI.createWindow({});
-
-		if (OS_IOS) {
-			indicator.openIndicator();
-		} else if (OS_ANDROID) {
-			win.orientationModes = [Titanium.UI.PORTRAIT];
-
-			win.addEventListener('open', function() {
-				win.activity.actionBar.onHomeIconItemSelected = function() {
-					win.close();
-					win = null;
-				};
-				win.activity.actionBar.displayHomeAsUp = true;
-				indicator.openIndicator();
-			});
-		}
-
-		//display loading spinner until webview gets loaded
-		var extwebview;
-
-		if (OS_ANDROID) {
-			extwebview = Titanium.UI.createWebView({
-				top : 0,
-				left : 0,
-				right : 0,
-				url : url,
-				height : Ti.UI.FILL,
-				width : Ti.UI.FILL,
-				backgroundColor : '#303030',
-				softKeyboardOnFocus : Titanium.UI.Android.SOFT_KEYBOARD_HIDE_ON_FOCUS
-			});
-		} else {
-			extwebview = Titanium.UI.createWebView({
-				top : 0,
-				left : 0,
-				right : 0,
-				url : url,
-				height : Ti.UI.FILL,
-				width : Ti.UI.FILL,
-				backgroundColor : '#303030'
-			});
-		}
-		extwebview.hideLoadIndicator = true;
-		win.add(extwebview);
-		//adding webview in current window
-
-		extwebview.addEventListener('load', function() {
-			indicator.closeIndicator();
-			//Hide the Loading indicator after the webview loaded
-		});
+		var win = Alloy.createController('showChallenge').getView();
 
 		if (OS_IOS) {
 			Alloy.Globals.NAV.openWindow(win, {
@@ -273,6 +214,7 @@ function createSectionsForTable(sectionText) {
 
 // show empty row if no games found
 function createEmptyTableRow(text) {
+	
 	var row = Ti.UI.createTableViewRow({
 		hasChild : false,
 		width : Ti.UI.FILL,
