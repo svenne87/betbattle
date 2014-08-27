@@ -244,8 +244,8 @@ function createViews(array) {
 			width : '15%',
 			left : '68.5%',
 			id : array[i].attributes.id,
-			gName: array[i].attributes.name,
-			admin: array[i].attributes.creator,
+			gName : array[i].attributes.name,
+			admin : array[i].attributes.creator,
 			font : {
 				fontFamily : font,
 				fontSize : 27
@@ -298,7 +298,6 @@ function createViews(array) {
 
 		group.add(deleteBtn);
 
-
 		deleteBtn.addEventListener('click', function(e) {
 			// delete group
 			if (e.source.admin == '1') {
@@ -316,7 +315,7 @@ function createViews(array) {
 						var deleteGroup = Ti.Network.createHTTPClient();
 						deleteGroup.onload = function() {
 							if (this.responseText == 'Erased') {
-								alert(Alloy.Globals.PHRASES.groupDeletedTxt);
+								//alert(Alloy.Globals.PHRASES.groupDeletedTxt);
 							} else {
 								alert(Alloy.Globals.PHRASES.commonErrorTxt);
 							}
@@ -327,18 +326,18 @@ function createViews(array) {
 							id : Alloy.Globals.BETKAMPENUID,
 						};
 						deleteGroup.send(params);
-						$.myGroups.close();
 						var win = Alloy.createController('myGroups').getView();
-		if (OS_IOS) {
-			Alloy.Globals.NAV.openWindow(win, {
-				animated : true
-			});
-		} else {
-			win.open({
-				fullScreen : true
-			});
-			win = null;
-		}
+						if (OS_IOS) {
+							Alloy.Globals.NAV.openWindow(win, {
+								animated : false
+							});
+						} else {
+							win.open({
+								fullScreen : true
+							});
+							win = null;
+						}
+						$.myGroups.close();
 						break;
 					case 1:
 						Titanium.API.info('cancel');
@@ -369,6 +368,18 @@ function createViews(array) {
 							member_to_remove : Alloy.Globals.BETKAMPENUID,
 						};
 						leaveGroup.send(params);
+						var win = Alloy.createController('myGroups').getView();
+						if (OS_IOS) {
+							Alloy.Globals.NAV.openWindow(win, {
+								animated : false
+							});
+						} else {
+							win.open({
+								fullScreen : true
+							});
+							win = null;
+						}
+						$.myGroups.close();
 						break;
 					case 1:
 						Titanium.API.info('cancel');
@@ -387,16 +398,17 @@ function createViews(array) {
 			gName = e.source.gName;
 			gAdmin = e.source.admin;
 			var win = Alloy.createController('editGroup', gID, gName, gAdmin).getView();
-		if (OS_IOS) {
-			Alloy.Globals.NAV.openWindow(win, {
-				animated : true
-			});
-		} else {
-			win.open({
-				fullScreen : true
-			});
-			win = null;
-		}
+			if (OS_IOS) {
+				Alloy.Globals.NAV.openWindow(win, {
+					animated : true
+				});
+			} else {
+				win.open({
+					fullScreen : true
+				});
+				win = null;
+			}
+			$.myGroups.close();
 		});
 
 	}

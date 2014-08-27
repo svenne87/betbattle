@@ -1,5 +1,25 @@
 var args = arguments[0] || {};
 
+var b = Titanium.UI.createButton({
+	title : 'Back'
+});
+$.editGroup.leftNavButton = b;
+b.addEventListener('click', function() {
+	var win = Alloy.createController('myGroups').getView();
+	if (OS_IOS) {
+		Alloy.Globals.NAV.openWindow(win, {
+			animated : true
+		});
+	} else {
+		win.open({
+			fullScreen : true
+		});
+		win = null;
+	}
+
+	$.editGroup.close();
+});
+
 var fontawesome = require('lib/IconicFont').IconicFont({
 	font : 'lib/FontAwesome'
 });
@@ -54,6 +74,7 @@ if (gAdmin == Alloy.Globals.BETKAMPENUID) {
 		width : '60%',
 		height : 40,
 		value : gName,
+		tintColor : '#000',
 		keyboardType : Titanium.UI.KEYBOARD_DEFAULT,
 		returnKeyType : Titanium.UI.RETURNKEY_DEFAULT,
 		borderStyle : Titanium.UI.INPUT_BORDERSTYLE_ROUNDED
@@ -82,6 +103,18 @@ if (gAdmin == Alloy.Globals.BETKAMPENUID) {
 			group_name : groupName.value,
 		};
 		editName.send(params);
+		var win = Alloy.createController('myGroups').getView();
+		if (OS_IOS) {
+			Alloy.Globals.NAV.openWindow(win, {
+				animated : true
+			});
+		} else {
+			win.open({
+				fullScreen : true
+			});
+			win = null;
+		}
+
 		$.editGroup.close();
 	});
 }
@@ -192,6 +225,8 @@ function createGUI(obj) {
 						};
 						removeMember.send(params);
 						Ti.API.info(params);
+						deleteBtn.visible = false;
+						member.backgroundColor = '#ff0000';
 						break;
 					case 1:
 						Titanium.API.info('cancel');
@@ -246,7 +281,7 @@ var e = 0;
 function createFriendGUI(friend, i) {
 	var fr = [];
 	if (members.data.length == null) {
-		
+
 	} else {
 		for (var s = 0; s < members.data.length; s++) {
 			fr.push(members.data[s].mID);
@@ -364,6 +399,8 @@ function createFriendGUI(friend, i) {
 					};
 					addMember.send(params);
 					Ti.API.info(params);
+					addBtn.visible = false;
+					member.backgroundColor = '#00ff00';
 					break;
 				case 1:
 					Titanium.API.info('cancel');
