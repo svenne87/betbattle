@@ -1,6 +1,174 @@
 var args = arguments[0] || {};
 Alloy.Globals.LANDINGWIN = $.landingPage;
 
+var beacons = [];
+
+function getBeacons(){
+	Ti.API.info("getBeacons");
+	if (Alloy.Globals.checkConnection()) {
+		// show indicator and disable button
+		
+		var xhr = Titanium.Network.createHTTPClient();
+		xhr.onerror = function(e) {
+			Ti.API.error('Bad Sever =>' + e.error);
+		};
+
+		try {
+			xhr.open('GET', Alloy.Globals.BETKAMPENGETGETBEACONSURL + '?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
+			xhr.setRequestHeader("content-type", "application/json");
+			//xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
+			xhr.setTimeout(Alloy.Globals.TIMEOUT);
+
+		
+			xhr.send();
+		} catch(e) {
+			Ti.API.info("ERROR CATCH");
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+		}
+		xhr.onload = function() {
+			Ti.API.info("ONLOAD "+ JSON.stringify(this));
+			if (this.status == '200') {
+				
+				if (this.readyState == 4) {
+					//Ti.API.log("respoooonse: " +this.responseText);
+					var beacons = JSON.parse(this.responseText);
+					
+					if(OS_IOS){
+						Alloy.Globals.TiBeacon.addEventListener("changeAuthorizationStatus", function(e){
+						   if (e.status != "authorized") {
+						      Ti.API.error("not authorized");
+						   }
+						});
+						
+						var dialogShown = false;
+						Alloy.Globals.TiBeacon.addEventListener("bluetoothStatus", function(e){
+						   if (e.status != "on" && !dialogShown) {
+						      dialogShown =  true;   
+						      	var dialog = Ti.UI.createAlertDialog({
+						      		message: 'Sätt på bluetooth för att få ut det mesta från appen.',
+						      		title:'Bluetooth',
+						      		ok: 'Ok',
+						      	});
+						      	dialog.show();
+						   }
+						});
+						
+						Alloy.Globals.TiBeacon.requestBluetoothStatus();
+						
+						function enterRegion(e) {
+							for(var i = 0; i < beacons.length; i++){
+								if(e.identifier == beacons[i].identifier){
+									getPromotion(beacons[i].id);
+								}
+							}
+							
+							
+							Alloy.Globals.TiBeacon.startRangingForBeacons(e);
+						}
+						
+						function exitRegion(e){
+							for(var i = 0; i < beacons.length; i++){
+								if(e.identifier == beacons[i].identifier){
+									//alert("Du lämnar konferensrumemt nu. Tack för besöket!");
+								}
+							}
+							
+						}
+						
+						function updateInformation(e){
+							/*if (e.identifier == 'conference' && e.proximity == "near"){
+								//alert("Du är i konferensrummet nu. Grattis!");
+							}else if (e.identifier == 'hall' && e.proximity == "near"){
+								//alert("Du är i hallen nu. Grattis!");
+							}else if (e.identifier == 'kitchen' && e.proximity == "near"){
+								//alert("Du är i köket! Glöm inte kaffet!");
+							}*/
+						}
+				
+						Alloy.Globals.TiBeacon.addEventListener("enteredRegion", enterRegion);
+						Alloy.Globals.TiBeacon.addEventListener("beaconProximity", updateInformation);
+						Alloy.Globals.TiBeacon.addEventListener("exitedRegion", exitRegion);
+							
+						for(var i = 0; i < beacons.length; i++){
+							Alloy.Globals.TiBeacon.startMonitoringForRegion({
+				            	uuid : beacons[i].uuid,
+				            	identifier : beacons[i].identifier,
+				            	major: beacons[i].major,
+				            	minor: beacons[i].minor
+				       		});
+						}
+				        
+				      
+				}else if(OS_ANDROID){
+					
+						if(Ti.Platform.version >= 4.3){
+							Alloy.Globals.TiBeacon.initBeacon({
+								success: onSuccess,
+								error: onError,
+								interval: 5,
+								region: onRegion,
+								found: onFound,
+							});
+							
+							function onSuccess(e){
+								Ti.API.info("SUCCESS : " + JSON.stringify(e));
+							}
+							
+					
+								
+							function onRegion(e){
+								Ti.API.info("BEACON : "+ JSON.stringify(e));
+								e = e.device;
+								for(var i = 0; i < beacons.length; i++){
+									if(e.uuidDashed == beacons[i].uuid){
+										if(e.major == beacons[i].major && e.minor == beacons[i].minor){
+											//getPromotion(beacons[i].id);
+											Ti.API.info("BEACON ON REGION");
+										}
+									}	
+								}
+							}
+							
+							function onFound(e){
+								Ti.API.info("FOUND : " + JSON.stringify(e));
+								e = e.device;
+								for(var i = 0; i < beacons.length; i++){
+									if(e.uuidDashed == beacons[i].uuid){
+										if(e.major == beacons[i].major && e.minor == beacons[i].minor){
+											getPromotion(beacons[i].id);
+										}
+									}
+								}
+							}
+							
+							function onError(e){
+								Ti.API.info("ERROR BEACON : " + JSON.stringify(e));
+							}
+							
+							if(Alloy.Globals.TiBeacon.isEnabled()){
+								Alloy.Globals.TiBeacon.startScanning();
+							}
+							
+						}
+						
+					}
+				} else {
+					Ti.API.error("ERROR: "+ this);
+					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+				}
+			} else {
+				Ti.API.error("Error =>" + this.response);
+				Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
+			}
+		};
+
+	} else {
+		Ti.API.info("NO CONNECTION");
+		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+	}
+}
+
+
 if(OS_ANDROID) {
 	$.landingPage.addEventListener('open', function(){	
 		$.landingPage.activity.actionBar.hide();
@@ -24,142 +192,234 @@ function createBeaconDialog(msg, title, link, beacon){
   	dialog.show();
 }
 
-///BEACONS IOS
-if(OS_IOS){
-		Alloy.Globals.TiBeacon.addEventListener("changeAuthorizationStatus", function(e){
-		   if (e.status != "authorized") {
-		      Ti.API.error("not authorized");
-		   }
-		});
+function getPromotion(beaconID){
+	if (Alloy.Globals.checkConnection()) {
+		// show indicator and disable button
 		
-		var dialogShown = false;
-		Alloy.Globals.TiBeacon.addEventListener("bluetoothStatus", function(e){
-		   if (e.status != "on" && !dialogShown) {
-		      dialogShown =  true;   
-		      	var dialog = Ti.UI.createAlertDialog({
-		      		message: 'Sätt på bluetooth för att få ut det mesta från appen.',
-		      		title:'Bluetooth',
-		      		ok: 'Ok',
-		      	});
-		      	dialog.show();
-		   }
-		});
-		
-		Alloy.Globals.TiBeacon.requestBluetoothStatus();
-		
-		function enterRegion(e) {
-			
-			if(e.identifier == 'conference'){
-				createBeaconDialog("Välkommen till JimDavis!", "Välkommen", "http://www.jimdavislabs.se", Alloy.Globals.AcceptedBeacon1);
-			}else if(e.identifier == 'hall'){
-				createBeaconDialog("Glöm inte toapappret", "Toaletten", "link", Alloy.Globals.AcceptedBeacon2);
-			}else if(e.identifier == 'kitchen'){
-				createBeaconDialog("Sätt gärna på kaffet i köket", "Köket", "kitchen", Alloy.Globals.AcceptedBeacon3);
-			}
-			
-			Alloy.Globals.TiBeacon.startRangingForBeacons(e);
-		}
-		
-		function exitRegion(e){
-			if(e.identifier == 'conference'){
-				alert("Du lämnar konferensrumemt nu. Tack för besöket!");
-			}
-		}
-		
-		function updateInformation(e){
-			if (e.identifier == 'conference' && e.proximity == "near"){
-				//alert("Du är i konferensrummet nu. Grattis!");
-			}else if (e.identifier == 'hall' && e.proximity == "near"){
-				//alert("Du är i hallen nu. Grattis!");
-			}else if (e.identifier == 'kitchen' && e.proximity == "near"){
-				//alert("Du är i köket! Glöm inte kaffet!");
-			}
-		}
+		var xhr = Titanium.Network.createHTTPClient();
+		xhr.onerror = function(e) {
+			Ti.API.error('Bad Sever =>' + e.error);
+		};
 
-		Alloy.Globals.TiBeacon.addEventListener("enteredRegion", enterRegion);
-		Alloy.Globals.TiBeacon.addEventListener("beaconProximity", updateInformation);
-		Alloy.Globals.TiBeacon.addEventListener("exitedRegion", exitRegion);
-			
+		try {
+			xhr.open('GET', Alloy.Globals.BETKAMPENGETPROMOTIONURL + '?beaconID=' + beaconID + '&lang=' + Alloy.Globals.LOCALE);
+			xhr.setRequestHeader("content-type", "application/json");
+			//xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
+			xhr.setTimeout(Alloy.Globals.TIMEOUT);
+
 		
-        Alloy.Globals.TiBeacon.startMonitoringForRegion({
-            uuid : "B9407F30-F5F8-466E-AFF9-25556B57FE6D",
-            identifier : "conference",
-            major: 25458,
-            minor: 53209
-        });
-        Alloy.Globals.TiBeacon.startMonitoringForRegion({
-        	uuid : "B9407F30-F5F8-466E-AFF9-25556B57FE6D",
-        	identifier: "hall",
-        	major: 41796, 
-        	minor: 19133,
-        });
-       Alloy.Globals.TiBeacon.startMonitoringForRegion({
-        	uuid: "B9407F30-F5F8-466E-AFF9-25556B57FE6D",
-        	identifier: "kitchen",
-        	major: 51092,
-        	minor: 34572,
-        });
-}else if(OS_ANDROID){
-	
-		if(Ti.Platform.version >= 4.3){
-			Alloy.Globals.TiBeacon.initBeacon({
-				success: onSuccess,
-				error: onError,
-				interval: 5,
-				region: onRegion,
-				found: onFound,
-			});
-			
-			function onSuccess(e){
-				Ti.API.info("SUCCESS : " + JSON.stringify(e));
-			}
-			
-	
-				
-			function onRegion(e){
-				Ti.API.info("BEACON : "+ JSON.stringify(e));
-				e = e.device;
-				if(e.uuid == "B9407F30F5F8466EAFF925556B57FE6D"){
-					if(e.major == "25458" && e.minor == "53209"){
-						createBeaconDialog("Välkommen till JimDavis!", "Välkommen", "http://www.jimdavislabs.se", Alloy.Globals.AcceptedBeacon1);
-					}
-					if(e.major == "41796" && e.minor == "19133"){
-						createBeaconDialog("Glöm inte toapappret", "Toaletten", "link", Alloy.Globals.AcceptedBeacon2);
-					}
-					if(e.major == "51092" && e.minor == "34572"){
-						createBeaconDialog("Sätt gärna på kaffet i köket", "Köket", "kitchen", Alloy.Globals.AcceptedBeacon3);
-					}
-				}
-			}
-			
-			function onFound(e){
-				Ti.API.info("FOUND : " + JSON.stringify(e));
-				e = e.device;
-				if(e.uuid == "B9407F30F5F8466EAFF925556B57FE6D"){
-					if(e.major == "25458" && e.minor == "53209"){
-						createBeaconDialog("Välkommen till JimDavis <- Found!", "Välkommen", "http://www.jimdavislabs.se", Alloy.Globals.AcceptedBeacon1);
-					}
-					if(e.major == "41796" && e.minor == "19133"){
-						createBeaconDialog("Glöm inte toapappret <- Found", "Toaletten", "link", Alloy.Globals.AcceptedBeacon2);
-					}
-					if(e.major == "51092" && e.minor == "34572"){
-						createBeaconDialog("Sätt gärna på kaffet i köket <- Found", "Köket", "kitchen", Alloy.Globals.AcceptedBeacon3);
-					}
-				}
-			}
-			
-			function onError(e){
-				Ti.API.info("ERROR BEACON : " + JSON.stringify(e));
-			}
-			
-			if(Alloy.Globals.TiBeacon.isEnabled()){
-				Alloy.Globals.TiBeacon.startScanning();
-			}
-			
+			xhr.send();
+		} catch(e) {
+			Ti.API.info("ERROR CATCH");
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 		}
+		xhr.onload = function() {
+			Ti.API.info("ONLOAD "+ JSON.stringify(this));
+			if (this.status == '200') {
+				
+				if (this.readyState == 4) {
+					//Ti.API.log("respoooonse: " +this.responseText);
+					var promo = JSON.parse(this.responseText);
+					
+					if(promo.type == 1){
+						createPromoTypeOne(promo);
+					}
+					if(promo.type == 2){
+						createPromoTypeTwo(promo);
+					}
+					if(promo.type == 3){
+						createPromoTypeThree(promo);
+					}
+				        
+				      
+				
+				} else {
+					Ti.API.error("ERROR: "+ this);
+					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+				}
+			} else {
+				Ti.API.error("Error =>" + this.response);
+				Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
+			}
+		};
+
+	} else {
+		Ti.API.info("NO CONNECTION");
+		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+	}
+}
+
+function createPromoTypeOne(promo){
+
+		
+	w = Ti.UI.createWindow({
+					title: promo.title,
+					backgroundColor: "#000",
+					layout: "vertical",
+					height: "90%",
+				}),
+	b = Titanium.UI.createButton( {title: 'Close'} );
+	w.title = promo.title;
+	w.barColor = 'black';
+	
+	w.add(b);
+	
+	b.addEventListener('click',function() {
+		w.close();
+	});
+	
+	var titleView = Ti.UI.createLabel({
+		width: "100%",
+		height: "10%",
+		text: promo.title,
+		textAlign: "center",
+		color: "#FFF",
+		font :{
+			fontSize: 18,
+			fontFamily: "Impact",
+		}
+	});
+	w.add(titleView);
+	
+	var image = Ti.UI.createImageView({
+		image : Alloy.Globals.BETKAMPENURL + '/promotions/images/' + promo.image,
+		width: "100%",
+		height: "45%",
+	});
+	w.add(image);
+	
+	var text = Ti.UI.createLabel({
+		width: "100%",
+		height: "45%",
+		text: promo.text,
+		textAlign: "center",
+		color: "#FFF",
+		font: {
+			fontSize: 16,
+			fontFamily: "Impact",
+		}
+	});
+	w.add(text);
+	w.open({ modal: true });
 		
 }
+
+function createPromoTypeTwo(promo){
 	
+			w = Ti.UI.createWindow({
+				title: promo.title,
+				backgroundColor: "#000",
+				layout: "vertical",
+				height: "90%",
+			});
+			b = Titanium.UI.createButton( {title: 'Close'} );
+
+			w.title = promo.title;
+			w.barColor = 'black';
+			w.add(b);
+			b.addEventListener('click',function() {
+				w.close();
+			});
+			
+			var image = Ti.UI.createImageView({
+				image: Alloy.Globals.BETKAMPENURL + '/promotions/images/' + promo.image,
+				width: "100%",
+				height: "100%",
+			});
+			w.add(image);
+			w.open({ modal: true });
+		
+}
+
+function createPromoTypeThree(promo){
+			w = Ti.UI.createWindow({
+				title: promo.title,
+				backgroundColor: "#000",
+				layout: "vertical",
+				height: "90%",
+			});
+			b = Titanium.UI.createButton( {title: 'Close'} );
+
+			w.title = promo.title;
+			w.barColor = 'black';
+			w.add(b);
+			b.addEventListener('click',function() {
+				w.close();
+			});
+			
+			
+			var titleView = Ti.UI.createLabel({
+				width: "100%",
+				height: "10%",
+				text: promo.title,
+				textAlign: "center",
+				color: "#FFF",
+				font :{
+					fontSize: 18,
+					fontFamily: "Impact",
+				}
+			});
+			w.add(titleView);
+			
+			var image = Ti.UI.createImageView({
+				image : Alloy.Globals.BETKAMPENURL + '/promotions/images/' + promo.image,
+				width: "100%",
+				height: "40%",
+			});
+			w.add(image);
+			
+			var text = Ti.UI.createLabel({
+				width: "100%",
+				height: "35%",
+				text: promo.text,
+				textAlign: "center",
+				color: "#FFF",
+				font: {
+					fontSize: 16,
+					fontFamily: "Impact",
+				}
+			});
+			w.add(text);
+			
+			var btn = Ti.UI.createView({
+				width: "50%",
+				height: "10%",
+				backgroundColor: "#c5c5c5",
+			});
+			
+			var btnText = Ti.UI.createLabel({
+				text: promo.title,
+				textAlign: "center",
+				font:{
+					fontSize: 14,
+					fontFamily: "Impact",
+				},
+				color: "#000",
+			});
+			
+			btn.add(btnText);
+			w.add(btn);
+			btn.addEventListener("click", function(e){
+				w.close();
+				Ti.API.info("CLICKAR");
+				var win = Alloy.createController(promo.button_link).getView();
+				if(OS_IOS){
+					Alloy.Globals.NAV.openWindow(win, {
+						animated : true
+					});
+					//Alloy.Globals.INDEXWIN = win;
+					win = null;
+				}else if(OS_ANDROID){
+					win.open({
+						fullScreen : true
+					});
+				}
+			});
+			
+			w.open({ modal: true });
+		
+}
+
 
 
 var top_view = Ti.UI.createView({
@@ -456,23 +716,23 @@ inviteBtn.addEventListener("click", function(e){
 });
 
 bot_img.addEventListener("click", function(e){
-				if (OS_IOS) {
-					var loginSuccessWindow = Alloy.createController('main', args).getView();
-					loginSuccessWindow.open({
-						fullScreen : true,
-						transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
-					});
-					loginSuccessWindow = null;
+	if (OS_IOS) {
+		var loginSuccessWindow = Alloy.createController('main', args).getView();
+		loginSuccessWindow.open({
+			fullScreen : true,
+			transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
+		});
+		loginSuccessWindow = null;
 
-				} else if (OS_ANDROID) {
-					var loginSuccessWindow = Alloy.createController('main', args).getView();
-					loginSuccessWindow.open({
-						fullScreen : true,
-						navBarHidden : false,
-						orientationModes : [Titanium.UI.PORTRAIT]
-					});
-					loginSuccessWindow = null;
-				}
+	} else if (OS_ANDROID) {
+		var loginSuccessWindow = Alloy.createController('main', args).getView();
+		loginSuccessWindow.open({
+			fullScreen : true,
+			navBarHidden : false,
+			orientationModes : [Titanium.UI.PORTRAIT]
+		});
+		loginSuccessWindow = null;
+	}
 });
 
 if(OS_IOS){
@@ -621,5 +881,14 @@ top_view.add(bot_img);
 bot_view.add(profileBtn);
 bot_view.add(inviteBtn);
 getMatchOfTheDay();
+
 $.landingPage.add(top_view);
 $.landingPage.add(bot_view);
+getBeacons();
+/*var test = {
+	title: "Hamburgarmeny!",
+	text: "Passa på idag! Innan matchen är slut kostar en meny endast 25kr. Visa oss att du har appen installerad på mobilen för att få ta del av erbjudandet.",
+	image: "hamburger-menu.png",
+	button_link: "halfPot",
+};
+createPromoTypeThree(test);*/
