@@ -78,20 +78,13 @@ var scoreInfo = Ti.UI.createLabel({
 });
 infoTxt.add(scoreInfo);
 
-for (var i = 0; i < 20; i++) {
-	if(OS_ANDROID){
+function createGUI(obj){
 	var friend = Ti.UI.createView({
 		top : '0.4%',
 		width : "100%",
-		height : 45,
+		height : 40,
+
 	});
-} else {
-	var friend = Ti.UI.createView({
-		top : '0.4%',
-		width : "100%",
-		height : '8%',
-	});
-}
 	mainView.add(friend);
 
 	var friendInfo = Ti.UI.createView({
@@ -113,7 +106,7 @@ for (var i = 0; i < 20; i++) {
 	friendInfo.add(profilePic);
 
 	var name = Ti.UI.createLabel({
-		text : 'Jag är en Kompis',
+		text : obj.name,
 		left : '15%',
 		font : {
 			fontSize : 14
@@ -143,6 +136,34 @@ deleteBtn.addEventListener('click', function(e) {
 	});
 
 }
+
+
+var xhr = Ti.Network.createHTTPClient({
+	// function called when the response data is available
+	onload : function(e) {
+		Ti.API.info("Received text: " + this.responseText);
+		var friends = JSON.parse(this.responseText);
+
+		for (var i = 0; i < friends.length; i++) {
+			//alert(friends[i].name);
+			createGUI(friends[i], i);
+		}
+	},
+	// function called when an error occurs, including a timeout
+	onerror : function(e) {
+		Ti.API.debug(e.error);
+		//alert('error');
+	},
+	timeout : Alloy.Globals.TIMEOUT // in milliseconds
+});
+// Prepare the connection.
+xhr.open('GET', Alloy.Globals.BETKAMPENGETFRIENDSURL + '?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
+
+xhr.setRequestHeader("content-type", "application/json");
+xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
+xhr.setTimeout(Alloy.Globals.TIMEOUT);
+
+xhr.send();
 
 
 $.myFriends.add(mainView);
