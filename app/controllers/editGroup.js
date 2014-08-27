@@ -396,6 +396,7 @@ function createFriendGUI(friend, i) {
 						group_id : e.source.id,
 						id : e.source.fId,
 						name : e.source.fName,
+						admin: 0
 					};
 					addMember.send(params);
 					Ti.API.info(params);

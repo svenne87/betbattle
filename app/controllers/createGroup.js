@@ -67,7 +67,7 @@ var saveName = Ti.UI.createButton({
 	width : '60%',
 	left : '20%',
 	top : '0.5%',
-	title : Alloy.Globals.PHRASES.saveTxt,
+	title : Alloy.Globals.PHRASES.pickFriendsTxt,
 	backgroundColor : '#FFF',
 	color : '#000',
 	borderRadius : 5
@@ -77,19 +77,25 @@ mainView.add(saveName);
 saveName.addEventListener('click', function(e) {
 	if (groupName.value.length > 2) {
 		var gName = Ti.Network.createHTTPClient();
+		gName.onload = function() {
+			if (this.responseText == "namnet finns redan") {
+				alert(Alloy.Globals.PHRASES.groupNameExistsTxt);
+			} else if (this.responseText == "Tillagd") {
+				groupName.visible = false;
+				saveName.visible = false;
+				groupNameLabel.text = groupName.value;
+				//getFriends();
+				getGroup();
 
+			}
+		};
 		gName.open("POST", Alloy.Globals.BETKAMPENURL + '/api/add_group.php');
 		var params = {
 			id : Alloy.Globals.BETKAMPENUID,
 			group_name : groupName.value
 		};
 		gName.send(params);
-		groupName.visible = false;
-		saveName.visible = false;
-		groupNameLabel.text = groupName.value; 
-		
-		getFriends();
-		getGroup();
+
 	} else if (groupName.value.length < 3) {
 		alert('groupname must be atleast 3 chars');
 	}
@@ -97,7 +103,7 @@ saveName.addEventListener('click', function(e) {
 
 l = 0;
 
-function createFriendGUI(obj) {
+function createFriendGUI(obj, groupId, i) {
 	l++;
 	if (l == 1) {
 		var line = Ti.UI.createView({
@@ -163,8 +169,9 @@ function createFriendGUI(obj) {
 	var addBtn = Ti.UI.createButton({
 		width : '18%',
 		left : '81%',
-		fId : obj.id,
-		fName : obj.name,
+		id : obj.id,
+		name : obj.name,
+		gid : groupId,
 		font : {
 			fontFamily : font,
 			fontSize : 27
@@ -182,29 +189,65 @@ function createFriendGUI(obj) {
 			addBtn.backgroundColor = '#00ff00';
 			addBtn.title = fontawesome.icon('fa-check');
 			member.borderColor = '#00ff00';
+			var addMember = Ti.Network.createHTTPClient();
+			addMember.open("POST", Alloy.Globals.BETKAMPENURL + '/api/add_group_member.php');
+			var params = {
+				group_id : e.source.gid,
+				id : e.source.id,
+				name : e.source.name,
+				admin : 0
+			};
+			addMember.send(params);
+			Ti.API.info(params);
 			click++;
 		} else if (click == 1) {
 			addBtn.backgroundColor = '#fff';
 			addBtn.title = fontawesome.icon('fa-plus');
 			member.borderColor = '#fff';
+			var removeMember = Ti.Network.createHTTPClient();
+			removeMember.open("POST", Alloy.Globals.BETKAMPENURL + '/api/remove_group_member.php');
+			var params = {
+				group_id : e.source.gid,
+				id : Alloy.Globals.BETKAMPENUID,
+				member_to_remove : e.source.id,
+			};
+			removeMember.send(params);
+			Ti.API.info(params);
 			click--;
 		}
 
 	});
+	
 }
 
+
 //get friends from db
-function getFriends() {
+function getFriends(groupId) {
 	var xhr = Ti.Network.createHTTPClient({
 		// function called when the response data is available
 		onload : function(e) {
-			Ti.API.info("Received text: " + this.responseText);
+			//Ti.API.info("Received text: " + this.responseText);
 			var friends = JSON.parse(this.responseText);
 
 			for (var i = 0; i < friends.length; i++) {
 				//alert(friends[i].name);
-				createFriendGUI(friends[i], i);
+				createFriendGUI(friends[i], groupId, i);
 			}
+			var saveGroupBtn = Ti.UI.createButton({
+			height : 40,
+			width : '60%',
+			left : '20%',
+			top : '2%',
+			title : Alloy.Globals.PHRASES.saveTxt,
+			backgroundColor : '#FFF',
+			color : '#000',
+			borderRadius : 5
+		});
+		mainView.add(saveGroupBtn);
+		
+		saveGroupBtn.addEventListener('click', function(e){
+			$.createGroup.close();
+		});
 		},
 		// function called when an error occurs, including a timeout
 		onerror : function(e) {
@@ -222,30 +265,70 @@ function getFriends() {
 
 	xhr.send();
 }
-function getGroup() {
-	var members = null;
-var client = Ti.Network.createHTTPClient({
-	// function called when the response data is available
-	onload : function(e) {
-		//Ti.API.info("Received text: " + this.responseText);
-		members = JSON.parse(this.responseText);
 
-		for (var i = 0; i < members.data.length; i++) {
-			//alert(members.data[i].name);
-			createGUI(members.data[i]);
-		}
-	},
-	// function called when an error occurs, including a timeout
-	onerror : function(e) {
-		Ti.API.debug(e.error);
-		//alert('error');
-	},
-	timeout : Alloy.Globals.TIMEOUT // in milliseconds
-});
-// Prepare the connection.
-client.open("GET", Alloy.Globals.BETKAMPENURL + '/api/get_members.php?gname=' + groupNameLabel.text);
-// Send the request.
-client.send();
+
+function getGroup() {
+	var groupId = null;
+	var client = Ti.Network.createHTTPClient({
+		// function called when the response data is available
+		onload : function(e) {
+			//Ti.API.info("Received text: " + this.responseText);
+			groupId = JSON.parse(this.responseText);
+			//Ti.API.info(groupId.data[0].gID);
+			getName(groupId.data[0].gID);
+			getFriends(groupId.data[0].gID);
+
+		},
+		// function called when an error occurs, including a timeout
+		onerror : function(e) {
+			Ti.API.debug(e.error);
+			//alert('error');
+		},
+		timeout : Alloy.Globals.TIMEOUT // in milliseconds
+	});
+	// Prepare the connection.
+	client.open("GET", Alloy.Globals.BETKAMPENURL + '/api/get_members.php?gname=' + groupNameLabel.text);
+	// Send the request.
+	client.send();
+}
+
+function getName(groupID) {
+	var myName = null;
+	var client = Ti.Network.createHTTPClient({
+		// function called when the response data is available
+		onload : function(e) {
+			Ti.API.info("Received text: " + this.responseText);
+			myName = JSON.parse(this.responseText);
+
+			//Ti.API.info(myName.data[0].name + '->' + groupID);
+			setAdmin(groupID, myName.data[0].name);
+
+		},
+		// function called when an error occurs, including a timeout
+		onerror : function(e) {
+			Ti.API.debug(e.error);
+			//alert('error');
+		},
+		timeout : Alloy.Globals.TIMEOUT // in milliseconds
+	});
+	// Prepare the connection.
+	client.open("GET", Alloy.Globals.BETKAMPENURL + '/api/get_members.php?myUid=' + Alloy.Globals.BETKAMPENUID);
+	// Send the request.
+	client.send();
+}
+
+function setAdmin(groupId, myName) {
+	var adminName = Ti.Network.createHTTPClient();
+
+	adminName.open("POST", Alloy.Globals.BETKAMPENURL + '/api/add_group_member.php');
+	var params = {
+		group_id : groupId,
+		id : Alloy.Globals.BETKAMPENUID,
+		name : myName,
+		admin : 1
+	};
+	adminName.send(params);
+	//Ti.API.info(params);
 }
 
 //getFriends();

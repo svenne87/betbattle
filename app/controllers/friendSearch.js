@@ -58,7 +58,7 @@ var client = Ti.Network.createHTTPClient({
 	filterCaseInsensitive:false,
 	filterAttribute: 'name'
 });
-alert(response.data.length);
+//alert(response.data.length);
 
 var rows=[];
 for(var item in response.data)
