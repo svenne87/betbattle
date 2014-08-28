@@ -13,6 +13,7 @@
 // Global variables
 Alloy.Globals.APPID = "9999SWEDENTEST";
 Alloy.Globals.FACEBOOKOBJECT;
+Alloy.Globals.BETKAMPEN;
 Alloy.Globals.FACEBOOK;
 Alloy.Globals.CHALLENGEOBJECTARRAY = [];
 Alloy.Globals.BETKAMPENUID = 0;
@@ -58,7 +59,7 @@ if(typeof lang == 'undefined' || lang == '' || lang == null) {
 
 // urls. Everything live needs to be done over SSL
 Alloy.Globals.INVITEURL = 'https://apps.facebook.com/betkampen';
-Alloy.Globals.BETKAMPENURL = 'http://secure.jimdavislabs.se/secure/betkampen_vm';
+Alloy.Globals.BETKAMPENURL = 'http://31.216.37.196/betbattle'; //'http://secure.jimdavislabs.se/secure/betkampen_vm';
 Alloy.Globals.BETKAMPENLOGINURL = Alloy.Globals.BETKAMPENURL + '/api/login.php';
 Alloy.Globals.BETKAMPENCHALLENGESURL = Alloy.Globals.BETKAMPENURL + '/api/challenges_v2.php';
 Alloy.Globals.BETKAMPENUSERURL = Alloy.Globals.BETKAMPENURL + '/api/user_stats.php'; //
@@ -76,7 +77,7 @@ Alloy.Globals.BETKAMPENCOINSANDROIDURL = Alloy.Globals.BETKAMPENURL + '/api/get_
 Alloy.Globals.BETKAMPENSHAREURL = Alloy.Globals.BETKAMPENURL + '/api/share.php';
 Alloy.Globals.GETLANGUAGE = Alloy.Globals.BETKAMPENURL + '/api/get_language.php';
 Alloy.Globals.BETKAMPENACHIEVEMENTSURL = Alloy.Globals.BETKAMPENURL + '/api/get_achievements.php';
-Alloy.Globals.BETKAMPENEMAILLOGIN = Alloy.Globals.BETKAMPENURL + '/api/email_login.php'; //Email login
+Alloy.Globals.BETKAMPENEMAILLOGIN = Alloy.Globals.BETKAMPENURL + '/api/token.php'; // get oauth token at login
 Alloy.Globals.BETKAMPENEMAILREG = Alloy.Globals.BETKAMPENURL + '/api/email_registration.php'; //Email registration
 Alloy.Globals.BETKAMPENGETMOTDINFO = Alloy.Globals.BETKAMPENURL + '/api/get_match_day_info.php'; //matchens mästare
 Alloy.Globals.BETKAMPENGETTICKETS = Alloy.Globals.BETKAMPENURL + '/api/get_user_tickets.php';
@@ -176,7 +177,7 @@ Alloy.Globals.postDeviceToken = function(deviceToken) {
 		try { 
 			xhr.open('POST', Alloy.Globals.BETKAMPENDEVICETOKENURL);
 			xhr.setRequestHeader("content-type", "application/json");
-			xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
+			xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
 			xhr.setTimeout(Alloy.Globals.TIMEOUT);
 
 			// build the json string
@@ -222,7 +223,7 @@ Alloy.Globals.checkCoins = function() {
 		try {
 			xhr.open('POST', Alloy.Globals.BETKAMPENCHECKCOINSURL + '?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
 			xhr.setRequestHeader("content-type", "application/json");
-			xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
+			xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
 			xhr.setTimeout(Alloy.Globals.TIMEOUT);
 
 			xhr.send();

@@ -19,17 +19,6 @@
 	opacity: 0.9,
 	borderRadius: 20
 },
-"#regUsername":{
-	color:'#336699',
-    top:40,
-    left:'8%',
-    width:250,
-    height:40,
-    hintText: Alloy.Globals.PHRASES.usernameTxt,
-    keyboardType:Titanium.UI.KEYBOARD_DEFAULT,
-    returnKeyType:Titanium.UI.RETURNKEY_DEFAULT,
-    borderStyle:Titanium.UI.INPUT_BORDERSTYLE_ROUNDED
-},
 "#regPass":{
 	color:'#336699',
     top:90,

@@ -64,7 +64,7 @@ function Controller() {
             try {
                 xhr.open("POST", Alloy.Globals.BETKAMPENANSWERURL);
                 xhr.setRequestHeader("content-type", "application/json");
-                xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
+                xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
                 xhr.setTimeout(Alloy.Globals.TIMEOUT);
                 var param;
                 param = -1 === tournamentIndex ? '{"lang" : "' + Alloy.Globals.LOCALE + '", "betkampen_id":"' + betkampenId + '", "cid":"' + cid + '", "bet_amount":"' + betAmount + '", "gamevalue": [{' : '{"lang" : "' + Alloy.Globals.LOCALE + '", "betkampen_id":"' + betkampenId + '", "tournament":"' + challengeObject.attributes.id + '", "round":"' + gameObjects[0].attributes.round_id + '", "league":"' + gameObjects[0].attributes.league_id + '", "gamevalue": [{';
@@ -797,7 +797,7 @@ function Controller() {
         try {
             -1 === roundId ? -1 === tournamentIndex ? xhr.open("GET", Alloy.Globals.BETKAMPENGAMESURL + "/?uid=" + Alloy.Globals.BETKAMPENUID + "&cid=" + challengeObject.attributes.id + "&lang=" + Alloy.Globals.LOCALE) : xhr.open("GET", Alloy.Globals.BETKAMPENGETGAMESFORTOURNAMENT + "/?uid=" + Alloy.Globals.BETKAMPENUID + "&tid=" + challengeObject.attributes.id + "&round=" + challengeObject.attributes.round + "&lang=" + Alloy.Globals.LOCALE) : xhr.open("GET", Alloy.Globals.BETKAMPENGETGAMESFORCHALLENGEURL + "/?uid=" + Alloy.Globals.BETKAMPENUID + "&league=" + leagueId + "&round=" + roundId + "&lang=" + Alloy.Globals.LOCALE);
             xhr.setRequestHeader("content-type", "application/json");
-            xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
+            xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
             xhr.setTimeout(Alloy.Globals.TIMEOUT);
             xhr.send();
         } catch (e) {

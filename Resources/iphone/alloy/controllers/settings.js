@@ -40,7 +40,7 @@ function Controller() {
             try {
                 xhr.open("POST", Alloy.Globals.BETKAMPENSETTINGURL);
                 xhr.setRequestHeader("content-type", "application/json");
-                xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
+                xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
                 xhr.setTimeout(Alloy.Globals.TIMEOUT);
                 xhr.send(param);
             } catch (e) {
@@ -182,7 +182,7 @@ function Controller() {
                         };
                         try {
                             xhr.open("POST", Alloy.Globals.BETKAMPENIMAGEUPLOADURL + "?lang=" + Alloy.Globals.LOCALE);
-                            xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
+                            xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
                             xhr.setRequestHeader("Content-Type", "multipart/form-data");
                             xhr.setTimeout(Alloy.Globals.TIMEOUT);
                             xhr.send({

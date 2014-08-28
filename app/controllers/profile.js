@@ -41,7 +41,7 @@ var botView = Ti.UI.createView({
 //create the top of the profile
 
 var profileName = Ti.UI.createLabel({
-	text: ""+Alloy.Globals.FACEBOOKOBJECT.attributes.fullName,
+	text: ""+Ti.App.Properties.getString('profileNameSetting'),
 	textAlign: "center",
 	top:10,
 	font: {
@@ -94,8 +94,16 @@ var profilePictureView = Ti.UI.createView({
 });
 profileTopView.add(profilePictureView);
 
+var image;
+if(typeof Alloy.Globals.FACEBOOKOBJECT !== 'undefined') {
+	imaeg = "https://graph.facebook.com/"+Alloy.Globals.FACEBOOKOBJECT.id+"/picture?type=large";
+} else {
+	// get betkampen image
+	image = '';
+}
+
 var profilePic = Ti.UI.createImageView({
-	image : "https://graph.facebook.com/"+Alloy.Globals.FACEBOOKOBJECT.id+"/picture?type=large", 
+	image : image, 
 	width: 90,
 	height: 90,
 	borderRadius : 45
@@ -330,7 +338,7 @@ function getProfile(){
 	try {
 		xhr.open('POST', Alloy.Globals.BETKAMPENUSERURL + '?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
 		xhr.setRequestHeader("content-type", "application/json");
-		xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
+		xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
 		xhr.setTimeout(Alloy.Globals.TIMEOUT);
 
 		xhr.send();
@@ -389,6 +397,7 @@ function getAchievements(){
 
 	try {
 		xhr.open('GET', Alloy.Globals.BETKAMPENACHIEVEMENTSURL + '?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
+		xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
 		//xhr.setRequestHeader("content-type", "application/json");
 		xhr.setTimeout(Alloy.Globals.TIMEOUT);
 

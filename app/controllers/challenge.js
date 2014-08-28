@@ -118,7 +118,7 @@ function postAnswer(betkampenId, cid, betAmount) {
 		try {
 			xhr.open('POST', Alloy.Globals.BETKAMPENANSWERURL);
 			xhr.setRequestHeader("content-type", "application/json");
-			xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
+			xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
 			xhr.setTimeout(Alloy.Globals.TIMEOUT);
 
 			// build the json string
@@ -1282,7 +1282,7 @@ if (Alloy.Globals.checkConnection()) {
 		}
 
 		xhr.setRequestHeader("content-type", "application/json");
-		xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
+		xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
 		xhr.setTimeout(Alloy.Globals.TIMEOUT);
 
 		xhr.send();

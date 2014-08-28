@@ -45,7 +45,7 @@ function getFriends() {
 		xhr.open('GET', Alloy.Globals.BETKAMPENGETFRIENDSURL + '?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
 
 		xhr.setRequestHeader("content-type", "application/json");
-		xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
+		xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
 		xhr.setTimeout(Alloy.Globals.TIMEOUT);
 
 		xhr.send();
@@ -128,7 +128,7 @@ function getGroups() {
 		xhr.open('GET', Alloy.Globals.BETKAMPENGETGROUPSURL + '/?lang=' + Alloy.Globals.LOCALE);
 
 		xhr.setRequestHeader("content-type", "application/json");
-		xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
+		xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
 		xhr.setTimeout(Alloy.Globals.TIMEOUT);
 
 		xhr.send();
@@ -271,7 +271,7 @@ function challengeGroup(array, param) {
 		try {
 			xhr.open('POST', Alloy.Globals.BETKAMPENCHALLENGEDONEURL);
 			xhr.setRequestHeader("content-type", "application/json");
-			//xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
+			//xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
 			xhr.setTimeout(Alloy.Globals.TIMEOUT);
 
 			// add groups to params
@@ -417,7 +417,7 @@ function challengeFriends(groupName) {
 		try {
 			xhr.open('POST', Alloy.Globals.BETKAMPENCHALLENGEDONEURL);
 			xhr.setRequestHeader("content-type", "application/json");
-			//xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
+			//xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
 			xhr.setTimeout(Alloy.Globals.TIMEOUT);
 
 			param += ', "uid":"' + Alloy.Globals.BETKAMPENUID + '", "friends":[{';

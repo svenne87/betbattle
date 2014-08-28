@@ -22,7 +22,7 @@ function Controller() {
         try {
             xhr.open("GET", Alloy.Globals.BETKAMPENGETFRIENDSURL + "?uid=" + Alloy.Globals.BETKAMPENUID + "&lang=" + Alloy.Globals.LOCALE);
             xhr.setRequestHeader("content-type", "application/json");
-            xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
+            xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
             xhr.setTimeout(Alloy.Globals.TIMEOUT);
             xhr.send();
         } catch (e) {
@@ -69,7 +69,7 @@ function Controller() {
         try {
             xhr.open("GET", Alloy.Globals.BETKAMPENGETGROUPSURL + "/?lang=" + Alloy.Globals.LOCALE);
             xhr.setRequestHeader("content-type", "application/json");
-            xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
+            xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
             xhr.setTimeout(Alloy.Globals.TIMEOUT);
             xhr.send();
         } catch (e) {

@@ -56,9 +56,9 @@ function getChallengesAndStart() {
 	try {
 		xhr.open('GET', Alloy.Globals.BETKAMPENCHALLENGESURL + '/?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
 		xhr.setRequestHeader("content-type", "application/json");
-		xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
+		xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
 		xhr.setTimeout(Alloy.Globals.TIMEOUT);
-		Ti.API.log(Alloy.Globals.FACEBOOK.accessToken);
+		Ti.API.log(Alloy.Globals.BETKAMPEN.token);
 
 		xhr.send();
 	} catch(e) {
@@ -172,6 +172,8 @@ function loginAuthenticated(fb) {
 	fb.requestWithGraphPath('/me', params, 'GET', function(e) {
 		if (e.success) {
 			Alloy.Globals.FACEBOOK = fb;
+																								Ti.API.log(fb); // TODO
+			Alloy.Globals.BETKAMPEN.token = fb.accessToken;
 			var result = null;
 
 			try {
@@ -226,7 +228,7 @@ function loginAuthenticated(fb) {
 					xhr.open('POST', Alloy.Globals.BETKAMPENLOGINURL);
 					xhr.setRequestHeader("content-type", "application/json");
 					xhr.setTimeout(Alloy.Globals.TIMEOUT);
-					var param = '{"auth_token" : "' + fb.accessToken + '", "lang":"' + Alloy.Globals.LOCALE + '"}';
+					var param = '{"access_token" : "' + fb.accessToken + '", "lang":"' + Alloy.Globals.LOCALE + '"}';
 					xhr.send(param);
 				} catch(e) {
 					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.internetMayBeOffErrorTxt);
@@ -359,7 +361,7 @@ if (Alloy.Globals.FBERROR) {
 	});
 }
 
-addEvent();					  // + '?lang=' + Alloy.Globals.LOCALE gick inte så bra...
+addEvent();					  
 							  // TODO gick inte försöka igen efter Timeout vid login försök...
 							  // TODO går inte att logga in, kan vara fb session som löpt up, sen går de inte försöka igen....
 // set correct language phrase

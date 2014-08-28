@@ -2,11 +2,10 @@
 	<Window class="container">
 		<View id="main">
 			<View id="cover">
-				<TextField id="regUsername"></TextField>
+				<TextField id="regEmail"></TextField>
 				<TextField id="regPass"></TextField>
 				<TextField id="regPassAgain"></TextField>
-				<TextField id="regEmail"></TextField>
-				<Button id="signUpBtn">Log in</Button>
+				<Button id="signUpBtn"></Button>
 				<Button id="abortRegBtn"></Button>
 			</View>
 		</View>

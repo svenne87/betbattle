@@ -69,7 +69,7 @@ function sendSettingsServer(param, type, valueToStore) {
 		try {
 			xhr.open('POST', Alloy.Globals.BETKAMPENSETTINGURL);
 			xhr.setRequestHeader("content-type", "application/json");
-			xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
+			xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
 			xhr.setTimeout(Alloy.Globals.TIMEOUT);
 
 			xhr.send(param);
@@ -269,7 +269,7 @@ function createGUI() {
 
 					try {
 						xhr.open('POST', Alloy.Globals.BETKAMPENIMAGEUPLOADURL + '?lang=' + Alloy.Globals.LOCALE);
-						xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
+						xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
 						xhr.setRequestHeader("Content-Type", "multipart/form-data");
 						//xhr.setRequestHeader("Content-Type", "image/png");
 						xhr.setTimeout(Alloy.Globals.TIMEOUT);
