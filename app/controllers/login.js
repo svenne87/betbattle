@@ -11,9 +11,7 @@ function addEvent() {
 	$.facebookBtn.addEventListener('click', listener);
 }
 
-function storeProfileName(name) {
-	// TODO right now facebook name is store, handle if no facebook name and then take first part of email, until profile name is set???
-	
+function storeProfileName(name) {	
 	if (!Ti.App.Properties.hasProperty("profileNameSetting")) {
 		Ti.App.Properties.setString("profileNameSetting", name);
 	}
@@ -372,6 +370,9 @@ $.viewThreeLabel.text = Alloy.Globals.PHRASES.labelThreeTxt;
 $.viewFourLabel.text = Alloy.Globals.PHRASES.labelFourTxt;
 $.viewFiveLabel.text = Alloy.Globals.PHRASES.labelFiveTxt;
 
+// try to get Betkampen token
+Alloy.Globals.readToken();
+
 // check login
 if (Alloy.Globals.checkConnection()) {		
 	if (fb.loggedIn) {
@@ -400,6 +401,11 @@ if (Alloy.Globals.checkConnection()) {
 				//loginAuthenticated(fb); //TODO Issue with fb module?
 			}, 300);
 		}
+	} else if(Alloy.Globals.BETKAMPEN) {
+		Ti.API.log('aooomen!');
+		// Betkampen auto sign in
+		indicator.openIndicator();
+		loginBetkampenAuthenticated();
 	} else {
 		if (!opened) {
 			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.welcomePhrase);
@@ -413,12 +419,62 @@ if (Alloy.Globals.checkConnection()) {
 	Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 }
 
+/* Only used for Betkampen token sign in! */
+// TODO handle refresh tokens here aswell
+function loginBetkampenAuthenticated() {
+	// Get betkampenID with valid token
+	var xhr = Titanium.Network.createHTTPClient();
+	xhr.onerror = function(e) {
+		Ti.API.error('Bad Sever =>' + e.error);
+		indicator.closeIndicator();
+		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+	};
 
-/*
- $.facebookBtn.addEventListener('click', function() {
- login();
- });
- */
+	try {
+		xhr.open('POST', Alloy.Globals.BETKAMPENLOGINURL);
+		xhr.setRequestHeader("content-type", "application/json");
+		xhr.setTimeout(Alloy.Globals.TIMEOUT);
+		var param = '{"access_token" : "' + Alloy.Globals.BETKAMPEN.token + '", "lang":"' + Alloy.Globals.LOCALE + '"}';
+		xhr.send(param);
+	} catch(e) {
+		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.internetMayBeOffErrorTxt);
+		indicator.closeIndicator();
+	}
+
+	xhr.onload = function() {		
+		if (this.status == '200') {
+			if (this.readyState == 4) {
+				var response = null;
+				try {
+					response = JSON.parse(this.responseText);
+				} catch(e) {
+					indicator.closeIndicator();
+					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+				}
+
+				if (response !== null) {
+					createLeagueAndUidObj(response);
+
+					if (Alloy.Globals.BETKAMPENUID > 0) {
+						getChallengesAndStart();
+					}
+				} else {
+					//////
+					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+					indicator.closeIndicator();
+				}
+
+			} else {
+				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+				indicator.closeIndicator();
+			}
+		} else {
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+			Ti.API.error("Error =>" + this.response);
+			indicator.closeIndicator();
+		}
+	};			
+}
 
 $.login.addEventListener('close', function() {
 	indicator.closeIndicator();

@@ -1,9 +1,27 @@
 var error = Alloy.Globals.PHRASES.loginError;
 var uie = require('lib/IndicatorWindow');
+
 var indicator = uie.createIndicatorWindow({
 	top : 200,
 	text : Alloy.Globals.PHRASES.loadingTxt
 });
+
+var args = arguments[0] || {};
+
+var emailReg = -1;
+if ( typeof args.email !== 'undefined') {
+	emailReg = args.email;
+}
+
+var passwordReg = -1;
+if ( typeof args.password !== 'undefined') {
+	passwordReg = args.password;
+}
+
+if(emailReg !== -1 && passwordReg !== -1) {
+	// auto login
+	login(true);
+}
 
 function storeProfileName(name) {
 	if (!Ti.App.Properties.hasProperty("profileNameSetting")) {
@@ -129,7 +147,7 @@ function getChallengesAndStart() {
  
 
 
-function loginAuthenticated(fb) {
+function loginAuthenticated() {
 	// Get betkampenID with valid token
 	var xhr = Titanium.Network.createHTTPClient();
 	xhr.onerror = function(e) {
@@ -189,7 +207,18 @@ function loginAuthenticated(fb) {
 }
 
 
-function login() {
+function login(auto) {
+	var username;
+	var password;
+	if(auto) {
+		// login from register
+		username = emailReg;
+		password = passwordReg;
+	} else {
+		username = $.loginEmail.value;
+		password = $.loginPass.value;
+	}
+	
 	if (Alloy.Globals.checkConnection()) {
 		$.signInBtn.enabled = false;
 		indicator.openIndicator();
@@ -202,8 +231,8 @@ function login() {
 			loginReq.open("POST", Alloy.Globals.BETKAMPENEMAILLOGIN);
 			var params = {
 				grant_type : 'password',
-				username : $.loginEmail.value,
-				password : $.loginPass.value,
+				username : username,
+				password : password,
 				client_id : 'betkampen_mobile',
 				client_secret : 'not_so_s3cr3t'
 			};
@@ -234,6 +263,7 @@ function login() {
 					
 					// store profile name in phone and fetch challenges
 					storeProfileName(name);
+					Alloy.Globals.storeToken();
 					loginAuthenticated();
 					
 				}
@@ -258,7 +288,7 @@ function login() {
 
 $.signInBtn.addEventListener('click', function(e) {
 	if ($.loginEmail.value != '' && $.loginPass.value != '') {
-		login();
+		login(false);
 	} else {
 		alert(error);
 	}

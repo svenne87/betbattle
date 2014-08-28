@@ -87,6 +87,7 @@ Alloy.Globals.BETKAMPENGETFRIENDSURL = Alloy.Globals.BETKAMPENURL + '/api/get_fr
 Alloy.Globals.BETKAMPENGETGETBEACONSURL = Alloy.Globals.BETKAMPENURL + '/api/get_beacons.php';
 Alloy.Globals.BETKAMPENGETPROMOTIONURL = Alloy.Globals.BETKAMPENURL + '/api/get_promotion.php';
 Alloy.Globals.BETKAMPENCHALLENGESHOWURL = Alloy.Globals.BETKAMPENURL + '/api/show_challenge.php';
+Alloy.Globals.BETKAMPENLOGOUTURL = Alloy.Globals.BETKAMPENURL + '/api/logout.php';
 
 Alloy.Globals.performTimeout = function(func) {
 	if (OS_ANDROID) {
@@ -95,6 +96,16 @@ Alloy.Globals.performTimeout = function(func) {
 	} else { func;
 	}
 
+};
+
+Alloy.Globals.storeToken = function() {
+	Ti.App.Properties.setString("BETKAMPEN", JSON.stringify(Alloy.Globals.BETKAMPEN));
+};
+
+Alloy.Globals.readToken = function(){
+	if (Ti.App.Properties.hasProperty("BETKAMPEN")) {
+		Alloy.Globals.BETKAMPEN = JSON.parse(Ti.App.Properties.getString('BETKAMPEN'));
+	}
 };
 
 Alloy.Globals.themeColor = function() {
@@ -305,7 +316,7 @@ Alloy.Globals.constructChallenge = function(responseAPI) {
 			for (var x = 0; x < response[i].opponents.length; x++) {
 				// build object
 				var opponent = {
-					fbid : response[i].opponents[x].fbid,
+					fbid : response[i].opponents[x].uid,
 					name : response[i].opponents[x].name,
 					status : response[i].opponents[x].status
 				};
@@ -318,7 +329,6 @@ Alloy.Globals.constructChallenge = function(responseAPI) {
 			for (var z = 0; z < response[i].winners.length; z++) {
 				// build object
 				var winner = {
-					fbid : response[i].winners[z].fbid,
 					name : response[i].winners[z].name,
 					uid : response[i].winners[z].uid
 				};
@@ -346,7 +356,7 @@ Alloy.Globals.constructChallenge = function(responseAPI) {
 				var challenge = Alloy.createModel('challenge', {
 					id : response[i].c_id,
 					name : response[i].c_name,
-					fbid : response[i].c_fbid,
+					uid : response[i].c_uid,
 					time : response[i].c_time,
 					status : response[i].status,
 					opponents : cOpponents,

@@ -31,7 +31,11 @@ createReq.onload = function() {
 			});
 			alertDialog.show();
 			alertDialog.addEventListener('click', function(e) {
-				var loginWindow = Alloy.createController('loginView').getView();
+				var args = {
+					email : $.regEmail.value,
+					password : $.regPass.value
+				};
+				var loginWindow = Alloy.createController('loginView', args).getView();
 				loginWindow.open();
 				$.registrationView.close();
 			});

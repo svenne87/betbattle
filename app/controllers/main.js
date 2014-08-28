@@ -144,7 +144,65 @@ if(OS_IOS){
 
 var leftData = [];
 
-	
+function logoutBetbattle(){
+	// check connection
+	if (Alloy.Globals.checkConnection()) {
+		var xhr = Titanium.Network.createHTTPClient();
+		xhr.onerror = function(e) {
+			Ti.API.error('Bad Sever =>' + JSON.stringify(e));
+		};
+
+		try { 
+			xhr.open('POST', Alloy.Globals.BETKAMPENLOGOUTURL);
+			xhr.setRequestHeader("content-type", "application/json");
+			xhr.setTimeout(Alloy.Globals.TIMEOUT);
+			// build the json string
+			var param = '{"access_token":"' + Alloy.Globals.BETKAMPEN.token + '", "refresh_token":"' + Alloy.Globals.BETKAMPEN.refresh_token + '", "lang":"' + Alloy.Globals.LOCALE +'"}';
+			xhr.send(param);
+		} catch(e) {
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+		}
+
+		xhr.onload = function() {
+			if (this.status == '200') {
+				if (this.readyState == 4) {
+					var response = '';
+					try {
+						response = JSON.parse(this.responseText);
+					} catch(e) {
+
+					}
+
+					Ti.API.log(response);
+					// remove token
+					Ti.App.Properties.removeProperty("BETKAMPEN");
+					
+					// close
+					if(OS_ANDROID) {
+						var activity = Titanium.Android.currentActivity;
+    					activity.finish();
+					} else if(OS_IOS) {
+						alertWindow.hide();
+						Alloy.Globals.CLOSE = false;
+						Alloy.Globals.CURRENTVIEW  = null;
+						Alloy.Globals.NAV.close();
+				
+						var login = Alloy.createController('login').getView();
+						login.open({modal : false});
+						login = null;
+					}
+				} else {
+					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+				}
+			} else {
+				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+				Ti.API.error("Error =>" + this.response);
+			}
+		};
+	} else {
+		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+	}
+}	
 
 function createSection() {
 	var section = Ti.UI.createTableViewSection();
@@ -269,26 +327,29 @@ function rowSelect(e) {
 				switch (e.index) {
 					case 0:						
 						var fb = Alloy.Globals.FACEBOOK;
-
-						fb.addEventListener('logout', function(e) {
-							Ti.API.log('steg 3');
-							// this never get's called, might be a bug
-						});
-
-						fb.logout();
-						$.mainWin.close();
-						var activity = Titanium.Android.currentActivity;
-    					activity.finish();
+						if(fb){
+							fb.addEventListener('logout', function(e) {
+								Ti.API.log('steg 3');
+								// this never get's called, might be a bug
+							});
+							fb.logout();
+							$.mainWin.close();
+							var activity = Titanium.Android.currentActivity;
+    						activity.finish();
     					
-    					/*
-    					// start app again
-						var intent = Ti.Android.createIntent({
-							action : Ti.Android.ACTION_MAIN,
-							url : 'Betkampen.js'
-						});
-						intent.addCategory(Ti.Android.CATEGORY_LAUNCHER);
-						Ti.Android.currentActivity.startActivity(intent);
-    					*/
+    						/*
+    						// start app again
+							var intent = Ti.Android.createIntent({
+								action : Ti.Android.ACTION_MAIN,
+								url : 'Betkampen.js'
+							});
+							intent.addCategory(Ti.Android.CATEGORY_LAUNCHER);
+							Ti.Android.currentActivity.startActivity(intent);
+    						*/
+						} else {
+							// Betkampen logout
+							logoutBetbattle();
+						}
 						break;
 					case 1:
 						alertWindow.hide();
@@ -313,21 +374,26 @@ function rowSelect(e) {
 					switch (e.index) {
 						case 0:						
 							var fb = Alloy.Globals.FACEBOOK;
-			
-							if(Alloy.Globals.CLOSE){
-								// need to keep track if event was already added, since it is beeing added several times otherwise.
-								fb.addEventListener('logout', function(e) {
-									alertWindow.hide();
-									Alloy.Globals.CLOSE = false;
-									Alloy.Globals.CURRENTVIEW  = null;
-									Alloy.Globals.NAV.close();
+							if(fb) {
+								if(Alloy.Globals.CLOSE){
+									// need to keep track if event was already added, since it is beeing added several times otherwise.
+									fb.addEventListener('logout', function(e) {
+										alertWindow.hide();
+										Alloy.Globals.CLOSE = false;
+										Alloy.Globals.CURRENTVIEW  = null;
+										Alloy.Globals.NAV.close();
 				
-									var login = Alloy.createController('login').getView();
-									login.open({modal : false});
-									login = null;
-								});
+										var login = Alloy.createController('login').getView();
+										login.open({modal : false});
+										login = null;
+									});
+								}
+								fb.logout();
+								
+							} else {
+								// Betkampen logout
+								logoutBetbattle();
 							}
-							fb.logout();
 							break;
 						case 1:
 							alertWindow.hide();

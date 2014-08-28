@@ -661,7 +661,7 @@ function constructTableView(array) {
 	});
 	
 	var image;
-	if(typeof Alloy.Globals.FACEBOOKOBJECT.id !== 'undefined') {
+	if(typeof Alloy.Globals.FACEBOOKOBJECT !== 'undefined') {
 		image = 'https://graph.facebook.com/' + Alloy.Globals.FACEBOOKOBJECT.id + '/picture';
 	} else {
 		image = '';
