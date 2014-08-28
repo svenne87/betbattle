@@ -244,6 +244,8 @@ function createViews(array) {
 			width : '15%',
 			left : '68.5%',
 			id : array[i].attributes.id,
+			gName : array[i].attributes.name,
+			admin : array[i].attributes.creator,
 			font : {
 				fontFamily : font,
 				fontSize : 27
@@ -295,41 +297,6 @@ function createViews(array) {
 		}
 
 		group.add(deleteBtn);
-		var groupID = array[i].attributes.id;
-		 
-		function deleteMyGroup(){
-			var deleteGroup = Ti.Network.createHTTPClient();
-						deleteGroup.onload = function() {
-							if (this.responseText == 'Erased') {
-								alert(Alloy.Globals.PHRASES.groupRemovedTxt);
-							} else {
-								alert(Alloy.Globals.PHRASES.commonErrorTxt);
-							}
-						};
-						deleteGroup.open("POST", Alloy.Globals.BETKAMPENURL + '/api/remove_group.php');
-						var params = {
-							group_id : groupID,
-							id : Alloy.Globals.BETKAMPENUID,
-						};
-						deleteGroup.send(params);
-		}
-		function leaveThisGroup(){
-			var leaveGroup = Ti.Network.createHTTPClient();
-				leaveGroup.onload = function() {
-					if (this.responseText == 'Gone') {
-						alert(Alloy.Globals.PHRASES.groupLeftTxt);
-					} else {
-						alert(Alloy.Globals.PHRASES.commonErrorTxt);
-					}
-				};
-				leaveGroup.open("POST", Alloy.Globals.BETKAMPENURL + '/api/remove_group_member.php');
-				var params = {
-					group_id : groupID,
-					id : Alloy.Globals.BETKAMPENUID,
-					member_to_remove : Alloy.Globals.BETKAMPENUID,
-				};
-				leaveGroup.send(params);
-		}
 
 		deleteBtn.addEventListener('click', function(e) {
 			// delete group
@@ -338,13 +305,39 @@ function createViews(array) {
 					title : 'Alert',
 					message : Alloy.Globals.PHRASES.deleteGroupTxt,
 					buttonNames : ['OK', 'Cancel'],
-					cancel : 1
+					cancel : 1,
+					id : e.source.id
 				});
 
 				aD.addEventListener('click', function(e) {
 					switch(e.index) {
 					case 0:
-						deleteMyGroup();
+						var deleteGroup = Ti.Network.createHTTPClient();
+						deleteGroup.onload = function() {
+							if (this.responseText == 'Erased') {
+								//alert(Alloy.Globals.PHRASES.groupDeletedTxt);
+							} else {
+								alert(Alloy.Globals.PHRASES.commonErrorTxt);
+							}
+						};
+						deleteGroup.open("POST", Alloy.Globals.BETKAMPENURL + '/api/remove_group.php');
+						var params = {
+							group_id : e.source.id,
+							id : Alloy.Globals.BETKAMPENUID,
+						};
+						deleteGroup.send(params);
+						var win = Alloy.createController('myGroups').getView();
+						if (OS_IOS) {
+							Alloy.Globals.NAV.openWindow(win, {
+								animated : false
+							});
+						} else {
+							win.open({
+								fullScreen : true
+							});
+							win = null;
+						}
+						$.myGroups.close();
 						break;
 					case 1:
 						Titanium.API.info('cancel');
@@ -357,15 +350,36 @@ function createViews(array) {
 			} else {
 				var aL = Titanium.UI.createAlertDialog({
 					title : 'Alert',
-					message : Alloy.Globals.PHRASES.LeaveGroupTxt,
+					message : Alloy.Globals.PHRASES.leaveGroupTxt,
 					buttonNames : ['OK', 'Cancel'],
-					cancel : 1
+					cancel : 1,
+					id : e.source.id
 				});
 
 				aL.addEventListener('click', function(e) {
 					switch(e.index) {
 					case 0:
-						leaveThisGroup();
+						var leaveGroup = Ti.Network.createHTTPClient();
+
+						leaveGroup.open("POST", Alloy.Globals.BETKAMPENURL + '/api/remove_group_member.php');
+						var params = {
+							group_id : e.source.id,
+							id : Alloy.Globals.BETKAMPENUID,
+							member_to_remove : Alloy.Globals.BETKAMPENUID,
+						};
+						leaveGroup.send(params);
+						var win = Alloy.createController('myGroups').getView();
+						if (OS_IOS) {
+							Alloy.Globals.NAV.openWindow(win, {
+								animated : false
+							});
+						} else {
+							win.open({
+								fullScreen : true
+							});
+							win = null;
+						}
+						$.myGroups.close();
 						break;
 					case 1:
 						Titanium.API.info('cancel');
@@ -374,49 +388,29 @@ function createViews(array) {
 
 				});
 				aL.show();
-				
+
 			}
 
 		});
 		editBtn.addEventListener('click', function(e) {
-			alert('editera mig' + e.source.id);
-		});
-
-		var members = array[i].attributes.members;
-
-		groupInfo.addEventListener('click', function(e) {
-			var modalWin = Ti.UI.createWindow({
-				modal : true,
-				backgroundColor : '#fff',
-				width : 300,
-				height : 300
-			});
-
-			for (var x = 0; x < members.length; x++) {
-				var mName = Ti.UI.createLabel({
-					top : '1%',
-					title : members[x].name,
-					left : '4%',
-					font : {
-						fontSize : 16,
-						fontFamily : "Impact"
-					},
+			//alert('editera mig' + e.source.id);
+			gID = e.source.id;
+			gName = e.source.gName;
+			gAdmin = e.source.admin;
+			var win = Alloy.createController('editGroup', gID, gName, gAdmin).getView();
+			if (OS_IOS) {
+				Alloy.Globals.NAV.openWindow(win, {
+					animated : true
 				});
-				modalWin.add(mName);
+			} else {
+				win.open({
+					fullScreen : true
+				});
+				win = null;
 			}
-			var closeBtn = Ti.UI.createButton({
-				title : 'stäng',
-				width : 100,
-				height : 50,
-				top : '80%',
-				backgroundColor : '#ccc'
-			});
-			modalWin.add(closeBtn);
-			modalWin.open();
-			closeBtn.addEventListener('click', function(e) {
-				modalWin.close();
-			});
+			$.myGroups.close();
 		});
+
 	}
 }
 
