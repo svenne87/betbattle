@@ -264,22 +264,24 @@ function login(auto) {
 					// store profile name in phone and fetch challenges
 					storeProfileName(name);
 					Alloy.Globals.storeToken();
-					loginAuthenticated();
-					
+					loginAuthenticated();	
 				}
-			} else if (this.status == '400') {
-				// Oauth returns 400 for credentials error
-				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.loginCredentialsError);
 			} else {
 				Ti.API.log(this.responseText);
-				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.loginCredentialsError);
 			}
 		};
 		loginReq.onerror = function(e) {
-			Ti.API.error('Bad Sever =>' + e.error);
+			Ti.API.error('Bad Sever =>' + JSON.stringify(e));
 			$.signInBtn.enabled = true;
 			indicator.closeIndicator();
-			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+			if(e.code === 400) {
+				// OAuth return 400 on credentials error
+				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.loginCredentialsError);
+			} else {
+				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+			}
+			
 		};
 	} else {
 		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);

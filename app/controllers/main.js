@@ -176,13 +176,13 @@ function logoutBetbattle(){
 					Ti.API.log(response);
 					// remove token
 					Ti.App.Properties.removeProperty("BETKAMPEN");
+					Alloy.Globals.BETKAMPEN = null;
 					
 					// close
 					if(OS_ANDROID) {
 						var activity = Titanium.Android.currentActivity;
     					activity.finish();
 					} else if(OS_IOS) {
-						alertWindow.hide();
 						Alloy.Globals.CLOSE = false;
 						Alloy.Globals.CURRENTVIEW  = null;
 						Alloy.Globals.NAV.close();
