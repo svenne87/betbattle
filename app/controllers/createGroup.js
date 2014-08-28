@@ -74,6 +74,7 @@ var saveName = Ti.UI.createButton({
 });
 mainView.add(saveName);
 
+//saves groupname
 saveName.addEventListener('click', function(e) {
 	if (groupName.value.length > 2) {
 		var gName = Ti.Network.createHTTPClient();
@@ -83,8 +84,9 @@ saveName.addEventListener('click', function(e) {
 			} else if (this.responseText == "Tillagd") {
 				groupName.visible = false;
 				saveName.visible = false;
+				//adds label with groupname
 				groupNameLabel.text = groupName.value;
-				//getFriends();
+				//get the group id
 				getGroup();
 
 			}
@@ -97,12 +99,13 @@ saveName.addEventListener('click', function(e) {
 		gName.send(params);
 
 	} else if (groupName.value.length < 3) {
-		alert('groupname must be atleast 3 chars');
+		alert(Alloy.Globals.PHRASES.shortGroupNameTxt);
 	}
 });
 
 l = 0;
 
+//get all your friends
 function createFriendGUI(obj, groupId, i) {
 	l++;
 	if (l == 1) {
@@ -165,7 +168,7 @@ function createFriendGUI(obj, groupId, i) {
 		},
 	});
 	member.add(name);
-	//add delete button to members not your self
+	//add button to select member
 	var addBtn = Ti.UI.createButton({
 		width : '18%',
 		left : '81%',
@@ -185,6 +188,7 @@ function createFriendGUI(obj, groupId, i) {
 	row.add(addBtn);
 	var click = 0;
 	addBtn.addEventListener('click', function(e) {
+		//click once add person to group
 		if (click == 0) {
 			addBtn.backgroundColor = '#00ff00';
 			addBtn.title = fontawesome.icon('fa-check');
@@ -200,10 +204,12 @@ function createFriendGUI(obj, groupId, i) {
 			addMember.send(params);
 			Ti.API.info(params);
 			click++;
+			//click again to remove friend from group
 		} else if (click == 1) {
 			addBtn.backgroundColor = '#fff';
 			addBtn.title = fontawesome.icon('fa-plus');
 			member.borderColor = '#fff';
+			
 			var removeMember = Ti.Network.createHTTPClient();
 			removeMember.open("POST", Alloy.Globals.BETKAMPENURL + '/api/remove_group_member.php');
 			var params = {
@@ -211,7 +217,8 @@ function createFriendGUI(obj, groupId, i) {
 				id : Alloy.Globals.BETKAMPENUID,
 				member_to_remove : e.source.id,
 			};
-			removeMember.send(params);
+			removeMember.send(params); 
+
 			Ti.API.info(params);
 			click--;
 		}
@@ -230,9 +237,10 @@ function getFriends(groupId) {
 			var friends = JSON.parse(this.responseText);
 
 			for (var i = 0; i < friends.length; i++) {
-				//alert(friends[i].name);
+				//send friends and group id to friend selector
 				createFriendGUI(friends[i], groupId, i);
 			}
+			//create button to save group when you have selected friends
 			var saveGroupBtn = Ti.UI.createButton({
 			height : 40,
 			width : '60%',
@@ -245,6 +253,7 @@ function getFriends(groupId) {
 		});
 		mainView.add(saveGroupBtn);
 		
+		//close down window when you are finished
 		saveGroupBtn.addEventListener('click', function(e){
 			$.createGroup.close();
 		});
@@ -266,7 +275,7 @@ function getFriends(groupId) {
 	xhr.send();
 }
 
-
+//get the group id by groupname from db
 function getGroup() {
 	var groupId = null;
 	var client = Ti.Network.createHTTPClient({
@@ -292,6 +301,7 @@ function getGroup() {
 	client.send();
 }
 
+//get your one namn to add as admin in your group
 function getName(groupID) {
 	var myName = null;
 	var client = Ti.Network.createHTTPClient({
@@ -317,6 +327,7 @@ function getName(groupID) {
 	client.send();
 }
 
+//set you as admin
 function setAdmin(groupId, myName) {
 	var adminName = Ti.Network.createHTTPClient();
 
@@ -331,5 +342,5 @@ function setAdmin(groupId, myName) {
 	//Ti.API.info(params);
 }
 
-//getFriends();
+
 $.createGroup.add(mainView);
