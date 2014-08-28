@@ -170,7 +170,6 @@ function loginAuthenticated(fb) {
 	fb.requestWithGraphPath('/me', params, 'GET', function(e) {
 		if (e.success) {
 			Alloy.Globals.FACEBOOK = fb;
-																								Ti.API.log(fb); // TODO
 			Alloy.Globals.BETKAMPEN.token = fb.accessToken;
 			var result = null;
 
@@ -459,19 +458,23 @@ function loginBetkampenAuthenticated() {
 						getChallengesAndStart();
 					}
 				} else {
-					//////
-					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+					if(this.status == '401'){
+						// TODO refresh token? staus 401 is returned?
+						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.loginCredentialsError);
+					}
 					indicator.closeIndicator();
 				}
 
 			} else {
 				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 				indicator.closeIndicator();
+				Ti.API.log("3");
 			}
 		} else {
 			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 			Ti.API.error("Error =>" + this.response);
 			indicator.closeIndicator();
+			Ti.API.log("4");
 		}
 	};			
 }

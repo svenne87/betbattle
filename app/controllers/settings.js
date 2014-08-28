@@ -63,7 +63,10 @@ function sendSettingsServer(param, type, valueToStore) {
 		var xhr = Titanium.Network.createHTTPClient();
 		xhr.onerror = function(e) {
 			indicator.closeIndicator();
-			Ti.API.error('Bad Sever =>' + e.error);
+			Ti.API.error('Bad Sever =>' + JSON.stringify(e));
+			if(e.code === 400) {
+				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.nameUnique);
+			}
 		};
 
 		try {
@@ -75,7 +78,7 @@ function sendSettingsServer(param, type, valueToStore) {
 			xhr.send(param);
 		} catch(e) {
 			indicator.closeIndicator();
-			Alloy.Globals.showFeedbackDialog(JSON.parse(this.response));
+			Alloy.Globals.showFeedbackDialog(JSON.stringify(e));
 		}
 
 		xhr.onload = function() {
@@ -88,10 +91,6 @@ function sendSettingsServer(param, type, valueToStore) {
 						// store value about profile name
 						Ti.App.Properties.setString("profileNameSetting", valueToStore);
 					}
-
-					Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
-
-				} else {
 					Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
 				}
 				indicator.closeIndicator();
@@ -197,10 +196,20 @@ function createGUI() {
 	}
 	
 	basicSwitch.addEventListener('change', function(e) {
+		var value = 0;
+		if(basicSwitch.value) {
+			value = 1;
+		}
+		
 		// build the json string
-		var param = '{"push_status":"' + basicSwitch.value + '", "app_identifier":"' + Alloy.Globals.APPID + '", "lang":"' + Alloy.Globals.LOCALE + '"}';
+		var deviceType = Titanium.Platform.osname;
+		var param = '{"device_token":"' + Alloy.Globals.DEVICETOKEN + '", "device_type":"' + deviceType + '", "push_status":' + value + ', "app_identifier":"' + Alloy.Globals.APPID + '", "lang":"' + Alloy.Globals.LOCALE + '"}';
 		// send to backend
-		sendSettingsServer(param, 0, basicSwitch.value);
+	//	if(Alloy.Globals.DEVICETOKEN){
+			// only send if not emulator
+			sendSettingsServer(param, 0, basicSwitch.value);
+	// TODO	}
+		
 	});
 
 	secondRow.add(basicSwitch);
@@ -258,7 +267,7 @@ function createGUI() {
 
 					var xhr = Titanium.Network.createHTTPClient();
 					xhr.onerror = function(e) {
-						Ti.API.error('Bad Sever =>' + e.error);
+						Ti.API.error('Bad Sever =>' + JSON.stringify(e.error));
 						uploadIndicator.hide();
 					};
 
@@ -270,13 +279,10 @@ function createGUI() {
 					try {
 						xhr.open('POST', Alloy.Globals.BETKAMPENIMAGEUPLOADURL + '?lang=' + Alloy.Globals.LOCALE);
 						xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
-						xhr.setRequestHeader("Content-Type", "multipart/form-data");
-						//xhr.setRequestHeader("Content-Type", "image/png");
 						xhr.setTimeout(Alloy.Globals.TIMEOUT);
 
 						xhr.send({
-							media : image,
-							filename : 'profile_image_' + Alloy.Globals.BETKAMPENUID + '.png'
+							media : image
 						});
 					} catch(e) {
 						uploadIndicator.hide();
@@ -484,7 +490,7 @@ function createPickers() {
 	var data = [];
 	var currentLocale = JSON.parse(Ti.App.Properties.getString('language'));
 	var currentLanguage;
-
+	
 	for (var lang in Alloy.Globals.AVAILABLELANGUAGES) {
 		if (currentLocale.language == Alloy.Globals.AVAILABLELANGUAGES[lang].name) {
 			currentLanguage = Alloy.Globals.AVAILABLELANGUAGES[lang].description;

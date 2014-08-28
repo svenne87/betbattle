@@ -14,6 +14,7 @@
 Alloy.Globals.APPID = "9999SWEDENTEST";
 Alloy.Globals.FACEBOOKOBJECT;
 Alloy.Globals.BETKAMPEN;
+Alloy.Globals.DEVICETOKEN;
 Alloy.Globals.FACEBOOK;
 Alloy.Globals.CHALLENGEOBJECTARRAY = [];
 Alloy.Globals.BETKAMPENUID = 0;
@@ -181,6 +182,7 @@ Alloy.Globals.checkConnection = function() {
 
 // post device token to our backend
 Alloy.Globals.postDeviceToken = function(deviceToken) {
+	Alloy.Globals.DEVICETOKEN = deviceToken;
 	// check connection
 	if (Alloy.Globals.checkConnection()) {
 		var xhr = Titanium.Network.createHTTPClient();
