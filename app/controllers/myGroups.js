@@ -149,26 +149,7 @@ function getGroups() {
 					// create the views
 					createViews(groupObjects);
 				} else {
-					indicator.openIndicator();
-					setTimeout(function() {
-						var arg = {
-							param : params
-						};
-						var win = Alloy.createController('friendSelect', arg).getView();
-						Alloy.Globals.WINDOWS.push(win);
-
-						if (OS_IOS) {
-							Alloy.Globals.NAV.openWindow(win, {
-								animated : true
-							});
-						} else if (OS_ANDROID) {
-							win.open({
-								fullScreen : true
-							});
-						}
-
-						indicator.closeIndicator();
-					}, 1500);
+					alert('Du har inga grupper, skapa en i friend Zone');
 				}
 
 			} else {

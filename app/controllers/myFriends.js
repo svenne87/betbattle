@@ -32,7 +32,7 @@ var friendLabel = Ti.UI.createLabel({
 mainView.add(friendLabel);
 
 var infoTxt = Ti.UI.createView({
-	top:20,
+	top : 20,
 	backgroundColor : '#EA7337',
 	backgroundGradient : {
 		type : "linear",
@@ -54,7 +54,7 @@ var infoTxt = Ti.UI.createView({
 	height : 30
 
 });
-mainView.add(infoTxt); 
+mainView.add(infoTxt);
 
 var nameInfo = Ti.UI.createLabel({
 	text : Alloy.Globals.PHRASES.nameTxt,
@@ -68,7 +68,7 @@ var nameInfo = Ti.UI.createLabel({
 infoTxt.add(nameInfo);
 
 var scoreInfo = Ti.UI.createLabel({
-	text : 'Ta bort',//Alloy.Globals.PHRASES.pointsTxt,
+	text : 'Ta bort', //Alloy.Globals.PHRASES.pointsTxt,
 	left : '82%',
 	color : "#fff",
 	font : {
@@ -78,13 +78,22 @@ var scoreInfo = Ti.UI.createLabel({
 });
 infoTxt.add(scoreInfo);
 
-function createGUI(obj){
-	var friend = Ti.UI.createView({
-		top : '0.4%',
-		width : "100%",
-		height : 40,
+function createGUI(obj) {
+	if (OS_ANDROID) {
+		var friend = Ti.UI.createView({
+			top : '0.4%',
+			width : "100%",
+			height : 35,
 
-	});
+		});
+	} else if (OS_IOS) {
+		var friend = Ti.UI.createView({
+			top : '0.4%',
+			width : "100%",
+			height : '6.5%',
+
+		});
+	}
 	mainView.add(friend);
 
 	var friendInfo = Ti.UI.createView({
@@ -105,11 +114,16 @@ function createGUI(obj){
 	});
 	friendInfo.add(profilePic);
 
+	boardName = obj.name.toString();
+	if (boardName.length > 26) {
+		boardName = boardName.substring(0, 26);
+	}
 	var name = Ti.UI.createLabel({
-		text : obj.name,
+		text : boardName,
 		left : '15%',
 		font : {
-			fontSize : 14
+			fontSize : 16,
+			fontFamily : "Impact"
 		},
 	});
 	friendInfo.add(name);
@@ -119,6 +133,8 @@ function createGUI(obj){
 		//height : '8%',
 		width : '15%',
 		left : '84%',
+		id : obj.id,
+		fName : obj.name,
 		font : {
 			fontFamily : font,
 			fontSize : 27
@@ -131,22 +147,55 @@ function createGUI(obj){
 	});
 	friend.add(deleteBtn);
 
-deleteBtn.addEventListener('click', function(e) {
-		alert('vill du ta bort mig?? ' + i);
+	deleteBtn.addEventListener('click', function(e) {
+
+		//deletefriend
+		var aL = Titanium.UI.createAlertDialog({
+			title : 'Alert',
+			message : Alloy.Globals.PHRASES.removeFriendTxt + ' ' + e.source.fName,
+			buttonNames : ['OK', 'Cancel'],
+			cancel : 1,
+			id : e.source.id
+		});
+
+		aL.addEventListener('click', function(e) {
+			switch(e.index) {
+			case 0:
+				var removeFriend = Ti.Network.createHTTPClient();
+				removeFriend.open("POST", Alloy.Globals.BETKAMPENURL + '/api/remove_friend.php');
+				var params = {
+					uid : Alloy.Globals.BETKAMPENUID,
+					fid : e.source.id
+				};
+				removeFriend.send(params);
+				//Ti.API.info(params);
+				deleteBtn.visible = false;
+				friendInfo.borderColor = '#ff0000';
+				break;
+			case 1:
+				Titanium.API.info('cancel');
+				break;
+			}
+
+		});
+		aL.show();
+
 	});
 
 }
-
 
 var xhr = Ti.Network.createHTTPClient({
 	// function called when the response data is available
 	onload : function(e) {
 		Ti.API.info("Received text: " + this.responseText);
 		var friends = JSON.parse(this.responseText);
-
-		for (var i = 0; i < friends.length; i++) {
-			//alert(friends[i].name);
-			createGUI(friends[i], i);
+		if (friends.length == 0) {
+			alert('Du har inga vänner än lägg till några i friend zone');
+		} else {
+			for (var i = 0; i < friends.length; i++) {
+				//alert(friends[i].name);
+				createGUI(friends[i]);
+			}
 		}
 	},
 	// function called when an error occurs, including a timeout
@@ -164,6 +213,5 @@ xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
 xhr.setTimeout(Alloy.Globals.TIMEOUT);
 
 xhr.send();
-
 
 $.myFriends.add(mainView);
