@@ -99,7 +99,7 @@ function checkTournament(obj) {
 	var opponents = obj.attributes.opponents;
 
 	for (opponent in opponents) {
-		if (opponents[opponent].fbid === Alloy.Globals.FACEBOOKOBJECT.attributes.id) {
+		if (opponents[opponent].uid === Alloy.Globals.BETKAMPENUID) {
 			// this is me
 			if (opponents[opponent].status == 2) {
 				// I have already posted a answer for this tournament round
@@ -659,12 +659,20 @@ function constructTableView(array) {
 		height: 70,
 		backgroundColor: "transparent",
 	});
+	
+	var image;
+	if(typeof Alloy.Globals.FACEBOOKOBJECT.id !== 'undefined') {
+		image = 'https://graph.facebook.com/' + Alloy.Globals.FACEBOOKOBJECT.id + '/picture';
+	} else {
+		image = '';
+	}
+	
 	var centerImageView = Ti.UI.createImageView({
 		//left : 0,
 		height : 40,
 		width : 40,
 		borderRadius: 20,
-		image : 'https://graph.facebook.com/' + Alloy.Globals.FACEBOOKOBJECT.id + '/picture'
+		image : image
 	});
 	
 	userInfoViewCenter.add(centerImageView);
