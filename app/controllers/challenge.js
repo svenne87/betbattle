@@ -21,11 +21,7 @@ function createGameType(gameType){
 	});
 	gameTypeView.add(gameTypeDescription);
 	
-	var optionsView = Ti.UI.createView({
-		//height: "70%",
-		width: 285,
-		layout: "horizontal",
-	});
+	
 	
 	
 	// object to store game id and value
@@ -38,6 +34,12 @@ function createGameType(gameType){
 	
 	
 	if(gameType.option_type == "button"){
+		var optionsView = Ti.UI.createView({
+			//height: "70%",
+			width: 285,
+			layout: "horizontal",
+		});
+	
 		var fontSize = 18;
 		var buttonViews = [];
 		for (var i = 0; i < gameType.options; i++){
@@ -96,105 +98,108 @@ function createGameType(gameType){
 		}
 		
 	}else if(gameType.option_type == "select"){
-		for (var i = 0; i <= gameType.options; i++){
-			///SKAPA EN SELECT
-			
-			if (OS_ANDROID) {
-		// create 1-15 values
-		for (var i = 0; i <= 15; i++) {
-			data.push(Titanium.UI.createPickerRow({
-				value : i,
-				title : '        ' + i + '    ',
-				fontSize : 30,
-				fontWeight : 'bold'
-			}));
-		};
-
-		var picker = Titanium.UI.createPicker({
-			top : 30,
-			left : 5,
-			width : Ti.UI.SIZE,
-			height : Ti.UI.SIZE
-		});
-
-
-		// on first picker change
-		teamOnePicker.addEventListener('change', function(e) {
-			e.selectedValue[0] = e.selectedValue[0].replace(/ /g, '');
-			gameArray[index].gameValue[0] = e.selectedValue[0];
-		});
-
-		// on second picker change
-		teamTwoPicker.addEventListener('change', function(e) {
-			e.selectedValue[0] = e.selectedValue[0].replace(/ /g, '');
-			gameArray[index].gameValue[1] = e.selectedValue[0];
-		});
-
-		teamOnePicker.add(data);
-		teamTwoPicker.add(data);
-		teamOnePicker.columns[0].width = Ti.UI.SIZE;
-		teamOnePicker.columns[0].height = Ti.UI.SIZE;
-		teamTwoPicker.columns[0].width = Ti.UI.SIZE;
-		teamTwoPicker.columns[0].height = Ti.UI.SIZE;
-
-		resultView.add(teamOnePicker);
-		resultView.add(teamTwoPicker);
-
-	} else if (OS_IOS) {
-
-		// create 1-15 values
-		for (var i = 0; i <= 15; i++) {
-			data.push(Titanium.UI.createPickerRow({
-				title : '' + i,
-				value : i
-			}));
-		};
-
-		var ModalPicker = require("lib/ModalPicker");
-		var visualPrefsOne = {
-			top : 30,
-			left : 5,
-			opacity : 0.85,
-			borderRadius : 3,
-			backgroundColor : '#FFF',
-			width : 140,
-			height : 40,
-			textAlign : 'center'
-		};
-
-		var teamOnePicker = new ModalPicker(visualPrefsOne, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt, Alloy.Globals.PHRASES.closeBtnTxt);
-		modalPickersToHide.push(teamOnePicker);
-
-		teamOnePicker.text = '0';
-
-		teamOnePicker.self.addEventListener('change', function(e) {
-			gameArray[index].gameValue[0] = teamOnePicker.value;
-		});
-
-		var visualPrefsTwo = {
-			top : 30,
-			right : 5,
-			opacity : 0.85,
-			borderRadius : 3,
-			backgroundColor : '#FFF',
-			width : 140,
-			height : 40,
-			textAlign : 'center'
-		};
-
-		var teamTwoPicker = new ModalPicker(visualPrefsTwo, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt, Alloy.Globals.PHRASES.closeBtnTxt);
-		modalPickersToHide.push(teamTwoPicker);
-		teamTwoPicker.text = '0';
-
-		teamTwoPicker.self.addEventListener('change', function(e) {
-			gameArray[index].gameValue[1] = teamTwoPicker.value;
-		});
-
-		resultView.add(teamOnePicker);
-		resultView.add(teamTwoPicker);
-	}
-			
+		var layoutType = 'horizontal';
+		if(gameType.options  <= 1){
+			layoutType = 'absolute';
 		}
+		var optionsView = Ti.UI.createView({
+			//height: "70%",
+			width: 250,
+			layout: layoutType,
+		});
+		var data = [];
+		if (OS_ANDROID) {
+				// create 1-15 values
+				for (var i = 0; i <= 15; i++) {
+					data.push(Titanium.UI.createPickerRow({
+						value : i,
+						title : '        ' + i + '    ',
+						fontSize : 30,
+						fontWeight : 'bold'
+					}));
+				};
+		
+				var picker = Titanium.UI.createPicker({
+					top : 30,
+					left : 5,
+					width : Ti.UI.SIZE,
+					height : Ti.UI.SIZE
+				});
+		
+		
+				// on first picker change
+				teamOnePicker.addEventListener('change', function(e) {
+					e.selectedValue[0] = e.selectedValue[0].replace(/ /g, '');
+					gameArray[index].gameValue[0] = e.selectedValue[0];
+				});
+		
+				// on second picker change
+				teamTwoPicker.addEventListener('change', function(e) {
+					e.selectedValue[0] = e.selectedValue[0].replace(/ /g, '');
+					gameArray[index].gameValue[1] = e.selectedValue[0];
+				});
+		
+				teamOnePicker.add(data);
+				teamTwoPicker.add(data);
+				teamOnePicker.columns[0].width = Ti.UI.SIZE;
+				teamOnePicker.columns[0].height = Ti.UI.SIZE;
+				teamTwoPicker.columns[0].width = Ti.UI.SIZE;
+				teamTwoPicker.columns[0].height = Ti.UI.SIZE;
+		
+				resultView.add(teamOnePicker);
+				resultView.add(teamTwoPicker);
+		
+			} else if (OS_IOS) {
+
+				// create 1-15 values
+				for (var i = 0; i <= 15; i++) {
+					data.push(Titanium.UI.createPickerRow({
+						title : '' + i,
+						value : i
+					}));
+				};
+				for (var i = 0; i < gameType.options; i++){
+					///SKAPA EN SELECT
+			
+					var ModalPicker = require("lib/ModalPicker");
+					if(layoutType == 'horizontal'){
+						var visualPrefs = {
+						//top : 30,
+						left : 5,
+						opacity : 0.85,
+						borderRadius : 3,
+						backgroundColor : '#FFF',
+						width : 120,
+						height : 40,
+						textAlign : 'center'
+					};
+					}else if(layoutType == 'absolute'){
+						var visualPrefs = {
+						//top : 30,
+						//left : 5,
+						opacity : 0.85,
+						borderRadius : 3,
+						backgroundColor : '#FFF',
+						width : 120,
+						height : 40,
+						textAlign : 'center'
+					};
+					}
+					
+		
+					var picker = new ModalPicker(visualPrefs, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt, Alloy.Globals.PHRASES.closeBtnTxt);
+					modalPickersToHide.push(picker);
+		
+					picker.text = '-';
+			
+					picker.self.addEventListener('change', function(e) {
+						gameArray[index].gameValue[i] = picker.value;
+					});
+		
+					optionsView.add(picker);
+				}
+			}
+		
 	}
 	gameTypeView.add(optionsView);
 	$.challenge.add(gameTypeView);
@@ -1329,12 +1334,17 @@ function createLayout() {
 		}
 		// create views
 		var gameTip = {
-			options: 3,
-			type: 2,
-			option_type: "button",
-			number_of_values: 1,
+			options: 2,
+			type: 3,
+			option_type: "select",
+			number_of_values:2,
 		};
-		createGameType(gameTip);
+		///*******KOLLLA IGENOM PÅ MÅNDAG******///
+		var gametypes = gameObjects[0].attributes.game_types;
+		for(var y in gametypes){
+			createGameType(gametypes[y]);	
+		}
+		
 		
 		createBorderView();
 
