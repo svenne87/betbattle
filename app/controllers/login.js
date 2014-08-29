@@ -163,14 +163,15 @@ function doError() {
 }
 
 function loginAuthenticated(fb) {
-	
 	params = {
 		access_token : fb.accessToken
 	};
 	fb.requestWithGraphPath('/me', params, 'GET', function(e) {
 		if (e.success) {
 			Alloy.Globals.FACEBOOK = fb;
-			Alloy.Globals.BETKAMPEN.token = fb.accessToken;
+			Alloy.Globals.BETKAMPEN = {
+				token : fb.accessToken
+			};
 			var result = null;
 
 			try {
@@ -242,7 +243,8 @@ function loginAuthenticated(fb) {
 							} catch(e) {
 								indicator.closeIndicator();
 								addEvent();
-								Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+								Ti.API.log(JSON.stringify(e));
+								Ti.API.log(Alloy.Globals.BETKAMPEN.token);
 							}
 
 							if (response !== null) {
@@ -449,7 +451,7 @@ function loginBetkampenAuthenticated() {
 		indicator.closeIndicator();
 	}
 
-	xhr.onload = function() {		
+	xhr.onload = function() {	
 		if (this.status == '200') {
 			if (this.readyState == 4) {
 				var response = null;
@@ -515,7 +517,6 @@ function authWithRefreshToken() {
 			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 		}
 		xhr.onload = function() {
-			Ti.API.log(this.status);
 			if (this.status == '200') {
 				if (this.readyState == 4) {
 					var response = '';
@@ -524,16 +525,15 @@ function authWithRefreshToken() {
 					} catch(e) {
 
 					}
-					
+
 					Alloy.Globals.BETKAMPEN = {
 						token : "TOKEN " + response.access_token,
 						valid : response.expires_in,
 						refresh_token : Alloy.Globals.BETKAMPEN.refresh_token   // since we don't get a new one here
 					};
-
+					Alloy.Globals.storeToken();
 					// brand new token, try to authenticate
 					loginBetkampenAuthenticated();
-					Ti.API.log(response);
 				} else {
 					Ti.API.log(this.response);
 				}
