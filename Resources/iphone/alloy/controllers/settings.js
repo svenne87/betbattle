@@ -197,8 +197,6 @@ function Controller() {
                         xhr.onload = function() {
                             if ("200" == this.status) {
                                 if (4 == this.readyState) {
-                                    Ti.API.log(this.responseText);
-                                    Ti.API.log(this.respone);
                                     var response = JSON.parse(this.responseText);
                                     Alloy.Globals.showFeedbackDialog(response);
                                 } else Ti.API.log(this.response);

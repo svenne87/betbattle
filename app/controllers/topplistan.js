@@ -138,13 +138,26 @@ function createGUI(obj, i) {
 		});
 		totalLeader.add(value);
 	}
+	
+	var image;
+	if(typeof Alloy.Globals.FACEBOOKOBJECT !== 'undefined') {
+		image = "https://graph.facebook.com/"+Alloy.Globals.FACEBOOKOBJECT.id+"/picture?type=large";
+	} else {
+		// get betkampen image
+		image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + Alloy.Globals.BETKAMPENUID + '.png';
+	}
 
 	var profilePic = Titanium.UI.createImageView({
-		image : "/images/no_pic.png",
+		image : image,
 		height : 25,
 		width : 25,
 		left : '15%'
 	});
+	profilePic.addEventListener('error',function(e){
+		// fallback for image
+		profilePic.image = '/images/no_pic.png';
+	});
+	
 	totalLeader.add(profilePic);
 
 	boardName = obj.name.toString();
