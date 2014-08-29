@@ -205,10 +205,10 @@ function createGUI() {
 		var deviceType = Titanium.Platform.osname;
 		var param = '{"device_token":"' + Alloy.Globals.DEVICETOKEN + '", "device_type":"' + deviceType + '", "push_status":' + value + ', "app_identifier":"' + Alloy.Globals.APPID + '", "lang":"' + Alloy.Globals.LOCALE + '"}';
 		// send to backend
-	//	if(Alloy.Globals.DEVICETOKEN){
+		if(Alloy.Globals.DEVICETOKEN){
 			// only send if not emulator
 			sendSettingsServer(param, 0, basicSwitch.value);
-	// TODO	}
+		}
 		
 	});
 
