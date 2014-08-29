@@ -95,27 +95,31 @@ if (gAdmin == Alloy.Globals.BETKAMPENUID) {
 	mainView.add(groupNameBtn);
 
 	groupNameBtn.addEventListener('click', function(e) {
-		var editName = Ti.Network.createHTTPClient();
+		if (groupName.value.length > 2) {
+			var editName = Ti.Network.createHTTPClient();
 
-		editName.open("POST", Alloy.Globals.BETKAMPENURL + '/api/edit_group_name.php');
-		var params = {
-			groupID : e.source.id,
-			group_name : groupName.value,
-		};
-		editName.send(params);
-		var win = Alloy.createController('myGroups').getView();
-		if (OS_IOS) {
-			Alloy.Globals.NAV.openWindow(win, {
-				animated : true
-			});
-		} else {
-			win.open({
-				fullScreen : true
-			});
-			win = null;
+			editName.open("POST", Alloy.Globals.BETKAMPENURL + '/api/edit_group_name.php');
+			var params = {
+				groupID : e.source.id,
+				group_name : groupName.value,
+			};
+			editName.send(params);
+			var win = Alloy.createController('myGroups').getView();
+			if (OS_IOS) {
+				Alloy.Globals.NAV.openWindow(win, {
+					animated : true
+				});
+			} else {
+				win.open({
+					fullScreen : true
+				});
+				win = null;
+			}
+
+			$.editGroup.close();
+		} else if (groupName.value.length < 3) {
+			alert(Alloy.Globals.PHRASES.shortGroupNameTxt);
 		}
-
-		$.editGroup.close();
 	});
 }
 var line = Ti.UI.createView({
@@ -280,7 +284,7 @@ function createGUI(obj) {
 var e = 0;
 function createFriendGUI(friend, i) {
 	var fr = [];
-	if (members.data.length == null) {
+	if (members.data.length == 0) {
 
 	} else {
 		for (var s = 0; s < members.data.length; s++) {
@@ -396,7 +400,7 @@ function createFriendGUI(friend, i) {
 						group_id : e.source.id,
 						id : e.source.fId,
 						name : e.source.fName,
-						admin: 0
+						admin : 0
 					};
 					addMember.send(params);
 					Ti.API.info(params);
