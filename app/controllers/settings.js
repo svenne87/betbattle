@@ -257,6 +257,11 @@ function createGUI() {
 	}));
 
 	thirdRow.addEventListener('click', function() {
+		if(Alloy.Globals.FACEBOOKOBJECT) {
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.fbImageChangeError);
+			return;
+		}
+		
 		Ti.Media.openPhotoGallery({
 			success : function(event) {
 
@@ -267,9 +272,9 @@ function createGUI() {
 
 					var xhr = Titanium.Network.createHTTPClient();
 					xhr.onerror = function(e) {
-						Ti.API.error('Bad Sever =>' + JSON.stringify(e.error));
+						Ti.API.error('Bad Sever =>' + JSON.stringify(e));
 						uploadIndicator.hide();
-						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.imageUploadError);
 					};
 
 					xhr.onsendstream = function(e) {
@@ -292,12 +297,8 @@ function createGUI() {
 
 					xhr.onload = function() {
 						if (this.status == '200') {
-							if (this.readyState == 4) {
-								var response = JSON.parse(this.responseText);
-								Alloy.Globals.showFeedbackDialog(response);
-							} else {
-								Ti.API.log(this.response);
-							}
+							var response = JSON.parse(this.responseText);
+							Alloy.Globals.showFeedbackDialog(response);
 							uploadIndicator.hide();
 						} else {
 							uploadIndicator.hide();

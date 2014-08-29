@@ -226,8 +226,6 @@ function login(auto) {
 		loginReq.setTimeout(Alloy.Globals.TIMEOUT);
 
 		try {
-			loginReq.setUsername('betkampen_mobile');
-			loginReq.setPassword('not_so_s3cr3t');
 			loginReq.open("POST", Alloy.Globals.BETKAMPENEMAILLOGIN);
 			var params = {
 				grant_type : 'password',
