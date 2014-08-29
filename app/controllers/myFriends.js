@@ -68,7 +68,7 @@ var nameInfo = Ti.UI.createLabel({
 infoTxt.add(nameInfo);
 
 var scoreInfo = Ti.UI.createLabel({
-	text : 'Ta bort', //Alloy.Globals.PHRASES.pointsTxt,
+	text : Alloy.Globals.PHRASES.deleteTxt,
 	left : '82%',
 	color : "#fff",
 	font : {
@@ -101,7 +101,7 @@ function createGUI(obj) {
 		width : "82.5%",
 		left : "1%",
 		opacity : 0.7,
-		borderRadius : 10
+		borderRadius : 5
 	});
 
 	friend.add(friendInfo);
@@ -157,7 +157,7 @@ function createGUI(obj) {
 		backgroundColor : '#fff',
 		color : '#000',
 		opacity : 0.7,
-		borderRadius : 10
+		borderRadius : 5
 	});
 	friend.add(deleteBtn);
 

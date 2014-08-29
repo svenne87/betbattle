@@ -296,7 +296,6 @@ function getGroup() {
 			Ti.API.info("Received text: " + this.responseText);
 			groupId = JSON.parse(this.responseText);
 			getName(groupId.data[0].gID);
-			getFriends(group.data[0].gID);
 
 		},
 		// function called when an error occurs, including a timeout
@@ -329,7 +328,8 @@ function getName(groupID) {
 				name : myName.data[0].name,
 			};
 			addMe.send(params);
-
+			
+			getFriends(groupID);
 
 		},
 		// function called when an error occurs, including a timeout
