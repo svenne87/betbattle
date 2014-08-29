@@ -112,6 +112,7 @@ function Controller() {
             layout: "vertical",
             height: 12
         }));
+        row.gameID = obj.attributes.id;
         row.teamNames = obj.attributes.team_1.team_name + " - " + obj.attributes.team_2.team_name;
         row.className = date.toUTCString();
         return row;
@@ -205,7 +206,8 @@ function Controller() {
                         round: e.row.id,
                         leagueName: leagueName,
                         leagueId: leagueId,
-                        teamNames: teamNames
+                        teamNames: teamNames,
+                        gameID: e.row.gameID
                     };
                     var win = Alloy.createController("challenge", arg).getView();
                     Alloy.Globals.WINDOWS.push(win);

@@ -9,15 +9,14 @@ function __processArg(obj, key) {
 
 function Controller() {
     function createGameType(gameType) {
-        var viewHeight;
-        viewHeight = "button" == gameType.option_type ? 20 * gameType.options + 40 : "80dp";
+        var viewHeight = "80dp";
         var gameTypeView = Ti.UI.createView({
             width: Ti.UI.FILL,
             height: viewHeight,
             layout: "vertical"
         });
         var gameTypeDescription = Ti.UI.createLabel({
-            text: "VIlket lag gör första målet?!",
+            text: "Vilket lag gör första målet?!",
             textAlign: "center",
             color: "#FFF",
             font: {
@@ -27,15 +26,28 @@ function Controller() {
         });
         gameTypeView.add(gameTypeDescription);
         var optionsView = Ti.UI.createView({
-            width: Ti.UI.FILL,
-            layout: "vertical"
+            width: 255,
+            layout: "horizontal"
         });
+        var gameObj = new Object();
+        gameObj.gameId = gameID;
+        var valueArray = new Array(0, 0);
+        gameObj.gameValue = valueArray;
+        gameArray.push(gameObj);
+        gameArray.indexOf(gameObj);
         if ("button" == gameType.option_type) for (var i = 0; gameType.options > i; i++) {
+            var type = gameType.type;
+            var text = Alloy.Globals.PHRASES.gameTypes[type].buttonValues[i + 1];
+            "team1" == text ? Ti.API.info("TEAM" + JSON.stringify(gameObjects)) : "team2" == text;
             var buttonView = Ti.UI.createButton({
-                title: "Hellos " + i,
+                title: text,
                 top: 5,
-                width: 100,
-                height: 20
+                borderColor: "#c5c5c5",
+                borderWidth: 1,
+                left: 5,
+                borderRadius: 5,
+                width: 80,
+                height: 40
             });
             optionsView.add(buttonView);
         } else if ("select" == gameType.option_type) for (var i = 0; gameType.options >= i; i++) ;
@@ -658,8 +670,8 @@ function Controller() {
                 "undefined" == typeof coinsToJoin && (coinsToJoin = parseInt(challengeObject.attributes.potential_pot) / challengeObject.attributes.opponents.length);
             }
             var gameTip = {
-                options: 2,
-                id: 1,
+                options: 3,
+                type: 2,
                 option_type: "button",
                 number_of_values: 1
             };
@@ -799,6 +811,8 @@ function Controller() {
     "undefined" != typeof args.round && (roundId = args.round);
     var leagueName = "";
     "undefined" != typeof args.leagueName && (leagueName = args.leagueName);
+    var gameID = -1;
+    "undefined" != typeof args.gameID && (gameID = args.gameID);
     var teamNames = "";
     "undefined" != typeof args.teamNames && (teamNames = args.teamNames);
     var leagueId = -1;
@@ -838,7 +852,10 @@ function Controller() {
             Ti.API.error("Bad Sever =>" + e.error);
         };
         try {
-            -1 === roundId ? -1 === tournamentIndex ? xhr.open("GET", Alloy.Globals.BETKAMPENGAMESURL + "/?uid=" + Alloy.Globals.BETKAMPENUID + "&cid=" + challengeObject.attributes.id + "&lang=" + Alloy.Globals.LOCALE) : xhr.open("GET", Alloy.Globals.BETKAMPENGETGAMESFORTOURNAMENT + "/?uid=" + Alloy.Globals.BETKAMPENUID + "&tid=" + challengeObject.attributes.id + "&round=" + challengeObject.attributes.round + "&lang=" + Alloy.Globals.LOCALE) : xhr.open("GET", Alloy.Globals.BETKAMPENGETGAMESFORCHALLENGEURL + "/?uid=" + Alloy.Globals.BETKAMPENUID + "&league=" + leagueId + "&round=" + roundId + "&lang=" + Alloy.Globals.LOCALE);
+            if (-1 === roundId) -1 === tournamentIndex ? xhr.open("GET", Alloy.Globals.BETKAMPENGAMESURL + "/?uid=" + Alloy.Globals.BETKAMPENUID + "&cid=" + challengeObject.attributes.id + "&lang=" + Alloy.Globals.LOCALE) : xhr.open("GET", Alloy.Globals.BETKAMPENGETGAMESFORTOURNAMENT + "/?uid=" + Alloy.Globals.BETKAMPENUID + "&tid=" + challengeObject.attributes.id + "&round=" + challengeObject.attributes.round + "&lang=" + Alloy.Globals.LOCALE); else {
+                Ti.API.info("skiickaar" + roundId);
+                xhr.open("GET", Alloy.Globals.BETKAMPENGETGAMESFORCHALLENGEURL + "/?uid=" + Alloy.Globals.BETKAMPENUID + "&league=" + leagueId + "&round=" + roundId + "&lang=" + Alloy.Globals.LOCALE);
+            }
             xhr.setRequestHeader("content-type", "application/json");
             xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
             xhr.setTimeout(Alloy.Globals.TIMEOUT);
@@ -850,6 +867,7 @@ function Controller() {
         xhr.onload = function() {
             if ("200" == this.status) if (4 == this.readyState) {
                 var response = JSON.parse(this.responseText);
+                Ti.API.info("HÄMTAT" + JSON.stringify(response));
                 for (var i in response) {
                     var teamOneName = response[i].team_1.team_name;
                     teamOneName.length > 16 && (teamOneName = teamOneName.substring(0, 13) + "...");

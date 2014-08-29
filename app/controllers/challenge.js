@@ -1,19 +1,15 @@
 /* Functions */
 
 function createGameType(gameType){
-	var viewHeight;
-	if(gameType.option_type == "button"){
-		viewHeight = (20 * gameType.options) + 40;
-	}else{
-		viewHeight = "80dp";
-	}
+	var viewHeight = "80dp";
+
 	var gameTypeView = Ti.UI.createView({
 		width: Ti.UI.FILL,
 		height: viewHeight,
 		layout: "vertical",
 	});
 	var gameTypeDescription = Ti.UI.createLabel({
-		text: "VIlket lag gör första målet?!",
+		text: "Vilket lag gör första målet?!",
 		textAlign: "center",
 		color: "#FFF",
 		//height: "30%",
@@ -26,18 +22,43 @@ function createGameType(gameType){
 	
 	var optionsView = Ti.UI.createView({
 		//height: "70%",
-		width: Ti.UI.FILL,
-		layout: "vertical",
+		width: 255,
+		layout: "horizontal",
 	});
+	
+	
+	// object to store game id and value
+	var gameObj = new Object();
+	gameObj.gameId = gameID;
+	var valueArray = new Array(0, 0);
+	gameObj.gameValue = valueArray;
+	gameArray.push(gameObj);
+	var index = gameArray.indexOf(gameObj);
+	
 	
 	if(gameType.option_type == "button"){
 	
 		for (var i = 0; i < gameType.options; i++){
+			var type = gameType.type;
+			//get the corresponding text inside each button from the JSON file
+			var text = Alloy.Globals.PHRASES.gameTypes[type].buttonValues[i+1];
+	
+			//if the json says team1 or team2. get the actual team  names
+			if(text == "team1"){
+				Ti.API.info("TEAM" + JSON.stringify(gameObjects));
+				//text = gameArray[index].team1.team_name;			
+			}else if(text == "team2"){
+				//text = gameArray[index].team2.team_name;
+			}
 			var buttonView = Ti.UI.createButton({
-				title: 'Hellos '+i,
+				title: text,
 			   	top: 5,
-			   	width: 100,
-			  	height: 20
+			   	borderColor: "#c5c5c5",
+			   	borderWidth: 1,
+			   	left: 5,
+			   	borderRadius: 5,
+			   	width: 80,
+			  	height: 40
 			});	
 			optionsView.add(buttonView);
 		}
@@ -1180,8 +1201,8 @@ function createLayout() {
 		}
 		// create views
 		var gameTip = {
-			options: 2,
-			id: 1,
+			options: 3,
+			type: 2,
 			option_type: "button",
 			number_of_values: 1,
 		};
@@ -1222,6 +1243,11 @@ if ( typeof args.round !== 'undefined') {
 var leagueName = '';
 if ( typeof args.leagueName !== 'undefined') {
 	leagueName = args.leagueName;
+}
+
+var gameID = -1;
+if( typeof args.gameID !== 'undefined'){
+	gameID = args.gameID;
 }
 
 var teamNames = '';
@@ -1342,6 +1368,7 @@ if (Alloy.Globals.checkConnection()) {
 			}
 
 		} else {
+			Ti.API.info("skiickaar" + roundId);
 			xhr.open('GET', Alloy.Globals.BETKAMPENGETGAMESFORCHALLENGEURL + '/?uid=' + Alloy.Globals.BETKAMPENUID + '&league=' + leagueId + '&round=' + roundId + '&lang=' + Alloy.Globals.LOCALE);
 		}
 
@@ -1358,6 +1385,7 @@ if (Alloy.Globals.checkConnection()) {
 		if (this.status == '200') {
 			if (this.readyState == 4) {
 				var response = JSON.parse(this.responseText);
+				Ti.API.info("HÄMTAT" + JSON.stringify(response));
 				// the response is an array with the different game types
 				// create objects for each game type
 				for (var i in response) {
