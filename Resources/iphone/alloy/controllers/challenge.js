@@ -32,10 +32,6 @@ function Controller() {
             }
         });
         gameTypeView.add(gameTypeDescription);
-        var optionsView = Ti.UI.createView({
-            width: 285,
-            layout: "horizontal"
-        });
         var gameObj = new Object();
         gameObj.gameId = gameID;
         var valueArray = new Array(0, 0);
@@ -43,6 +39,10 @@ function Controller() {
         gameArray.push(gameObj);
         var index = gameArray.indexOf(gameObj);
         if ("button" == gameType.option_type) {
+            var optionsView = Ti.UI.createView({
+                width: 285,
+                layout: "horizontal"
+            });
             var fontSize = 18;
             var buttonViews = [];
             for (var i = 0; gameType.options > i; i++) {
@@ -76,7 +76,47 @@ function Controller() {
                 });
                 optionsView.add(buttonViews[i]);
             }
-        } else if ("select" == gameType.option_type) for (var i = 0; gameType.options >= i; i++) ;
+        } else if ("select" == gameType.option_type) {
+            var layoutType = "horizontal";
+            1 >= gameType.options && (layoutType = "absolute");
+            var optionsView = Ti.UI.createView({
+                width: 250,
+                layout: layoutType
+            });
+            var data = [];
+            var i;
+            var picker;
+            for (var i = 0; 15 >= i; i++) data.push(Titanium.UI.createPickerRow({
+                title: "" + i,
+                value: i
+            }));
+            for (var i = 0; gameType.options > i; i++) {
+                var ModalPicker = require("lib/ModalPicker");
+                if ("horizontal" == layoutType) var visualPrefs = {
+                    left: 5,
+                    opacity: .85,
+                    borderRadius: 3,
+                    backgroundColor: "#FFF",
+                    width: 120,
+                    height: 40,
+                    textAlign: "center"
+                }; else if ("absolute" == layoutType) var visualPrefs = {
+                    opacity: .85,
+                    borderRadius: 3,
+                    backgroundColor: "#FFF",
+                    width: 120,
+                    height: 40,
+                    textAlign: "center"
+                };
+                var picker = new ModalPicker(visualPrefs, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt, Alloy.Globals.PHRASES.closeBtnTxt);
+                modalPickersToHide.push(picker);
+                picker.text = "-";
+                picker.self.addEventListener("change", function() {
+                    gameArray[index].gameValue[i] = picker.value;
+                });
+                optionsView.add(picker);
+            }
+        }
         gameTypeView.add(optionsView);
         $.challenge.add(gameTypeView);
     }
@@ -695,13 +735,8 @@ function Controller() {
                 coinsToJoin = gameObjects[0].attributes.pot;
                 "undefined" == typeof coinsToJoin && (coinsToJoin = parseInt(challengeObject.attributes.potential_pot) / challengeObject.attributes.opponents.length);
             }
-            var gameTip = {
-                options: 3,
-                type: 2,
-                option_type: "button",
-                number_of_values: 1
-            };
-            createGameType(gameTip);
+            var gametypes = gameObjects[0].attributes.game_types;
+            for (var y in gametypes) createGameType(gametypes[y]);
             createBorderView();
             -1 === roundId ? createBetCoinsView(coinsToJoin) : createBetCoinsChooseView();
             createBorderView();
