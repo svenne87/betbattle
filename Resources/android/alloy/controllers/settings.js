@@ -35,24 +35,25 @@ function Controller() {
             var xhr = Titanium.Network.createHTTPClient();
             xhr.onerror = function(e) {
                 indicator.closeIndicator();
-                Ti.API.error("Bad Sever =>" + e.error);
+                Ti.API.error("Bad Sever =>" + JSON.stringify(e));
+                400 === e.code && Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.nameUnique);
             };
             try {
                 xhr.open("POST", Alloy.Globals.BETKAMPENSETTINGURL);
                 xhr.setRequestHeader("content-type", "application/json");
-                xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
+                xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
                 xhr.setTimeout(Alloy.Globals.TIMEOUT);
                 xhr.send(param);
             } catch (e) {
                 indicator.closeIndicator();
-                Alloy.Globals.showFeedbackDialog(JSON.parse(this.response));
+                Alloy.Globals.showFeedbackDialog(JSON.stringify(e));
             }
             xhr.onload = function() {
                 if ("200" == this.status) {
                     if (4 == this.readyState) {
                         0 === type ? Ti.App.Properties.setBool("pushSetting", valueToStore) : 1 === type && Ti.App.Properties.setString("profileNameSetting", valueToStore);
                         Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
-                    } else Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
+                    }
                     indicator.closeIndicator();
                 } else {
                     indicator.closeIndicator();
@@ -128,8 +129,11 @@ function Controller() {
             value: pushEnabled
         });
         basicSwitch.addEventListener("change", function() {
-            var param = '{"push_status":"' + basicSwitch.value + '", "app_identifier":"' + Alloy.Globals.APPID + '", "lang":"' + Alloy.Globals.LOCALE + '"}';
-            sendSettingsServer(param, 0, basicSwitch.value);
+            var value = 0;
+            basicSwitch.value && (value = 1);
+            var deviceType = "android";
+            var param = '{"device_token":"' + Alloy.Globals.DEVICETOKEN + '", "device_type":"' + deviceType + '", "push_status":' + value + ', "app_identifier":"' + Alloy.Globals.APPID + '", "lang":"' + Alloy.Globals.LOCALE + '"}';
+            Alloy.Globals.DEVICETOKEN && sendSettingsServer(param, 0, basicSwitch.value);
         });
         secondRow.add(basicSwitch);
         $.settingsView.add(secondRow);
@@ -175,7 +179,7 @@ function Controller() {
                         uploadIndicator.show();
                         var xhr = Titanium.Network.createHTTPClient();
                         xhr.onerror = function(e) {
-                            Ti.API.error("Bad Sever =>" + e.error);
+                            Ti.API.error("Bad Sever =>" + JSON.stringify(e.error));
                             uploadIndicator.hide();
                         };
                         xhr.onsendstream = function(e) {
@@ -183,12 +187,10 @@ function Controller() {
                         };
                         try {
                             xhr.open("POST", Alloy.Globals.BETKAMPENIMAGEUPLOADURL + "?lang=" + Alloy.Globals.LOCALE);
-                            xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
-                            xhr.setRequestHeader("Content-Type", "multipart/form-data");
+                            xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
                             xhr.setTimeout(Alloy.Globals.TIMEOUT);
                             xhr.send({
-                                media: image,
-                                filename: "profile_image_" + Alloy.Globals.BETKAMPENUID + ".png"
+                                media: image
                             });
                         } catch (e) {
                             uploadIndicator.hide();

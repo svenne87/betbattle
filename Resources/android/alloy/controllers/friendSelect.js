@@ -45,7 +45,7 @@ function Controller() {
             try {
                 xhr.open("POST", Alloy.Globals.BETKAMPENCHALLENGEDONEURL);
                 xhr.setRequestHeader("content-type", "application/json");
-                xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
+                xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
                 xhr.setTimeout(Alloy.Globals.TIMEOUT);
                 param += ', "new_group":"' + groupName + '", "friends":[{';
                 for (var i = 0; facebookFriendsChallenge.length > i; i++) {

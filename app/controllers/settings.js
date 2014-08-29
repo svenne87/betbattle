@@ -269,6 +269,7 @@ function createGUI() {
 					xhr.onerror = function(e) {
 						Ti.API.error('Bad Sever =>' + JSON.stringify(e.error));
 						uploadIndicator.hide();
+						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 					};
 
 					xhr.onsendstream = function(e) {
@@ -286,6 +287,7 @@ function createGUI() {
 						});
 					} catch(e) {
 						uploadIndicator.hide();
+						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 					}
 
 					xhr.onload = function() {
@@ -300,6 +302,7 @@ function createGUI() {
 						} else {
 							uploadIndicator.hide();
 							Ti.API.error("Error =>" + this.response);
+							Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
 						}
 					};
 				} else {
@@ -656,7 +659,5 @@ function getLanguage() {
 // run it
 createGUI();
 
-// TODO handle it in backend!!!!! test and fix all php files
-// TODO images are forced as .png right now..
 // TODO fix so we can notify clients about a language change in phrases.
 
