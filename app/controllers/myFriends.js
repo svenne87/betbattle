@@ -198,13 +198,55 @@ function createGUI(obj) {
 
 }
 
+function createBtn() {
+	var addFriendsLabel = Ti.UI.createLabel({
+		text : Alloy.Globals.PHRASES.noFriendsTxt,
+		textAlign : "center",
+		top : 10,
+		font : {
+			fontSize : 22,
+			fontFamily : "Impact"
+		},
+		color : "#FFF"
+	});
+	mainView.add(addFriendsLabel);
+
+	var openFriendSearchBtn = Ti.UI.createButton({
+		height : 40,
+		width : '60%',
+		left : '20%',
+		top : '0.5%',
+		title : Alloy.Globals.PHRASES.addFriendsTxt,
+		backgroundColor : '#FFF',
+		color : '#000',
+		borderRadius : 5
+	});
+	mainView.add(openFriendSearchBtn);
+
+	openFriendSearchBtn.addEventListener('click', function(e) {
+		var win = Alloy.createController('friendSearch').getView();
+		if (OS_IOS) {
+			Alloy.Globals.NAV.openWindow(win, {
+				animated : true
+			});
+		} else {
+			win.open({
+				fullScreen : true
+			});
+			win = null;
+		}
+		$.myFriends.close();
+	});
+
+}
+
 var xhr = Ti.Network.createHTTPClient({
 	// function called when the response data is available
 	onload : function(e) {
 		Ti.API.info("Received text: " + this.responseText);
 		var friends = JSON.parse(this.responseText);
 		if (friends.length == 0) {
-			alert('Du har inga vänner än lägg till några i friend zone');
+			createBtn();
 		} else {
 			for (var i = 0; i < friends.length; i++) {
 				//alert(friends[i].name);

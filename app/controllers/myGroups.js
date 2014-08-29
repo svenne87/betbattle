@@ -76,10 +76,10 @@ var scoreInfo = Ti.UI.createLabel({
 infoTxt.add(scoreInfo);
 
 // refresh this view
-Ti.App.addEventListener("groupSelectRefresh", function(e) {
-	indicator.openIndicator();
-	getGroups();
-});
+//Ti.App.addEventListener("groupSelectRefresh", function(e) {
+	//indicator.openIndicator();
+	//getGroups();
+//});
 
 function getGroups() {
 
@@ -128,8 +128,7 @@ function getGroups() {
 						for (var x = 0; x < response[i].members.length; x++) {
 							// member object
 							var member = {
-								fbid : response[i].members[x].fbid,
-								id : response[i].members[x].id,
+								id : response[i].members[x].uid,
 								name : response[i].members[x].name
 							};
 							membersArray.push(member);
@@ -149,7 +148,7 @@ function getGroups() {
 					// create the views
 					createViews(groupObjects);
 				} else {
-					alert('Du har inga grupper, skapa en i friend Zone');
+					createBtn();
 				}
 
 			} else {
@@ -167,6 +166,48 @@ function getGroups() {
 			Ti.API.error("Error =>" + this.response);
 		}
 	};
+}
+
+function createBtn() {
+	var addGroupLabel = Ti.UI.createLabel({
+		text : Alloy.Globals.PHRASES.noGroupsTxt,
+		textAlign : "center",
+		top : 10,
+		font : {
+			fontSize : 22,
+			fontFamily : "Impact"
+		},
+		color : "#FFF"
+	});
+	mainView.add(addFriendsLabel);
+
+	var openCreateGroupBtn = Ti.UI.createButton({
+		height : 40,
+		width : '60%',
+		left : '20%',
+		top : '0.5%',
+		title : Alloy.Globals.PHRASES.createGroupTxt,
+		backgroundColor : '#FFF',
+		color : '#000',
+		borderRadius : 5
+	});
+	mainView.add(openCreateGroupBtn);
+
+	openCreateGroupBtn.addEventListener('click', function(e) {
+		var win = Alloy.createController('createGroup').getView();
+		if (OS_IOS) {
+			Alloy.Globals.NAV.openWindow(win, {
+				animated : true
+			});
+		} else {
+			win.open({
+				fullScreen : true
+			});
+			win = null;
+		}
+		$.myGroups.close();
+	});
+
 }
 
 function createViews(array) {
@@ -263,7 +304,7 @@ function createViews(array) {
 				//height : '8%',
 				width : '15%',
 				left : '84%',
-				id : array[i].attributes.id,
+				id : array[i].attributesid,
 				admin : '0',
 				font : {
 					fontFamily : font,
