@@ -18,6 +18,7 @@ function storeProfileName(name) {
 }
 
 function createLeagueAndUidObj(response) {
+	Ti.API.log(JSON.stringify(response));
 	Alloy.Globals.BETKAMPENUID = response.betkampen_uid;
 	Alloy.Globals.LEAGUES = [];
 	Alloy.Globals.AVAILABLELANGUAGES = [];
@@ -26,13 +27,16 @@ function createLeagueAndUidObj(response) {
 		var league = {
 			id : response.leagues[i].id,
 			name : response.leagues[i].name,
-			logo : response.leagues[i].logo
+			sport : response.leagues[i].sport,
+			logo : response.leagues[i].logo,
+			actvie : response.leagues[i].active
 		};
 		// store all active leagues
 		Alloy.Globals.LEAGUES.push(league);
 	}
 	        for (var i = 0; response.languages.length > i; i++) {
             var language = {
+            	id : response.languages[i].id,
                 name: response.languages[i].name,
                 imageLocation: response.languages[i].imageLocation,
                 description: response.languages[i].description
@@ -243,8 +247,6 @@ function loginAuthenticated(fb) {
 							} catch(e) {
 								indicator.closeIndicator();
 								addEvent();
-								Ti.API.log(JSON.stringify(e));
-								Ti.API.log(Alloy.Globals.BETKAMPEN.token);
 							}
 
 							if (response !== null) {

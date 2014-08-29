@@ -1,6 +1,94 @@
 var args = arguments[0] || {};
 Alloy.Globals.LANDINGWIN = $.landingPage;
 
+var deviceToken;
+
+if(OS_IOS){
+	// only iOS		
+	$.mainWin.addEventListener('open', function(){
+		var apns = require('lib/push_notifications_apns');
+		apns.apns();
+	}); 
+	
+} else if(OS_ANDROID) {
+
+	var gcm = require('net.iamyellow.gcmjs');
+	var pendingData = gcm.data;
+	if (pendingData && pendingData !== null) {
+		// if we're here is because user has clicked on the notification
+		// and we set extras for the intent 
+		// and the app WAS NOT running
+		// (don't worry, we'll see more of this later)
+		Ti.API.info('******* data (started) ' + JSON.stringify(pendingData));
+	}
+
+	gcm.registerForPushNotifications({
+		success: function (ev) {
+			// on successful registration
+			// post to our server
+			Alloy.Globals.postDeviceToken(ev.deviceToken);
+			Ti.API.info('******* success, ' + ev.deviceToken);
+		},
+		error: function (ev) {
+			// when an error occurs
+			Ti.API.info('******* error, ' + ev.error);
+		},
+		callback: function (e) {
+			// when a gcm notification is received WHEN the app IS IN FOREGROUND
+			
+			try{
+				var alertWindow = Titanium.UI.createAlertDialog({
+					title : e.title,
+					message : e.message,
+					buttonNames : ['OK']
+				});
+
+				alertWindow.addEventListener('click', function(e) {
+					alertWindow.hide();
+					Ti.App.fireEvent('challengesViewRefresh');
+				});
+				alertWindow.show();
+			} catch(e){
+				// something went wrong
+				//> THIS should fail
+			}
+			
+		},
+		unregister: function (ev) {
+			// on unregister 
+			Ti.API.info('******* unregister, ' + ev.deviceToken);
+		},
+		data: function (data) {
+			// if we're here is because user has clicked on the notification
+			// and we set extras in the intent 
+			// and the app WAS RUNNING (=> RESUMED)
+			// (again don't worry, we'll see more of this later)
+		
+			try{
+				Ti.App.fireEvent('challengesViewRefresh');
+						
+				var alertWindow = Titanium.UI.createAlertDialog({
+					title : e.title,
+					message : e.message,
+					buttonNames : ['OK']
+				});
+
+				alertWindow.addEventListener('click', function(e) {
+					alertWindow.hide();
+				});
+				alertWindow.show();
+			} catch(e){
+				// something went wrong
+			}
+		}
+	});
+
+	// in order to unregister:
+	// require('net.iamyellow.gcmjs').unregister();
+
+}
+
+
 var beacons = [];
 
 function getBeacons(){

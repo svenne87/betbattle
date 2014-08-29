@@ -198,7 +198,7 @@ Alloy.Globals.postDeviceToken = function(deviceToken) {
 
 			// build the json string
 			var param = '{"device_token":"' + deviceToken + '", "device_type":"' + Ti.Platform.osname + '", "lang":"' + Alloy.Globals.LOCALE +'"}';
-			
+			Ti.API.log(Alloy.Globals.FACEBOOKOBJECT.attributes.id);
 			xhr.send(param);
 		} catch(e) {
 			//

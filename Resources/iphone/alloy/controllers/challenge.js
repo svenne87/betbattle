@@ -76,7 +76,48 @@ function Controller() {
                 });
                 optionsView.add(buttonViews[i]);
             }
-        } else if ("select" == gameType.option_type) for (var i = 0; gameType.options >= i; i++) ;
+        } else if ("select" == gameType.option_type) for (var i = 0; gameType.options >= i; i++) {
+            var i;
+            for (var i = 0; 15 >= i; i++) data.push(Titanium.UI.createPickerRow({
+                title: "" + i,
+                value: i
+            }));
+            var ModalPicker = require("lib/ModalPicker");
+            var visualPrefsOne = {
+                top: 30,
+                left: 5,
+                opacity: .85,
+                borderRadius: 3,
+                backgroundColor: "#FFF",
+                width: 140,
+                height: 40,
+                textAlign: "center"
+            };
+            var teamOnePicker = new ModalPicker(visualPrefsOne, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt, Alloy.Globals.PHRASES.closeBtnTxt);
+            modalPickersToHide.push(teamOnePicker);
+            teamOnePicker.text = "0";
+            teamOnePicker.self.addEventListener("change", function() {
+                gameArray[index].gameValue[0] = teamOnePicker.value;
+            });
+            var visualPrefsTwo = {
+                top: 30,
+                right: 5,
+                opacity: .85,
+                borderRadius: 3,
+                backgroundColor: "#FFF",
+                width: 140,
+                height: 40,
+                textAlign: "center"
+            };
+            var teamTwoPicker = new ModalPicker(visualPrefsTwo, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt, Alloy.Globals.PHRASES.closeBtnTxt);
+            modalPickersToHide.push(teamTwoPicker);
+            teamTwoPicker.text = "0";
+            teamTwoPicker.self.addEventListener("change", function() {
+                gameArray[index].gameValue[1] = teamTwoPicker.value;
+            });
+            resultView.add(teamOnePicker);
+            resultView.add(teamTwoPicker);
+        }
         gameTypeView.add(optionsView);
         $.challenge.add(gameTypeView);
     }
