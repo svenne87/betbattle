@@ -134,7 +134,7 @@ function Controller() {
             basicSwitch.value && (value = 1);
             var deviceType = Titanium.Platform.osname;
             var param = '{"device_token":"' + Alloy.Globals.DEVICETOKEN + '", "device_type":"' + deviceType + '", "push_status":' + value + ', "app_identifier":"' + Alloy.Globals.APPID + '", "lang":"' + Alloy.Globals.LOCALE + '"}';
-            sendSettingsServer(param, 0, basicSwitch.value);
+            Alloy.Globals.DEVICETOKEN && sendSettingsServer(param, 0, basicSwitch.value);
         });
         secondRow.add(basicSwitch);
         $.settingsView.add(secondRow);
@@ -180,6 +180,7 @@ function Controller() {
                         xhr.onerror = function(e) {
                             Ti.API.error("Bad Sever =>" + JSON.stringify(e.error));
                             uploadIndicator.hide();
+                            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                         };
                         xhr.onsendstream = function(e) {
                             uploadIndicator.value = e.progress;
@@ -193,6 +194,7 @@ function Controller() {
                             });
                         } catch (e) {
                             uploadIndicator.hide();
+                            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                         }
                         xhr.onload = function() {
                             if ("200" == this.status) {
@@ -204,6 +206,7 @@ function Controller() {
                             } else {
                                 uploadIndicator.hide();
                                 Ti.API.error("Error =>" + this.response);
+                                Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
                             }
                         };
                     } else Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);

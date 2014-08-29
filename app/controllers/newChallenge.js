@@ -153,7 +153,8 @@ function createTableRow(obj) {
 		layout : 'vertical',
 		height : 12
 	}));
-	row.gameID = obj.attributes.id;
+	//Ti.API.info("GAMEROW = "+ JSON.stringify(obj));
+	row.gameID = obj.attributes.game_id;
 	row.teamNames = obj.attributes.team_1.team_name + " - " + obj.attributes.team_2.team_name;
 	row.className = date.toUTCString();
 	return row;
