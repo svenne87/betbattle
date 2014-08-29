@@ -1,19 +1,16 @@
 /* Functions */
 
 function createGameType(gameType){
-	var viewHeight;
-	if(gameType.option_type == "button"){
-		viewHeight = (20 * gameType.options) + 40;
-	}else{
-		viewHeight = "80dp";
-	}
+	var type = gameType.type;
+	var viewHeight = "80dp";
+
 	var gameTypeView = Ti.UI.createView({
 		width: Ti.UI.FILL,
 		height: viewHeight,
 		layout: "vertical",
 	});
 	var gameTypeDescription = Ti.UI.createLabel({
-		text: "VIlket lag gör första målet?!",
+		text: Alloy.Globals.PHRASES.gameTypes[type].description,
 		textAlign: "center",
 		color: "#FFF",
 		//height: "30%",
@@ -26,25 +23,177 @@ function createGameType(gameType){
 	
 	var optionsView = Ti.UI.createView({
 		//height: "70%",
-		width: Ti.UI.FILL,
-		layout: "vertical",
+		width: 285,
+		layout: "horizontal",
 	});
 	
-	if(gameType.option_type == "button"){
 	
+	// object to store game id and value
+	var gameObj = new Object();
+	gameObj.gameId = gameID;
+	var valueArray = new Array(0, 0);
+	gameObj.gameValue = valueArray;
+	gameArray.push(gameObj);
+	var index = gameArray.indexOf(gameObj);
+	
+	
+	if(gameType.option_type == "button"){
+		var fontSize = 18;
+		var buttonViews = [];
 		for (var i = 0; i < gameType.options; i++){
+			
+			//get the corresponding text inside each button from the JSON file
+			var text = Alloy.Globals.PHRASES.gameTypes[type].buttonValues[i+1];
+			
+			//if the json says team1 or team2. get the actual team  names
+			if(text == "team1"){
+				Ti.API.info("TEAM" + JSON.stringify(gameObjects[0].attributes.team_1.team_name));
+				text = gameObjects[0].attributes.team_1.team_name;			
+			}else if(text == "team2"){
+				text = gameObjects[0].attributes.team_2.team_name;
+			}
+			//if text is too long make text smaller so it fits more.
+			if(text.length > 9){
+				fontSize = 12;
+			}
 			var buttonView = Ti.UI.createButton({
-				title: 'Hellos '+i,
+				title: text,
 			   	top: 5,
-			   	width: 100,
-			  	height: 20
+			   	borderColor: "#c5c5c5",
+			   	borderWidth: 1,
+			   	left: 5,
+			   	value: i+1,
+			   	font:{
+			   		fontSize: fontSize,
+			   	},
+			   	borderRadius: 5,
+			   	width: 90,
+			  	height: 40
 			});	
-			optionsView.add(buttonView);
+			
+			
+			
+			
+			buttonViews.push(buttonView);
+			
+		}
+		//add click event to all buttonviews. this is done here so that we can change color correctly when clicking one
+		for(var i in buttonViews){
+			buttonViews[i].addEventListener("click", function(e){
+				Ti.API.info("Clickade " + JSON.stringify(e));
+				gameArray[index].gameValue[0] = e.source.value;
+				changeColors(e);
+			});
+			optionsView.add(buttonViews[i]);
+		}
+		
+		//function that loops through and resets the color on all views. then changes the one clicked to the new colorw
+		function changeColors(e){
+			for(var i in buttonViews){
+				buttonViews[i].backgroundColor = "#303030";
+				e.source.backgroundColor = "#6d6d6d";
+			}
 		}
 		
 	}else if(gameType.option_type == "select"){
 		for (var i = 0; i <= gameType.options; i++){
 			///SKAPA EN SELECT
+			
+			if (OS_ANDROID) {
+		// create 1-15 values
+		for (var i = 0; i <= 15; i++) {
+			data.push(Titanium.UI.createPickerRow({
+				value : i,
+				title : '        ' + i + '    ',
+				fontSize : 30,
+				fontWeight : 'bold'
+			}));
+		};
+
+		var picker = Titanium.UI.createPicker({
+			top : 30,
+			left : 5,
+			width : Ti.UI.SIZE,
+			height : Ti.UI.SIZE
+		});
+
+
+		// on first picker change
+		teamOnePicker.addEventListener('change', function(e) {
+			e.selectedValue[0] = e.selectedValue[0].replace(/ /g, '');
+			gameArray[index].gameValue[0] = e.selectedValue[0];
+		});
+
+		// on second picker change
+		teamTwoPicker.addEventListener('change', function(e) {
+			e.selectedValue[0] = e.selectedValue[0].replace(/ /g, '');
+			gameArray[index].gameValue[1] = e.selectedValue[0];
+		});
+
+		teamOnePicker.add(data);
+		teamTwoPicker.add(data);
+		teamOnePicker.columns[0].width = Ti.UI.SIZE;
+		teamOnePicker.columns[0].height = Ti.UI.SIZE;
+		teamTwoPicker.columns[0].width = Ti.UI.SIZE;
+		teamTwoPicker.columns[0].height = Ti.UI.SIZE;
+
+		resultView.add(teamOnePicker);
+		resultView.add(teamTwoPicker);
+
+	} else if (OS_IOS) {
+
+		// create 1-15 values
+		for (var i = 0; i <= 15; i++) {
+			data.push(Titanium.UI.createPickerRow({
+				title : '' + i,
+				value : i
+			}));
+		};
+
+		var ModalPicker = require("lib/ModalPicker");
+		var visualPrefsOne = {
+			top : 30,
+			left : 5,
+			opacity : 0.85,
+			borderRadius : 3,
+			backgroundColor : '#FFF',
+			width : 140,
+			height : 40,
+			textAlign : 'center'
+		};
+
+		var teamOnePicker = new ModalPicker(visualPrefsOne, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt, Alloy.Globals.PHRASES.closeBtnTxt);
+		modalPickersToHide.push(teamOnePicker);
+
+		teamOnePicker.text = '0';
+
+		teamOnePicker.self.addEventListener('change', function(e) {
+			gameArray[index].gameValue[0] = teamOnePicker.value;
+		});
+
+		var visualPrefsTwo = {
+			top : 30,
+			right : 5,
+			opacity : 0.85,
+			borderRadius : 3,
+			backgroundColor : '#FFF',
+			width : 140,
+			height : 40,
+			textAlign : 'center'
+		};
+
+		var teamTwoPicker = new ModalPicker(visualPrefsTwo, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt, Alloy.Globals.PHRASES.closeBtnTxt);
+		modalPickersToHide.push(teamTwoPicker);
+		teamTwoPicker.text = '0';
+
+		teamTwoPicker.self.addEventListener('change', function(e) {
+			gameArray[index].gameValue[1] = teamTwoPicker.value;
+		});
+
+		resultView.add(teamOnePicker);
+		resultView.add(teamTwoPicker);
+	}
+			
 		}
 	}
 	gameTypeView.add(optionsView);
@@ -1180,8 +1329,8 @@ function createLayout() {
 		}
 		// create views
 		var gameTip = {
-			options: 2,
-			id: 1,
+			options: 3,
+			type: 2,
 			option_type: "button",
 			number_of_values: 1,
 		};
@@ -1222,6 +1371,11 @@ if ( typeof args.round !== 'undefined') {
 var leagueName = '';
 if ( typeof args.leagueName !== 'undefined') {
 	leagueName = args.leagueName;
+}
+
+var gameID = -1;
+if( typeof args.gameID !== 'undefined'){
+	gameID = args.gameID;
 }
 
 var teamNames = '';
@@ -1342,7 +1496,8 @@ if (Alloy.Globals.checkConnection()) {
 			}
 
 		} else {
-			xhr.open('GET', Alloy.Globals.BETKAMPENGETGAMESFORCHALLENGEURL + '/?uid=' + Alloy.Globals.BETKAMPENUID + '&league=' + leagueId + '&round=' + roundId + '&lang=' + Alloy.Globals.LOCALE);
+			Ti.API.info("skiickaar" + gameID);
+			xhr.open('GET', Alloy.Globals.BETKAMPENGETGAMESFORCHALLENGEURL + '/?uid=' + Alloy.Globals.BETKAMPENUID + '&gameID=' + gameID + '&lang=' + Alloy.Globals.LOCALE);
 		}
 
 		xhr.setRequestHeader("content-type", "application/json");
@@ -1357,48 +1512,50 @@ if (Alloy.Globals.checkConnection()) {
 	xhr.onload = function() {
 		if (this.status == '200') {
 			if (this.readyState == 4) {
+				Ti.API.info("HÄMTAT" + JSON.stringify(this.responseText));
 				var response = JSON.parse(this.responseText);
+				Ti.API.info("THIS " + JSON.stringify(response));
 				// the response is an array with the different game types
 				// create objects for each game type
-				for (var i in response) {
-					var teamOneName = response[i].team_1.team_name;
+				
+					var teamOneName = response.team_1.team_name;
 
 					if (teamOneName.length > 16) {
 						teamOneName = teamOneName.substring(0, 13) + '...';
 					}
 
-					var teamTwoName = response[i].team_2.team_name;
+					var teamTwoName = response.team_2.team_name;
 
 					if (teamTwoName.length > 16) {
 						teamTwoName = teamTwoName.substring(0, 13) + '...';
 					}
 
 					var team_1 = {
-						team_id : response[i].team_1.team_id,
-						team_logo : response[i].team_1.team_logo,
+						team_id : response.team_1.team_id,
+						team_logo : response.team_1.team_logo,
 						team_name : teamOneName
 					};
 					var team_2 = {
-						team_id : response[i].team_2.team_id,
-						team_logo : response[i].team_2.team_logo,
+						team_id : response.team_2.team_id,
+						team_logo : response.team_2.team_logo,
 						team_name : teamTwoName
 					};
 
 					var gameObject = Alloy.createModel('game', {
-						game_date : response[i].game_date,
-						game_id : response[i].game_id,
-						game_type : response[i].game_type,
-						league_id : response[i].league_id,
-						league_name : response[i].league_name,
-						round_id : response[i].round_id,
-						status : response[i].status,
+						game_date : response.game_date,
+						game_id : response.game_id,
+						game_type : response.game_type,
+						league_id : response.league_id,
+						league_name : response.league_name,
+						round_id : response.round_id,
+						status : response.status,
 						team_1 : team_1,
 						team_2 : team_2,
-						pot : response[i].pot
+						pot : response.pot
 					});
 					// add to an array
 					gameObjects.push(gameObject);
-				}
+				
 
 				// create the layout and check for coins
 				Alloy.Globals.checkCoins();

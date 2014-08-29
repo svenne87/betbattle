@@ -153,6 +153,8 @@ function createTableRow(obj) {
 		layout : 'vertical',
 		height : 12
 	}));
+	//Ti.API.info("GAMEROW = "+ JSON.stringify(obj));
+	row.gameID = obj.attributes.game_id;
 	row.teamNames = obj.attributes.team_1.team_name + " - " + obj.attributes.team_2.team_name;
 	row.className = date.toUTCString();
 	return row;
@@ -305,6 +307,7 @@ function createAndShowTableView(league, array) {
 			var now = new Date();
 
 			var teamNames = e.rowData.teamNames;
+			var gameID = e.rowData.gameID;
 
 			if (now.getTime() > matchDate.getTime()) {
 				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.roundHasStartedErrorTxt);
@@ -314,6 +317,7 @@ function createAndShowTableView(league, array) {
 					leagueName : leagueName,
 					leagueId : leagueId,
 					teamNames : teamNames,
+					gameID: gameID,
 				};
 
 				var win = Alloy.createController('challenge', arg).getView();

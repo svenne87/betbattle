@@ -9,15 +9,21 @@ function __processArg(obj, key) {
 
 function Controller() {
     function createGameType(gameType) {
-        var viewHeight;
-        viewHeight = "button" == gameType.option_type ? 20 * gameType.options + 40 : "80dp";
+        function changeColors(e) {
+            for (var i in buttonViews) {
+                buttonViews[i].backgroundColor = "#303030";
+                e.source.backgroundColor = "#6d6d6d";
+            }
+        }
+        var type = gameType.type;
+        var viewHeight = "80dp";
         var gameTypeView = Ti.UI.createView({
             width: Ti.UI.FILL,
             height: viewHeight,
             layout: "vertical"
         });
         var gameTypeDescription = Ti.UI.createLabel({
-            text: "VIlket lag gör första målet?!",
+            text: Alloy.Globals.PHRASES.gameTypes[type].description,
             textAlign: "center",
             color: "#FFF",
             font: {
@@ -27,17 +33,49 @@ function Controller() {
         });
         gameTypeView.add(gameTypeDescription);
         var optionsView = Ti.UI.createView({
-            width: Ti.UI.FILL,
-            layout: "vertical"
+            width: 285,
+            layout: "horizontal"
         });
-        if ("button" == gameType.option_type) for (var i = 0; gameType.options > i; i++) {
-            var buttonView = Ti.UI.createButton({
-                title: "Hellos " + i,
-                top: 5,
-                width: 100,
-                height: 20
-            });
-            optionsView.add(buttonView);
+        var gameObj = new Object();
+        gameObj.gameId = gameID;
+        var valueArray = new Array(0, 0);
+        gameObj.gameValue = valueArray;
+        gameArray.push(gameObj);
+        var index = gameArray.indexOf(gameObj);
+        if ("button" == gameType.option_type) {
+            var fontSize = 18;
+            var buttonViews = [];
+            for (var i = 0; gameType.options > i; i++) {
+                var text = Alloy.Globals.PHRASES.gameTypes[type].buttonValues[i + 1];
+                if ("team1" == text) {
+                    Ti.API.info("TEAM" + JSON.stringify(gameObjects[0].attributes.team_1.team_name));
+                    text = gameObjects[0].attributes.team_1.team_name;
+                } else "team2" == text && (text = gameObjects[0].attributes.team_2.team_name);
+                text.length > 9 && (fontSize = 12);
+                var buttonView = Ti.UI.createButton({
+                    title: text,
+                    top: 5,
+                    borderColor: "#c5c5c5",
+                    borderWidth: 1,
+                    left: 5,
+                    value: i + 1,
+                    font: {
+                        fontSize: fontSize
+                    },
+                    borderRadius: 5,
+                    width: 90,
+                    height: 40
+                });
+                buttonViews.push(buttonView);
+            }
+            for (var i in buttonViews) {
+                buttonViews[i].addEventListener("click", function(e) {
+                    Ti.API.info("Clickade " + JSON.stringify(e));
+                    gameArray[index].gameValue[0] = e.source.value;
+                    changeColors(e);
+                });
+                optionsView.add(buttonViews[i]);
+            }
         } else if ("select" == gameType.option_type) for (var i = 0; gameType.options >= i; i++) ;
         gameTypeView.add(optionsView);
         $.challenge.add(gameTypeView);
@@ -658,8 +696,8 @@ function Controller() {
                 "undefined" == typeof coinsToJoin && (coinsToJoin = parseInt(challengeObject.attributes.potential_pot) / challengeObject.attributes.opponents.length);
             }
             var gameTip = {
-                options: 2,
-                id: 1,
+                options: 3,
+                type: 2,
                 option_type: "button",
                 number_of_values: 1
             };
@@ -799,6 +837,8 @@ function Controller() {
     "undefined" != typeof args.round && (roundId = args.round);
     var leagueName = "";
     "undefined" != typeof args.leagueName && (leagueName = args.leagueName);
+    var gameID = -1;
+    "undefined" != typeof args.gameID && (gameID = args.gameID);
     var teamNames = "";
     "undefined" != typeof args.teamNames && (teamNames = args.teamNames);
     var leagueId = -1;
@@ -838,7 +878,10 @@ function Controller() {
             Ti.API.error("Bad Sever =>" + e.error);
         };
         try {
-            -1 === roundId ? -1 === tournamentIndex ? xhr.open("GET", Alloy.Globals.BETKAMPENGAMESURL + "/?uid=" + Alloy.Globals.BETKAMPENUID + "&cid=" + challengeObject.attributes.id + "&lang=" + Alloy.Globals.LOCALE) : xhr.open("GET", Alloy.Globals.BETKAMPENGETGAMESFORTOURNAMENT + "/?uid=" + Alloy.Globals.BETKAMPENUID + "&tid=" + challengeObject.attributes.id + "&round=" + challengeObject.attributes.round + "&lang=" + Alloy.Globals.LOCALE) : xhr.open("GET", Alloy.Globals.BETKAMPENGETGAMESFORCHALLENGEURL + "/?uid=" + Alloy.Globals.BETKAMPENUID + "&league=" + leagueId + "&round=" + roundId + "&lang=" + Alloy.Globals.LOCALE);
+            if (-1 === roundId) -1 === tournamentIndex ? xhr.open("GET", Alloy.Globals.BETKAMPENGAMESURL + "/?uid=" + Alloy.Globals.BETKAMPENUID + "&cid=" + challengeObject.attributes.id + "&lang=" + Alloy.Globals.LOCALE) : xhr.open("GET", Alloy.Globals.BETKAMPENGETGAMESFORTOURNAMENT + "/?uid=" + Alloy.Globals.BETKAMPENUID + "&tid=" + challengeObject.attributes.id + "&round=" + challengeObject.attributes.round + "&lang=" + Alloy.Globals.LOCALE); else {
+                Ti.API.info("skiickaar" + gameID);
+                xhr.open("GET", Alloy.Globals.BETKAMPENGETGAMESFORCHALLENGEURL + "/?uid=" + Alloy.Globals.BETKAMPENUID + "&gameID=" + gameID + "&lang=" + Alloy.Globals.LOCALE);
+            }
             xhr.setRequestHeader("content-type", "application/json");
             xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
             xhr.setTimeout(Alloy.Globals.TIMEOUT);
@@ -849,36 +892,36 @@ function Controller() {
         }
         xhr.onload = function() {
             if ("200" == this.status) if (4 == this.readyState) {
+                Ti.API.info("HÄMTAT" + JSON.stringify(this.responseText));
                 var response = JSON.parse(this.responseText);
-                for (var i in response) {
-                    var teamOneName = response[i].team_1.team_name;
-                    teamOneName.length > 16 && (teamOneName = teamOneName.substring(0, 13) + "...");
-                    var teamTwoName = response[i].team_2.team_name;
-                    teamTwoName.length > 16 && (teamTwoName = teamTwoName.substring(0, 13) + "...");
-                    var team_1 = {
-                        team_id: response[i].team_1.team_id,
-                        team_logo: response[i].team_1.team_logo,
-                        team_name: teamOneName
-                    };
-                    var team_2 = {
-                        team_id: response[i].team_2.team_id,
-                        team_logo: response[i].team_2.team_logo,
-                        team_name: teamTwoName
-                    };
-                    var gameObject = Alloy.createModel("game", {
-                        game_date: response[i].game_date,
-                        game_id: response[i].game_id,
-                        game_type: response[i].game_type,
-                        league_id: response[i].league_id,
-                        league_name: response[i].league_name,
-                        round_id: response[i].round_id,
-                        status: response[i].status,
-                        team_1: team_1,
-                        team_2: team_2,
-                        pot: response[i].pot
-                    });
-                    gameObjects.push(gameObject);
-                }
+                Ti.API.info("THIS " + JSON.stringify(response));
+                var teamOneName = response.team_1.team_name;
+                teamOneName.length > 16 && (teamOneName = teamOneName.substring(0, 13) + "...");
+                var teamTwoName = response.team_2.team_name;
+                teamTwoName.length > 16 && (teamTwoName = teamTwoName.substring(0, 13) + "...");
+                var team_1 = {
+                    team_id: response.team_1.team_id,
+                    team_logo: response.team_1.team_logo,
+                    team_name: teamOneName
+                };
+                var team_2 = {
+                    team_id: response.team_2.team_id,
+                    team_logo: response.team_2.team_logo,
+                    team_name: teamTwoName
+                };
+                var gameObject = Alloy.createModel("game", {
+                    game_date: response.game_date,
+                    game_id: response.game_id,
+                    game_type: response.game_type,
+                    league_id: response.league_id,
+                    league_name: response.league_name,
+                    round_id: response.round_id,
+                    status: response.status,
+                    team_1: team_1,
+                    team_2: team_2,
+                    pot: response.pot
+                });
+                gameObjects.push(gameObject);
                 Alloy.Globals.checkCoins();
                 indicator.closeIndicator();
                 createLayout();

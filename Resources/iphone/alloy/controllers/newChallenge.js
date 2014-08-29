@@ -112,6 +112,7 @@ function Controller() {
             layout: "vertical",
             height: 12
         }));
+        row.gameID = obj.attributes.game_id;
         row.teamNames = obj.attributes.team_1.team_name + " - " + obj.attributes.team_2.team_name;
         row.className = date.toUTCString();
         return row;
@@ -200,12 +201,14 @@ function Controller() {
                 matchDate.setHours(matchDate.getHours() - 2);
                 var now = new Date();
                 var teamNames = e.rowData.teamNames;
+                var gameID = e.rowData.gameID;
                 if (now.getTime() > matchDate.getTime()) Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.roundHasStartedErrorTxt); else {
                     var arg = {
                         round: e.row.id,
                         leagueName: leagueName,
                         leagueId: leagueId,
-                        teamNames: teamNames
+                        teamNames: teamNames,
+                        gameID: gameID
                     };
                     var win = Alloy.createController("challenge", arg).getView();
                     Alloy.Globals.WINDOWS.push(win);
