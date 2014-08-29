@@ -106,7 +106,7 @@ saveName.addEventListener('click', function(e) {
 l = 0;
 
 //get all your friends
-function createFriendGUI(obj, groupId, i) {
+function createFriendGUI(obj, groupId) {
 	l++;
 	if (l == 1) {
 		var line = Ti.UI.createView({
@@ -146,12 +146,25 @@ function createFriendGUI(obj, groupId, i) {
 		left : '1%'
 	});
 	row.add(member);
+			
+	//profilepicture
+	var image;
+	if(typeof obj.fbid !== 'undefined') {
+		image = "https://graph.facebook.com/"+ obj.fbid +"/picture?type=large";
+	} else {
+		// get betkampen image
+		image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + obj.id + '.png';
+	}
 
 	var profilePic = Titanium.UI.createImageView({
-		image : "/images/no_pic.png",
+	image : image,
 		height : 25,
 		width : 25,
 		left : '2%'
+	});
+	profilePic.addEventListener('error',function(e){
+		// fallback for image
+		profilePic.image = '/images/no_pic.png';
 	});
 	member.add(profilePic);
 
@@ -199,7 +212,6 @@ function createFriendGUI(obj, groupId, i) {
 				group_id : e.source.gid,
 				id : e.source.id,
 				name : e.source.name,
-				admin : 0
 			};
 			addMember.send(params);
 			Ti.API.info(params);
@@ -238,7 +250,7 @@ function getFriends(groupId) {
 
 			for (var i = 0; i < friends.length; i++) {
 				//send friends and group id to friend selector
-				createFriendGUI(friends[i], groupId, i);
+				createFriendGUI(friends[i], groupId);
 			}
 			//create button to save group when you have selected friends
 			var saveGroupBtn = Ti.UI.createButton({
@@ -281,11 +293,9 @@ function getGroup() {
 	var client = Ti.Network.createHTTPClient({
 		// function called when the response data is available
 		onload : function(e) {
-			//Ti.API.info("Received text: " + this.responseText);
+			Ti.API.info("Received text: " + this.responseText);
 			groupId = JSON.parse(this.responseText);
-			//Ti.API.info(groupId.data[0].gID);
 			getName(groupId.data[0].gID);
-			getFriends(groupId.data[0].gID);
 
 		},
 		// function called when an error occurs, including a timeout
@@ -301,7 +311,7 @@ function getGroup() {
 	client.send();
 }
 
-//get your one namn to add as admin in your group
+ //get your one namn to add as admin in your group
 function getName(groupID) {
 	var myName = null;
 	var client = Ti.Network.createHTTPClient({
@@ -309,9 +319,17 @@ function getName(groupID) {
 		onload : function(e) {
 			Ti.API.info("Received text: " + this.responseText);
 			myName = JSON.parse(this.responseText);
-
-			//Ti.API.info(myName.data[0].name + '->' + groupID);
-			setAdmin(groupID, myName.data[0].name);
+			
+			var addMe = Ti.Network.createHTTPClient();
+			addMe.open("POST", Alloy.Globals.BETKAMPENURL + '/api/add_group_member.php');
+			var params = {
+				group_id : groupID,
+				id : Alloy.Globals.BETKAMPENUID,
+				name : myName.data[0].name,
+			};
+			addMe.send(params);
+			
+			getFriends(groupID);
 
 		},
 		// function called when an error occurs, including a timeout
@@ -325,21 +343,6 @@ function getName(groupID) {
 	client.open("GET", Alloy.Globals.BETKAMPENURL + '/api/get_members.php?myUid=' + Alloy.Globals.BETKAMPENUID);
 	// Send the request.
 	client.send();
-}
-
-//set you as admin
-function setAdmin(groupId, myName) {
-	var adminName = Ti.Network.createHTTPClient();
-
-	adminName.open("POST", Alloy.Globals.BETKAMPENURL + '/api/add_group_member.php');
-	var params = {
-		group_id : groupId,
-		id : Alloy.Globals.BETKAMPENUID,
-		name : myName,
-		admin : 1
-	};
-	adminName.send(params);
-	//Ti.API.info(params);
 }
 
 

@@ -96,10 +96,10 @@ profileTopView.add(profilePictureView);
 
 var image;
 if(typeof Alloy.Globals.FACEBOOKOBJECT !== 'undefined') {
-	imaeg = "https://graph.facebook.com/"+Alloy.Globals.FACEBOOKOBJECT.id+"/picture?type=large";
+	image = "https://graph.facebook.com/"+Alloy.Globals.FACEBOOKOBJECT.id+"/picture?type=large";
 } else {
 	// get betkampen image
-	image = '';
+	image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + Alloy.Globals.BETKAMPENUID + '.png';
 }
 
 var profilePic = Ti.UI.createImageView({
@@ -108,6 +108,13 @@ var profilePic = Ti.UI.createImageView({
 	height: 90,
 	borderRadius : 45
 });
+
+// default if no image is found
+profilePic.addEventListener('error',function(e){
+	profilePic.image = '/images/no_pic.png';
+});
+
+
 profilePictureView.add(profilePic);
 
 var profileLevelView = Ti.UI.createView({
@@ -434,8 +441,6 @@ function getAchievements(){
 						achievement.addEventListener("click", function(e){
 							
 							if(OS_ANDROID){
-								
-								
 								var w = Ti.UI.createView({
 									height: "100%",
 									width: "100%",

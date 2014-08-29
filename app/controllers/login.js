@@ -419,14 +419,23 @@ if (Alloy.Globals.checkConnection()) {
 }
 
 /* Only used for Betkampen token sign in! */
-// TODO handle refresh tokens here aswell
+var refreshTry = 0;
+
 function loginBetkampenAuthenticated() {
 	// Get betkampenID with valid token
 	var xhr = Titanium.Network.createHTTPClient();
 	xhr.onerror = function(e) {
-		Ti.API.error('Bad Sever =>' + e.error);
-		indicator.closeIndicator();
-		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+		Ti.API.error('Bad Sever =>' + JSON.stringify(e));
+		if(e.code == 401) {
+			// if this is first try, then try refresh token
+			if(refreshTry === 0) {
+				refreshTry = 1;
+				authWithRefreshToken();
+			}	
+		} else {
+			indicator.closeIndicator();
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+		}
 	};
 
 	try {
@@ -458,13 +467,9 @@ function loginBetkampenAuthenticated() {
 						getChallengesAndStart();
 					}
 				} else {
-					if(this.status == '401'){
-						// TODO refresh token? staus 401 is returned?
-						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.loginCredentialsError);
-					}
 					indicator.closeIndicator();
+					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.loginCredentialsError);
 				}
-
 			} else {
 				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 				indicator.closeIndicator();
@@ -478,6 +483,73 @@ function loginBetkampenAuthenticated() {
 		}
 	};			
 }
+
+// Try to authenticate using refresh token
+function authWithRefreshToken() {
+	if(Alloy.Globals.checkConnection()){
+		var xhr = Titanium.Network.createHTTPClient();
+		xhr.onerror = function(e){
+			Ti.API.error('Bad Sever reAuth =>' + JSON.stringify(e));
+			indicator.closeIndicator();
+			refreshTry = 0;
+			// reAuth failed. Need to login again. 400 = invalid token
+			Alloy.Globals.BETKAMPEN = null;
+			if(e.code != 400) {
+				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+			}
+		};
+		try { 
+			xhr.open('POST', Alloy.Globals.BETKAMPENEMAILLOGIN);
+			xhr.setTimeout(Alloy.Globals.TIMEOUT);
+
+			var params = {
+				grant_type : 'refresh_token',
+				refresh_token : Alloy.Globals.BETKAMPEN.refresh_token,
+				client_id : 'betkampen_mobile',
+				client_secret : 'not_so_s3cr3t'
+			};
+			xhr.send(params);
+		} catch(e) {
+			indicator.closeIndicator();
+			refreshTry = 0;
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+		}
+		xhr.onload = function() {
+			Ti.API.log(this.status);
+			if (this.status == '200') {
+				if (this.readyState == 4) {
+					var response = '';
+					try {
+						response = JSON.parse(this.responseText);
+					} catch(e) {
+
+					}
+					
+					Alloy.Globals.BETKAMPEN = {
+						token : "TOKEN " + response.access_token,
+						valid : response.expires_in,
+						refresh_token : Alloy.Globals.BETKAMPEN.refresh_token   // since we don't get a new one here
+					};
+
+					// brand new token, try to authenticate
+					loginBetkampenAuthenticated();
+					Ti.API.log(response);
+				} else {
+					Ti.API.log(this.response);
+				}
+			} else {
+				Ti.API.error("Error =>" + this.response);
+				indicator.closeIndicator();
+				refreshTry = 0;
+				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+			}
+		};
+	} else {
+		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+	}
+}
+
+
 
 $.login.addEventListener('close', function() {
 	indicator.closeIndicator();

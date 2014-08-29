@@ -41,22 +41,26 @@ var socialShareLabel = Ti.UI.createLabel({
 });
 mainView.add(socialShareLabel);
 //----------------------------------------------------------------------EMAIL-----------------------------------------------------------------------------
-var mailBtn = Titanium.UI.createButton({
+var mailBtn = Titanium.UI.createView({
 	top:"4%",
 	height: '11%',
 	width: '80%',
 	left: '10%',
+	backgroundColor: '#fff',
+	borderRadius: 5
+});
+mainView.add(mailBtn);
+
+var mailIconLabel = Titanium.UI.createLabel({
 	font : {
 		fontFamily : font,
 		fontSize: 22
 	},
-	title: fontawesome.icon('fa-file-text-o'),
-	backgroundColor: '#fff',
+	text: fontawesome.icon('fa-file-text-o'),
+	left: '5%',
 	color: '#000',
-	textAlign: "left",
-	borderRadius: 5
 });
-mainView.add(mailBtn);
+mailBtn.add(mailIconLabel);
 
 mailLabel = Titanium.UI.createLabel({
 	text: Alloy.Globals.PHRASES.sendMailTxt,
@@ -68,22 +72,26 @@ mailLabel = Titanium.UI.createLabel({
 });
 mailBtn.add(mailLabel);
 //----------------------------------------------------------------------SMS-----------------------------------------------------------------------------
-var smsBtn = Titanium.UI.createButton({
+var smsBtn = Titanium.UI.createView({
 	top:"2%",
 	height: '11%',
 	width: '80%',
 	left: '10%',
+	backgroundColor: '#fff',
+	borderRadius: 5
+});
+mainView.add(smsBtn);
+
+var smsIconLabel = Titanium.UI.createLabel({
 	font : {
 		fontFamily : font,
 		fontSize: 22
 	},
-	title: fontawesome.icon('fa-mobile'),
-	backgroundColor: '#fff',
+	text: fontawesome.icon('fa-mobile'),
+	left: '5%',
 	color: '#000',
-	textAlign: "left",
-	borderRadius: 5
 });
-mainView.add(smsBtn);
+smsBtn.add(smsIconLabel);
 
 smsLabel = Titanium.UI.createLabel({
 	text: Alloy.Globals.PHRASES.sendSMSTxt,
@@ -95,22 +103,26 @@ smsLabel = Titanium.UI.createLabel({
 });
 smsBtn.add(smsLabel);
 //----------------------------------------------------------------------FACEBOOK-----------------------------------------------------------------------------
-var fbBtn = Titanium.UI.createButton({
+var fbBtn = Titanium.UI.createView({
 	top:"2%",
 	height: '11%',
 	width: '80%',
 	left: '10%',
+	backgroundColor: '#3B5998',
+	borderRadius: 5
+});
+mainView.add(fbBtn);
+
+var fbIconLabel = Titanium.UI.createLabel({
 	font : {
 		fontFamily : font,
 		fontSize: 22
 	},
-	title: fontawesome.icon('fa-facebook'),
-	backgroundColor: '#3B5998',
-	color: '#FFF',
-	textAlign: "left",
-	borderRadius: 5
+	text: fontawesome.icon('fa-facebook'),
+	left: '5%',
+	color: '#fff',
 });
-mainView.add(fbBtn);
+fbBtn.add(fbIconLabel);
 
 fbLabel = Titanium.UI.createLabel({
 	text: Alloy.Globals.PHRASES.shareFBTxt,
@@ -122,22 +134,26 @@ fbLabel = Titanium.UI.createLabel({
 });
 fbBtn.add(fbLabel);
 //-------------------------------------------------------------------TWITTER--------------------------------------------------------------------------------
-var twitterBtn = Titanium.UI.createButton({
+var twitterBtn = Titanium.UI.createView({
 	top:"2%",
 	height: '11%',
 	width: '80%',
 	left: '10%',
+	backgroundColor: '#00ACED',
+	borderRadius: 5
+});
+mainView.add(twitterBtn);
+
+var twitterIconLabel = Titanium.UI.createLabel({
 	font : {
 		fontFamily : font,
 		fontSize: 22
 	},
-	title: fontawesome.icon('fa-twitter'),
-	backgroundColor: '#00ACED',
-	color: '#FFF',
-	textAlign: "left",
-	borderRadius: 5
+	text: fontawesome.icon('fa-twitter'),
+	left: '5%',
+	color: '#fff',
 });
-mainView.add(twitterBtn);
+twitterBtn.add(twitterIconLabel);
 
 twitterLabel = Titanium.UI.createLabel({
 	text: Alloy.Globals.PHRASES.shareTwitterTxt,
@@ -149,22 +165,26 @@ twitterLabel = Titanium.UI.createLabel({
 });
 twitterBtn.add(twitterLabel);
 //---------------------------------------------------------------------------------------------------------------------------------------------------
-var googleBtn = Titanium.UI.createButton({
+var googleBtn = Titanium.UI.createView({
 	top:"2%",
 	height: '11%',
 	width: '80%',
 	left: '10%',
+	backgroundColor: '#DD4B39',
+	borderRadius: 5
+});
+mainView.add(googleBtn);
+
+var gplusIconLabel = Titanium.UI.createLabel({
 	font : {
 		fontFamily : font,
 		fontSize: 22
 	},
-	title: fontawesome.icon('fa-google-plus'),
-	backgroundColor: '#DD4B39',
-	color: '#FFF',
-	textAlign: "left",
-	borderRadius: 5
+	text: fontawesome.icon('fa-google-plus'),
+	left: '5%',
+	color: '#fff',
 });
-mainView.add(googleBtn);
+googleBtn.add(gplusIconLabel);
 
 googleLabel = Titanium.UI.createLabel({
 	text: Alloy.Globals.PHRASES.shareGoogleTxt,

@@ -32,25 +32,29 @@ var friendZoneLabel = Ti.UI.createLabel({
 mainView.add(friendZoneLabel);
 
 
-var fbFriendBtn = Titanium.UI.createButton({
+var fbFriendBtn = Titanium.UI.createView({
 	//title: Alloy.Globals.PHRASES.fbFriendsTxt,
 	top:"5%",
 	height: '10%',
 	width: '80%',
 	left: '10%',
-	font : {
-		fontFamily : font,
-		fontSize: 22
-	},
-	title: fontawesome.icon('fa-facebook'),
 	backgroundColor: '#3B5998',
-	color: '#fff',
-	textAlign: "left",
 	borderRadius: 5
 });
 mainView.add(fbFriendBtn);
 
-fbLabel = Titanium.UI.createLabel({
+var fbIconLabel = Titanium.UI.createLabel({
+	font : {
+		fontFamily : font,
+		fontSize: 22
+	},
+	text: fontawesome.icon('fa-facebook'),
+	left: '5%',
+	color: '#fff',
+});
+fbFriendBtn.add(fbIconLabel);
+
+var fbLabel = Titanium.UI.createLabel({
 	text:  Alloy.Globals.PHRASES.fbFriendsTxt,
 	font: {
 		fontSize: 18,
@@ -60,24 +64,28 @@ fbLabel = Titanium.UI.createLabel({
 });
 fbFriendBtn.add(fbLabel);
 
-var myFriendBtn = Titanium.UI.createButton({
+var myFriendBtn = Titanium.UI.createView({
 	top:"1%",
 	height: '10%',
 	width: '80%',
 	left: '10%',
-	font : {
-		fontFamily : font,
-		fontSize: 22
-	},
-	title: fontawesome.icon('fa-user'),
 	backgroundColor: '#fff',
-	color: '#000',
-	textAlign: "left",
 	borderRadius: 5
 });
 mainView.add(myFriendBtn);
 
-mFriendLabel = Titanium.UI.createLabel({
+var mFIconLabel = Titanium.UI.createLabel({
+	font : {
+		fontFamily : font,
+		fontSize: 22
+	},
+	text: fontawesome.icon('fa-user'),
+	left: '5%',
+	color: '#000',
+});
+myFriendBtn.add(mFIconLabel);
+
+var mFriendLabel = Titanium.UI.createLabel({
 	text: Alloy.Globals.PHRASES.myFriendsTxt,
 	font: {
 		fontSize: 18,
@@ -88,24 +96,28 @@ mFriendLabel = Titanium.UI.createLabel({
 myFriendBtn.add(mFriendLabel);
 
 
-var myGroupsBtn = Titanium.UI.createButton({
+var myGroupsBtn = Titanium.UI.createView({
 	top:"1%",
 	height: '10%',
 	width: '80%',
 	left: '10%',
-	font : {
-		fontFamily : font,
-		fontSize: 22
-	},
-	title: fontawesome.icon('fa-users'),
 	backgroundColor: '#fff',
-	color: '#000',
-	textAlign: "left",
 	borderRadius: 5
 });
 mainView.add(myGroupsBtn);
 
-mGroupLabel = Titanium.UI.createLabel({
+var mgIconLabel = Titanium.UI.createLabel({
+	font : {
+		fontFamily : font,
+		fontSize: 22
+	},
+	text: fontawesome.icon('fa-users'),
+	left: '5%',
+	color: '#000',
+});
+myGroupsBtn.add(mgIconLabel);
+
+var mGroupLabel = Titanium.UI.createLabel({
 	text: Alloy.Globals.PHRASES.myGroupsTxt,
 	font: {
 		fontSize: 18,
@@ -115,24 +127,28 @@ mGroupLabel = Titanium.UI.createLabel({
 });
 myGroupsBtn.add(mGroupLabel);
 
-var addFriendsBtn = Titanium.UI.createButton({
+var addFriendsBtn = Titanium.UI.createView({
 	top:"10%",
 	height: '10%',
 	width: '80%',
 	left: '10%',
-	font : {
-		fontFamily : font,
-		fontSize: 22
-	},
-	title: fontawesome.icon('fa-plus'),
 	backgroundColor: '#fff',
-	color: '#000',
-	textAlign: "left",
 	borderRadius: 5
 });
 mainView.add(addFriendsBtn);
 
-aFriendLabel = Titanium.UI.createLabel({
+var afIconLabel = Titanium.UI.createLabel({
+	font : {
+		fontFamily : font,
+		fontSize: 22
+	},
+	text: fontawesome.icon('fa-plus'),
+	left: '5%',
+	color: '#000',
+});
+addFriendsBtn.add(afIconLabel);
+
+var aFriendLabel = Titanium.UI.createLabel({
 	text: Alloy.Globals.PHRASES.addFriendsTxt,
 	font: {
 		fontSize: 18,
@@ -142,22 +158,26 @@ aFriendLabel = Titanium.UI.createLabel({
 });
 addFriendsBtn.add(aFriendLabel);
 
-var createGroupBtn = Titanium.UI.createButton({
+var createGroupBtn = Titanium.UI.createView({
 	top:"1%",
 	height: '10%',
 	width: '80%',
 	left: '10%',
+	backgroundColor: '#fff',
+	borderRadius: 5
+});
+mainView.add(createGroupBtn);
+
+var cgIconLabel = Titanium.UI.createLabel({
 	font : {
 		fontFamily : font,
 		fontSize: 22
 	},
-	title: fontawesome.icon('fa-plus'),
-	backgroundColor: '#fff',
+	text: fontawesome.icon('fa-plus'),
+	left: '5%',
 	color: '#000',
-	textAlign: "left",
-	borderRadius: 5
 });
-mainView.add(createGroupBtn);
+createGroupBtn.add(cgIconLabel);
 
 cGroupLabel = Titanium.UI.createLabel({
 	text: Alloy.Globals.PHRASES.createGroupTxt,
@@ -169,22 +189,26 @@ cGroupLabel = Titanium.UI.createLabel({
 });
 createGroupBtn.add(cGroupLabel);
 
-var shareBtn = Titanium.UI.createButton({
+var shareBtn = Titanium.UI.createView({
 	top:"1%",
 	height: '10%',
 	width: '80%',
 	left: '10%',
+	backgroundColor: '#fff',
+	borderRadius: 5
+});
+mainView.add(shareBtn);
+
+var sIconLabel = Titanium.UI.createLabel({
 	font : {
 		fontFamily : font,
 		fontSize: 22
 	},
-	title: fontawesome.icon('fa-share-alt'),
-	backgroundColor: '#fff',
+	text: fontawesome.icon('fa-share-alt'),
+	left: '5%',
 	color: '#000',
-	textAlign: "left",
-	borderRadius: 5
 });
-mainView.add(shareBtn);
+shareBtn.add(sIconLabel);
 
 shareLabel = Titanium.UI.createLabel({
 	text: Alloy.Globals.PHRASES.inviteFriendsTxt,

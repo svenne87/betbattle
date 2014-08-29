@@ -160,13 +160,27 @@ function createGUI(obj) {
 			left : '1%'
 		});
 		row.add(member);
+		
+		//profilepicture
+		var image;
+		if(typeof obj.fbid !== 'undefined') {
+			image = "https://graph.facebook.com/"+ obj.fbid +"/picture?type=large";
+		} else {
+			// get betkampen image
+			image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + obj.id + '.png';
+		}
 
 		var profilePic = Titanium.UI.createImageView({
-			image : "/images/no_pic.png",
+		image : image,
 			height : 25,
 			width : 25,
 			left : '2%'
 		});
+		profilePic.addEventListener('error',function(e){
+			// fallback for image
+			profilePic.image = '/images/no_pic.png';
+		});
+
 		member.add(profilePic);
 
 		boardName = obj.name.toString();

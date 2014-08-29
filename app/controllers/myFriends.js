@@ -68,7 +68,7 @@ var nameInfo = Ti.UI.createLabel({
 infoTxt.add(nameInfo);
 
 var scoreInfo = Ti.UI.createLabel({
-	text : 'Ta bort', //Alloy.Globals.PHRASES.pointsTxt,
+	text : Alloy.Globals.PHRASES.deleteTxt,
 	left : '82%',
 	color : "#fff",
 	font : {
@@ -101,17 +101,31 @@ function createGUI(obj) {
 		width : "82.5%",
 		left : "1%",
 		opacity : 0.7,
-		borderRadius : 10
+		borderRadius : 5
 	});
 
 	friend.add(friendInfo);
+	
+	//profilepicture
+	var image;
+	if(typeof obj.fbid !== 'undefined') {
+		image = "https://graph.facebook.com/"+ obj.fbid +"/picture?type=large";
+	} else {
+		// get betkampen image
+		image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + obj.id + '.png';
+	}
 
 	var profilePic = Titanium.UI.createImageView({
-		image : "/images/no_pic.png",
+	image : image,
 		height : 25,
 		width : 25,
 		left : '2%'
 	});
+	profilePic.addEventListener('error',function(e){
+		// fallback for image
+		profilePic.image = '/images/no_pic.png';
+	});
+
 	friendInfo.add(profilePic);
 
 	boardName = obj.name.toString();
@@ -143,7 +157,7 @@ function createGUI(obj) {
 		backgroundColor : '#fff',
 		color : '#000',
 		opacity : 0.7,
-		borderRadius : 10
+		borderRadius : 5
 	});
 	friend.add(deleteBtn);
 
@@ -184,13 +198,55 @@ function createGUI(obj) {
 
 }
 
+function createBtn() {
+	var addFriendsLabel = Ti.UI.createLabel({
+		text : Alloy.Globals.PHRASES.noFriendsTxt,
+		textAlign : "center",
+		top : 10,
+		font : {
+			fontSize : 22,
+			fontFamily : "Impact"
+		},
+		color : "#FFF"
+	});
+	mainView.add(addFriendsLabel);
+
+	var openFriendSearchBtn = Ti.UI.createButton({
+		height : 40,
+		width : '60%',
+		left : '20%',
+		top : '0.5%',
+		title : Alloy.Globals.PHRASES.addFriendsTxt,
+		backgroundColor : '#FFF',
+		color : '#000',
+		borderRadius : 5
+	});
+	mainView.add(openFriendSearchBtn);
+
+	openFriendSearchBtn.addEventListener('click', function(e) {
+		var win = Alloy.createController('friendSearch').getView();
+		if (OS_IOS) {
+			Alloy.Globals.NAV.openWindow(win, {
+				animated : true
+			});
+		} else {
+			win.open({
+				fullScreen : true
+			});
+			win = null;
+		}
+		$.myFriends.close();
+	});
+
+}
+
 var xhr = Ti.Network.createHTTPClient({
 	// function called when the response data is available
 	onload : function(e) {
 		Ti.API.info("Received text: " + this.responseText);
 		var friends = JSON.parse(this.responseText);
 		if (friends.length == 0) {
-			alert('Du har inga vänner än lägg till några i friend zone');
+			createBtn();
 		} else {
 			for (var i = 0; i < friends.length; i++) {
 				//alert(friends[i].name);
