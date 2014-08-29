@@ -163,11 +163,11 @@ function createGUI(obj) {
 		
 		//profilepicture
 		var image;
-		if(typeof Alloy.Globals.FACEBOOKOBJECT !== 'undefined') {
-			image = "https://graph.facebook.com/"+Alloy.Globals.FACEBOOKOBJECT.id+"/picture?type=large";
+		if(typeof obj.fbid !== 'undefined') {
+			image = "https://graph.facebook.com/"+ obj.fbid +"/picture?type=large";
 		} else {
 			// get betkampen image
-			image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + Alloy.Globals.BETKAMPENUID + '.png';
+			image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + obj.id + '.png';
 		}
 
 		var profilePic = Titanium.UI.createImageView({
