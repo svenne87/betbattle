@@ -1,5 +1,56 @@
 /* Functions */
 
+function createGameType(gameType){
+	var viewHeight;
+	if(gameType.option_type == "button"){
+		viewHeight = (20 * gameType.options) + 40;
+	}else{
+		viewHeight = "80dp";
+	}
+	var gameTypeView = Ti.UI.createView({
+		width: Ti.UI.FILL,
+		height: viewHeight,
+		layout: "vertical",
+	});
+	var gameTypeDescription = Ti.UI.createLabel({
+		text: "VIlket lag gör första målet?!",
+		textAlign: "center",
+		color: "#FFF",
+		//height: "30%",
+		font:{
+			fontSize:18,
+			fontFamily: "Impact",
+		}
+	});
+	gameTypeView.add(gameTypeDescription);
+	
+	var optionsView = Ti.UI.createView({
+		//height: "70%",
+		width: Ti.UI.FILL,
+		layout: "vertical",
+	});
+	
+	if(gameType.option_type == "button"){
+	
+		for (var i = 0; i < gameType.options; i++){
+			var buttonView = Ti.UI.createButton({
+				title: 'Hellos '+i,
+			   	top: 5,
+			   	width: 100,
+			  	height: 20
+			});	
+			optionsView.add(buttonView);
+		}
+		
+	}else if(gameType.option_type == "select"){
+		for (var i = 0; i <= gameType.options; i++){
+			///SKAPA EN SELECT
+		}
+	}
+	gameTypeView.add(optionsView);
+	$.challenge.add(gameTypeView);
+}
+
 // create new challenge and choose friends to challenge
 function createChallengeAndChooseFriends(betkampenId, betAmount) {
 	// build the json string
@@ -1001,8 +1052,8 @@ function createLayout() {
 	
 	var image = Ti.UI.createView({
 		width : '100%',
-		height : 142,
-		backgroundImage : '/images/header.png'
+		height : 70,
+		backgroundImage : '/images/profileBG.jpg'
 	});
 	
 	//Ti.API.info("LOGGGA: "+ JSON.stringify(args));
@@ -1018,12 +1069,12 @@ function createLayout() {
 
 	var fontSize = Alloy.Globals.getFontSize(3);
 
-	if (leagueName.length > 10) {
-		fontSize = 36;
+	if (teamNames.length > 20) {
+		fontSize = 28;
 	}
 
 	image.add(Ti.UI.createLabel({
-		top : 50,
+		top : 0,
 		font : {
 			fontFamily : Alloy.Globals.getFont(),
 			fontSize : fontSize
@@ -1033,7 +1084,7 @@ function createLayout() {
 		opacity : 0.85,
 		borderRadius : 3,
 		textAlign : 'center',
-		text : leagueName
+		text : teamNames
 	}));
 
 	$.challenge.add(image);
@@ -1082,7 +1133,7 @@ function createLayout() {
 
 		Alloy.Globals.performTimeout(createBorderView());
 
-		// create views
+		
 		var gameType = parseInt(gameObjects[i].attributes.game_type);
 		switch(gameType) {
 			case 1:
@@ -1118,7 +1169,7 @@ function createLayout() {
 	}
 
 	function doRest() {
-
+		
 		if (roundId === -1) {
 			// tournament fix
 			coinsToJoin = gameObjects[0].attributes.pot;
@@ -1127,7 +1178,15 @@ function createLayout() {
 				coinsToJoin = parseInt(challengeObject.attributes.potential_pot) / challengeObject.attributes.opponents.length;
 			}
 		}
-
+		// create views
+		var gameTip = {
+			options: 2,
+			id: 1,
+			option_type: "button",
+			number_of_values: 1,
+		};
+		createGameType(gameTip);
+		
 		createBorderView();
 
 		if (roundId === -1) {
@@ -1163,6 +1222,11 @@ if ( typeof args.round !== 'undefined') {
 var leagueName = '';
 if ( typeof args.leagueName !== 'undefined') {
 	leagueName = args.leagueName;
+}
+
+var teamNames = '';
+if( typeof args.teamNames !== 'undefined'){
+	teamNames = args.teamNames;
 }
 
 var leagueId = -1;

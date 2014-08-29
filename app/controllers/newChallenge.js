@@ -153,7 +153,7 @@ function createTableRow(obj) {
 		layout : 'vertical',
 		height : 12
 	}));
-
+	row.teamNames = obj.attributes.team_1.team_name + " - " + obj.attributes.team_2.team_name;
 	row.className = date.toUTCString();
 	return row;
 }
@@ -161,6 +161,7 @@ function createTableRow(obj) {
 // show the tableView
 function createAndShowTableView(league, array) {
 	// check if table exists, and if it does simply remove it
+	Ti.API.info("Array" + JSON.stringify(array));
 	var children = $.newChallenge.children;
 	for (var i = 0; i < children.length; i++) {
 		if (children[i].id === 'newChallengeTable') {
@@ -298,9 +299,12 @@ function createAndShowTableView(league, array) {
 		}
 
 		if (e.rowData !== null && typeof e.rowData.id !== 'undefined') {
+			Ti.API.info("maatch" + JSON.stringify(e.rowData));
 			var matchDate = new Date(e.rowData.className);
 			matchDate.setHours(matchDate.getHours() - 2);
 			var now = new Date();
+
+			var teamNames = e.rowData.teamNames;
 
 			if (now.getTime() > matchDate.getTime()) {
 				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.roundHasStartedErrorTxt);
@@ -308,7 +312,8 @@ function createAndShowTableView(league, array) {
 				var arg = {
 					round : e.row.id,
 					leagueName : leagueName,
-					leagueId : leagueId
+					leagueId : leagueId,
+					teamNames : teamNames,
 				};
 
 				var win = Alloy.createController('challenge', arg).getView();
@@ -356,7 +361,7 @@ function getGames(league) {
 		try {
 			xhr.open('GET', Alloy.Globals.BETKAMPENGETGAMESURL + '/?uid=' + Alloy.Globals.BETKAMPENUID + '&league=' + league + '&lang=' + Alloy.Globals.LOCALE);
 			xhr.setRequestHeader("content-type", "application/json");
-			xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
+			xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
 			xhr.setTimeout(Alloy.Globals.TIMEOUT);
 
 			xhr.send();
@@ -372,6 +377,7 @@ function getGames(league) {
 		xhr.onload = function() {
 			if (this.status == '200') {
 				if (this.readyState == 4) {
+					Ti.API.info("getGames = " + JSON.stringify(this.responseText));
 					var response = JSON.parse(this.responseText);
 					// create gameListObjects and use that array to create table
 					var array = createGameListObject(response);

@@ -112,10 +112,12 @@ function Controller() {
             layout: "vertical",
             height: 12
         }));
+        row.teamNames = obj.attributes.team_1.team_name + " - " + obj.attributes.team_2.team_name;
         row.className = date.toUTCString();
         return row;
     }
     function createAndShowTableView(league, array) {
+        Ti.API.info("Array" + JSON.stringify(array));
         var children = $.newChallenge.children;
         for (var i = 0; children.length > i; i++) "newChallengeTable" === children[i].id && $.newChallenge.remove(children[i]);
         leagueId = league;
@@ -193,14 +195,17 @@ function Controller() {
         table.addEventListener("click", function(e) {
             if (2 == Alloy.Globals.SLIDERZINDEX) return;
             if (null !== e.rowData && "undefined" != typeof e.rowData.id) {
+                Ti.API.info("maatch" + JSON.stringify(e.rowData));
                 var matchDate = new Date(e.rowData.className);
                 matchDate.setHours(matchDate.getHours() - 2);
                 var now = new Date();
+                var teamNames = e.rowData.teamNames;
                 if (now.getTime() > matchDate.getTime()) Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.roundHasStartedErrorTxt); else {
                     var arg = {
                         round: e.row.id,
                         leagueName: leagueName,
-                        leagueId: leagueId
+                        leagueId: leagueId,
+                        teamNames: teamNames
                     };
                     var win = Alloy.createController("challenge", arg).getView();
                     Alloy.Globals.WINDOWS.push(win);
@@ -226,7 +231,7 @@ function Controller() {
             try {
                 xhr.open("GET", Alloy.Globals.BETKAMPENGETGAMESURL + "/?uid=" + Alloy.Globals.BETKAMPENUID + "&league=" + league + "&lang=" + Alloy.Globals.LOCALE);
                 xhr.setRequestHeader("content-type", "application/json");
-                xhr.setRequestHeader("Authorization", Alloy.Globals.FACEBOOK.accessToken);
+                xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
                 xhr.setTimeout(Alloy.Globals.TIMEOUT);
                 xhr.send();
             } catch (e) {
@@ -237,6 +242,7 @@ function Controller() {
             xhr.onload = function() {
                 if ("200" == this.status) {
                     if (4 == this.readyState) {
+                        Ti.API.info("getGames = " + JSON.stringify(this.responseText));
                         var response = JSON.parse(this.responseText);
                         var array = createGameListObject(response);
                         array.length > 0 ? createAndShowTableView(league, array) : createNoGamesView();

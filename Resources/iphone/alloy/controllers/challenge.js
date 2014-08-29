@@ -8,6 +8,40 @@ function __processArg(obj, key) {
 }
 
 function Controller() {
+    function createGameType(gameType) {
+        var viewHeight;
+        viewHeight = "button" == gameType.option_type ? 20 * gameType.options + 40 : "80dp";
+        var gameTypeView = Ti.UI.createView({
+            width: Ti.UI.FILL,
+            height: viewHeight,
+            layout: "vertical"
+        });
+        var gameTypeDescription = Ti.UI.createLabel({
+            text: "VIlket lag gör första målet?!",
+            textAlign: "center",
+            color: "#FFF",
+            font: {
+                fontSize: 18,
+                fontFamily: "Impact"
+            }
+        });
+        gameTypeView.add(gameTypeDescription);
+        var optionsView = Ti.UI.createView({
+            width: Ti.UI.FILL,
+            layout: "vertical"
+        });
+        if ("button" == gameType.option_type) for (var i = 0; gameType.options > i; i++) {
+            var buttonView = Ti.UI.createButton({
+                title: "Hellos " + i,
+                top: 5,
+                width: 100,
+                height: 20
+            });
+            optionsView.add(buttonView);
+        } else if ("select" == gameType.option_type) for (var i = 0; gameType.options >= i; i++) ;
+        gameTypeView.add(optionsView);
+        $.challenge.add(gameTypeView);
+    }
     function createChallengeAndChooseFriends(betkampenId, betAmount) {
         var param = '{"lang" : "' + Alloy.Globals.LOCALE + '", "betkampen_id":"' + betkampenId + '", "server_url":"' + Alloy.Globals.BETKAMPENURL + '", "round":"' + roundId + '", "bet_amount":"' + betAmount + '", "gamevalue": [{';
         for (var i in gameArray) if (void 0 === gameArray[i].gameValue.length) {
@@ -623,6 +657,13 @@ function Controller() {
                 coinsToJoin = gameObjects[0].attributes.pot;
                 "undefined" == typeof coinsToJoin && (coinsToJoin = parseInt(challengeObject.attributes.potential_pot) / challengeObject.attributes.opponents.length);
             }
+            var gameTip = {
+                options: 2,
+                id: 1,
+                option_type: "button",
+                number_of_values: 1
+            };
+            createGameType(gameTip);
             createBorderView();
             -1 === roundId ? createBetCoinsView(coinsToJoin) : createBetCoinsChooseView();
             createBorderView();
@@ -630,17 +671,17 @@ function Controller() {
         }
         var image = Ti.UI.createView({
             width: "100%",
-            height: 142,
-            backgroundImage: "/images/header.png"
+            height: 70,
+            backgroundImage: "/images/profileBG.jpg"
         });
         if (0 === leagueName.length) for (var i in Alloy.Globals.LEAGUES) if (Alloy.Globals.LEAGUES[i].id == gameObjects[0].attributes.league_id) {
             leagueName = Alloy.Globals.LEAGUES[i].name;
             break;
         }
         var fontSize = Alloy.Globals.getFontSize(3);
-        leagueName.length > 10 && (fontSize = 36);
+        teamNames.length > 20 && (fontSize = 28);
         image.add(Ti.UI.createLabel({
-            top: 50,
+            top: 0,
             font: {
                 fontFamily: Alloy.Globals.getFont(),
                 fontSize: fontSize
@@ -650,7 +691,7 @@ function Controller() {
             opacity: .85,
             borderRadius: 3,
             textAlign: "center",
-            text: leagueName
+            text: teamNames
         }));
         $.challenge.add(image);
         if (-1 === roundId && null !== challengeObject) {
@@ -758,6 +799,8 @@ function Controller() {
     "undefined" != typeof args.round && (roundId = args.round);
     var leagueName = "";
     "undefined" != typeof args.leagueName && (leagueName = args.leagueName);
+    var teamNames = "";
+    "undefined" != typeof args.teamNames && (teamNames = args.teamNames);
     var leagueId = -1;
     "undefined" != typeof args.leagueId && (leagueId = args.leagueId);
     var tournamentIndex = -1;
