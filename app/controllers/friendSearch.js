@@ -171,7 +171,7 @@ function createGUI(obj) {
 			image = "https://graph.facebook.com/"+ obj.fbid +"/picture?type=large";
 		} else {
 			// get betkampen image
-			image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + obj.id + '.png';
+			image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + obj.fid + '.png';
 		}
 
 		var profilePic = Titanium.UI.createImageView({
