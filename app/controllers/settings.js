@@ -88,7 +88,7 @@ function sendSettingsServer(param, type, valueToStore) {
 						Ti.App.Properties.setBool("pushSetting", valueToStore);
 					} else if (type === 1) {
 						// store value about profile name
-						Ti.App.Properties.setString("profileNameSetting", valueToStore);
+						//Ti.App.Properties.setString("profileNameSetting", valueToStore);
 					}
 					Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
 				}

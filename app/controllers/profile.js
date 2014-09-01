@@ -41,7 +41,6 @@ var botView = Ti.UI.createView({
 //create the top of the profile
 
 var profileName = Ti.UI.createLabel({
-	text: ""+Ti.App.Properties.getString('profileNameSetting'),
 	textAlign: "center",
 	top:10,
 	font: {
@@ -374,6 +373,8 @@ function getProfile(){
 					
 					wins.setText(userInfo.totalWins);
 					winsText.setText(Alloy.Globals.PHRASES.winsInfoTxt);
+					
+					profileName.setText(userInfo.name);
 					
 					profilePosition.setText(userInfo.position);
 					Ti.API.info("Position :"+userInfo.position);
