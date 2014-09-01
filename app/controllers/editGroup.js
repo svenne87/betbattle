@@ -284,7 +284,7 @@ function createGUI(obj) {
 		member.add(profilePic);
 
 		var name = Ti.UI.createLabel({
-			text : obj.name,
+			text : obj.username,
 			left : '15%',
 			font : {
 				fontSize : 18,
@@ -296,20 +296,21 @@ function createGUI(obj) {
 }
 
 var e = 0;
-function createFriendGUI(friend, i) {
+function createFriendGUI(friend, members) {
 	var fr = [];
-	
+	if (members.data.length == 0) {
+
+	} else {
 		for (var s = 0; s < members.data.length; s++) {
 			fr.push(members.data[s].uid);
 
-		
+		}
 	}
 	function isInArray(fr, search) {
 		return (fr.indexOf(search) >= 0) ? true : false;
 	}
 
 	if (isInArray(fr, friend.id)) {
-		Ti.API.info('hej hej');
 	} else {
 		e++;
 		if (e == 1) {
@@ -323,26 +324,6 @@ function createFriendGUI(friend, i) {
 
 			var addLabel = Ti.UI.createLabel({
 				text : Alloy.Globals.PHRASES.addMembersTxt,
-				textAlign : "center",
-				top : '1%',
-				font : {
-					fontSize : 18,
-					fontFamily : "Impact"
-				},
-				color : "#FFF"
-			});
-			mainView.add(addLabel);
-		} else if (e == 0) {
-			var line2 = Ti.UI.createView({
-				width : '100%',
-				height : '1%',
-				top : '2%',
-				backgroundColor : '#fff'
-			});
-			mainView.add(line2);
-
-			var addLabel = Ti.UI.createLabel({
-				text : 'Alla dina vänner är med i denna gruppen',//Alloy.Globals.PHRASES.addMembersTxt,
 				textAlign : "center",
 				top : '1%',
 				font : {
@@ -453,17 +434,17 @@ function createFriendGUI(friend, i) {
 }
 
 //Get mebers from db
-var members = null;
 var client = Ti.Network.createHTTPClient({
 	// function called when the response data is available
 	onload : function(e) {
 		Ti.API.info("Members: " + this.responseText);
-		members = JSON.parse(this.responseText);
+		var members = JSON.parse(this.responseText);
 
 		for (var i = 0; i < members.data.length; i++) {
 			//alert(members.data[i].name);
 			createGUI(members.data[i]);
 		}
+		getFriends(members);
 	},
 	// function called when an error occurs, including a timeout
 	onerror : function(e) {
@@ -473,11 +454,12 @@ var client = Ti.Network.createHTTPClient({
 	timeout : Alloy.Globals.TIMEOUT // in milliseconds
 });
 // Prepare the connection.
-client.open("GET", Alloy.Globals.BETKAMPENURL + '/api/get_group_members.php?gid=' + gID);
+client.open("GET", Alloy.Globals.BETKAMPENURL + '/api/get_group_members.php?gid=' + gID + '&lang=' + Alloy.Globals.LOCALE);
 // Send the request.
 client.send();
 
 //get friends from db
+function getFriends(members){
 var xhr = Ti.Network.createHTTPClient({
 	// function called when the response data is available
 	onload : function(e) {
@@ -486,8 +468,9 @@ var xhr = Ti.Network.createHTTPClient({
 
 		for (var i = 0; i < friends.length; i++) {
 			//alert(friends[i].name);
-			createFriendGUI(friends[i], i);
+			createFriendGUI(friends[i], members);
 		}
+		
 	},
 	// function called when an error occurs, including a timeout
 	onerror : function(e) {
@@ -504,5 +487,6 @@ xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
 xhr.setTimeout(Alloy.Globals.TIMEOUT);
 
 xhr.send();
+}
 
 $.editGroup.add(mainView);
