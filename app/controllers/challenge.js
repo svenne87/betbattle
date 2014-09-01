@@ -9,6 +9,7 @@ function createGameType(gameType){
 		height: viewHeight,
 		layout: "vertical",
 	});
+	
 	var gameTypeDescription = Ti.UI.createLabel({
 		text: Alloy.Globals.PHRASES.gameTypes[type].description,
 		textAlign: "center",
@@ -19,6 +20,7 @@ function createGameType(gameType){
 			fontFamily: "Impact",
 		}
 	});
+	
 	gameTypeView.add(gameTypeDescription);
 	
 	
@@ -26,7 +28,7 @@ function createGameType(gameType){
 	
 	// object to store game id and value
 	var gameObj = new Object();
-	gameObj.gameId = gameID;
+	gameObj.gameType = gameType.type;
 	var valueArray = new Array(-1, -1);
 	gameObj.gameValue = valueArray;
 	gameArray.push(gameObj);
@@ -88,7 +90,7 @@ function createGameType(gameType){
 				changeColors(e);
 				Ti.API.info("gameArray : " + JSON.stringify(gameArray));
 				if(validate()){
-					
+					saveChallenge();
 				}
 			});
 			optionsView.add(buttonViews[i]);
@@ -138,6 +140,9 @@ function createGameType(gameType){
 						gameArray[index].gameValue[i] = e.selectedValue[0];
 						if(gameType.number_of_values == 1){
 							gameArray[index].gameValues[1] = 0;
+						}
+						if(validate()){
+							saveChallenge();
 						}
 					});
 			
@@ -201,26 +206,24 @@ function createGameType(gameType){
 			
 					Ti.API.info("Y VÄRDE : " + i);
 					picker.self.addEventListener('change', function(e) {
-						//alert(e.source.id);
+						
 						var id = e.source.id;
 						var ind = id.indexOf("_");
 						i = id.substring(0,ind);
 						var arrayIndex = id.substring(ind+1, id.length);
-						//i = indexOf("-")e.source.id;
-						Ti.API.info("gameType: " + arrayIndex);
-						Ti.API.info("i = " + i);
+					
 						
 						picker.value = modalPickersToHide[arrayIndex].value;
 						
-						//Ti.API.info("i value : " + i);
-						Ti.API.info("e : " + JSON.stringify(e));
-						//Ti.API.info("pickers " + JSON.stringify(picker));
+						
 						gameArray[index].gameValue[i] = picker.value;
 						if(gameType.number_of_values == 1){
 							gameArray[index].gameValue[1] = 0;
 						}
 						Ti.API.info("gameArray : " + JSON.stringify(gameArray));
-						Ti.API.info("Validate" + validate());
+						if(validate()){
+							saveChallenge();
+						};
 					});
 					
 					
@@ -240,6 +243,76 @@ function createGameType(gameType){
 	$.challenge.add(gameTypeView);
 }
 
+function saveChallenge(){
+	
+	
+	if (Alloy.Globals.checkConnection()) {
+		var xhr = Titanium.Network.createHTTPClient();
+		xhr.onerror = function(e) {
+			Ti.API.error('Bad Sever =>' + e.error);
+		};
+
+		try {
+			xhr.open('POST', Alloy.Globals.BETKAMPENSAVECHALLENGEURL);
+			xhr.setRequestHeader("content-type", "application/json");
+			xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
+			xhr.setTimeout(Alloy.Globals.TIMEOUT);
+
+			// build the json string
+			var param = '{"lang" : "' + Alloy.Globals.LOCALE + '", "betkampen_id":"' + Alloy.Globals.BETKAMPENUID + '", "gameID": "'+gameID+'", "gamevalue": {';
+		
+			for (var i in gameArray) {
+		
+					// is array
+					param += '"' + gameArray[i].gameType + '": [';
+					for (var x in gameArray[i].gameValue) {
+						param += '"' + gameArray[i].gameValue[x];
+						if (x != (gameArray[i].gameValue.length - 1)) {
+							param += '", ';
+						} else {
+							// last one
+							param += '"';
+						}
+					}
+					if (i != (gameArray.length - 1)) {
+						param += '], ';
+					} else {
+						// last one
+						param += ']';
+					}
+				
+			}
+			param += '}';
+		
+			
+			
+			Ti.API.info("JSON STRING : " + param);
+			
+			xhr.send(param);
+		} catch(e) {
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+		}
+
+		xhr.onload = function() {
+			if (this.status == '200') {
+
+				if (this.readyState == 4) {
+					var response = JSON.parse(this.responseText);
+					
+					Ti.API.info("response: " + JSON.stringify(response));
+					// show dialog and if ok close window
+					} else {
+					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+				}
+			} else {
+				Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
+				Ti.API.error("Error =>" + this.response);
+			}
+		};
+	} else {
+		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+	}
+}
 // create new challenge and choose friends to challenge
 function createChallengeAndChooseFriends(betkampenId, betAmount) {
 	// build the json string

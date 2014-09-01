@@ -90,6 +90,7 @@ Alloy.Globals.BETKAMPENGETGETBEACONSURL = Alloy.Globals.BETKAMPENURL + '/api/get
 Alloy.Globals.BETKAMPENGETPROMOTIONURL = Alloy.Globals.BETKAMPENURL + '/api/get_promotion.php';
 Alloy.Globals.BETKAMPENCHALLENGESHOWURL = Alloy.Globals.BETKAMPENURL + '/api/show_challenge.php';
 Alloy.Globals.BETKAMPENLOGOUTURL = Alloy.Globals.BETKAMPENURL + '/api/logout.php';
+<<<<<<< HEAD
 Alloy.Globals.BETKAMPENDELTEGROUPURL = Alloy.Globals.BETKAMPENURL + '/api/remove_group.php'; //delete your own group
 Alloy.Globals.BETKAMPENREMOVEGROUPMEMBERURL = Alloy.Globals.BETKAMPENURL + '/api/remove_group_member.php'; //leave group or remove group member
 Alloy.Globals.BETKAMEPNCHANGEGROUPNAMEURL = Alloy.Globals.BETKAMPENURL + '/api/edit_group_name.php'; // change groupname
@@ -99,6 +100,9 @@ Alloy.Globals.BETKAMPENDELETEFRIENDURL = Alloy.Globals.BETKAMPENURL + '/api/remo
 Alloy.Globals.BETKAMPENCREATEGROUPURL = Alloy.Globals.BETKAMPENURL + '/api/add_group.php'; // create a new group and add you as admin
 Alloy.Globals.BETKAMPENFRIENDSEARCHURL = Alloy.Globals.BETKAMPENURL + '/api/get_users_search.php'; // search in db for friends
 Alloy.Globals.BETKAMPENADDFRIENDSURL = Alloy.Globals.BETKAMPENURL + '/api/add_friends.php'; // add friends to your friendlist
+=======
+Alloy.Globals.BETKAMPENSAVECHALLENGEURL = Alloy.Globals.BETKAMPENURL + '/api/save_challenge.php';
+>>>>>>> FETCH_HEAD
 
 Alloy.Globals.performTimeout = function(func) {
 	if (OS_ANDROID) {
