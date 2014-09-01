@@ -91,7 +91,7 @@ saveName.addEventListener('click', function(e) {
 				groupNameLabel.text = groupName.value;
 				var groupId = JSON.parse(this.responseText);
 				var addMe = Ti.Network.createHTTPClient();
-				addMe.open("POST", Alloy.Globals.BETKAMPENURL + '/api/add_group_member.php');
+				addMe.open("POST", Alloy.Globals.BETKAMPENADDGROUPMEMBERSURL + '&lang=' + Alloy.Globals.LOCALE);
 				var params = {
 					group_id : groupId,
 					id : Alloy.Globals.BETKAMPENUID,
@@ -103,7 +103,7 @@ saveName.addEventListener('click', function(e) {
 
 			}
 		};
-		gName.open("POST", Alloy.Globals.BETKAMPENURL + '/api/add_group.php');
+		gName.open("POST", Alloy.Globals.BETKAMPENCREATEGROUPURL + '&lang=' + Alloy.Globals.LOCALE);
 		var params = {
 			id : Alloy.Globals.BETKAMPENUID,
 			group_name : groupName.value
@@ -219,7 +219,7 @@ function createFriendGUI(obj, groupId) {
 			addBtn.title = fontawesome.icon('fa-check');
 			member.borderColor = '#00ff00';
 			var addMember = Ti.Network.createHTTPClient();
-			addMember.open("POST", Alloy.Globals.BETKAMPENURL + '/api/add_group_member.php');
+			addMember.open("POST", Alloy.Globals.BETKAMPENADDGROUPMEMBERSURL + '&lang=' + Alloy.Globals.LOCALE);
 			var params = {
 				group_id : e.source.gid,
 				id : e.source.id,
@@ -235,7 +235,7 @@ function createFriendGUI(obj, groupId) {
 			member.borderColor = '#fff';
 			
 			var removeMember = Ti.Network.createHTTPClient();
-			removeMember.open("POST", Alloy.Globals.BETKAMPENURL + '/api/remove_group_member.php');
+			removeMember.open("POST", Alloy.Globals.BETKAMPENREMOVEGROUPMEMBERURL + '&lang=' + Alloy.Globals.LOCALE);
 			var params = {
 				group_id : e.source.gid,
 				id : Alloy.Globals.BETKAMPENUID,

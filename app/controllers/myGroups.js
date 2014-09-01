@@ -305,8 +305,9 @@ function createViews(array) {
 				//height : '8%',
 				width : '15%',
 				left : '84%',
-				id : array[i].attributesid,
+				id : array[i].attributes.id,
 				admin : '0',
+				creator: array[i].attributes.creator,
 				font : {
 					fontFamily : font,
 					fontSize : 27
@@ -344,7 +345,7 @@ function createViews(array) {
 								alert(Alloy.Globals.PHRASES.commonErrorTxt);
 							}
 						};
-						deleteGroup.open("POST", Alloy.Globals.BETKAMPENURL + '/api/remove_group.php');
+						deleteGroup.open("POST", Alloy.Globals.BETKAMPENDELTEGROUPURL + '/?lang=' + Alloy.Globals.LOCALE);
 						var params = {
 							group_id : e.source.id,
 							id : Alloy.Globals.BETKAMPENUID,
@@ -385,7 +386,7 @@ function createViews(array) {
 					case 0:
 						var leaveGroup = Ti.Network.createHTTPClient();
 
-						leaveGroup.open("POST", Alloy.Globals.BETKAMPENURL + '/api/remove_group_member.php');
+						leaveGroup.open("POST", Alloy.Globals.BETKAMPENREMOVEGROUPMEMBERURL);
 						var params = {
 							group_id : e.source.id,
 							id : Alloy.Globals.BETKAMPENUID,
