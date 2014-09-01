@@ -748,7 +748,7 @@ function constructTableView(array) {
 			left : 0,
 			headerView : tableHeaderView,
 			height : '100%',
-			//backgroundColor : '#303030',
+			backgroundColor : 'transparent',
 			separatorColor : '#6d6d6d',
 			id : 'challengeTable'
 		});
@@ -817,7 +817,7 @@ function constructTableView(array) {
 
 	acceptRow.add(Ti.UI.createLabel({
 		font : {
-			fontFamily : font
+			fontFamily : Alloy.Globals.getFont()
 		},
 		text : fontawesome.icon('icon-chevron-right'),
 		right : rightPercentage,
@@ -829,7 +829,7 @@ function constructTableView(array) {
 
 	pendingRow.add(Ti.UI.createLabel({
 		font : {
-			fontFamily : font
+			fontFamily : Alloy.Globals.getFont()
 		},
 		text : fontawesome.icon('icon-chevron-right'),
 		right : rightPercentage,
@@ -841,7 +841,7 @@ function constructTableView(array) {
 
 	finishedRow.add(Ti.UI.createLabel({
 		font : {
-			fontFamily : font,
+			fontFamily : Alloy.Globals.getFont(),
 		},
 		text : fontawesome.icon('icon-chevron-right'),
 		right : rightPercentage,
