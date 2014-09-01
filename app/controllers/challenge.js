@@ -201,10 +201,14 @@ function createGameType(gameType){
 			
 					Ti.API.info("Y VÄRDE : " + i);
 					picker.self.addEventListener('change', function(e) {
+						alert(e.source.id);
+						i = e.source.id;
+						picker.value = modalPickersToHide[i].value;
+						
 						Ti.API.info("i value : " + i);
 						Ti.API.info("e : " + JSON.stringify(e));
 						Ti.API.info("pickers " + JSON.stringify(picker));
-						gameArray[index].gameValue[i-1] = picker.value;
+						gameArray[index].gameValue[i] = picker.value;
 						Ti.API.info("gameArray : " + JSON.stringify(gameArray));
 					});
 					

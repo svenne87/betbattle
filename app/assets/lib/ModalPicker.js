@@ -1,8 +1,8 @@
-function ModalPicker(prefs, data, selectTxt, closeTxt) {
+function ModalPicker(prefs, data, selectTxt, closeTxt, id) {
 
     var self = Ti.UI.createLabel(prefs);
 
-    self.id = null;
+    self.id = id;
 
 
     var subWin = Ti.UI.createWindow({
