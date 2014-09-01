@@ -46,15 +46,15 @@ function createLeagueAndUidObj(response) {
 		// store all active leagues
 		Alloy.Globals.LEAGUES.push(league);
 	}
-	        for (var i = 0; response.languages.length > i; i++) {
-            var language = {
-            	id : response.languages[i].id,
-                name: response.languages[i].name,
-                imageLocation: response.languages[i].imageLocation,
-                description: response.languages[i].description
-            };
-            Alloy.Globals.AVAILABLELANGUAGES.push(language);
-        }
+	for (var i = 0; response.languages.length > i; i++) {
+		var language = {
+            id : response.languages[i].id,
+            name: response.languages[i].name,
+            imageLocation: response.languages[i].imageLocation,
+            description: response.languages[i].description
+        };
+       	Alloy.Globals.AVAILABLELANGUAGES.push(language);
+   	}
 }
 
 function getChallengesAndStart() {
@@ -146,10 +146,7 @@ function getChallengesAndStart() {
 }
 
 
-  // TODO Handle expired token (Global, perhaps at resume???)
   // TODO Handle if registered with fb and no password stored, if we want to login using betkampen?
- 
-
 
 function loginAuthenticated() {
 	// Get betkampenID with valid token
@@ -222,10 +219,11 @@ function login(auto) {
 		username = $.loginEmail.value;
 		password = $.loginPass.value;
 	}
-	
+
 	if (Alloy.Globals.checkConnection()) {
 		$.signInBtn.enabled = false;
 		indicator.openIndicator();
+		
 		var loginReq = Titanium.Network.createHTTPClient();
 		loginReq.setTimeout(Alloy.Globals.TIMEOUT);
 
@@ -258,13 +256,15 @@ function login(auto) {
 						refresh_token : response.refresh_token
 					};
 					
-					// get first part on name
-					var name =  $.loginEmail.value;
-					var index = name.indexOf("@");
-					name = name.substring(0, index);
-					
-					// store profile name in phone and fetch challenges
-					storeProfileName(name);
+					if(auto){
+						// first time login, get first part on name
+						var name =  $.loginEmail.value;
+						var index = name.indexOf("@");
+						name = name.substring(0, index);
+						// store profile name in phone and fetch challenges
+						// TODO storeProfileName(name);
+					}
+
 					Alloy.Globals.storeToken();
 					loginAuthenticated();	
 				}
@@ -282,8 +282,7 @@ function login(auto) {
 				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.loginCredentialsError);
 			} else {
 				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-			}
-			
+			}	
 		};
 	} else {
 		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);

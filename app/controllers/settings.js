@@ -74,7 +74,6 @@ function sendSettingsServer(param, type, valueToStore) {
 			xhr.setRequestHeader("content-type", "application/json");
 			xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
 			xhr.setTimeout(Alloy.Globals.TIMEOUT);
-
 			xhr.send(param);
 		} catch(e) {
 			indicator.closeIndicator();

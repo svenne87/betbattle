@@ -202,7 +202,7 @@ function loginAuthenticated(fb) {
 				}
 				
 				// store profile name
-				storeProfileName(result.name);
+				// TODO storeProfileName(result.name);
 
 				Alloy.Globals.FACEBOOKOBJECT = Alloy.createModel('facebook', {
 					id : result.id,

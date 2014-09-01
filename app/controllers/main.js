@@ -86,7 +86,7 @@ function logoutBetbattle(){
 					}
 
 					Ti.API.log(response);
-					// remove token
+					// remove token and name
 					Ti.App.Properties.removeProperty("BETKAMPEN");
 					Alloy.Globals.BETKAMPEN = null;
 					Alloy.Globals.FACEBOOKOBJECT = null;
