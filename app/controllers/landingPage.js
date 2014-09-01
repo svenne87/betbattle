@@ -5,7 +5,7 @@ var deviceToken;
 
 if(OS_IOS){
 	// only iOS		
-	$.mainWin.addEventListener('open', function(){
+	 $.landingPage.addEventListener('open', function(){
 		var apns = require('lib/push_notifications_apns');
 		apns.apns();
 	}); 
