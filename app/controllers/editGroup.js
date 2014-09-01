@@ -167,7 +167,7 @@ function createGUI(obj) {
 			image = "https://graph.facebook.com/"+ obj.fbid +"/picture?type=large";
 		} else {
 			// get betkampen image
-			image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + obj.id + '.png';
+			image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + obj.uid + '.png';
 		}
 
 		var profilePic = Titanium.UI.createImageView({
@@ -183,7 +183,7 @@ function createGUI(obj) {
 
 		member.add(profilePic);
 
-		boardName = obj.name.toString();
+		boardName = obj.username.toString();
 		if (boardName.length > 26) {
 			boardName = boardName.substring(0, 26);
 		}
@@ -197,15 +197,15 @@ function createGUI(obj) {
 		});
 		member.add(name);
 		//add delete button to members not your self
-		if (obj.mID == Alloy.Globals.BETKAMPENUID) {
+		if (obj.uid == Alloy.Globals.BETKAMPENUID) {
 
 		} else {
 			var deleteBtn = Ti.UI.createButton({
 				width : '18%',
 				left : '81%',
 				id : gID,
-				mId : obj.mID,
-				mName : obj.name,
+				uid : obj.uid,
+				mName : obj.username,
 				font : {
 					fontFamily : font,
 					fontSize : 27
@@ -226,7 +226,7 @@ function createGUI(obj) {
 					buttonNames : ['OK', 'Cancel'],
 					cancel : 1,
 					id : e.source.id,
-					mId : e.source.mId,
+					uid : e.source.uid,
 					mName : e.source.mName
 				});
 
@@ -239,7 +239,7 @@ function createGUI(obj) {
 						var params = {
 							group_id : e.source.id,
 							id : Alloy.Globals.BETKAMPENUID,
-							member_to_remove : e.source.mId,
+							member_to_remove : e.source.uid,
 						};
 						removeMember.send(params);
 						Ti.API.info(params);
@@ -298,19 +298,18 @@ function createGUI(obj) {
 var e = 0;
 function createFriendGUI(friend, i) {
 	var fr = [];
-	if (members.data.length == 0) {
-
-	} else {
+	
 		for (var s = 0; s < members.data.length; s++) {
-			fr.push(members.data[s].mID);
+			fr.push(members.data[s].uid);
 
-		}
+		
 	}
 	function isInArray(fr, search) {
 		return (fr.indexOf(search) >= 0) ? true : false;
 	}
 
 	if (isInArray(fr, friend.id)) {
+		Ti.API.info('hej hej');
 	} else {
 		e++;
 		if (e == 1) {
@@ -324,6 +323,26 @@ function createFriendGUI(friend, i) {
 
 			var addLabel = Ti.UI.createLabel({
 				text : Alloy.Globals.PHRASES.addMembersTxt,
+				textAlign : "center",
+				top : '1%',
+				font : {
+					fontSize : 18,
+					fontFamily : "Impact"
+				},
+				color : "#FFF"
+			});
+			mainView.add(addLabel);
+		} else if (e == 0) {
+			var line2 = Ti.UI.createView({
+				width : '100%',
+				height : '1%',
+				top : '2%',
+				backgroundColor : '#fff'
+			});
+			mainView.add(line2);
+
+			var addLabel = Ti.UI.createLabel({
+				text : 'Alla dina vänner är med i denna gruppen',//Alloy.Globals.PHRASES.addMembersTxt,
 				textAlign : "center",
 				top : '1%',
 				font : {
@@ -372,7 +391,7 @@ function createFriendGUI(friend, i) {
 			},
 		});
 		member.add(name);
-		//add delete button to members not your self
+		//add button to members
 		Ti.API.info(gID + ' ' + friend.id + ' ' + friend.name);
 		var addBtn = Ti.UI.createButton({
 			width : '18%',
@@ -438,7 +457,7 @@ var members = null;
 var client = Ti.Network.createHTTPClient({
 	// function called when the response data is available
 	onload : function(e) {
-		//Ti.API.info("Received text: " + this.responseText);
+		Ti.API.info("Members: " + this.responseText);
 		members = JSON.parse(this.responseText);
 
 		for (var i = 0; i < members.data.length; i++) {
@@ -454,7 +473,7 @@ var client = Ti.Network.createHTTPClient({
 	timeout : Alloy.Globals.TIMEOUT // in milliseconds
 });
 // Prepare the connection.
-client.open("GET", Alloy.Globals.BETKAMPENURL + '/api/get_members.php?gid=' + gID);
+client.open("GET", Alloy.Globals.BETKAMPENURL + '/api/get_group_members.php?gid=' + gID);
 // Send the request.
 client.send();
 

@@ -144,14 +144,15 @@ function createGUI(obj, i) {
 		image = "https://graph.facebook.com/"+ obj.fbid +"/picture?type=large";
 	} else {
 		// get betkampen image
-		image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + obj.id + '.png';
+		image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + obj.uid + '.png';
 	}
 
 	var profilePic = Titanium.UI.createImageView({
 		image : image,
-		height : 25,
-		width : 25,
-		left : '15%'
+		height : 30,
+		width : 30,
+		left : '15%',
+		borderRadius: 5
 	});
 	profilePic.addEventListener('error',function(e){
 		// fallback for image
@@ -200,7 +201,7 @@ function createGUI(obj, i) {
 	totalLeader.add(name);
 
 	var coins = Ti.UI.createLabel({
-		text : obj.score,
+		text : obj.points.toString(),
 		left : '85%',
 		font : {
 			fontSize : 16,
@@ -211,7 +212,6 @@ function createGUI(obj, i) {
 	mainView.add(totalLeader);
 }
 
-var url = Alloy.Globals.BETKAMPENURL + '/api/get_scoreboard.php';
 var name = null;
 var client = Ti.Network.createHTTPClient({
 	// function called when the response data is available
@@ -219,8 +219,8 @@ var client = Ti.Network.createHTTPClient({
 		Ti.API.info("Received text: " + this.responseText);
 		name = JSON.parse(this.responseText);
 
-		for (var i = 0; i < name.scoreboard.length; i++) {
-			createGUI(name.scoreboard[i], i);
+		for (var i = 0; i < name.length; i++) {
+			createGUI(name[i], i);
 		}
 	},
 	// function called when an error occurs, including a timeout
@@ -231,7 +231,11 @@ var client = Ti.Network.createHTTPClient({
 	timeout : Alloy.Globals.TIMEOUT // in milliseconds
 });
 // Prepare the connection.
-client.open("GET", url);
+client.open("GET", Alloy.Globals.BETKAMPENURL + '/api/get_scoreboard.php?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
+
+client.setRequestHeader("content-type", "application/json");
+client.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
+client.setTimeout(Alloy.Globals.TIMEOUT);
 // Send the request.
 client.send();
 

@@ -76,10 +76,10 @@ var scoreInfo = Ti.UI.createLabel({
 infoTxt.add(scoreInfo);
 
 // refresh this view
-//Ti.App.addEventListener("groupSelectRefresh", function(e) {
-	//indicator.openIndicator();
-	//getGroups();
-//});
+Ti.App.addEventListener("groupSelectRefresh", function(e) {
+	indicator.openIndicator();
+	getGroups();
+});
 
 function getGroups() {
 
@@ -118,6 +118,7 @@ function getGroups() {
 		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 	}
 	xhr.onload = function() {
+		Ti.API.log(this.responseText);
 		if (this.status == '200') {
 			if (this.readyState == 4) {
 				var response = JSON.parse(this.responseText);
@@ -179,7 +180,7 @@ function createBtn() {
 		},
 		color : "#FFF"
 	});
-	mainView.add(addFriendsLabel);
+	mainView.add(addGroupLabel);
 
 	var openCreateGroupBtn = Ti.UI.createButton({
 		height : 40,
@@ -336,6 +337,7 @@ function createViews(array) {
 					case 0:
 						var deleteGroup = Ti.Network.createHTTPClient();
 						deleteGroup.onload = function() {
+							Ti.API.info(this.ResponseText);
 							if (this.responseText == 'Erased') {
 								//alert(Alloy.Globals.PHRASES.groupDeletedTxt);
 							} else {
