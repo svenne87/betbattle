@@ -91,7 +91,7 @@ saveName.addEventListener('click', function(e) {
 				groupNameLabel.text = groupName.value;
 				var groupId = JSON.parse(this.responseText);
 				var addMe = Ti.Network.createHTTPClient();
-				addMe.open("POST", Alloy.Globals.BETKAMPENADDGROUPMEMBERSURL + '&lang=' + Alloy.Globals.LOCALE);
+				addMe.open("POST", Alloy.Globals.BETKAMPENADDGROUPMEMBERSURL);
 				var params = {
 					group_id : groupId,
 					id : Alloy.Globals.BETKAMPENUID,
@@ -103,7 +103,7 @@ saveName.addEventListener('click', function(e) {
 
 			}
 		};
-		gName.open("POST", Alloy.Globals.BETKAMPENCREATEGROUPURL + '&lang=' + Alloy.Globals.LOCALE);
+		gName.open("POST", Alloy.Globals.BETKAMPENCREATEGROUPURL);
 		var params = {
 			id : Alloy.Globals.BETKAMPENUID,
 			group_name : groupName.value
