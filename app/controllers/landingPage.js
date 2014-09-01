@@ -1,6 +1,218 @@
 var args = arguments[0] || {};
 Alloy.Globals.LANDINGWIN = $.landingPage;
 
+var appResume = args.resume;
+var uie = require('lib/IndicatorWindow');
+var indicator = uie.createIndicatorWindow({
+	top : 200,
+	text : Alloy.Globals.PHRASES.loadingTxt
+});
+
+function createLeagueAndUidObj(response) {
+	Alloy.Globals.BETKAMPENUID = response.betkampen_uid;
+	Alloy.Globals.LEAGUES = [];
+	Alloy.Globals.AVAILABLELANGUAGES = [];
+
+	for (var i = 0; i < response.leagues.length; i++) {
+		var league = {
+			id : response.leagues[i].id,
+			name : response.leagues[i].name,
+			sport : response.leagues[i].sport,
+			logo : response.leagues[i].logo,
+			actvie : response.leagues[i].active
+		};
+		// store all active leagues
+		Alloy.Globals.LEAGUES.push(league);
+	}
+	        for (var i = 0; response.languages.length > i; i++) {
+            var language = {
+            	id : response.languages[i].id,
+                name: response.languages[i].name,
+                imageLocation: response.languages[i].imageLocation,
+                description: response.languages[i].description
+            };
+            Alloy.Globals.AVAILABLELANGUAGES.push(language);
+        }
+}
+
+/* Only used for Betkampen token sign in! */
+var refreshTry = 0;
+
+function loginBetkampenAuthenticated() {
+	// Get betkampenID with valid token
+	var xhr = Titanium.Network.createHTTPClient();
+	xhr.onerror = function(e) {
+		Ti.API.error('Bad Sever =>' + JSON.stringify(e));
+		if (e.code == 401) {
+			// if this is first try, then try refresh token
+			if (refreshTry === 0) {
+				refreshTry = 1;
+				authWithRefreshToken();
+			}
+		} else {
+			indicator.closeIndicator();
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+		}
+	};
+
+	try {
+		xhr.open('POST', Alloy.Globals.BETKAMPENLOGINURL);
+		xhr.setRequestHeader("content-type", "application/json");
+		xhr.setTimeout(Alloy.Globals.TIMEOUT);
+		var param = '{"access_token" : "' + Alloy.Globals.BETKAMPEN.token + '", "lang":"' + Alloy.Globals.LOCALE + '"}';
+		xhr.send(param);
+	} catch(e) {
+		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.internetMayBeOffErrorTxt);
+		indicator.closeIndicator();
+	}
+
+	xhr.onload = function() {
+		if (this.status == '200') {
+			if (this.readyState == 4) {
+				var response = null;
+				try {
+					response = JSON.parse(this.responseText);
+				} catch(e) {
+					indicator.closeIndicator();
+					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+				}
+
+				if (response !== null) {
+					createLeagueAndUidObj(response);
+
+					if (Alloy.Globals.BETKAMPENUID > 0) {
+						indicator.closeIndicator();
+						Ti.App.fireEvent('app:challengesViewRefresh');
+					}
+				} else {
+					indicator.closeIndicator();
+					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.loginCredentialsError);
+				}
+			} else {
+				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+				indicator.closeIndicator();
+				Ti.API.log("3");
+			}
+		} else {
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+			Ti.API.error("Error =>" + this.response);
+			indicator.closeIndicator();
+			Ti.API.log("4");
+		}
+	};
+}
+
+// Try to authenticate using refresh token
+function authWithRefreshToken() {
+	if (Alloy.Globals.checkConnection()) {
+		var xhr = Titanium.Network.createHTTPClient();
+		xhr.onerror = function(e) {
+			Ti.API.error('Bad Sever reAuth =>' + JSON.stringify(e));
+			indicator.closeIndicator();
+			refreshTry = 0;
+			// reAuth failed. Need to login again. 400 = invalid token
+			Ti.App.Properties.removeProperty("BETKAMPEN");
+			Alloy.Globals.BETKAMPEN = null;
+			Alloy.Globals.CLOSE = false;
+			Alloy.Globals.CURRENTVIEW  = null;
+			Alloy.Globals.NAV.close();
+			var login = Alloy.createController('login').getView();
+			login.open({modal : false});
+			login = null;
+			
+			if (e.code != 400) {
+				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+			}
+		};
+		try {
+			xhr.open('POST', Alloy.Globals.BETKAMPENEMAILLOGIN);
+			xhr.setTimeout(Alloy.Globals.TIMEOUT);
+
+			var params = {
+				grant_type : 'refresh_token',
+				refresh_token : Alloy.Globals.BETKAMPEN.refresh_token,
+				client_id : 'betkampen_mobile',
+				client_secret : 'not_so_s3cr3t'
+			};
+			xhr.send(params);
+		} catch(e) {
+			indicator.closeIndicator();
+			refreshTry = 0;
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+		}
+		xhr.onload = function() {
+			if (this.status == '200') {
+				if (this.readyState == 4) {
+					var response = '';
+					try {
+						response = JSON.parse(this.responseText);
+					} catch(e) {
+
+					}
+
+					Alloy.Globals.BETKAMPEN = {
+						token : "TOKEN " + response.access_token,
+						valid : response.expires_in,
+						refresh_token : Alloy.Globals.BETKAMPEN.refresh_token // since we don't get a new one here
+					};
+					Alloy.Globals.storeToken();
+					// brand new token, try to authenticate
+					loginBetkampenAuthenticated();
+				} else {
+					Ti.API.log(this.response);
+				}
+			} else {
+				Ti.API.error("Error =>" + this.response);
+				indicator.closeIndicator();
+				refreshTry = 0;
+				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+			}
+		};
+	} else {
+		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+	}
+}
+
+
+// resume listener for ios and android
+if (OS_IOS) {
+	if (Alloy.Globals.OPEN) {
+		Ti.App.addEventListener('resume', function() {
+			if (Alloy.Globals.CURRENTVIEW !== null) {
+				// check connection
+				if (Alloy.Globals.checkConnection()) {
+					if (Alloy.Globals.FACEBOOKOBJECT) {
+						// TODO handle Facebook reAuth?
+						//indicator.openIndicator();
+						Ti.App.fireEvent('app:challengesViewRefresh');
+					} else {
+						// Betkampen check and if needed refresh token
+						Ti.API.log("resume...");
+						Alloy.Globals.readToken();
+						indicator.openIndicator();
+						loginBetkampenAuthenticated();
+					}
+					Ti.UI.iPhone.setAppBadge(0);
+				} else {
+					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionError);
+					// TODO add retry?
+				}
+			} 
+		});
+	}
+} else if (OS_ANDROID) {
+	if (Alloy.Globals.checkConnection()) {
+		var activity = Ti.Android.currentActivity;
+		activity.addEventListener('resume', function(e) {
+			//indicator.openIndicator();
+			Ti.App.fireEvent('app:challengesViewRefresh');
+		});
+	} else {
+		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionError);
+	}
+}
+
+
 var deviceToken;
 
 if(OS_IOS){
@@ -130,7 +342,7 @@ function getBeacons(){
 						
 						var dialogShown = false;
 						Alloy.Globals.TiBeacon.addEventListener("bluetoothStatus", function(e){
-						   if (e.status != "on" && !dialogShown) {
+						   if (e.status != "on" && !dialogShown && appResume != 0) {
 						      dialogShown =  true;   
 						      	var dialog = Ti.UI.createAlertDialog({
 						      		message: 'Sätt på bluetooth för att få ut det mesta från appen.',
@@ -804,23 +1016,20 @@ inviteBtn.addEventListener("click", function(e){
 });
 
 bot_img.addEventListener("click", function(e){
+	var loginSuccessWindow = Alloy.createController('main', args).getView();
 	if (OS_IOS) {
-		var loginSuccessWindow = Alloy.createController('main', args).getView();
 		loginSuccessWindow.open({
 			fullScreen : true,
 			transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
 		});
-		loginSuccessWindow = null;
-
 	} else if (OS_ANDROID) {
-		var loginSuccessWindow = Alloy.createController('main', args).getView();
 		loginSuccessWindow.open({
 			fullScreen : true,
 			navBarHidden : false,
 			orientationModes : [Titanium.UI.PORTRAIT]
 		});
-		loginSuccessWindow = null;
 	}
+	loginSuccessWindow = null;
 });
 
 if(OS_IOS){
@@ -833,7 +1042,7 @@ if(OS_IOS){
 	
 	if(iOSVersion < 7){
 		$.landingPage.titleControl = Ti.UI.createLabel({
-    	text : 'Betkampen',
+    	text : Alloy.Globals.PHRASES.betbattleTxt,
     	font : {
         	fontSize : Alloy.Globals.getFontSize(2),
        	 	fontWeight : 'bold',

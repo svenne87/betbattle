@@ -122,12 +122,19 @@ function createSection() {
 	var section = Ti.UI.createTableViewSection();
 
 	var args = {
+		title : Alloy.Globals.PHRASES.homeTxt,
+		customView : 'landingPage',
+		image : '/images/home.png'
+	};
+	section.add(Alloy.createController('menurow', args).getView());
+	
+	var args1 = {
 		title : Alloy.Globals.PHRASES.challengesTxt,
 		customView : 'challengesView',
 		image : '/images/ikon_spelanasta.png'
 	};
+	section.add(Alloy.createController('menurow', args1).getView());
 	
-	section.add(Alloy.createController('menurow', args).getView());
 	var args2 = {
 		title : Alloy.Globals.PHRASES.createChallengeTxt,
 		customView : 'newChallengeLeague',
@@ -166,7 +173,7 @@ function createSection() {
 	var args7 = {
 		title : Alloy.Globals.PHRASES.friendZoneTxt,
 		customView : 'friendZone',
-		image : '/images/share.png'
+		image : '/images/firendzone.png'
 	};
 	section.add(Alloy.createController('menurow', args7).getView());
 
@@ -189,7 +196,7 @@ function createSection() {
 
 function rowSelect(e) {
 	
-	if(OS_IOS && e.row.customView !== 'challengesView' && e.row.customView !== 'logout'){	
+	if(OS_IOS && e.row.customView !== 'challengesView' && e.row.customView !== 'logout'  && e.row.customView !== 'landingPage'){	
 		
 		if (Alloy.Globals.checkConnection()) {
 			// open these in window
@@ -209,7 +216,7 @@ function rowSelect(e) {
 			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionError);
 		}
 			
-	} else if(OS_ANDROID && e.row.customView !== 'challengesView' && e.row.customView !== 'logout'){
+	} else if(OS_ANDROID && e.row.customView !== 'challengesView' && e.row.customView !== 'logout'  && e.row.customView !== 'landingPage'){
 		if (Alloy.Globals.checkConnection()) {
 			// open these in window
 			var win =  Alloy.createController(e.row.customView).getView();
@@ -228,6 +235,21 @@ function rowSelect(e) {
 			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionError);
 		}
 	}
+	
+	
+	if(e.row.customView === 'landingPage') {
+		if(OS_IOS){
+			Alloy.Globals.NAV.close();
+			var args = {resume : false};
+			var start = Alloy.createController('landingPage', args).getView();
+			Alloy.Globals.CURRENTVIEW  = start;
+			start.open({modal : false});
+			start = null;
+		} else if (OS_ANDROID){
+			// TODO
+		}
+	}
+	
 
 	if(OS_ANDROID && e.row.customView === 'logout'){
 		if (Alloy.Globals.checkConnection()) {	
