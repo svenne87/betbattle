@@ -90,8 +90,9 @@ function getChallengesAndStart() {
 					dialog : indicator
 				};
 
+				var loginSuccessWindow = Alloy.createController('landingPage', args).getView();
+				Alloy.Globals.CURRENTVIEW = loginSuccessWindow;
 				if (OS_IOS) {
-					var loginSuccessWindow = Alloy.createController('landingPage', args).getView();
 					loginSuccessWindow.open({
 						fullScreen : true,
 						transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
@@ -99,7 +100,6 @@ function getChallengesAndStart() {
 					loginSuccessWindow = null;
 
 				} else if (OS_ANDROID) {
-					var loginSuccessWindow = Alloy.createController('landingPage', args).getView();
 					loginSuccessWindow.open({
 						fullScreen : true,
 						orientationModes : [Titanium.UI.PORTRAIT]

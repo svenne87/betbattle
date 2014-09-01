@@ -660,10 +660,10 @@ function constructTableView(array) {
 	});
 
 	var image;
-	if ( typeof Alloy.Globals.FACEBOOKOBJECT !== 'undefined') {
+	if (Alloy.Globals.FACEBOOKOBJECT) {
 		image = 'https://graph.facebook.com/' + Alloy.Globals.FACEBOOKOBJECT.id + '/picture';
 	} else {
-		image = '';
+		image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + Alloy.Globals.BETKAMPENUID + '.png';
 	}
 
 	var centerImageView = Ti.UI.createImageView({
@@ -673,6 +673,11 @@ function constructTableView(array) {
 		borderRadius : 20,
 		image : image
 	});
+	
+	centerImageView.addEventListener('error',function(e){
+		// fallback for image
+		centerImageView.image = '/images/no_pic.png';
+	});
 
 	userInfoViewCenter.add(centerImageView);
 
@@ -680,6 +685,7 @@ function constructTableView(array) {
 
 	userInfoView.addEventListener('click', function() {
 		var win = Alloy.createController('profile').getView();
+		Alloy.Globals.CURRENTVIEW =  win;
 		if (OS_IOS) {
 			Alloy.Globals.NAV.openWindow(win, {
 				animated : true
@@ -1173,7 +1179,15 @@ function authWithRefreshToken() {
 			indicator.closeIndicator();
 			refreshTry = 0;
 			// reAuth failed. Need to login again. 400 = invalid token
+			Ti.App.Properties.removeProperty("BETKAMPEN");
 			Alloy.Globals.BETKAMPEN = null;
+			Alloy.Globals.CLOSE = false;
+			Alloy.Globals.CURRENTVIEW  = null;
+			Alloy.Globals.NAV.close();
+			var login = Alloy.createController('login').getView();
+			login.open({modal : false});
+			login = null;
+			
 			if (e.code != 400) {
 				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 			}
@@ -1334,24 +1348,23 @@ if (OS_IOS) {
 				if (Alloy.Globals.checkConnection()) {
 					if (Alloy.Globals.FACEBOOKOBJECT) {
 						// TODO handle Facebook reAuth?
+						indicator.openIndicator();
+						getChallenges();
 					} else {
 						// Betkampen check and if needed refresh token
+						Ti.API.log("resume...");
 						Alloy.Globals.readToken();
 						indicator.openIndicator();
-						loginBetkampenAuthenticated();  // TODO add retry?
+						loginBetkampenAuthenticated();
 					}
-
 					Ti.UI.iPhone.setAppBadge(0);
-					indicator.openIndicator();
-					getChallenges();
 				} else {
 					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionError);
 					userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
 					userInfoWinsLabel.setText('');
-					// TODO add retry
+					// TODO add retry?
 				}
-			} else {
-			}
+			} 
 		});
 	}
 } else if (OS_ANDROID) {
