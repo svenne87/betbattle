@@ -85,6 +85,7 @@ function createGameType(gameType){
 				Ti.API.info("Clickade " + JSON.stringify(e));
 				gameArray[index].gameValue[0] = e.source.value;
 				changeColors(e);
+				Ti.API.info("gameArray : " + JSON.stringify(gameArray));
 			});
 			optionsView.add(buttonViews[i]);
 		}
@@ -151,6 +152,7 @@ function createGameType(gameType){
 		
 			} else if (OS_IOS) {
 
+				var pickers = [];
 				// create 1-15 values
 				for (var i = 0; i <= 15; i++) {
 					data.push(Titanium.UI.createPickerRow({
@@ -160,44 +162,65 @@ function createGameType(gameType){
 				};
 				for (var i = 0; i < gameType.options; i++){
 					///SKAPA EN SELECT
-			
+					var visualPrefs;
 					var ModalPicker = require("lib/ModalPicker");
 					if(layoutType == 'horizontal'){
-						var visualPrefs = {
-						//top : 30,
-						left : 5,
-						opacity : 0.85,
-						borderRadius : 3,
-						backgroundColor : '#FFF',
-						width : 120,
-						height : 40,
-						textAlign : 'center'
-					};
+						visualPrefs = {
+							//top : 30,
+							left : 5,
+							id : "picker_" + i,
+							opacity : 0.85,
+							borderRadius : 3,
+							backgroundColor : '#FFF',
+							width : 120,
+							height : 40,
+							textAlign : 'center'
+						};
 					}else if(layoutType == 'absolute'){
-						var visualPrefs = {
-						//top : 30,
-						//left : 5,
-						opacity : 0.85,
-						borderRadius : 3,
-						backgroundColor : '#FFF',
-						width : 120,
-						height : 40,
-						textAlign : 'center'
-					};
+						visualPrefs = {
+							//top : 30,
+							//left : 5,
+							id : "picker_" + i,
+							opacity : 0.85,
+							borderRadius : 3,
+							backgroundColor : '#FFF',
+							width : 120,
+							height : 40,
+							textAlign : 'center'
+						};
 					}
 					
 		
-					var picker = new ModalPicker(visualPrefs, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt, Alloy.Globals.PHRASES.closeBtnTxt);
+					var picker = null;
+		
+					picker =  new ModalPicker(visualPrefs, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt, Alloy.Globals.PHRASES.closeBtnTxt, i);
 					modalPickersToHide.push(picker);
-		
+					
 					picker.text = '-';
+					//picker.text = '-';
 			
+					Ti.API.info("Y VÄRDE : " + i);
 					picker.self.addEventListener('change', function(e) {
-						gameArray[index].gameValue[i] = picker.value;
+						Ti.API.info("i value : " + i);
+						Ti.API.info("e : " + JSON.stringify(e));
+						Ti.API.info("pickers " + JSON.stringify(picker));
+						gameArray[index].gameValue[i-1] = picker.value;
+						Ti.API.info("gameArray : " + JSON.stringify(gameArray));
 					});
-		
+					
+					
 					optionsView.add(picker);
+					
+					//pickers.push(picker);
+					
+					
+					
 				}
+				for(var y = 0; y < pickers.length; y++){
+					
+					;
+				}
+				
 			}
 		
 	}
@@ -971,7 +994,7 @@ function createResultView(title, game) {
 }
 
 // Bet coins view, when answering a challenge
-function createBetCoinsView(coinsToJoin) {
+/*function createBetCoinsView(coinsToJoin) {
 	// handle if new bet
 
 	var coinsView = Titanium.UI.createView({
@@ -988,7 +1011,7 @@ function createBetCoinsView(coinsToJoin) {
 		color : '#FFF',
 		textAlign : 'center',
 		font : {
-			fontFamily : Alloy.Globals.getFont(),
+			fontFamily : "Impact",
 			fontSize : Alloy.Globals.getFontSize(2)
 		},
 		text : coinsToJoin + ' ' + Alloy.Globals.PHRASES.betbattleTxt + ' ' + Alloy.Globals.PHRASES.coinsTxt
@@ -1020,7 +1043,7 @@ function createBetCoinsChooseView() {
 		color : '#FFF',
 		textAlign : 'center',
 		font : {
-			fontFamily : Alloy.Globals.getFont(),
+			fontFamily : "Impact",
 			fontSize : Alloy.Globals.getFontSize(2)
 		},
 		text : Alloy.Globals.PHRASES.chooseCoinsBetTxt
@@ -1185,7 +1208,7 @@ function createSubmitButtonView(buttonText, betkampenId, cid) {
 	submitView.add(submitButton);
 	$.challenge.add(submitView);
 }
-
+*/
 // validate
 function validate() {
 	for (var i in gameArray) {
@@ -1283,44 +1306,7 @@ function createLayout() {
 	}
 
 
-	for (var i in gameObjects) {
-
-		Alloy.Globals.performTimeout(createBorderView());
-
-		
-		var gameType = parseInt(gameObjects[i].attributes.game_type);
-		switch(gameType) {
-			case 1:
-				// winner
-				Alloy.Globals.performTimeout(createGameScoreView(gameObjects[i]));
-				break;
-			case 2:
-				// first goal
-				Alloy.Globals.performTimeout(createFirstGoalView(gameObjects[i]));
-				break;
-			case 3:
-				// result
-				Alloy.Globals.performTimeout(createResultView(Alloy.Globals.PHRASES.resultTxt, gameObjects[i]));
-				break;
-			case 4:
-				// number of red cards
-				Alloy.Globals.performTimeout(createRedCardsView(gameObjects[i]));
-				break;
-			case 5:
-				// result after the first period
-				Alloy.Globals.performTimeout(createResultView(Alloy.Globals.PHRASES.resultAfterFirstPeriodTxt, gameObjects[i]));
-				break;
-			case 6:
-				// result after the second period
-				Alloy.Globals.performTimeout(createResultView(Alloy.Globals.PHRASES.resultAfterSecondPeriodTxt, gameObjects[i]));
-				break;
-			case 7:
-				// result after the first halftime
-				Alloy.Globals.performTimeout(createResultView(Alloy.Globals.PHRASES.halfTimeResultTxt, gameObjects[i]));
-				break;
-		}
-
-	}
+	
 
 	function doRest() {
 		
@@ -1332,14 +1318,8 @@ function createLayout() {
 				coinsToJoin = parseInt(challengeObject.attributes.potential_pot) / challengeObject.attributes.opponents.length;
 			}
 		}
-		// create views
-		var gameTip = {
-			options: 2,
-			type: 3,
-			option_type: "select",
-			number_of_values:2,
-		};
-		///*******KOLLLA IGENOM PÅ MÅNDAG******///
+		
+		///*******Create game types******///
 		var gametypes = gameObjects[0].attributes.game_types;
 		for(var y in gametypes){
 			createGameType(gametypes[y]);	
@@ -1348,10 +1328,10 @@ function createLayout() {
 		
 		createBorderView();
 
-		if (roundId === -1) {
+		/*if (roundId === -1) {
 			createBetCoinsView(coinsToJoin);
 		} else {
-			createBetCoinsChooseView();
+			createBetCoinsChooseView();w
 		}
 
 		createBorderView();
@@ -1361,7 +1341,7 @@ function createLayout() {
 		} else {
 			// -1 here indicates that we are creating a challenge
 			createSubmitButtonView(Alloy.Globals.PHRASES.challengeBtnTxt, Alloy.Globals.BETKAMPENUID, -1);
-		}
+		}*/
 	}
 
 
@@ -1555,6 +1535,7 @@ if (Alloy.Globals.checkConnection()) {
 						game_date : response.game_date,
 						game_id : response.game_id,
 						game_type : response.game_type,
+						game_types : response.game_types,
 						league_id : response.league_id,
 						league_name : response.league_name,
 						round_id : response.round_id,
