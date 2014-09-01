@@ -78,7 +78,7 @@ mainView.add(saveName);
 
 //saves groupname
 saveName.addEventListener('click', function(e) {
-	if (groupName.value.length > 2) {
+	if (groupName.value.length > 2 && groupName.value.length <= 18) {
 		var gName = Ti.Network.createHTTPClient();
 		gName.onload = function() {
 			Ti.API.info(this.responseText);
@@ -112,6 +112,8 @@ saveName.addEventListener('click', function(e) {
 
 	} else if (groupName.value.length < 3) {
 		alert(Alloy.Globals.PHRASES.shortGroupNameTxt);
+	} else if (groupName.value.length > 18){
+		alert(Alloy.Globals.PHRASES.longGroupNameTxt);
 	}
 });
 
