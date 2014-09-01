@@ -176,7 +176,8 @@ function authWithRefreshToken() {
 
 // resume listener for ios and android
 if (OS_IOS) {
-	if (Alloy.Globals.OPEN) {
+	if (Alloy.Globals.OPEN && Alloy.Globals.RESUME) {
+		Alloy.Globals.RESUME = false;
 		Ti.App.addEventListener('resume', function() {
 			if (Alloy.Globals.CURRENTVIEW !== null) {
 				// check connection

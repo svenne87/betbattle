@@ -2,7 +2,6 @@ var refreshItem;
 
 // used to navigate between views
 Ti.App.addEventListener('app:updateView', function(obj){
-
 	var currentView = Alloy.Globals.CURRENTVIEW;
 	// attempt to clear memory
 	$.ds.contentview.removeAllChildren();
@@ -21,7 +20,6 @@ Ti.App.addEventListener('app:updateView', function(obj){
 });
 
 exitOnClose: true;
-
 Alloy.Globals.MAINWIN = $.mainWin;
 
 if(Alloy.Globals.INDEXWIN !== null){

@@ -32,6 +32,7 @@ Alloy.Globals.LANDINGWIN = null;
 Alloy.Globals.WINDOWS = [];
 Alloy.Globals.OPEN = true;
 Alloy.Globals.CLOSE = true;
+Alloy.Globals.RESUME = true;
 Alloy.Globals.FBERROR = true;
 Alloy.Globals.PHRASES = {};
 Alloy.Globals.TiBeacon = null;
