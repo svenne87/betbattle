@@ -173,7 +173,7 @@ function createSection() {
 	var args7 = {
 		title : Alloy.Globals.PHRASES.friendZoneTxt,
 		customView : 'friendZone',
-		image : '/images/firendzone.png'
+		image : '/images/friendzone.png'
 	};
 	section.add(Alloy.createController('menurow', args7).getView());
 
