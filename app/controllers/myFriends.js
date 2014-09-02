@@ -108,7 +108,7 @@ function createGUI(obj) {
 	
 	//profilepicture
 	var image;
-	if(typeof obj.fbid !== 'undefined') {
+	if(obj.fbid !== null) {
 		image = "https://graph.facebook.com/"+ obj.fbid +"/picture?type=large";
 	} else {
 		// get betkampen image

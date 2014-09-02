@@ -163,7 +163,7 @@ function createFriendGUI(obj, groupId) {
 			
 	//profilepicture
 	var image;
-	if(typeof obj.fbid !== 'undefined') {
+	if(obj.fbid !== null) {
 		image = "https://graph.facebook.com/"+ obj.fbid +"/picture?type=large";
 	} else {
 		// get betkampen image
@@ -221,7 +221,7 @@ function createFriendGUI(obj, groupId) {
 			addBtn.title = fontawesome.icon('fa-check');
 			member.borderColor = '#00ff00';
 			var addMember = Ti.Network.createHTTPClient();
-			addMember.open("POST", Alloy.Globals.BETKAMPENADDGROUPMEMBERSURL + '&lang=' + Alloy.Globals.LOCALE);
+			addMember.open("POST", Alloy.Globals.BETKAMPENADDGROUPMEMBERSURL);
 			var params = {
 				group_id : e.source.gid,
 				id : e.source.id,
@@ -237,7 +237,7 @@ function createFriendGUI(obj, groupId) {
 			member.borderColor = '#fff';
 			
 			var removeMember = Ti.Network.createHTTPClient();
-			removeMember.open("POST", Alloy.Globals.BETKAMPENREMOVEGROUPMEMBERURL + '&lang=' + Alloy.Globals.LOCALE);
+			removeMember.open("POST", Alloy.Globals.BETKAMPENREMOVEGROUPMEMBERURL);
 			var params = {
 				group_id : e.source.gid,
 				id : Alloy.Globals.BETKAMPENUID,
