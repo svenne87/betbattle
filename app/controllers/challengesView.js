@@ -817,8 +817,7 @@ function constructTableView(array) {
 
 	acceptRow.add(Ti.UI.createLabel({
 		font : {
-<<<<<<< HEAD
-=======
+
 			fontFamily : Alloy.Globals.getFont(),
 			fontSize : Alloy.Globals.getFontSize(2),
 		},
@@ -830,7 +829,7 @@ function constructTableView(array) {
 	
 	acceptRow.add(Ti.UI.createLabel({
 		font : {
->>>>>>> b8c4350a9600b08374818c9dce972a8b051e815c
+
 			fontFamily : font
 		},
 		text : fontawesome.icon('icon-chevron-right'),
