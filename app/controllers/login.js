@@ -195,20 +195,14 @@ function loginAuthenticated(fb) {
 						}
 					}
 				}
-				
-				// store profile name
-				// TODO storeProfileName(result.name);
 
 				Alloy.Globals.FACEBOOKOBJECT = Alloy.createModel('facebook', {
 					id : result.id,
-					//bithday : result.birthday,
 					locale : result.locale,
-					//location : result.location['name'],
 					username : result.username,
 					fullName : result.name,
 					firstName : result.first_name,
 					lastName : result.last_name,
-					//gender : result.gender,
 					email : result.email
 				});
 

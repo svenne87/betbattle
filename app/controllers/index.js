@@ -1,17 +1,12 @@
 /* This is the app's entry point */
 
-
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({
 	top : 200
 });
 
-
-
-
 function openLogin() {
 	if (OS_IOS) {
-
 		var login = Alloy.createController('login').getView();
 
 		login.open({

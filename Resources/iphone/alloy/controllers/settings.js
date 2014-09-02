@@ -51,7 +51,7 @@ function Controller() {
             xhr.onload = function() {
                 if ("200" == this.status) {
                     if (4 == this.readyState) {
-                        0 === type ? Ti.App.Properties.setBool("pushSetting", valueToStore) : 1 === type;
+                        0 === type && Ti.App.Properties.setBool("pushSetting", valueToStore);
                         Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
                     }
                     indicator.closeIndicator();
@@ -254,7 +254,7 @@ function Controller() {
         }));
         fourthRow.addEventListener("click", function() {
             var dialog;
-            var profileName = Ti.App.Properties.getString("profileNameSetting");
+            var profileName = Alloy.Globals.PROFILENAME;
             var confirm = Alloy.Globals.PHRASES.okConfirmTxt;
             var cancel = Alloy.Globals.PHRASES.abortBtnTxt;
             var titleTxt = Alloy.Globals.PHRASES.profileNameTitleTxt;

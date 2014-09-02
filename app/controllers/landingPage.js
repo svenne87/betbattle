@@ -8,6 +8,18 @@ var indicator = uie.createIndicatorWindow({
 	text : Alloy.Globals.PHRASES.loadingTxt
 });
 
+function showFbLogin() {
+	Alloy.Globals.CURRENTVIEW  = null;
+	Alloy.Globals.NAV.close();
+	Ti.App.Properties.removeProperty("BETKAMPEN");
+	Alloy.Globals.BETKAMPEN = null;
+	Alloy.Globals.FACEBOOKOBJECT = null;
+				
+	var login = Alloy.createController('login').getView();
+	login.open({modal : false});
+	login = null;
+}
+
 function createLeagueAndUidObj(response) {
 	Alloy.Globals.BETKAMPENUID = response.betkampen_uid;
 	Alloy.Globals.PROFILENAME = response.profile_name;
@@ -39,16 +51,21 @@ function createLeagueAndUidObj(response) {
 /* Only used for Betkampen token sign in! */
 var refreshTry = 0;
 
-function loginBetkampenAuthenticated() {
+function loginBetkampenAuthenticated(status) {
 	// Get betkampenID with valid token
 	var xhr = Titanium.Network.createHTTPClient();
 	xhr.onerror = function(e) {
 		Ti.API.error('Bad Sever =>' + JSON.stringify(e));
 		if (e.code == 401) {
-			// if this is first try, then try refresh token
-			if (refreshTry === 0) {
-				refreshTry = 1;
-				authWithRefreshToken();
+			if(status === 1){
+				// if this is first try, then try refresh token
+				if (refreshTry === 0) {
+					refreshTry = 1;
+					authWithRefreshToken();
+				}
+			} else if(status === 2) {
+				// Facebook failed to reAuth, present login screen
+				showFbLogin();
 			}
 		} else {
 			indicator.closeIndicator();
@@ -158,7 +175,7 @@ function authWithRefreshToken() {
 					};
 					Alloy.Globals.storeToken();
 					// brand new token, try to authenticate
-					loginBetkampenAuthenticated();
+					loginBetkampenAuthenticated(1);
 				} else {
 					Ti.API.log(this.response);
 				}
@@ -184,15 +201,23 @@ if (OS_IOS) {
 				// check connection
 				if (Alloy.Globals.checkConnection()) {
 					if (Alloy.Globals.FACEBOOKOBJECT) {
-						// TODO handle Facebook reAuth?
-						//indicator.openIndicator();
-						Ti.App.fireEvent('app:challengesViewRefresh');
+						var fb = Alloy.Globals.FACEBOOK;
+						if(fb) {
+							if(fb.loggedIn) {
+								indicator.openIndicator();
+								loginBetkampenAuthenticated(2);
+								// TODO Test, run methods, need to authorize??  Testa /me och se om de svara 401 etc. då visa login...
+							} else {
+								// not logged in, show Betkampen login view
+								showFbLogin();
+							}													
+						}
 					} else {
 						// Betkampen check and if needed refresh token
 						Ti.API.log("resume...");
 						Alloy.Globals.readToken();
 						indicator.openIndicator();
-						loginBetkampenAuthenticated();
+						loginBetkampenAuthenticated(1);
 					}
 					Ti.UI.iPhone.setAppBadge(0);
 				} else {
