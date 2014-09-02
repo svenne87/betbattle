@@ -163,7 +163,7 @@ function createGUI(obj) {
 		
 		//profilepicture
 		var image;
-		if(typeof obj.fbid !== 'undefined') {
+		if(obj.fbid !== null) {
 			image = "https://graph.facebook.com/"+ obj.fbid +"/picture?type=large";
 		} else {
 			// get betkampen image
@@ -275,11 +275,29 @@ function createGUI(obj) {
 		});
 		row.add(member);
 
-		var profilePic = Titanium.UI.createImageView({
+		/*var profilePic = Titanium.UI.createImageView({
 			image : "/images/no_pic.png",
 			height : 25,
 			width : 25,
 			left : '2%'
+		});*/
+		var image;
+		if(obj.fbid !== null) {
+			image = "https://graph.facebook.com/"+ obj.fbid +"/picture?type=large";
+		} else {
+			// get betkampen image
+			image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + obj.uid + '.png';
+		}
+
+		var profilePic = Titanium.UI.createImageView({
+		image : image,
+			height : 25,
+			width : 25,
+			left : '2%'
+		});
+		profilePic.addEventListener('error',function(e){
+			// fallback for image
+			profilePic.image = '/images/no_pic.png';
 		});
 		member.add(profilePic);
 
@@ -351,11 +369,29 @@ function createFriendGUI(friend, members) {
 		});
 		row.add(member);
 
-		var profilePic = Titanium.UI.createImageView({
+		/*var profilePic = Titanium.UI.createImageView({
 			image : "/images/no_pic.png",
 			height : 25,
 			width : 25,
 			left : '2%'
+		});*/
+		var image;
+		if(friend.fbid !== null) {
+			image = "https://graph.facebook.com/"+ friend.fbid +"/picture?type=large";
+		} else {
+			// get betkampen image
+			image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + friend.id + '.png';
+		}
+
+		var profilePic = Titanium.UI.createImageView({
+		image : image,
+			height : 25,
+			width : 25,
+			left : '2%'
+		});
+		profilePic.addEventListener('error',function(e){
+			// fallback for image
+			profilePic.image = '/images/no_pic.png';
 		});
 		member.add(profilePic);
 
