@@ -1,10 +1,7 @@
 var error = Alloy.Globals.PHRASES.loginError;
 var uie = require('lib/IndicatorWindow');
 
-var indicator = uie.createIndicatorWindow({
-	top : 200,
-	text : Alloy.Globals.PHRASES.loadingTxt
-});
+var indicator = null;
 
 var args = arguments[0] || {};
 
@@ -23,15 +20,9 @@ if(emailReg !== -1 && passwordReg !== -1) {
 	login(true);
 }
 
-function storeProfileName(name) {
-	if (!Ti.App.Properties.hasProperty("profileNameSetting")) {
-		Ti.App.Properties.setString("profileNameSetting", name);
-	}
-}
-
-
 function createLeagueAndUidObj(response) {
 	Alloy.Globals.BETKAMPENUID = response.betkampen_uid;
+	Alloy.Globals.PROFILENAME = response.profile_name;
 	Alloy.Globals.LEAGUES = [];
 	Alloy.Globals.AVAILABLELANGUAGES = [];
 
@@ -46,15 +37,15 @@ function createLeagueAndUidObj(response) {
 		// store all active leagues
 		Alloy.Globals.LEAGUES.push(league);
 	}
-	        for (var i = 0; response.languages.length > i; i++) {
-            var language = {
-            	id : response.languages[i].id,
-                name: response.languages[i].name,
-                imageLocation: response.languages[i].imageLocation,
-                description: response.languages[i].description
-            };
-            Alloy.Globals.AVAILABLELANGUAGES.push(language);
-        }
+	for (var i = 0; response.languages.length > i; i++) {
+		var language = {
+            id : response.languages[i].id,
+            name: response.languages[i].name,
+            imageLocation: response.languages[i].imageLocation,
+            description: response.languages[i].description
+        };
+       	Alloy.Globals.AVAILABLELANGUAGES.push(language);
+   	}
 }
 
 function getChallengesAndStart() {
@@ -96,7 +87,6 @@ function getChallengesAndStart() {
 				if(response !== null) {
 					Alloy.Globals.CHALLENGEOBJECTARRAY = Alloy.Globals.constructChallenge(response);
 				}
-				
 
 				// login success
 				var args = {
@@ -146,10 +136,7 @@ function getChallengesAndStart() {
 }
 
 
-  // TODO Handle expired token (Global, perhaps at resume???)
   // TODO Handle if registered with fb and no password stored, if we want to login using betkampen?
- 
-
 
 function loginAuthenticated() {
 	// Get betkampenID with valid token
@@ -212,32 +199,30 @@ function loginAuthenticated() {
 
 
 function login(auto) {
-	var username;
-	var password;
+	var user;
+	var pass;
 	if(auto) {
 		// login from register
-		username = emailReg;
-		password = passwordReg;
+		user = emailReg;
+		pass = passwordReg;
 	} else {
-		username = $.loginEmail.value;
-		password = $.loginPass.value;
+		user = $.loginEmail.value;
+		pass = $.loginPass.value;
 	}
-	
+
 	if (Alloy.Globals.checkConnection()) {
 		$.signInBtn.enabled = false;
-		indicator.openIndicator();
 		var loginReq = Titanium.Network.createHTTPClient();
-		loginReq.setTimeout(Alloy.Globals.TIMEOUT);
-
 		try {
 			loginReq.open("POST", Alloy.Globals.BETKAMPENEMAILLOGIN);
 			var params = {
 				grant_type : 'password',
-				username : username,
-				password : password,
+				username : user,
+				password : pass,
 				client_id : 'betkampen_mobile',
 				client_secret : 'not_so_s3cr3t'
 			};
+			loginReq.setTimeout(Alloy.Globals.TIMEOUT);
 			loginReq.send(params);
 		} catch(e) {
 			Ti.API.error('Bad Sever =>' + e.error);
@@ -257,14 +242,7 @@ function login(auto) {
 						valid : response.expires_in,
 						refresh_token : response.refresh_token
 					};
-					
-					// get first part on name
-					var name =  $.loginEmail.value;
-					var index = name.indexOf("@");
-					name = name.substring(0, index);
-					
-					// store profile name in phone and fetch challenges
-					storeProfileName(name);
+
 					Alloy.Globals.storeToken();
 					loginAuthenticated();	
 				}
@@ -282,16 +260,23 @@ function login(auto) {
 				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.loginCredentialsError);
 			} else {
 				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-			}
-			
+			}	
 		};
 	} else {
+		indicator.closeIndicator();
 		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 	}
 }
 
 $.signInBtn.addEventListener('click', function(e) {
 	if ($.loginEmail.value != '' && $.loginPass.value != '') {
+		// this is due to a strange titanium bug with the garbage collector
+		var indicator = uie.createIndicatorWindow({
+			top : 200,
+			text : Alloy.Globals.PHRASES.loadingTxt
+		});
+		
+		indicator.openIndicator();
 		login(false);
 	} else {
 		alert(error);

@@ -108,7 +108,7 @@ function createGUI(obj) {
 	
 	//profilepicture
 	var image;
-	if(typeof obj.fbid !== 'undefined') {
+	if(obj.fbid !== null) {
 		image = "https://graph.facebook.com/"+ obj.fbid +"/picture?type=large";
 	} else {
 		// get betkampen image
@@ -176,7 +176,7 @@ function createGUI(obj) {
 			switch(e.index) {
 			case 0:
 				var removeFriend = Ti.Network.createHTTPClient();
-				removeFriend.open("POST", Alloy.Globals.BETKAMPENURL + '/api/remove_friend.php');
+				removeFriend.open("POST", Alloy.Globals.BETKAMPENDELETEFRIENDURL);
 				var params = {
 					uid : Alloy.Globals.BETKAMPENUID,
 					fid : e.source.id

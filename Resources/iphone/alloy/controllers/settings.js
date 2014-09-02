@@ -51,7 +51,7 @@ function Controller() {
             xhr.onload = function() {
                 if ("200" == this.status) {
                     if (4 == this.readyState) {
-                        0 === type ? Ti.App.Properties.setBool("pushSetting", valueToStore) : 1 === type && Ti.App.Properties.setString("profileNameSetting", valueToStore);
+                        0 === type ? Ti.App.Properties.setBool("pushSetting", valueToStore) : 1 === type;
                         Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
                     }
                     indicator.closeIndicator();

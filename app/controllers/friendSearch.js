@@ -167,7 +167,7 @@ function createGUI(obj) {
 		row.add(member);
 		//profilepicture
 		var image;
-		if(typeof obj.fbid !== 'undefined') {
+		if(obj.fbid !== null) {
 			image = "https://graph.facebook.com/"+ obj.fbid +"/picture?type=large";
 		} else {
 			// get betkampen image
@@ -248,7 +248,7 @@ function createGUI(obj) {
 				addBtn.title = fontawesome.icon('fa-check');
 				member.borderColor = '#00ff00';
 				var addFriends = Ti.Network.createHTTPClient();
-				addFriends.open("POST", Alloy.Globals.BETKAMPENURL + '/api/add_friends.php');
+				addFriends.open("POST", Alloy.Globals.BETKAMPENADDFRIENDSURL);
 				var params = {
 					uid : Alloy.Globals.BETKAMPENUID,
 					fid : e.source.id
@@ -262,7 +262,7 @@ function createGUI(obj) {
 				addBtn.title = fontawesome.icon('fa-plus');
 				member.borderColor = '#fff';
 				var removeFriend = Ti.Network.createHTTPClient();
-				removeFriend.open("POST", Alloy.Globals.BETKAMPENURL + '/api/remove_friend.php');
+				removeFriend.open("POST", Alloy.Globals.BETKAMPENDELETEFRIENDURL);
 				var params = {
 					uid : Alloy.Globals.BETKAMPENUID,
 					fid : e.source.id
@@ -323,7 +323,7 @@ function getSearchResult() {
 			timeout : Alloy.Globals.TIMEOUT // in milliseconds
 		});
 		// Prepare the connection. search in users table after what you searched
-		client.open("GET", Alloy.Globals.BETKAMPENURL + '/api/get_users_search.php?search=' + searchText.value);
+		client.open("GET", Alloy.Globals.BETKAMPENFRIENDSEARCHURL + '?search=' + searchText.value + '&lang=' + Alloy.Globals.LOCALE);
 		// Send the request.
 		client.send();
 	} else {

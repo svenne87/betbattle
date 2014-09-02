@@ -98,7 +98,7 @@ if (gAdmin == Alloy.Globals.BETKAMPENUID) {
 		if (groupName.value.length > 2) {
 			var editName = Ti.Network.createHTTPClient();
 
-			editName.open("POST", Alloy.Globals.BETKAMPENURL + '/api/edit_group_name.php');
+			editName.open("POST", Alloy.Globals.BETKAMEPNCHANGEGROUPNAMEURL + '/?lang=' + Alloy.Globals.LOCALE);
 			var params = {
 				groupID : e.source.id,
 				group_name : groupName.value,
@@ -163,7 +163,7 @@ function createGUI(obj) {
 		
 		//profilepicture
 		var image;
-		if(typeof obj.fbid !== 'undefined') {
+		if(obj.fbid !== null) {
 			image = "https://graph.facebook.com/"+ obj.fbid +"/picture?type=large";
 		} else {
 			// get betkampen image
@@ -235,7 +235,7 @@ function createGUI(obj) {
 					case 0:
 						var removeMember = Ti.Network.createHTTPClient();
 
-						removeMember.open("POST", Alloy.Globals.BETKAMPENURL + '/api/remove_group_member.php');
+						removeMember.open("POST", Alloy.Globals.BETKAMPENREMOVEGROUPMEMBERURL + '/?lang=' + Alloy.Globals.LOCALE);
 						var params = {
 							group_id : e.source.id,
 							id : Alloy.Globals.BETKAMPENUID,
@@ -275,11 +275,29 @@ function createGUI(obj) {
 		});
 		row.add(member);
 
-		var profilePic = Titanium.UI.createImageView({
+		/*var profilePic = Titanium.UI.createImageView({
 			image : "/images/no_pic.png",
 			height : 25,
 			width : 25,
 			left : '2%'
+		});*/
+		var image;
+		if(obj.fbid !== null) {
+			image = "https://graph.facebook.com/"+ obj.fbid +"/picture?type=large";
+		} else {
+			// get betkampen image
+			image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + obj.uid + '.png';
+		}
+
+		var profilePic = Titanium.UI.createImageView({
+		image : image,
+			height : 25,
+			width : 25,
+			left : '2%'
+		});
+		profilePic.addEventListener('error',function(e){
+			// fallback for image
+			profilePic.image = '/images/no_pic.png';
 		});
 		member.add(profilePic);
 
@@ -351,11 +369,29 @@ function createFriendGUI(friend, members) {
 		});
 		row.add(member);
 
-		var profilePic = Titanium.UI.createImageView({
+		/*var profilePic = Titanium.UI.createImageView({
 			image : "/images/no_pic.png",
 			height : 25,
 			width : 25,
 			left : '2%'
+		});*/
+		var image;
+		if(friend.fbid !== null) {
+			image = "https://graph.facebook.com/"+ friend.fbid +"/picture?type=large";
+		} else {
+			// get betkampen image
+			image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + friend.id + '.png';
+		}
+
+		var profilePic = Titanium.UI.createImageView({
+		image : image,
+			height : 25,
+			width : 25,
+			left : '2%'
+		});
+		profilePic.addEventListener('error',function(e){
+			// fallback for image
+			profilePic.image = '/images/no_pic.png';
 		});
 		member.add(profilePic);
 
@@ -409,7 +445,7 @@ function createFriendGUI(friend, members) {
 				case 0:
 					var addMember = Ti.Network.createHTTPClient();
 
-					addMember.open("POST", Alloy.Globals.BETKAMPENURL + '/api/add_group_member.php');
+					addMember.open("POST", Alloy.Globals.BETKAMPENADDGROUPMEMBERSURL + '/?lang=' + Alloy.Globals.LOCALE);
 					var params = {
 						group_id : e.source.id,
 						id : e.source.fId,
@@ -454,7 +490,7 @@ var client = Ti.Network.createHTTPClient({
 	timeout : Alloy.Globals.TIMEOUT // in milliseconds
 });
 // Prepare the connection.
-client.open("GET", Alloy.Globals.BETKAMPENURL + '/api/get_group_members.php?gid=' + gID + '&lang=' + Alloy.Globals.LOCALE);
+client.open("GET", Alloy.Globals.BETKAMPENGETGROUPMEMBERSURL + '?gid=' + gID + '&lang=' + Alloy.Globals.LOCALE);
 // Send the request.
 client.send();
 

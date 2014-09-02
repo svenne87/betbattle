@@ -78,7 +78,7 @@ mainView.add(saveName);
 
 //saves groupname
 saveName.addEventListener('click', function(e) {
-	if (groupName.value.length > 2) {
+	if (groupName.value.length > 2 && groupName.value.length <= 18) {
 		var gName = Ti.Network.createHTTPClient();
 		gName.onload = function() {
 			Ti.API.info(this.responseText);
@@ -91,7 +91,7 @@ saveName.addEventListener('click', function(e) {
 				groupNameLabel.text = groupName.value;
 				var groupId = JSON.parse(this.responseText);
 				var addMe = Ti.Network.createHTTPClient();
-				addMe.open("POST", Alloy.Globals.BETKAMPENURL + '/api/add_group_member.php');
+				addMe.open("POST", Alloy.Globals.BETKAMPENADDGROUPMEMBERSURL);
 				var params = {
 					group_id : groupId,
 					id : Alloy.Globals.BETKAMPENUID,
@@ -103,7 +103,7 @@ saveName.addEventListener('click', function(e) {
 
 			}
 		};
-		gName.open("POST", Alloy.Globals.BETKAMPENURL + '/api/add_group.php');
+		gName.open("POST", Alloy.Globals.BETKAMPENCREATEGROUPURL);
 		var params = {
 			id : Alloy.Globals.BETKAMPENUID,
 			group_name : groupName.value
@@ -112,6 +112,8 @@ saveName.addEventListener('click', function(e) {
 
 	} else if (groupName.value.length < 3) {
 		alert(Alloy.Globals.PHRASES.shortGroupNameTxt);
+	} else if (groupName.value.length > 18){
+		alert(Alloy.Globals.PHRASES.longGroupNameTxt);
 	}
 });
 
@@ -161,7 +163,7 @@ function createFriendGUI(obj, groupId) {
 			
 	//profilepicture
 	var image;
-	if(typeof obj.fbid !== 'undefined') {
+	if(obj.fbid !== null) {
 		image = "https://graph.facebook.com/"+ obj.fbid +"/picture?type=large";
 	} else {
 		// get betkampen image
@@ -219,7 +221,7 @@ function createFriendGUI(obj, groupId) {
 			addBtn.title = fontawesome.icon('fa-check');
 			member.borderColor = '#00ff00';
 			var addMember = Ti.Network.createHTTPClient();
-			addMember.open("POST", Alloy.Globals.BETKAMPENURL + '/api/add_group_member.php');
+			addMember.open("POST", Alloy.Globals.BETKAMPENADDGROUPMEMBERSURL);
 			var params = {
 				group_id : e.source.gid,
 				id : e.source.id,
@@ -235,7 +237,7 @@ function createFriendGUI(obj, groupId) {
 			member.borderColor = '#fff';
 			
 			var removeMember = Ti.Network.createHTTPClient();
-			removeMember.open("POST", Alloy.Globals.BETKAMPENURL + '/api/remove_group_member.php');
+			removeMember.open("POST", Alloy.Globals.BETKAMPENREMOVEGROUPMEMBERURL);
 			var params = {
 				group_id : e.source.gid,
 				id : Alloy.Globals.BETKAMPENUID,

@@ -41,7 +41,6 @@ var botView = Ti.UI.createView({
 //create the top of the profile
 
 var profileName = Ti.UI.createLabel({
-	text: ""+Ti.App.Properties.getString('profileNameSetting'),
 	textAlign: "center",
 	top:10,
 	font: {
@@ -95,7 +94,7 @@ var profilePictureView = Ti.UI.createView({
 profileTopView.add(profilePictureView);
 
 var image;
-if(typeof Alloy.Globals.FACEBOOKOBJECT !== 'undefined') {
+if(Alloy.Globals.FACEBOOKOBJECT) {
 	image = "https://graph.facebook.com/"+Alloy.Globals.FACEBOOKOBJECT.id+"/picture?type=large";
 } else {
 	// get betkampen image
@@ -374,6 +373,8 @@ function getProfile(){
 					
 					wins.setText(userInfo.totalWins);
 					winsText.setText(Alloy.Globals.PHRASES.winsInfoTxt);
+					
+					profileName.setText(userInfo.name);
 					
 					profilePosition.setText(userInfo.position);
 					Ti.API.info("Position :"+userInfo.position);

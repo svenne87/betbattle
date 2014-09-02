@@ -744,6 +744,14 @@ function constructTableView(array) {
 			separatorStyle : separatorS,
 			separatorColor : separatorColor
 		});
+		sections[0] = Ti.UI.createTableViewSection({
+			headerView : Ti.UI.createView({
+				height : 0.1,
+			}),
+			footerView : Ti.UI.createView({
+				height : 0.1,
+			})
+		});
 	} else if (OS_ANDROID) {
 		table = Titanium.UI.createTableView({
 			width : Ti.UI.FILL,
@@ -754,32 +762,23 @@ function constructTableView(array) {
 			separatorColor : '#6d6d6d',
 			id : 'challengeTable'
 		});
+		sections[0] = Ti.UI.createTableViewSection({});
 	}
 
-	sections[0] = Ti.UI.createTableViewSection({
-		headerView : Ti.UI.createView({
-			height : 0.1,
-		}),
-		footerView : Ti.UI.createView({
-			height : 0.1,
-		}),
-	});
-
 	var acceptRow = Ti.UI.createTableViewRow({
-		title : "Nya Utmaningar",
-		height : 30,
+		height : 60,
 		id : "new",
 		width : Ti.UI.FILL,
 		color : "#FFF",
 		backgroundColor : 'transparent',
 		font : {
 			fontSize : 14,
+			fontFamily : Alloy.Globals.getFont()
 		}
 	});
 
 	var pendingRow = Ti.UI.createTableViewRow({
-		title : "Pågående Utmaningar",
-		height : 30,
+		height : 60,
 		id : "pending",
 		width : Ti.UI.FILL,
 		color : "#FFF",
@@ -790,8 +789,7 @@ function constructTableView(array) {
 	});
 
 	var finishedRow = Ti.UI.createTableViewRow({
-		title : "Avslutade Utmaningar",
-		height : 30,
+		height : 60,
 		id : "finished",
 		width : Ti.UI.FILL,
 		color : "#FFF",
@@ -800,6 +798,7 @@ function constructTableView(array) {
 			fontSize : 14,
 		}
 	});
+
 
 	var fontawesome = require('lib/IconicFont').IconicFont({
 		font : 'lib/FontAwesome'
@@ -814,17 +813,41 @@ function constructTableView(array) {
 		if (Titanium.Platform.displayCaps.platformWidth < 350) {
 			rightPercentage = '3%';
 		}
-
 	}
 
 	acceptRow.add(Ti.UI.createLabel({
 		font : {
+<<<<<<< HEAD
+=======
+			fontFamily : Alloy.Globals.getFont(),
+			fontSize : Alloy.Globals.getFontSize(2),
+		},
+		text : Alloy.Globals.PHRASES.newChallengesTxt,
+		color : '#FFF',
+		height : 'auto',
+		width : 'auto'
+	}));
+	
+	acceptRow.add(Ti.UI.createLabel({
+		font : {
+>>>>>>> b8c4350a9600b08374818c9dce972a8b051e815c
 			fontFamily : font
 		},
 		text : fontawesome.icon('icon-chevron-right'),
 		right : rightPercentage,
 		color : '#c5c5c5',
 		fontSize : 80,
+		height : 'auto',
+		width : 'auto'
+	}));
+	
+	pendingRow.add(Ti.UI.createLabel({
+		font : {
+			fontFamily : Alloy.Globals.getFont(),
+			fontSize : Alloy.Globals.getFontSize(2),
+		},
+		text : Alloy.Globals.PHRASES.pendingChallengesTxt,
+		color : '#FFF',
 		height : 'auto',
 		width : 'auto'
 	}));
@@ -839,6 +862,17 @@ function constructTableView(array) {
 		fontSize : 80,
 		height : 'auto',
 		width : 'auto',
+	}));	
+	
+	finishedRow.add(Ti.UI.createLabel({
+		font : {
+			fontFamily : Alloy.Globals.getFont(),
+			fontSize : Alloy.Globals.getFontSize(2),
+		},
+		text : Alloy.Globals.PHRASES.finishedChallengesTxt,
+		color : '#FFF',
+		height : 'auto',
+		width : 'auto'
 	}));
 
 	finishedRow.add(Ti.UI.createLabel({
@@ -860,6 +894,7 @@ function constructTableView(array) {
 
 	//sections[0] =Alloy.Globals.PHRASES.newChallengesTxt createSectionsForTable(Alloy.Globals.PHRASES.tournamentsTxt);
 	sections[1] = createSectionsForTable("Just Nu");
+	
 	//sections[2] = createSectionsForTable(Alloy.Globals.PHRASES.pendingChallengesTxt);
 	//sections[3] = createSectionsForTable(Alloy.Globals.PHRASES.finishedChallengesTxt);
 

@@ -18,6 +18,7 @@ Alloy.Globals.DEVICETOKEN;
 Alloy.Globals.FACEBOOK;
 Alloy.Globals.CHALLENGEOBJECTARRAY = [];
 Alloy.Globals.BETKAMPENUID = 0;
+Alloy.Globals.PROFILENAME;
 Alloy.Globals.CHALLENGEINDEX;
 Alloy.Globals.LEAGUES;
 Alloy.Globals.AVAILABLELANGUAGES;
@@ -90,6 +91,15 @@ Alloy.Globals.BETKAMPENGETGETBEACONSURL = Alloy.Globals.BETKAMPENURL + '/api/get
 Alloy.Globals.BETKAMPENGETPROMOTIONURL = Alloy.Globals.BETKAMPENURL + '/api/get_promotion.php';
 Alloy.Globals.BETKAMPENCHALLENGESHOWURL = Alloy.Globals.BETKAMPENURL + '/api/show_challenge.php';
 Alloy.Globals.BETKAMPENLOGOUTURL = Alloy.Globals.BETKAMPENURL + '/api/logout.php';
+Alloy.Globals.BETKAMPENDELTEGROUPURL = Alloy.Globals.BETKAMPENURL + '/api/remove_group.php'; //delete your own group
+Alloy.Globals.BETKAMPENREMOVEGROUPMEMBERURL = Alloy.Globals.BETKAMPENURL + '/api/remove_group_member.php'; //leave group or remove group member
+Alloy.Globals.BETKAMEPNCHANGEGROUPNAMEURL = Alloy.Globals.BETKAMPENURL + '/api/edit_group_name.php'; // change groupname
+Alloy.Globals.BETKAMPENADDGROUPMEMBERSURL = Alloy.Globals.BETKAMPENURL + '/api/add_group_member.php'; //add groupmembers
+Alloy.Globals.BETKAMPENGETGROUPMEMBERSURL = Alloy.Globals.BETKAMPENURL + '/api/get_group_members.php'; // get all groupmembers
+Alloy.Globals.BETKAMPENDELETEFRIENDURL = Alloy.Globals.BETKAMPENURL + '/api/remove_friend.php'; // delete friends from your friendlist
+Alloy.Globals.BETKAMPENCREATEGROUPURL = Alloy.Globals.BETKAMPENURL + '/api/add_group.php'; // create a new group and add you as admin
+Alloy.Globals.BETKAMPENFRIENDSEARCHURL = Alloy.Globals.BETKAMPENURL + '/api/get_users_search.php'; // search in db for friends
+Alloy.Globals.BETKAMPENADDFRIENDSURL = Alloy.Globals.BETKAMPENURL + '/api/add_friends.php'; // add friends to your friendlist
 Alloy.Globals.BETKAMPENSAVECHALLENGEURL = Alloy.Globals.BETKAMPENURL + '/api/save_challenge.php';
 
 Alloy.Globals.performTimeout = function(func) {
