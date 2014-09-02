@@ -447,7 +447,22 @@ if (OS_IOS){
 		}));
 	}
 
+	var ticketBtn = Ti.UI.createButton({
+		//title: fontawesome.icon("fa-ticket"),
+		font:{
+			fontFamily: font,
+			fontSize: 18,
+		},
+		//backgroundImage: "/images/ticketBtn.png",
+		color: "#FFF",
+		width: Ti.UI.SIZE,
+		height: 25,
+		right: 10,
+	});
+
+	
 	$.mainWin.setLeftNavButton(buttonBarMenu);
+	$.mainWin.setRightNavButton(ticketBtn);
 // TODO
 /*
 	$.mainWin.open({

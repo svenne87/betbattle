@@ -9,7 +9,9 @@
  }
  });*/
 var mod = require('bencoding.blur');
+
 // update coins
+
 Ti.App.addEventListener('updateCoins', function(coins) {
 	var currentCoins = -1;
 	try {
@@ -817,7 +819,7 @@ function constructTableView(array) {
 
 	acceptRow.add(Ti.UI.createLabel({
 		font : {
-			fontFamily : Alloy.Globals.getFont()
+			fontFamily : font
 		},
 		text : fontawesome.icon('icon-chevron-right'),
 		right : rightPercentage,
@@ -829,7 +831,7 @@ function constructTableView(array) {
 
 	pendingRow.add(Ti.UI.createLabel({
 		font : {
-			fontFamily : Alloy.Globals.getFont()
+			fontFamily : font
 		},
 		text : fontawesome.icon('icon-chevron-right'),
 		right : rightPercentage,
@@ -841,7 +843,7 @@ function constructTableView(array) {
 
 	finishedRow.add(Ti.UI.createLabel({
 		font : {
-			fontFamily : Alloy.Globals.getFont(),
+			fontFamily : font
 		},
 		text : fontawesome.icon('icon-chevron-right'),
 		right : rightPercentage,
