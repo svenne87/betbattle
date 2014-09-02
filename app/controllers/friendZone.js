@@ -221,7 +221,7 @@ shareLabel = Titanium.UI.createLabel({
 shareBtn.add(shareLabel);
 
 fbFriendBtn.addEventListener('click', function(e){
-	var win = Alloy.createController('shareView').getView();
+	var win = Alloy.createController('fbFriends').getView();
 		if (OS_IOS) {
 			Alloy.Globals.NAV.openWindow(win, {
 				animated : true
