@@ -300,7 +300,9 @@ function saveChallenge(){
 				if (this.readyState == 4) {
 					Ti.API.info("RESPONSE : " + JSON.stringify(this.responseText));
 					var response = JSON.parse(this.responseText);
-					
+					if(response == 1) {
+						Alloy.Globals.COUPON = Alloy.Globals.getCoupon();
+					}
 					Ti.API.info("response: " + JSON.stringify(response));
 					// show dialog and if ok close window
 					} else {

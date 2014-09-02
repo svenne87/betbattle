@@ -40,6 +40,7 @@ Alloy.Globals.TiBeacon = null;
 Alloy.Globals.AcceptedBeacon1 = false;
 Alloy.Globals.AcceptedBeacon2 = false;
 Alloy.Globals.AcceptedBeacon3 = false;
+Alloy.Globals.COUPON;
 
 //initialize beacons
 if(OS_IOS){
@@ -392,3 +393,36 @@ Alloy.Globals.constructChallenge = function(responseAPI) {
 	return finalArray;
 };
 
+Alloy.Globals.getCoupon = function(uid){
+	// check connection
+	if (Alloy.Globals.checkConnection()) {
+		var xhr = Titanium.Network.createHTTPClient();
+		xhr.onerror = function(e) {
+			Ti.API.error('Bad Sever =>' + e.error);
+		};
+
+		try {
+			xhr.open('POST', Alloy.Globals.BETKAMPENCHECKCOINSURL + '?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
+			xhr.setRequestHeader("content-type", "application/json");
+			xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
+			xhr.setTimeout(Alloy.Globals.TIMEOUT);
+
+			xhr.send();
+		} catch(e) {
+			//
+		}
+
+		xhr.onload = function() {
+			if (this.status == '200') {
+				if (this.readyState == 4) {
+					var response = null;
+					
+					response = JSON.parse(this.responseText);
+					Ti.API.info("Response Coupon: " + response);
+				}
+			} else {
+				Ti.API.error("Error =>" + this.response);
+			}
+		};
+	}
+};

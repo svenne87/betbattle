@@ -447,23 +447,30 @@ if (OS_IOS){
 			classes : ['navLogo']
 		}));
 	}
-
-	var ticketBtn = Ti.UI.createButton({
-		//title: fontawesome.icon("fa-ticket"),
+	var btn = Ti.UI.createView({
+		width: 50,
+		height: 50,
+		right: 15,
+		top:5,
+	});
+	
+	var ticketBtn = Ti.UI.createLabel({	
 		font:{
 			fontFamily: font,
-			fontSize: 18,
+			fontSize: 30,
 		},
+		text: fontawesome.icon("fa-ticket"),
 		//backgroundImage: "/images/ticketBtn.png",
-		color: "#FFF",
-		width: Ti.UI.SIZE,
-		height: 25,
-		right: 10,
+		color: "#303030",
+		width: 'auto',
+		height: 'auto',
+		right: 15,
+		top: 15,
 	});
 
-	
+	btn.add(ticketBtn);
 	$.mainWin.setLeftNavButton(buttonBarMenu);
-	$.mainWin.setRightNavButton(ticketBtn);
+	$.nav.add(btn);
 // TODO
 /*
 	$.mainWin.open({
