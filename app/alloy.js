@@ -18,6 +18,7 @@ Alloy.Globals.DEVICETOKEN;
 Alloy.Globals.FACEBOOK;
 Alloy.Globals.CHALLENGEOBJECTARRAY = [];
 Alloy.Globals.BETKAMPENUID = 0;
+Alloy.Globals.PROFILENAME;
 Alloy.Globals.CHALLENGEINDEX;
 Alloy.Globals.LEAGUES;
 Alloy.Globals.AVAILABLELANGUAGES;

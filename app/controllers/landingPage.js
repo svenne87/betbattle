@@ -10,6 +10,7 @@ var indicator = uie.createIndicatorWindow({
 
 function createLeagueAndUidObj(response) {
 	Alloy.Globals.BETKAMPENUID = response.betkampen_uid;
+	Alloy.Globals.PROFILENAME = response.profile_name;
 	Alloy.Globals.LEAGUES = [];
 	Alloy.Globals.AVAILABLELANGUAGES = [];
 

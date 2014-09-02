@@ -94,7 +94,7 @@ var profilePictureView = Ti.UI.createView({
 profileTopView.add(profilePictureView);
 
 var image;
-if(typeof Alloy.Globals.FACEBOOKOBJECT !== 'undefined') {
+if(Alloy.Globals.FACEBOOKOBJECT) {
 	image = "https://graph.facebook.com/"+Alloy.Globals.FACEBOOKOBJECT.id+"/picture?type=large";
 } else {
 	// get betkampen image

@@ -92,6 +92,7 @@ function logoutBetbattle(){
 					Alloy.Globals.FACEBOOKOBJECT = null;
 					// close
 					if(OS_ANDROID) {
+						$.mainWin.close();
 						var activity = Titanium.Android.currentActivity;
     					activity.finish();
 					} else if(OS_IOS) {

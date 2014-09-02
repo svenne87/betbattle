@@ -11,15 +11,10 @@ function addEvent() {
 	$.facebookBtn.addEventListener('click', listener);
 }
 
-function storeProfileName(name) {	
-	if (!Ti.App.Properties.hasProperty("profileNameSetting")) {
-		Ti.App.Properties.setString("profileNameSetting", name);
-	}
-}
-
 function createLeagueAndUidObj(response) {
 	Ti.API.log(JSON.stringify(response));
 	Alloy.Globals.BETKAMPENUID = response.betkampen_uid;
+	Alloy.Globals.PROFILENAME = response.profile_name;
 	Alloy.Globals.LEAGUES = [];
 	Alloy.Globals.AVAILABLELANGUAGES = [];
 
