@@ -447,8 +447,30 @@ if (OS_IOS){
 			classes : ['navLogo']
 		}));
 	}
+	var btn = Ti.UI.createView({
+		width: 50,
+		height: 50,
+		right: 15,
+		top:5,
+	});
+	
+	var ticketBtn = Ti.UI.createLabel({	
+		font:{
+			fontFamily: font,
+			fontSize: 30,
+		},
+		text: fontawesome.icon("fa-ticket"),
+		//backgroundImage: "/images/ticketBtn.png",
+		color: "#303030",
+		width: 'auto',
+		height: 'auto',
+		right: 15,
+		top: 15,
+	});
 
+	btn.add(ticketBtn);
 	$.mainWin.setLeftNavButton(buttonBarMenu);
+	$.nav.add(btn);
 // TODO
 /*
 	$.mainWin.open({

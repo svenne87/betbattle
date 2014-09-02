@@ -9,7 +9,9 @@
  }
  });*/
 var mod = require('bencoding.blur');
+
 // update coins
+
 Ti.App.addEventListener('updateCoins', function(coins) {
 	var currentCoins = -1;
 	try {
@@ -815,6 +817,7 @@ function constructTableView(array) {
 
 	acceptRow.add(Ti.UI.createLabel({
 		font : {
+
 			fontFamily : Alloy.Globals.getFont(),
 			fontSize : Alloy.Globals.getFontSize(2),
 		},
@@ -826,6 +829,7 @@ function constructTableView(array) {
 	
 	acceptRow.add(Ti.UI.createLabel({
 		font : {
+
 			fontFamily : font
 		},
 		text : fontawesome.icon('icon-chevron-right'),
