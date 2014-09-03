@@ -40,7 +40,8 @@ Alloy.Globals.TiBeacon = null;
 Alloy.Globals.AcceptedBeacon1 = false;
 Alloy.Globals.AcceptedBeacon2 = false;
 Alloy.Globals.AcceptedBeacon3 = false;
-Alloy.Globals.COUPON;
+Alloy.Globals.COUPON = null;
+Alloy.Globals.hasCoupon = false;
 
 //initialize beacons
 if(OS_IOS){
@@ -102,6 +103,7 @@ Alloy.Globals.BETKAMPENCREATEGROUPURL = Alloy.Globals.BETKAMPENURL + '/api/add_g
 Alloy.Globals.BETKAMPENFRIENDSEARCHURL = Alloy.Globals.BETKAMPENURL + '/api/get_users_search.php'; // search in db for friends
 Alloy.Globals.BETKAMPENADDFRIENDSURL = Alloy.Globals.BETKAMPENURL + '/api/add_friends.php'; // add friends to your friendlist
 Alloy.Globals.BETKAMPENSAVECHALLENGEURL = Alloy.Globals.BETKAMPENURL + '/api/save_challenge.php';
+Alloy.Globals.BETKAMPENGETCOUPONURL = Alloy.Globals.BETKAMPENURL + '/api/get_coupon.php';
 
 Alloy.Globals.performTimeout = function(func) {
 	if (OS_ANDROID) {
@@ -402,7 +404,7 @@ Alloy.Globals.getCoupon = function(uid){
 		};
 
 		try {
-			xhr.open('POST', Alloy.Globals.BETKAMPENCHECKCOINSURL + '?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
+			xhr.open('POST', Alloy.Globals.BETKAMPENGETCOUPONURL + '?lang=' + Alloy.Globals.LOCALE);
 			xhr.setRequestHeader("content-type", "application/json");
 			xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
 			xhr.setTimeout(Alloy.Globals.TIMEOUT);
@@ -416,9 +418,34 @@ Alloy.Globals.getCoupon = function(uid){
 			if (this.status == '200') {
 				if (this.readyState == 4) {
 					var response = null;
-					
+					Ti.API.info("responsen" + JSON.stringify(this.responseText));
 					response = JSON.parse(this.responseText);
-					Ti.API.info("Response Coupon: " + response);
+					Ti.API.info("Response Coupon: " + JSON.stringify(response));
+					Alloy.Globals.COUPON = response;
+					if(Alloy.Globals.COUPON.games.length > 0){
+						Alloy.Globals.hasCoupon = true;
+						Ti.API.info("challenge succces");
+						var children = Alloy.Globals.NAV.getChildren();
+							for(var i in children){
+								if (children[i].id == "ticketView"){
+									var labels = children[i].getChildren();
+									for(var y in labels){
+										if(labels[y].id == "badge"){
+											labels[y].setBackgroundColor("red");
+											labels[y].setBorderColor("#c5c5c5");
+											labels[y].setText("1");
+										}
+										if(labels[y].id == "label"){
+											labels[y].setColor("#FFF");
+										}
+									}
+									
+								}
+							}
+						
+					}else{
+						Alloy.Globals.hasCoupon = false;
+					}
 				}
 			} else {
 				Ti.API.error("Error =>" + this.response);
