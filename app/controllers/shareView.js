@@ -389,7 +389,7 @@ if (OS_IOS) {
 				flags : Ti.Android.FLAG_ACTIVITY_NEW_TASK,
 				type : 'text/plain'
 			});
-			intTwitter.putExtra(Ti.Android.EXTRA_TEXT, "'" + Alloy.Globals.PHRASES.twitterMsg + "'");
+			intTwitter.putExtra(Ti.Android.EXTRA_TEXT,  Alloy.Globals.PHRASES.twitterMsg);
 			Ti.Android.currentActivity.startActivity(intTwitter);
 		} catch(x) {
 			alert('Hittar inte Twitters app. Har du den installerad?');
@@ -433,7 +433,7 @@ googleBtn.addEventListener('click', function(e) {
 
 var emailDialog = Titanium.UI.createEmailDialog();
 emailDialog.subject = 'Testa betkampen';
-emailDialog.messageBody = 'hej hej betkampen här';
+emailDialog.messageBody = Alloy.Globals.PHRASES.twitterMsg;
 
 mailBtn.addEventListener('click', function(e) {
 	emailDialog.open();
@@ -444,7 +444,7 @@ if (OS_IOS) {
 	var sms = require('bencoding.sms').createSMSDialog({
 		barColor : '#336699'
 	});
-	sms.setMessageBody('hej hej betkampen här');
+	sms.setMessageBody(Alloy.Globals.PHRASES.twitterMsg);
 
 	smsBtn.addEventListener('click', function(e) {
 		sms.open();
@@ -456,7 +456,7 @@ if (OS_IOS) {
 		action : Ti.Android.ACTION_SENDTO,
 		data : 'smsto:'
 	});
-	intent.putExtra('sms_body', 'hej hej detta är betkampen');
+	intent.putExtra('sms_body', Alloy.Globals.PHRASES.twitterMsg);
 
 	smsBtn.addEventListener('click', function(e) {
 		Ti.Android.currentActivity.startActivity(intent);
