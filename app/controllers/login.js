@@ -351,8 +351,8 @@ if (Alloy.Globals.FBERROR) {
 	});
 }
 
-addEvent();					  
-							  // TODO gick inte försöka igen efter Timeout vid login försök...
+addEvent();					  // Har satt Alloy.Globals.FBERROR till false för att inte öppna flera gånger, sätta till true vid error??
+							  // TODO gick inte försöka igen efter Timeout vid login försök... 
 							  // TODO går inte att logga in, kan vara fb session som löpt up, sen går de inte försöka igen....
 // set correct language phrase
 $.facebookBtnText.text = Alloy.Globals.PHRASES.loginFacebookButtonTxt;							  
@@ -455,7 +455,7 @@ function loginBetkampenAuthenticated() {
 
 				if (response !== null) {
 					createLeagueAndUidObj(response);
-
+					
 					if (Alloy.Globals.BETKAMPENUID > 0) {
 						getChallengesAndStart();
 					}
