@@ -432,7 +432,7 @@ googleBtn.addEventListener('click', function(e) {
 // --------------------------------------------------------------- Send EMAIL  ----------------------------------------------------------------------------
 
 var emailDialog = Titanium.UI.createEmailDialog();
-emailDialog.subject = 'Testa betkampen';
+emailDialog.subject = Alloy.Globals.PHRASES.fbConnectTxt;
 emailDialog.messageBody = Alloy.Globals.PHRASES.twitterMsg;
 
 mailBtn.addEventListener('click', function(e) {
@@ -456,7 +456,7 @@ if (OS_IOS) {
 		action : Ti.Android.ACTION_SENDTO,
 		data : 'smsto:'
 	});
-	intent.putExtra('sms_body', Alloy.Globals.PHRASES.twitterMsg);
+	intent.putExtra('sms_body', "'" + Alloy.Globals.PHRASES.twitterMsg + "'");
 
 	smsBtn.addEventListener('click', function(e) {
 		Ti.Android.currentActivity.startActivity(intent);
