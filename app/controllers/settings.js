@@ -86,6 +86,9 @@ function sendSettingsServer(param, type, valueToStore) {
 					if (type === 0) {
 						// store value about push
 						Ti.App.Properties.setBool("pushSetting", valueToStore);
+					} else if(type === 1) {
+						// name change
+						Alloy.Globals.PROFILENAME = valueToStore;
 					}
 					Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
 				}

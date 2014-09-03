@@ -1,7 +1,7 @@
 var error = Alloy.Globals.PHRASES.loginError;
 var uie = require('lib/IndicatorWindow');
 
-var indicator = null;
+var indicator;
 
 var args = arguments[0] || {};
 
