@@ -1,7 +1,7 @@
 var error = Alloy.Globals.PHRASES.loginError;
 var uie = require('lib/IndicatorWindow');
 
-var indicator = null;
+var indicator;
 
 var args = arguments[0] || {};
 
@@ -271,7 +271,7 @@ function login(auto) {
 $.signInBtn.addEventListener('click', function(e) {
 	if ($.loginEmail.value != '' && $.loginPass.value != '') {
 		// this is due to a strange titanium bug with the garbage collector
-		var indicator = uie.createIndicatorWindow({
+		indicator = uie.createIndicatorWindow({
 			top : 200,
 			text : Alloy.Globals.PHRASES.loadingTxt
 		});

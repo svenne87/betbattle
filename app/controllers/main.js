@@ -96,7 +96,7 @@ function logoutBetbattle(){
 						var activity = Titanium.Android.currentActivity;
     					activity.finish();
 					} else if(OS_IOS) {
-						Alloy.Globals.CLOSE = false;
+						Alloy.Globals.FBERROR = false;							
 						Alloy.Globals.CURRENTVIEW  = null;
 						Alloy.Globals.NAV.close();
 				
@@ -271,6 +271,7 @@ function rowSelect(e) {
 							Ti.App.Properties.removeProperty("BETKAMPEN");
 							Alloy.Globals.BETKAMPEN = null;
 							Alloy.Globals.FACEBOOKOBJECT = null;
+							Alloy.Globals.FACEBOOK = null;
 							$.mainWin.close();
 							var activity = Titanium.Android.currentActivity;
     						activity.finish();
@@ -323,6 +324,7 @@ function rowSelect(e) {
 										Ti.App.Properties.removeProperty("BETKAMPEN");
 										Alloy.Globals.BETKAMPEN = null;
 										Alloy.Globals.FACEBOOKOBJECT = null;
+										Alloy.Globals.FACEBOOK = null;
 				
 										var login = Alloy.createController('login').getView();
 										login.open({modal : false});

@@ -234,7 +234,7 @@ function createViews(array) {
 	for (var i = 0; i < array.length; i++) {
 
 		var group = Ti.UI.createView({
-			top : '0.4%',
+			top : 2,
 			width : "100%",
 			height : 40
 		});
@@ -263,7 +263,6 @@ function createViews(array) {
 		groupInfo.add(name);
 
 		var editBtn = Ti.UI.createButton({
-			top : "0.4%",
 			width : '15%',
 			left : '68.5%',
 			id : array[i].attributes.id,
@@ -283,7 +282,6 @@ function createViews(array) {
 
 		if (array[i].attributes.creator == Alloy.Globals.BETKAMPENUID) {
 			var deleteBtn = Ti.UI.createButton({
-				top : "0.4%",
 				//height : '8%',
 				width : '15%',
 				left : '84%',
@@ -301,7 +299,6 @@ function createViews(array) {
 			});
 		} else {
 			var deleteBtn = Ti.UI.createButton({
-				top : "0.4%",
 				//height : '8%',
 				width : '15%',
 				left : '84%',

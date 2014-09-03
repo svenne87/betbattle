@@ -147,7 +147,7 @@ function createGUI(obj) {
 		var row = Ti.UI.createView({
 			width : '100%',
 			height : 35,
-			top : '0.3%'
+			top : 2
 		});
 		mainView.add(row);
 
@@ -261,7 +261,7 @@ function createGUI(obj) {
 		var row = Ti.UI.createView({
 			width : '100%',
 			height : 35,
-			top : '0.3%'
+			top : 2
 		});
 		mainView.add(row);
 
@@ -355,7 +355,7 @@ function createFriendGUI(friend, members) {
 		var row = Ti.UI.createView({
 			width : '100%',
 			height : 35,
-			top : '0.3%'
+			top : 2
 		});
 		mainView.add(row);
 
