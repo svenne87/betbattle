@@ -79,21 +79,12 @@ var scoreInfo = Ti.UI.createLabel({
 infoTxt.add(scoreInfo);
 
 function createGUI(obj) {
-	if (OS_ANDROID) {
 		var friend = Ti.UI.createView({
-			top : '0.4%',
+			top : 2,
 			width : "100%",
 			height : 35,
-
 		});
-	} else if (OS_IOS) {
-		var friend = Ti.UI.createView({
-			top : '0.4%',
-			width : "100%",
-			height : '6.5%',
-
-		});
-	}
+			
 	mainView.add(friend);
 
 	var friendInfo = Ti.UI.createView({

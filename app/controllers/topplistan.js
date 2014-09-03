@@ -81,27 +81,16 @@ var scoreInfo = Ti.UI.createLabel({
 infoTxt.add(scoreInfo);
 
 function createGUI(obj, i) {
-	if (OS_ANDROID) {
+	
 		var totalLeader = Ti.UI.createView({
-			top : '0.03%',
+			top : 1,
 			backgroundColor : '#fff',
-			width : "97%",
+			width : "98%",
 			height : 45,
 			opacity : 0.7,
-			borderRadius : 10
+			borderRadius : 5
 
 		});
-	} else {
-		var totalLeader = Ti.UI.createView({
-			top : '0.1%',
-			backgroundColor : '#fff',
-			width : "97%",
-			height : "8%",
-			opacity : 0.7,
-			borderRadius : 10
-
-		});
-	}
 
 	var nr = Ti.UI.createLabel({
 		text : i + 1,
@@ -201,7 +190,7 @@ function createGUI(obj, i) {
 	totalLeader.add(name);
 
 	var coins = Ti.UI.createLabel({
-		text : obj.points.toString(),
+		text : obj.points,
 		left : '85%',
 		font : {
 			fontSize : 16,
