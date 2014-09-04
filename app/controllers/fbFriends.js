@@ -34,7 +34,7 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 	});
 	mainView.add(connectLabel);
 
-	var fb = require('facebook');
+	/*var fb = require('facebook');
 
 	// app id and permission's
 	fb.appid = Ti.App.Properties.getString('ti.facebook.appid');
@@ -52,6 +52,34 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 		if (Alloy.Globals.connect == false) {
 			if (e.success) {
 				var fbid = Ti.Network.createHTTPClient();
+				fbid.onload = function() {
+					Ti.API.info(this.responseText);
+					if (this.responseText == "konto finns-1") {
+						alert(Alloy.Globals.PHRASES.fbAccountExistsTxt);
+					} else {
+						if (OS_ANDROID) {
+							// close
+							Alloy.Globals.MAINWIN.close();
+							Alloy.Globals.LANDINGWIN.close();
+							$.settingsWindow.exitOnClose = true;
+							$.settingsWindow.close();
+
+							var activity = Titanium.Android.currentActivity;
+							activity.finish();
+
+							// start app again
+							var intent = Ti.Android.createIntent({
+								action : Ti.Android.ACTION_MAIN,
+								url : 'Betkampen.js'
+							});
+							intent.addCategory(Ti.Android.CATEGORY_LAUNCHER);
+							Ti.Android.currentActivity.startActivity(intent);
+						} else {
+							// restart app
+							Ti.App._restart();
+						}
+					}
+				}
 				fbid.open("POST", Alloy.Globals.BETKAMPENURL + '/api/connect_account_fb.php');
 				var params = {
 					fb_id : fb.uid,
@@ -59,28 +87,6 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 				};
 				fbid.send(params);
 				Ti.API.info(params);
-				if (OS_ANDROID) {
-				// close
-				Alloy.Globals.MAINWIN.close();
-				Alloy.Globals.LANDINGWIN.close();
-				$.settingsWindow.exitOnClose = true;
-				$.settingsWindow.close();
-
-				var activity = Titanium.Android.currentActivity;
-				activity.finish();
-
-				// start app again
-				var intent = Ti.Android.createIntent({
-					action : Ti.Android.ACTION_MAIN,
-					url : 'Betkampen.js'
-				});
-				intent.addCategory(Ti.Android.CATEGORY_LAUNCHER);
-				Ti.Android.currentActivity.startActivity(intent);
-			} else {
-				// restart app
-				Ti.App._restart();
-			}
-
 
 			}
 		}
@@ -89,7 +95,7 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 	mainView.add(fb.createLoginButton({
 		top : 10,
 		style : fb.BUTTON_STYLE_WIDE
-	}));
+	}));*/
 
 } else {
 
