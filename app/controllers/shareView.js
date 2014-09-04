@@ -432,8 +432,8 @@ googleBtn.addEventListener('click', function(e) {
 // --------------------------------------------------------------- Send EMAIL  ----------------------------------------------------------------------------
 
 var emailDialog = Titanium.UI.createEmailDialog();
-emailDialog.subject = Alloy.Globals.PHRASES.fbConnectTxt;
-emailDialog.messageBody = Alloy.Globals.PHRASES.twitterMsg;
+emailDialog.subject = Alloy.Globals.PHRASES.mailSubject;
+emailDialog.messageBody = Alloy.Globals.PHRASES.mailMsg;
 
 mailBtn.addEventListener('click', function(e) {
 	emailDialog.open();
@@ -444,7 +444,7 @@ if (OS_IOS) {
 	var sms = require('bencoding.sms').createSMSDialog({
 		barColor : '#336699'
 	});
-	sms.setMessageBody(Alloy.Globals.PHRASES.twitterMsg);
+	sms.setMessageBody(Alloy.Globals.PHRASES.smsMsg);
 
 	smsBtn.addEventListener('click', function(e) {
 		sms.open();
@@ -456,7 +456,7 @@ if (OS_IOS) {
 		action : Ti.Android.ACTION_SENDTO,
 		data : 'smsto:'
 	});
-	intent.putExtra('sms_body', "'" + Alloy.Globals.PHRASES.twitterMsg + "'");
+	intent.putExtra('sms_body', "'" + Alloy.Globals.PHRASES.smsMsg + "'");
 
 	smsBtn.addEventListener('click', function(e) {
 		Ti.Android.currentActivity.startActivity(intent);

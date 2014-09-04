@@ -41,6 +41,7 @@ Alloy.Globals.AcceptedBeacon1 = false;
 Alloy.Globals.AcceptedBeacon2 = false;
 Alloy.Globals.AcceptedBeacon3 = false;
 Alloy.Globals.COUPON;
+Alloy.Globals.connect;
 
 //initialize beacons
 if(OS_IOS){
