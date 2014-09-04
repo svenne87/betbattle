@@ -40,6 +40,7 @@ Alloy.Globals.TiBeacon = null;
 Alloy.Globals.AcceptedBeacon1 = false;
 Alloy.Globals.AcceptedBeacon2 = false;
 Alloy.Globals.AcceptedBeacon3 = false;
+Alloy.Globals.connect;
 Alloy.Globals.COUPON = null;
 Alloy.Globals.hasCoupon = false;
 

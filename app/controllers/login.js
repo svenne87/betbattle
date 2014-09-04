@@ -29,15 +29,15 @@ function createLeagueAndUidObj(response) {
 		// store all active leagues
 		Alloy.Globals.LEAGUES.push(league);
 	}
-	        for (var i = 0; response.languages.length > i; i++) {
-            var language = {
-            	id : response.languages[i].id,
-                name: response.languages[i].name,
-                imageLocation: response.languages[i].imageLocation,
-                description: response.languages[i].description
-            };
-            Alloy.Globals.AVAILABLELANGUAGES.push(language);
-        }
+	for (var i = 0; response.languages.length > i; i++) {
+		var language = {
+			id : response.languages[i].id,
+			name : response.languages[i].name,
+			imageLocation : response.languages[i].imageLocation,
+			description : response.languages[i].description
+		};
+		Alloy.Globals.AVAILABLELANGUAGES.push(language);
+	}
 }
 
 function getChallengesAndStart() {
@@ -140,22 +140,22 @@ function doError() {
 
 	alertWindow.addEventListener('click', function(e) {
 		switch (e.index) {
-			case 0:
-				alertWindow.hide();
-				indicator.openIndicator();
-				loginAuthenticated(fb);
-				break;
-			case 1:
-				alertWindow.hide();
+		case 0:
+			alertWindow.hide();
+			indicator.openIndicator();
+			loginAuthenticated(fb);
+			break;
+		case 1:
+			alertWindow.hide();
 
-				/*
-				 if (OS_ANDROID) {
-				 var activity = Titanium.Android.currentActivity;
-				 activity.finish();
-				 $.login.close();
-				 }
-				 */
-				break;
+			/*
+			 if (OS_ANDROID) {
+			 var activity = Titanium.Android.currentActivity;
+			 activity.finish();
+			 $.login.close();
+			 }
+			 */
+			break;
 		}
 	});
 	alertWindow.show();
@@ -261,7 +261,7 @@ function loginAuthenticated(fb) {
 						indicator.closeIndicator();
 						addEvent();
 					}
-				};			
+				};
 			} else {
 				doError();
 			}
@@ -316,46 +316,52 @@ $.facebookBtn.add(Ti.UI.createLabel({
 	fontSize : 40
 }));
 
-
 var fb = require('facebook');
 
 // app id and permission's
 fb.appid = Ti.App.Properties.getString('ti.facebook.appid');
 
-if(OS_IOS){
+if (OS_IOS) {
 	fb.permissions = ['email', 'user_birthday', 'user_friends', 'user_location', 'user_games_activity', 'friends_games_activity'];
 } else {
 	fb.permissions = ['email', 'user_birthday', 'user_friends', 'user_location', 'user_games_activity', 'friends_games_activity', 'publish_actions'];
 }
 fb.forceDialogAuth = false;
 
+//Alloy.Globals.connect = true;
+//Ti.API.info(Alloy.Globals.connect);
 if (Alloy.Globals.FBERROR) {
 	// need to keep track if event was already added, since it is beeing added several times otherwise.
 	fb.addEventListener('login', function(e) {
+		//if (Alloy.Globals.connect == true) {
 		indicator.openIndicator();
+		//}
 		Alloy.Globals.FBERROR = false;
-		if (e.success) {
-			removeEvent();
-			setTimeout(function() {
-				loginAuthenticated(fb);
-			}, 300);
-		} else if (e.error) {
-			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.facebookAbortConnectionTxt);
-			//addEvent();
-			indicator.closeIndicator();
-		} else if (e.cancelled) {
-			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.canceledTxt);
-			indicator.closeIndicator();
-			//addEvent();
-		}
+		//if (Alloy.Globals.connect == true) {
+			if (e.success) {
+				removeEvent();
+				setTimeout(function() {
+					loginAuthenticated(fb);
+				}, 300);
+			} else if (e.error) {
+				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.facebookAbortConnectionTxt);
+				//addEvent();
+				indicator.closeIndicator();
+			} else if (e.cancelled) {
+				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.canceledTxt);
+				indicator.closeIndicator();
+				//addEvent();
+			}
+		//}
 	});
 }
 
-addEvent();					  // Har satt Alloy.Globals.FBERROR till false för att inte öppna flera gånger, sätta till true vid error??
-							  // TODO gick inte försöka igen efter Timeout vid login försök... 
-							  // TODO går inte att logga in, kan vara fb session som löpt up, sen går de inte försöka igen....
+addEvent();
+// Har satt Alloy.Globals.FBERROR till false för att inte öppna flera gånger, sätta till true vid error??
+// TODO gick inte försöka igen efter Timeout vid login försök...
+// TODO går inte att logga in, kan vara fb session som löpt up, sen går de inte försöka igen....
 // set correct language phrase
-$.facebookBtnText.text = Alloy.Globals.PHRASES.loginFacebookButtonTxt;							  
+$.facebookBtnText.text = Alloy.Globals.PHRASES.loginFacebookButtonTxt;
 $.viewOneLabel.text = Alloy.Globals.PHRASES.labelOneTxt;
 $.viewTwoLabel.text = Alloy.Globals.PHRASES.labelTwoTxt;
 $.viewThreeLabel.text = Alloy.Globals.PHRASES.labelThreeTxt;
@@ -366,7 +372,7 @@ $.viewFiveLabel.text = Alloy.Globals.PHRASES.labelFiveTxt;
 Alloy.Globals.readToken();
 
 // check login
-if (Alloy.Globals.checkConnection()) {		
+if (Alloy.Globals.checkConnection()) {
 	if (fb.loggedIn) {
 		if (!opened) {
 			// don't show the dialog at auto login
@@ -374,7 +380,7 @@ if (Alloy.Globals.checkConnection()) {
 				opened : true
 			}));
 		}
-		
+
 		removeEvent();
 		if (OS_ANDROID) {
 			$.login.addEventListener('open', function() {
@@ -393,7 +399,7 @@ if (Alloy.Globals.checkConnection()) {
 				//loginAuthenticated(fb); //TODO Issue with fb module?
 			}, 300);
 		}
-	} else if(Alloy.Globals.BETKAMPEN) {
+	} else if (Alloy.Globals.BETKAMPEN) {
 		Ti.API.log('aooomen!');
 		// Betkampen auto sign in
 		indicator.openIndicator();
@@ -419,12 +425,12 @@ function loginBetkampenAuthenticated() {
 	var xhr = Titanium.Network.createHTTPClient();
 	xhr.onerror = function(e) {
 		Ti.API.error('Bad Sever =>' + JSON.stringify(e));
-		if(e.code == 401) {
+		if (e.code == 401) {
 			// if this is first try, then try refresh token
-			if(refreshTry === 0) {
+			if (refreshTry === 0) {
 				refreshTry = 1;
 				authWithRefreshToken();
-			}	
+			}
 		} else {
 			indicator.closeIndicator();
 			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
@@ -442,7 +448,7 @@ function loginBetkampenAuthenticated() {
 		indicator.closeIndicator();
 	}
 
-	xhr.onload = function() {	
+	xhr.onload = function() {
 		if (this.status == '200') {
 			if (this.readyState == 4) {
 				var response = null;
@@ -455,7 +461,7 @@ function loginBetkampenAuthenticated() {
 
 				if (response !== null) {
 					createLeagueAndUidObj(response);
-					
+
 					if (Alloy.Globals.BETKAMPENUID > 0) {
 						getChallengesAndStart();
 					}
@@ -474,24 +480,24 @@ function loginBetkampenAuthenticated() {
 			indicator.closeIndicator();
 			Ti.API.log("4");
 		}
-	};			
+	};
 }
 
 // Try to authenticate using refresh token
 function authWithRefreshToken() {
-	if(Alloy.Globals.checkConnection()){
+	if (Alloy.Globals.checkConnection()) {
 		var xhr = Titanium.Network.createHTTPClient();
-		xhr.onerror = function(e){
+		xhr.onerror = function(e) {
 			Ti.API.error('Bad Sever reAuth =>' + JSON.stringify(e));
 			indicator.closeIndicator();
 			refreshTry = 0;
 			// reAuth failed. Need to login again. 400 = invalid token
 			Alloy.Globals.BETKAMPEN = null;
-			if(e.code != 400) {
+			if (e.code != 400) {
 				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 			}
 		};
-		try { 
+		try {
 			xhr.open('POST', Alloy.Globals.BETKAMPENEMAILLOGIN);
 			xhr.setTimeout(Alloy.Globals.TIMEOUT);
 
@@ -520,7 +526,7 @@ function authWithRefreshToken() {
 					Alloy.Globals.BETKAMPEN = {
 						token : "TOKEN " + response.access_token,
 						valid : response.expires_in,
-						refresh_token : Alloy.Globals.BETKAMPEN.refresh_token   // since we don't get a new one here
+						refresh_token : Alloy.Globals.BETKAMPEN.refresh_token // since we don't get a new one here
 					};
 					Alloy.Globals.storeToken();
 					// brand new token, try to authenticate
@@ -540,28 +546,26 @@ function authWithRefreshToken() {
 	}
 }
 
-
-
 $.login.addEventListener('close', function() {
 	indicator.closeIndicator();
-	
+
 	$.scrollableView.removeAllChildren();
-	
-	for(child in $.scrollableView.children) {
+
+	for (child in $.scrollableView.children) {
 		$.scrollableView[child] = null;
 	}
-	
+
 	children = null;
 	$.scrollableView = null;
-	
+
 	$.destroy();
 });
 
 if (OS_ANDROID) {
-	$.login.addEventListener('open', function(){
+	$.login.addEventListener('open', function() {
 		$.login.activity.actionBar.hide();
 	});
-	
+
 	$.login.addEventListener('android:back', function() {
 		$.login.close();
 		var activity = Titanium.Android.currentActivity;
@@ -569,29 +573,30 @@ if (OS_ANDROID) {
 	});
 }
 
-//----------------- email login 
-
+//----------------- email login
 
 // opening login view
-$.loginBtn.addEventListener('click', function(e)
-{
+$.loginBtn.addEventListener('click', function(e) {
 	var loginWindow = Alloy.createController('loginView').getView();
 	if (OS_IOS) {
-		loginWindow.open({transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT});
-	} else{
+		loginWindow.open({
+			transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
+		});
+	} else {
 		loginWindow.open();
 	}
 	$.login.close();
 });
 
 //open rigistration view
-$.registerBtn.addEventListener('click', function(e)
-{
-	
+$.registerBtn.addEventListener('click', function(e) {
+
 	var regWindow = Alloy.createController('registrationView').getView();
 	if (OS_IOS) {
-		regWindow.open({transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT});
-	} else{
+		regWindow.open({
+			transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
+		});
+	} else {
 		regWindow.open();
 	}
 	$.login.close();
@@ -600,4 +605,3 @@ $.registerBtn.addEventListener('click', function(e)
 
 $.registerBtnText.text = Alloy.Globals.PHRASES.registerTxt;
 $.loginBtnText.text = Alloy.Globals.PHRASES.signInTxt;
-	
