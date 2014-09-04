@@ -38,6 +38,7 @@ function Controller() {
                         friendObjects = [];
                         for (var i = 0; response.length > i; i++) {
                             var friendObject = Alloy.createModel("friend", {
+                                fbid: response[i].fbid,
                                 id: response[i].id,
                                 name: response[i].name
                             });
@@ -87,7 +88,6 @@ function Controller() {
                             var membersArray = [];
                             for (var x = 0; response[i].members.length > x; x++) {
                                 var member = {
-                                    fbid: response[i].members[x].fbid,
                                     id: response[i].members[x].id,
                                     name: response[i].members[x].name
                                 };
@@ -102,19 +102,6 @@ function Controller() {
                             groupObjects.push(groupObject);
                         }
                         createViews(groupObjects, 1);
-                    } else {
-                        indicator.openIndicator();
-                        setTimeout(function() {
-                            var arg = {
-                                param: params
-                            };
-                            var win = Alloy.createController("friendSelect", arg).getView();
-                            Alloy.Globals.WINDOWS.push(win);
-                            Alloy.Globals.NAV.openWindow(win, {
-                                animated: true
-                            });
-                            indicator.closeIndicator();
-                        }, 1500);
                     }
                 } else Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                 indicator.closeIndicator();
@@ -220,13 +207,19 @@ function Controller() {
                     height: 10
                 }));
                 for (var x = 0; array[i].attributes.members.length > x; x++) {
-                    subRow.add(Ti.UI.createImageView({
-                        image: "https://graph.facebook.com/" + array[i].attributes.members[x].fbid + "/picture",
+                    var image;
+                    image = null !== array[i].attributes.members[x].fbid ? "https://graph.facebook.com/" + array[i].attributes.members[x].fbid + "/picture?type=large" : Alloy.Globals.BETKAMPENURL + "/profile_images/" + array[i].attributes.members[x].id + ".png";
+                    var profilePic = Ti.UI.createImageView({
+                        image: image,
                         height: 40,
                         width: 40,
                         left: 10,
                         top: 5
-                    }));
+                    });
+                    profilePic.addEventListener("error", function() {
+                        profilePic.image = "/images/no_pic.png";
+                    });
+                    subRow.add(profilePic);
                     subRow.add(Ti.UI.createLabel({
                         text: array[i].attributes.members[x].name,
                         top: -30,
@@ -268,6 +261,8 @@ function Controller() {
                     color: "#FFF"
                 }));
             } else {
+                var image;
+                image = null !== array[i].attributes.fbid ? "https://graph.facebook.com/" + array[i].attributes.fbid + "/picture?type=large" : Alloy.Globals.BETKAMPENURL + "/profile_images/" + array[i].attributes.id + ".png";
                 var row = $.UI.create("TableViewRow", {
                     classes: [ "challengesSectionDefault" ],
                     id: array[i].attributes.id,
@@ -282,7 +277,10 @@ function Controller() {
                     height: 30,
                     left: 5,
                     id: "img-" + array[i].attributes.id,
-                    image: Alloy.Globals.BETKAMPENURL + "/profile_images/profile_image_" + array[i].attributes.id + ".png"
+                    image: image
+                });
+                detailsImg.addEventListener("error", function() {
+                    detailsImg.image = "/images/no_pic.png";
                 });
                 row.add(detailsImg);
                 row.add(Ti.UI.createLabel({
@@ -486,7 +484,7 @@ function Controller() {
         getGroups();
     });
     var args = arguments[0] || {};
-    var params = args.param || null;
+    args.param || null;
     var groupObjects = [];
     var friendObjects = [];
     var selectedGroupIds = [];

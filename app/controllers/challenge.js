@@ -90,7 +90,13 @@ function createGameType(gameType){
 				changeColors(e);
 				Ti.API.info("gameArray : " + JSON.stringify(gameArray));
 				if(validate()){
-					saveChallenge();
+					if(Alloy.Globals.COUPON != null){
+						Ti.API.info("update");
+						updateChallenge();
+					}else{
+						Ti.API.info("save");
+						saveChallenge();
+					}
 				}
 			});
 			optionsView.add(buttonViews[i]);
@@ -142,7 +148,13 @@ function createGameType(gameType){
 							gameArray[index].gameValues[1] = 0;
 						}
 						if(validate()){
-							saveChallenge();
+							if(Alloy.Globals.COUPON != null){
+								Ti.API.info("update");
+								updateChallenge();
+							}else{
+								Ti.API.info("save");
+								saveChallenge();
+							}
 						}
 					});
 			
@@ -222,7 +234,14 @@ function createGameType(gameType){
 						}
 						Ti.API.info("gameArray : " + JSON.stringify(gameArray));
 						if(validate()){
-							saveChallenge();
+							if(Alloy.Globals.COUPON != null){
+								Ti.API.info("update");
+								updateChallenge();
+							}else{
+								Ti.API.info("save");
+								saveChallenge();	
+							}
+							
 						};
 					});
 					
@@ -243,11 +262,95 @@ function createGameType(gameType){
 	$.challenge.add(gameTypeView);
 }
 
+function updateChallenge(){
+	if (Alloy.Globals.checkConnection()) {
+		indicator.openIndicator();
+		var xhr = Titanium.Network.createHTTPClient();
+		xhr.onerror = function(e) {
+			Ti.API.error("FEL : " + JSON.stringify(e));
+			Ti.API.error('Bad Sever =>' + e.error);
+			indicator.closeIndicator();
+		};
+
+		try {
+			xhr.open('POST', Alloy.Globals.BETKAMPENUPDATECHALLENGEURL);
+			xhr.setRequestHeader("content-type", "application/json");
+			xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
+			xhr.setTimeout(Alloy.Globals.TIMEOUT);
+
+			// build the json string
+			var param = '{"lang" : "' + Alloy.Globals.LOCALE + '", "cid":"' + Alloy.Globals.COUPON.id + '", "gameID": "'+gameID+'", "gamevalue": {';
+		
+			for (var i in gameArray) {
+			Ti.API.info("skickar gameArray : " + JSON.stringify(gameArray[i]));
+					// is array
+					param += '"' + gameArray[i].gameType + '": [';
+					for (var x in gameArray[i].gameValue) {
+						param += '"' + gameArray[i].gameValue[x];
+						if (x != (gameArray[i].gameValue.length - 1)) {
+							param += '", ';
+						} else {
+							// last one
+							param += '"';
+						}
+					}
+					if (i != (gameArray.length - 1)) {
+						param += '], ';
+					} else {
+						// last one
+						param += ']';
+					}
+				
+			}
+			param += '}}';
+		
+			
+			
+			Ti.API.info("JSON STRING : " + param);
+			
+			xhr.send(param);
+		} catch(e) {
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+			indicator.closeIndicator();
+		}
+
+		xhr.onload = function() {
+			if (this.status == '200') {
+
+				if (this.readyState == 4) {
+					indicator.closeIndicator();
+					Ti.API.info("RESPONSE : " + JSON.stringify(this.responseText));
+					var response = JSON.parse(this.responseText);
+					if(response == 1) {
+						Alloy.Globals.getCoupon();
+						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.couponSavedMsg);
+					}else if(response == 2){
+						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.couponGameExistsMsg);
+					}
+					Ti.API.info("response: " + JSON.stringify(response));
+					
+					} else {
+					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+				}
+			} else {
+				indicator.closeIndicator();
+				Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
+				Ti.API.error("Error =>" + this.response);
+			}
+		};
+	} else {
+		indicator.closeIndicator();
+		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+	}
+}
+
+
 function saveChallenge(){
 	
 	
 	if (Alloy.Globals.checkConnection()) {
 		var xhr = Titanium.Network.createHTTPClient();
+		indicator.openIndicator();
 		xhr.onerror = function(e) {
 			Ti.API.error("FEL : " + JSON.stringify(e));
 			Ti.API.error('Bad Sever =>' + e.error);
@@ -291,6 +394,7 @@ function saveChallenge(){
 			
 			xhr.send(param);
 		} catch(e) {
+			indicator.closeIndicator();
 			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 		}
 
@@ -298,22 +402,29 @@ function saveChallenge(){
 			if (this.status == '200') {
 
 				if (this.readyState == 4) {
+					indicator.closeIndicator();
 					Ti.API.info("RESPONSE : " + JSON.stringify(this.responseText));
 					var response = JSON.parse(this.responseText);
 					if(response == 1) {
+						
 						Alloy.Globals.getCoupon();
+						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.couponSavedMsg);
+					}else{
+						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 					}
-					Ti.API.info("response: " + JSON.stringify(response));
+					
 					// show dialog and if ok close window
-					} else {
+				}else {
 					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 				}
 			} else {
+				indicator.closeIndicator();
 				Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
 				Ti.API.error("Error =>" + this.response);
 			}
 		};
 	} else {
+		indicator.closeIndicator();
 		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 	}
 }
@@ -909,6 +1020,12 @@ function createLayout() {
 // used to create a new challenge
 var args = arguments[0] || {};
 // roundId will be -1 as long as we are not creating a new challenge
+var uie = require('lib/IndicatorWindow');
+var indicator = uie.createIndicatorWindow({
+	top : 200,
+	text : Alloy.Globals.PHRASES.loadingTxt
+});
+
 
 var roundId = -1;
 if ( typeof args.round !== 'undefined') {

@@ -103,7 +103,9 @@ Alloy.Globals.BETKAMPENCREATEGROUPURL = Alloy.Globals.BETKAMPENURL + '/api/add_g
 Alloy.Globals.BETKAMPENFRIENDSEARCHURL = Alloy.Globals.BETKAMPENURL + '/api/get_users_search.php'; // search in db for friends
 Alloy.Globals.BETKAMPENADDFRIENDSURL = Alloy.Globals.BETKAMPENURL + '/api/add_friends.php'; // add friends to your friendlist
 Alloy.Globals.BETKAMPENSAVECHALLENGEURL = Alloy.Globals.BETKAMPENURL + '/api/save_challenge.php';
+Alloy.Globals.BETKAMPENUPDATECHALLENGEURL = Alloy.Globals.BETKAMPENURL + '/api/update_challenge.php';
 Alloy.Globals.BETKAMPENGETCOUPONURL = Alloy.Globals.BETKAMPENURL + '/api/get_coupon.php';
+Alloy.Globals.BETKAMPENDELETECOUPONGAMEURL = Alloy.Globals.BETKAMPENURL + '/api/delete_coupon_game.php';
 
 Alloy.Globals.performTimeout = function(func) {
 	if (OS_ANDROID) {
@@ -189,6 +191,7 @@ Alloy.Globals.showFeedbackDialog = function(msg) {
 	});
 	alertWindow.show();
 };
+
 
 // check network
 Alloy.Globals.checkConnection = function() {
@@ -422,7 +425,26 @@ Alloy.Globals.getCoupon = function(uid){
 					response = JSON.parse(this.responseText);
 					Ti.API.info("Response Coupon: " + JSON.stringify(response));
 					Alloy.Globals.COUPON = response;
-					if(Alloy.Globals.COUPON.games.length > 0){
+					if(response == 0){
+						Alloy.Globals.COUPON = null;
+						Alloy.Globals.hasCoupon = false;
+						var children = Alloy.Globals.NAV.getChildren();
+						for(var i in children){
+							if (children[i].id == "ticketView"){
+								var labels = children[i].getChildren();
+								for(var y in labels){
+									if(labels[y].id == "badge"){
+									labels[y].setBackgroundColor("transparent");
+									labels[y].setBorderColor("transparent");
+									labels[y].setText("");
+									}
+									if(labels[y].id == "label"){
+										labels[y].setColor("#303030");
+									}
+								}
+							}
+						}
+					}else if(Alloy.Globals.COUPON.games.length > 0){
 						Alloy.Globals.hasCoupon = true;
 						Ti.API.info("challenge succces");
 						var children = Alloy.Globals.NAV.getChildren();
@@ -433,7 +455,7 @@ Alloy.Globals.getCoupon = function(uid){
 										if(labels[y].id == "badge"){
 											labels[y].setBackgroundColor("red");
 											labels[y].setBorderColor("#c5c5c5");
-											labels[y].setText("1");
+											labels[y].setText(""+Alloy.Globals.COUPON.games.length);
 										}
 										if(labels[y].id == "label"){
 											labels[y].setColor("#FFF");
@@ -442,14 +464,11 @@ Alloy.Globals.getCoupon = function(uid){
 									
 								}
 							}
-						
-					}else{
-						Alloy.Globals.hasCoupon = false;
 					}
-				}
 			} else {
 				Ti.API.error("Error =>" + this.response);
 			}
+		}
 		};
 	}
 };
