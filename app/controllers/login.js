@@ -328,16 +328,16 @@ if (OS_IOS) {
 }
 fb.forceDialogAuth = false;
 
-Alloy.Globals.connect = true;
-Ti.API.info(Alloy.Globals.connect);
+//Alloy.Globals.connect = true;
+//Ti.API.info(Alloy.Globals.connect);
 if (Alloy.Globals.FBERROR) {
 	// need to keep track if event was already added, since it is beeing added several times otherwise.
 	fb.addEventListener('login', function(e) {
-		if (Alloy.Globals.connect == true) {
+		//if (Alloy.Globals.connect == true) {
 		indicator.openIndicator();
-		}
+		//}
 		Alloy.Globals.FBERROR = false;
-		if (Alloy.Globals.connect == true) {
+		//if (Alloy.Globals.connect == true) {
 			if (e.success) {
 				removeEvent();
 				setTimeout(function() {
@@ -352,7 +352,7 @@ if (Alloy.Globals.FBERROR) {
 				indicator.closeIndicator();
 				//addEvent();
 			}
-		}
+		//}
 	});
 }
 
