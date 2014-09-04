@@ -454,6 +454,7 @@ if (OS_IOS){
 		height: 50,
 		right: 15,
 		top:5,
+		id: "ticketView"
 	});
 	
 	var ticketBtn = Ti.UI.createLabel({	
@@ -466,13 +467,53 @@ if (OS_IOS){
 		color: "#303030",
 		width: 'auto',
 		height: 'auto',
+		id:"label",
 		right: 15,
 		top: 15,
 	});
 
 	btn.add(ticketBtn);
+	var badge = Ti.UI.createLabel({
+		width: 15,
+		height: 15,
+		borderRadius: 7,
+		//text: 1,
+		right: 5,
+		id: "badge",
+		textAlign: "center",
+		font: {
+			fontSize: 10,
+			fontFamily: "Impact",
+		},
+		backgroundColor: "transparent",
+		borderColor: "transparent",
+		borderWidth: 1,	
+	});
+	btn.add(badge);
+	var couponOpen = false;
+	//Add event listener to ticket button
+	btn.addEventListener("click", function(){
+		if(couponOpen) return;
+		if(Alloy.Globals.hasCoupon){
+			couponOpen = true;
+			var win = Alloy.createController('showCoupon').getView();
+			win.addEventListener('close', function(){
+				win = null;
+				couponOpen = false;	
+			});
+			
+			Alloy.Globals.NAV.openWindow(win, {
+				animated : true
+			});
+			win = null;
+		}
+	});
+	
 	$.mainWin.setLeftNavButton(buttonBarMenu);
+	
 	$.nav.add(btn);
+	
+	Ti.API.info("LOGGA NAV" + JSON.stringify($.nav.getChildren()));
 // TODO
 /*
 	$.mainWin.open({
