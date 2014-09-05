@@ -41,63 +41,6 @@ var statsLabel = Ti.UI.createLabel({
 });
 statsView.add(statsLabel);
 
-var infoTxt = Ti.UI.createView({
-	backgroundColor : '#EA7337',
-	backgroundGradient : {
-		type : "linear",
-		startPoint : {
-			x : "0%",
-			y : "0%"
-		},
-		endPoint : {
-			x : "0%",
-			y : "100%"
-		},
-		colors : [{
-			color : "#F09C00",
-		}, {
-			color : "#D85000",
-		}]
-	},
-	width : "100%",
-	height : 30
-
-});
-scoreView.add(infoTxt);
-
-var nrInfo = Ti.UI.createLabel({
-	text : Alloy.Globals.PHRASES.positionTxt,
-	left : '2%',
-	color : "#fff",
-	font : {
-		fontSize : 18,
-		fontFamily : "Impact"
-	},
-});
-infoTxt.add(nrInfo);
-
-var nameInfo = Ti.UI.createLabel({
-	text : Alloy.Globals.PHRASES.nameTxt,
-	left : '40%',
-	color : "#fff",
-	font : {
-		fontSize : 18,
-		fontFamily : "Impact"
-	},
-});
-infoTxt.add(nameInfo);
-
-var scoreInfo = Ti.UI.createLabel({
-	text : Alloy.Globals.PHRASES.pointsTxt,
-	left : '83%',
-	color : "#fff",
-	font : {
-		fontSize : 18,
-		fontFamily : "Impact"
-	},
-});
-infoTxt.add(scoreInfo);
-
 function createGUI(obj, i) {
 
 	var totalLeader = Ti.UI.createView({
@@ -119,32 +62,6 @@ function createGUI(obj, i) {
 		},
 	});
 	totalLeader.add(nr);
-
-	if (i == 0) {
-		var value = Titanium.UI.createImageView({
-			image : "/images/gold.png",
-			height : 20,
-			width : 20,
-			left : '6%'
-		});
-		totalLeader.add(value);
-	} else if (i == 1) {
-		var value = Titanium.UI.createImageView({
-			image : "/images/silver.png",
-			height : 20,
-			width : 20,
-			left : '6%'
-		});
-		totalLeader.add(value);
-	} else if (i == 2) {
-		var value = Titanium.UI.createImageView({
-			image : "/images/bronze.png",
-			height : 20,
-			width : 20,
-			left : '6%'
-		});
-		totalLeader.add(value);
-	}
 
 	var image;
 	if (obj.fbid !== null) {
@@ -172,39 +89,15 @@ function createGUI(obj, i) {
 	if (boardName.length > 22) {
 		boardName = boardName.substring(0, 22);
 	}
-	if (i == 0) {
-		var name = Ti.UI.createLabel({
-			text : Alloy.Globals.PHRASES.chipleaderTxt + "\n" + boardName,
-			left : '27%',
-			font : {
-				fontSize : 14
-			},
-		});
-	} else if (i == 1) {
-		var name = Ti.UI.createLabel({
-			text : Alloy.Globals.PHRASES.runnerUppTxt + "\n" + boardName,
-			left : '27%',
-			font : {
-				fontSize : 14
-			},
-		});
-	} else if (i == 2) {
-		var name = Ti.UI.createLabel({
-			text : Alloy.Globals.PHRASES.thirdPlaceTxt + "\n" + boardName,
-			left : '27%',
-			font : {
-				fontSize : 14
-			},
-		});
-	} else {
-		var name = Ti.UI.createLabel({
-			text : boardName,
-			left : '27%',
-			font : {
-				fontSize : 14
-			},
-		});
-	}
+
+	var name = Ti.UI.createLabel({
+		text : boardName,
+		left : '27%',
+		font : {
+			fontSize : 14
+		},
+	});
+
 	totalLeader.add(name);
 
 	var coins = Ti.UI.createLabel({
