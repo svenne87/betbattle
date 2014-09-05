@@ -13,7 +13,7 @@ var statsView = Ti.UI.createScrollView({
 	height : "50%",
 	width : "100%",
 	top : '50%',
-	backgroundColor : "#fff",
+	backgroundColor : "transparent",
 	layout : "vertical"
 });
 
