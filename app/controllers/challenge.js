@@ -1,31 +1,28 @@
 /* Functions */
 
-function createGameType(gameType){
+function createGameType(gameType, gameObject) {
 	var type = gameType.type;
 	var viewHeight = "80dp";
 
 	var gameTypeView = Ti.UI.createView({
-		width: Ti.UI.FILL,
-		height: viewHeight,
-		layout: "vertical",
+		width : Ti.UI.FILL,
+		height : viewHeight,
+		layout : "vertical",
 	});
-	
+
 	var gameTypeDescription = Ti.UI.createLabel({
-		text: Alloy.Globals.PHRASES.gameTypes[type].description,
-		textAlign: "center",
-		color: "#FFF",
+		text : Alloy.Globals.PHRASES.gameTypes[type].description,
+		textAlign : "center",
+		color : "#FFF",
 		//height: "30%",
-		font:{
-			fontSize:18,
-			fontFamily: "Impact",
+		font : {
+			fontSize : 18,
+			fontFamily : "Impact",
 		}
 	});
-	
+
 	gameTypeView.add(gameTypeDescription);
-	
-	
-	
-	
+
 	// object to store game id and value
 	var gameObj = new Object();
 	gameObj.gameType = gameType.type;
@@ -33,67 +30,63 @@ function createGameType(gameType){
 	gameObj.gameValue = valueArray;
 	gameArray.push(gameObj);
 	var index = gameArray.indexOf(gameObj);
-	
-	
-	if(gameType.option_type == "button"){
+
+	if (gameType.option_type == "button") {
 		var optionsView = Ti.UI.createView({
 			//height: "70%",
-			width: 285,
-			layout: "horizontal",
+			width : 285,
+			layout : "horizontal",
 		});
-	
+
 		var fontSize = 18;
 		var buttonViews = [];
-		for (var i = 0; i < gameType.options; i++){
-			
+		for (var i = 0; i < gameType.options; i++) {
+
 			//get the corresponding text inside each button from the JSON file
-			var text = Alloy.Globals.PHRASES.gameTypes[type].buttonValues[i+1];
-			
+			var text = Alloy.Globals.PHRASES.gameTypes[type].buttonValues[i + 1];
+
 			//if the json says team1 or team2. get the actual team  names
-			if(text == "team1"){
-				Ti.API.info("TEAM" + JSON.stringify(gameObjects[0].attributes.team_1.team_name));
-				text = gameObjects[0].attributes.team_1.team_name;		
-			}else if(text == "team2"){
-				text = gameObjects[0].attributes.team_2.team_name;
+			if (text == "team1") {
+				Ti.API.info("TEAM" + JSON.stringify(gameObject.attributes.team_1.team_name));
+				text = gameObject.attributes.team_1.team_name;
+			} else if (text == "team2") {
+				text = gameObject.attributes.team_2.team_name;
 			}
 			//if text is too long make text smaller so it fits more.
-			if(text.length > 9){
+			if (text.length > 9) {
 				fontSize = 12;
 			}
 			var buttonView = Ti.UI.createButton({
-				title: text,
-			   	top: 5,
-			   	borderColor: "#c5c5c5",
-			   	borderWidth: 1,
-			   	left: 5,
-			   	value: i+1,
-			   	font:{
-			   		fontSize: fontSize,
-			   	},
-			   	borderRadius: 5,
-			   	width: 90,
-			  	height: 40
-			});	
-			
-			
-			
-			
+				title : text,
+				top : 5,
+				borderColor : "#c5c5c5",
+				borderWidth : 1,
+				left : 5,
+				value : i + 1,
+				font : {
+					fontSize : fontSize,
+				},
+				borderRadius : 5,
+				width : 90,
+				height : 40
+			});
+
 			buttonViews.push(buttonView);
-			
+
 		}
 		//add click event to all buttonviews. this is done here so that we can change color correctly when clicking one
-		for(var i in buttonViews){
-			buttonViews[i].addEventListener("click", function(e){
+		for (var i in buttonViews) {
+			buttonViews[i].addEventListener("click", function(e) {
 				Ti.API.info("Clickade " + JSON.stringify(e));
 				gameArray[index].gameValue[0] = e.source.value;
 				gameArray[index].gameValue[1] = 0;
 				changeColors(e);
 				Ti.API.info("gameArray : " + JSON.stringify(gameArray));
-				if(validate()){
-					if(Alloy.Globals.COUPON != null){
+				if (validate()) {
+					if (Alloy.Globals.COUPON != null) {
 						Ti.API.info("update");
 						updateChallenge();
-					}else{
+					} else {
 						Ti.API.info("save");
 						saveChallenge();
 					}
@@ -101,168 +94,160 @@ function createGameType(gameType){
 			});
 			optionsView.add(buttonViews[i]);
 		}
-		
+
 		//function that loops through and resets the color on all views. then changes the one clicked to the new colorw
-		function changeColors(e){
-			for(var i in buttonViews){
+		function changeColors(e) {
+			for (var i in buttonViews) {
 				buttonViews[i].backgroundColor = "#303030";
 				e.source.backgroundColor = "#6d6d6d";
 			}
 		}
-		
-	}else if(gameType.option_type == "select"){
+
+	} else if (gameType.option_type == "select") {
 		var layoutType = 'horizontal';
-		if(gameType.options  <= 1){
+		if (gameType.options <= 1) {
 			layoutType = 'absolute';
 		}
 		var optionsView = Ti.UI.createView({
 			//height: "70%",
-			width: 250,
-			layout: layoutType,
+			width : 250,
+			layout : layoutType,
 		});
 		var data = [];
 		if (OS_ANDROID) {
-				// create 1-15 values
-				for (var i = 0; i <= 15; i++) {
-					data.push(Titanium.UI.createPickerRow({
-						value : i,
-						title : '        ' + i + '    ',
-						fontSize : 30,
-						fontWeight : 'bold'
-					}));
-				};
-				for (var i = 0; i < gameType.options; i ++){
-					var picker = Titanium.UI.createPicker({
-						top : 30,
-						left : 5,
-						width : Ti.UI.SIZE,
-						height : Ti.UI.SIZE
-					});
-			
-			
-					// on first picker change
-					picker.addEventListener('change', function(e) {
-						e.selectedValue[0] = e.selectedValue[0].replace(/ /g, '');
-						gameArray[index].gameValue[i] = e.selectedValue[0];
-						if(gameType.number_of_values == 1){
-							gameArray[index].gameValues[1] = 0;
-						}
-						if(validate()){
-							if(Alloy.Globals.COUPON != null){
-								Ti.API.info("update");
-								updateChallenge();
-							}else{
-								Ti.API.info("save");
-								saveChallenge();
-							}
-						}
-					});
-			
-					picker.add(data);
-					picker.columns[0].width = Ti.UI.SIZE;
-					picker.columns[0].height = Ti.UI.SIZE;
-			
-					optionsView.add(picker);
-				}
-				
-		
-			} else if (OS_IOS) {
+			// create 1-15 values
+			for (var i = 0; i <= 15; i++) {
+				data.push(Titanium.UI.createPickerRow({
+					value : i,
+					title : '        ' + i + '    ',
+					fontSize : 30,
+					fontWeight : 'bold'
+				}));
+			};
+			for (var i = 0; i < gameType.options; i++) {
+				var picker = Titanium.UI.createPicker({
+					top : 30,
+					left : 5,
+					width : Ti.UI.SIZE,
+					height : Ti.UI.SIZE
+				});
 
-				var pickers = [];
-				// create 1-15 values
-				for (var i = 0; i <= 15; i++) {
-					data.push(Titanium.UI.createPickerRow({
-						title : '' + i,
-						value : i
-					}));
-				};
-				for (var i = 0; i < gameType.options; i++){
-					///SKAPA EN SELECT
-					var visualPrefs;
-					var ModalPicker = require("lib/ModalPicker");
-					if(layoutType == 'horizontal'){
-						visualPrefs = {
-							//top : 30,
-							left : 5,
-							id : "picker_" + i,
-							opacity : 0.85,
-							borderRadius : 3,
-							backgroundColor : '#FFF',
-							width : 120,
-							height : 40,
-							textAlign : 'center'
-						};
-					}else if(layoutType == 'absolute'){
-						visualPrefs = {
-							//top : 30,
-							//left : 5,
-							id : "picker_" + i,
-							opacity : 0.85,
-							borderRadius : 3,
-							backgroundColor : '#FFF',
-							width : 120,
-							height : 40,
-							textAlign : 'center'
-						};
+				// on first picker change
+				picker.addEventListener('change', function(e) {
+					e.selectedValue[0] = e.selectedValue[0].replace(/ /g, '');
+					gameArray[index].gameValue[i] = e.selectedValue[0];
+					if (gameType.number_of_values == 1) {
+						gameArray[index].gameValues[1] = 0;
 					}
-					
-		
-					var picker = null;
-					var count = i+1;
-					var id = i + "_" + gameType.type+count;
-					picker =  new ModalPicker(visualPrefs, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt, Alloy.Globals.PHRASES.closeBtnTxt, id);
-					modalPickersToHide[gameType.type+count] = picker;
-					
-					picker.text = '-';
-					//picker.text = '-';
-			
-					Ti.API.info("Y VÄRDE : " + i);
-					picker.self.addEventListener('change', function(e) {
-						
-						var id = e.source.id;
-						var ind = id.indexOf("_");
-						i = id.substring(0,ind);
-						var arrayIndex = id.substring(ind+1, id.length);
-					
-						
-						picker.value = modalPickersToHide[arrayIndex].value;
-						
-						
-						gameArray[index].gameValue[i] = picker.value;
-						if(gameType.number_of_values == 1){
-							gameArray[index].gameValue[1] = 0;
+					if (validate()) {
+						if (Alloy.Globals.COUPON != null) {
+							Ti.API.info("update");
+							updateChallenge();
+						} else {
+							Ti.API.info("save");
+							saveChallenge();
 						}
-						Ti.API.info("gameArray : " + JSON.stringify(gameArray));
-						if(validate()){
-							if(Alloy.Globals.COUPON != null){
-								Ti.API.info("update");
-								updateChallenge();
-							}else{
-								Ti.API.info("save");
-								saveChallenge();	
-							}
-							
-						};
-					});
-					
-					
-					optionsView.add(picker);
-					
-					//pickers.push(picker);
-					
-					
-					
-				}
-				
-				
+					}
+				});
+
+				picker.add(data);
+				picker.columns[0].width = Ti.UI.SIZE;
+				picker.columns[0].height = Ti.UI.SIZE;
+
+				optionsView.add(picker);
 			}
-		
+
+		} else if (OS_IOS) {
+
+			var pickers = [];
+			// create 1-15 values
+			for (var i = 0; i <= 15; i++) {
+				data.push(Titanium.UI.createPickerRow({
+					title : '' + i,
+					value : i
+				}));
+			};
+			for (var i = 0; i < gameType.options; i++) {
+				///SKAPA EN SELECT
+				var
+				visualPrefs;
+				var ModalPicker = require("lib/ModalPicker");
+				if (layoutType == 'horizontal') {
+					visualPrefs = {
+						//top : 30,
+						left : 5,
+						id : "picker_" + i,
+						opacity : 0.85,
+						borderRadius : 3,
+						backgroundColor : '#FFF',
+						width : 120,
+						height : 40,
+						textAlign : 'center'
+					};
+				} else if (layoutType == 'absolute') {
+					visualPrefs = {
+						//top : 30,
+						//left : 5,
+						id : "picker_" + i,
+						opacity : 0.85,
+						borderRadius : 3,
+						backgroundColor : '#FFF',
+						width : 120,
+						height : 40,
+						textAlign : 'center'
+					};
+				}
+
+				var picker = null;
+				var count = i + 1;
+				var id = i + "_" + gameType.type + count;
+				picker = new ModalPicker(visualPrefs, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt, Alloy.Globals.PHRASES.closeBtnTxt, id);
+				modalPickersToHide[gameType.type + count] = picker;
+
+				picker.text = '-';
+				//picker.text = '-';
+
+				Ti.API.info("Y VÄRDE : " + i);
+				picker.self.addEventListener('change', function(e) {
+
+					var id = e.source.id;
+					var ind = id.indexOf("_");
+					i = id.substring(0, ind);
+					var arrayIndex = id.substring(ind + 1, id.length);
+
+					picker.value = modalPickersToHide[arrayIndex].value;
+
+					gameArray[index].gameValue[i] = picker.value;
+					if (gameType.number_of_values == 1) {
+						gameArray[index].gameValue[1] = 0;
+					}
+					Ti.API.info("gameArray : " + JSON.stringify(gameArray));
+					if (validate()) {
+						if (Alloy.Globals.COUPON != null) {
+							Ti.API.info("update");
+							updateChallenge();
+						} else {
+							Ti.API.info("save");
+							saveChallenge();
+						}
+
+					};
+				});
+
+				optionsView.add(picker);
+
+				//pickers.push(picker);
+
+			}
+
+		}
+
 	}
 	gameTypeView.add(optionsView);
-	$.challenge.add(gameTypeView);
+	view.add(gameTypeView);
 }
 
-function updateChallenge(){
+function updateChallenge() {
 	if (Alloy.Globals.checkConnection()) {
 		indicator.openIndicator();
 		var xhr = Titanium.Network.createHTTPClient();
@@ -279,35 +264,33 @@ function updateChallenge(){
 			xhr.setTimeout(Alloy.Globals.TIMEOUT);
 
 			// build the json string
-			var param = '{"lang" : "' + Alloy.Globals.LOCALE + '", "cid":"' + Alloy.Globals.COUPON.id + '", "gameID": "'+gameID+'", "gamevalue": {';
-		
+			var param = '{"lang" : "' + Alloy.Globals.LOCALE + '", "cid":"' + Alloy.Globals.COUPON.id + '", "gameID": "' + gameID + '", "gamevalue": {';
+
 			for (var i in gameArray) {
-			Ti.API.info("skickar gameArray : " + JSON.stringify(gameArray[i]));
-					// is array
-					param += '"' + gameArray[i].gameType + '": [';
-					for (var x in gameArray[i].gameValue) {
-						param += '"' + gameArray[i].gameValue[x];
-						if (x != (gameArray[i].gameValue.length - 1)) {
-							param += '", ';
-						} else {
-							// last one
-							param += '"';
-						}
-					}
-					if (i != (gameArray.length - 1)) {
-						param += '], ';
+				Ti.API.info("skickar gameArray : " + JSON.stringify(gameArray[i]));
+				// is array
+				param += '"' + gameArray[i].gameType + '": [';
+				for (var x in gameArray[i].gameValue) {
+					param += '"' + gameArray[i].gameValue[x];
+					if (x != (gameArray[i].gameValue.length - 1)) {
+						param += '", ';
 					} else {
 						// last one
-						param += ']';
+						param += '"';
 					}
-				
+				}
+				if (i != (gameArray.length - 1)) {
+					param += '], ';
+				} else {
+					// last one
+					param += ']';
+				}
+
 			}
 			param += '}}';
-		
-			
-			
+
 			Ti.API.info("JSON STRING : " + param);
-			
+
 			xhr.send(param);
 		} catch(e) {
 			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
@@ -321,15 +304,15 @@ function updateChallenge(){
 					indicator.closeIndicator();
 					Ti.API.info("RESPONSE : " + JSON.stringify(this.responseText));
 					var response = JSON.parse(this.responseText);
-					if(response == 1) {
+					if (response == 1) {
 						Alloy.Globals.getCoupon();
 						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.couponSavedMsg);
-					}else if(response == 2){
+					} else if (response == 2) {
 						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.couponGameExistsMsg);
 					}
 					Ti.API.info("response: " + JSON.stringify(response));
-					
-					} else {
+
+				} else {
 					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 				}
 			} else {
@@ -344,10 +327,8 @@ function updateChallenge(){
 	}
 }
 
+function saveChallenge() {
 
-function saveChallenge(){
-	
-	
 	if (Alloy.Globals.checkConnection()) {
 		var xhr = Titanium.Network.createHTTPClient();
 		indicator.openIndicator();
@@ -363,35 +344,33 @@ function saveChallenge(){
 			xhr.setTimeout(Alloy.Globals.TIMEOUT);
 
 			// build the json string
-			var param = '{"lang" : "' + Alloy.Globals.LOCALE + '", "betkampen_id":"' + Alloy.Globals.BETKAMPENUID + '", "gameID": "'+gameID+'", "gamevalue": {';
-		
+			var param = '{"lang" : "' + Alloy.Globals.LOCALE + '", "betkampen_id":"' + Alloy.Globals.BETKAMPENUID + '", "gameID": "' + gameID + '", "gamevalue": {';
+
 			for (var i in gameArray) {
-			Ti.API.info("skickar gameArray : " + JSON.stringify(gameArray[i]));
-					// is array
-					param += '"' + gameArray[i].gameType + '": [';
-					for (var x in gameArray[i].gameValue) {
-						param += '"' + gameArray[i].gameValue[x];
-						if (x != (gameArray[i].gameValue.length - 1)) {
-							param += '", ';
-						} else {
-							// last one
-							param += '"';
-						}
-					}
-					if (i != (gameArray.length - 1)) {
-						param += '], ';
+				Ti.API.info("skickar gameArray : " + JSON.stringify(gameArray[i]));
+				// is array
+				param += '"' + gameArray[i].gameType + '": [';
+				for (var x in gameArray[i].gameValue) {
+					param += '"' + gameArray[i].gameValue[x];
+					if (x != (gameArray[i].gameValue.length - 1)) {
+						param += '", ';
 					} else {
 						// last one
-						param += ']';
+						param += '"';
 					}
-				
+				}
+				if (i != (gameArray.length - 1)) {
+					param += '], ';
+				} else {
+					// last one
+					param += ']';
+				}
+
 			}
 			param += '}}';
-		
-			
-			
+
 			Ti.API.info("JSON STRING : " + param);
-			
+
 			xhr.send(param);
 		} catch(e) {
 			indicator.closeIndicator();
@@ -405,16 +384,16 @@ function saveChallenge(){
 					indicator.closeIndicator();
 					Ti.API.info("RESPONSE : " + JSON.stringify(this.responseText));
 					var response = JSON.parse(this.responseText);
-					if(response == 1) {
-						
+					if (response == 1) {
+
 						Alloy.Globals.getCoupon();
 						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.couponSavedMsg);
-					}else{
+					} else {
 						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 					}
-					
+
 					// show dialog and if ok close window
-				}else {
+				} else {
 					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 				}
 			} else {
@@ -428,7 +407,6 @@ function saveChallenge(){
 		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 	}
 }
-
 
 // create new challenge and choose friends to challenge
 function createChallengeAndChooseFriends(betkampenId, betAmount) {
@@ -511,28 +489,28 @@ function postAnswer(betkampenId, cid, betAmount) {
 				var alertWindow = Titanium.UI.createAlertDialog({
 					title : Alloy.Globals.PHRASES.betbattleTxt,
 					message : JSON.parse(this.responseText),
-					buttonNames : [Alloy.Globals.PHRASES .okConfirmTxt, Alloy.Globals.PHRASES.storeTxt]
+					buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.storeTxt]
 				});
 
 				alertWindow.addEventListener('click', function(e) {
 					switch (e.index) {
-						case 0:
-							alertWindow.hide();
-							break;
-						case 1:
-							var win = Alloy.createController('store').getView();
+					case 0:
+						alertWindow.hide();
+						break;
+					case 1:
+						var win = Alloy.createController('store').getView();
 
-							if (OS_IOS) {
-								Alloy.Globals.NAV.openWindow(win, {
-									animated : true
-								});
-							} else if (OS_ANDROID) {
-								win.open({
-									fullScreen : true
-								});
-							}
-							alertWindow.hide();
-							break;
+						if (OS_IOS) {
+							Alloy.Globals.NAV.openWindow(win, {
+								animated : true
+							});
+						} else if (OS_ANDROID) {
+							win.open({
+								fullScreen : true
+							});
+						}
+						alertWindow.hide();
+						break;
 					}
 				});
 				alertWindow.show();
@@ -556,10 +534,10 @@ function postAnswer(betkampenId, cid, betAmount) {
 
 			if (tournamentIndex === -1) {
 				// for normal challenge
-				param = '{"lang" : "' + Alloy.Globals.LOCALE +'", "betkampen_id":"' + betkampenId + '", "cid":"' + cid + '", "bet_amount":"' + betAmount + '", "gamevalue": [{';
+				param = '{"lang" : "' + Alloy.Globals.LOCALE + '", "betkampen_id":"' + betkampenId + '", "cid":"' + cid + '", "bet_amount":"' + betAmount + '", "gamevalue": [{';
 			} else {
 				// for tournament
-				param = '{"lang" : "' + Alloy.Globals.LOCALE +'", "betkampen_id":"' + betkampenId + '", "tournament":"' + challengeObject.attributes.id + '", "round":"' + gameObjects[0].attributes.round_id + '", "league":"' + gameObjects[0].attributes.league_id + '", "gamevalue": [{';
+				param = '{"lang" : "' + Alloy.Globals.LOCALE + '", "betkampen_id":"' + betkampenId + '", "tournament":"' + challengeObject.attributes.id + '", "round":"' + gameObjects[0].attributes.round_id + '", "league":"' + gameObjects[0].attributes.league_id + '", "gamevalue": [{';
 			}
 
 			for (var i in gameArray) {
@@ -660,252 +638,254 @@ function createBorderView() {
 	}));
 }
 
-
-
 // Bet coins view, when answering a challenge
 /*function createBetCoinsView(coinsToJoin) {
-	// handle if new bet
+// handle if new bet
 
-	var coinsView = Titanium.UI.createView({
-		height : 50,
-		width : '100%',
-		backgroundColor : '#303030'
-	});
+var coinsView = Titanium.UI.createView({
+height : 50,
+width : '100%',
+backgroundColor : '#303030'
+});
 
-	coinsView.add(Titanium.UI.createLabel({
-		height : 40,
-		width : '100%',
-		top : 5,
-		backgroundColor : '#303030',
-		color : '#FFF',
-		textAlign : 'center',
-		font : {
-			fontFamily : "Impact",
-			fontSize : Alloy.Globals.getFontSize(2)
-		},
-		text : coinsToJoin + ' ' + Alloy.Globals.PHRASES.betbattleTxt + ' ' + Alloy.Globals.PHRASES.coinsTxt
-	}));
+coinsView.add(Titanium.UI.createLabel({
+height : 40,
+width : '100%',
+top : 5,
+backgroundColor : '#303030',
+color : '#FFF',
+textAlign : 'center',
+font : {
+fontFamily : "Impact",
+fontSize : Alloy.Globals.getFontSize(2)
+},
+text : coinsToJoin + ' ' + Alloy.Globals.PHRASES.betbattleTxt + ' ' + Alloy.Globals.PHRASES.coinsTxt
+}));
 
-	$.challenge.add(coinsView);
+$.challenge.add(coinsView);
 }
 
 // when creating a challenge
 function createBetCoinsChooseView() {
-	var viewHeight = 60;
+var viewHeight = 60;
 
-	if (OS_ANDROID) {
-		viewHeight = Ti.UI.SIZE;
-	}
+if (OS_ANDROID) {
+viewHeight = Ti.UI.SIZE;
+}
 
-	var betView = Titanium.UI.createView({
-		height : viewHeight,
-		width : '100%',
-		layout : 'vertical',
-		backgroundColor : '#303030'
-	});
+var betView = Titanium.UI.createView({
+height : viewHeight,
+width : '100%',
+layout : 'vertical',
+backgroundColor : '#303030'
+});
 
-	betView.add(Titanium.UI.createLabel({
-		height : 40,
-		width : '100%',
-		top : 10,
-		backgroundColor : '#303030',
-		color : '#FFF',
-		textAlign : 'center',
-		font : {
-			fontFamily : "Impact",
-			fontSize : Alloy.Globals.getFontSize(2)
-		},
-		text : Alloy.Globals.PHRASES.chooseCoinsBetTxt
-	}));
+betView.add(Titanium.UI.createLabel({
+height : 40,
+width : '100%',
+top : 10,
+backgroundColor : '#303030',
+color : '#FFF',
+textAlign : 'center',
+font : {
+fontFamily : "Impact",
+fontSize : Alloy.Globals.getFontSize(2)
+},
+text : Alloy.Globals.PHRASES.chooseCoinsBetTxt
+}));
 
-	$.challenge.add(betView);
+$.challenge.add(betView);
 
-	// create 20, 40, 60, 80, 100 values
-	var betArray = ['20', '40', '60', '80', '100'];
-	var data = [];
+// create 20, 40, 60, 80, 100 values
+var betArray = ['20', '40', '60', '80', '100'];
+var data = [];
 
-	if (OS_ANDROID) {
-		// default
-		data.push(Titanium.UI.createPickerRow({
-			title : '        ' + Alloy.Globals.PHRASES.chooseConfirmBtnTxt,
-			value : -1
-		}));
+if (OS_ANDROID) {
+// default
+data.push(Titanium.UI.createPickerRow({
+title : '        ' + Alloy.Globals.PHRASES.chooseConfirmBtnTxt,
+value : -1
+}));
 
-		for (var i = 0; i < betArray.length; i++) {
-			data.push(Titanium.UI.createPickerRow({
-				title : '         ' + betArray[i] + '    ',
-				height : 40,
-				value : betArray[i]
-			}));
-		}
+for (var i = 0; i < betArray.length; i++) {
+data.push(Titanium.UI.createPickerRow({
+title : '         ' + betArray[i] + '    ',
+height : 40,
+value : betArray[i]
+}));
+}
 
-		// fix scroll
-		for (var i = 0; i < 8; i++) {
-			data.push(Titanium.UI.createPickerRow({
-				title : '          ---',
-				value : -1,
-				opacity : 0,
-				visible : false
-			}));
-		}
+// fix scroll
+for (var i = 0; i < 8; i++) {
+data.push(Titanium.UI.createPickerRow({
+title : '          ---',
+value : -1,
+opacity : 0,
+visible : false
+}));
+}
 
-		var betPicker = Titanium.UI.createPicker({
-			top : 0,
-			height : Ti.UI.SIZE,
-			width : Ti.UI.SIZE,
-			showVerticalScrollIndicator : true,
-			selectionIndicator : true
-		});
+var betPicker = Titanium.UI.createPicker({
+top : 0,
+height : Ti.UI.SIZE,
+width : Ti.UI.SIZE,
+showVerticalScrollIndicator : true,
+selectionIndicator : true
+});
 
-		betPicker.add(data);
+betPicker.add(data);
 
-		betPicker.columns[0].width = Ti.UI.SIZE;
-		betPicker.columns[0].height = Ti.UI.SIZE;
-		betPicker.columns[0].font = {
-			fontSize : 40
-		};
-		betPicker.columns[0].fontSize = 40;
+betPicker.columns[0].width = Ti.UI.SIZE;
+betPicker.columns[0].height = Ti.UI.SIZE;
+betPicker.columns[0].font = {
+fontSize : 40
+};
+betPicker.columns[0].fontSize = 40;
 
-		var spaceView = Ti.UI.createView({
-			height : 5,
-			id : 'spaceView'
-		});
+var spaceView = Ti.UI.createView({
+height : 5,
+id : 'spaceView'
+});
 
-		betPicker.addEventListener('change', function(e) {
-			coinsToJoin = e.selectedValue[0].replace(/ /g, '');
-		});
+betPicker.addEventListener('change', function(e) {
+coinsToJoin = e.selectedValue[0].replace(/ /g, '');
+});
 
-		$.challenge.add(betPicker);
-		$.challenge.add(spaceView);
+$.challenge.add(betPicker);
+$.challenge.add(spaceView);
 
-	} else if (OS_IOS) {
-		// default
-		data.push(Titanium.UI.createPickerRow({
-			title : Alloy.Globals.PHRASES.chooseConfirmBtnTxt,
-			value : -1
-		}));
+} else if (OS_IOS) {
+// default
+data.push(Titanium.UI.createPickerRow({
+title : Alloy.Globals.PHRASES.chooseConfirmBtnTxt,
+value : -1
+}));
 
-		for (var i = 0; i < betArray.length; i++) {
-			data.push(Titanium.UI.createPickerRow({
-				title : '' + betArray[i],
-				value : betArray[i]
-			}));
-		}
+for (var i = 0; i < betArray.length; i++) {
+data.push(Titanium.UI.createPickerRow({
+title : '' + betArray[i],
+value : betArray[i]
+}));
+}
 
-		var ModalPicker = require("lib/ModalPicker");
-		var visualPrefs = {
-			top : 0,
-			opacity : 0.85,
-			borderRadius : 3,
-			backgroundColor : '#FFF',
-			width : 140,
-			height : 40,
-			textAlign : 'center'
-		};
+var ModalPicker = require("lib/ModalPicker");
+var visualPrefs = {
+top : 0,
+opacity : 0.85,
+borderRadius : 3,
+backgroundColor : '#FFF',
+width : 140,
+height : 40,
+textAlign : 'center'
+};
 
-		var betPicker = new ModalPicker(visualPrefs, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt, Alloy.Globals.PHRASES.closeBtnTxt);
-		modalPickersToHide.push(betPicker);
+var betPicker = new ModalPicker(visualPrefs, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt, Alloy.Globals.PHRASES.closeBtnTxt);
+modalPickersToHide.push(betPicker);
 
-		betPicker.text = Alloy.Globals.PHRASES.chooseConfirmBtnTxt;
+betPicker.text = Alloy.Globals.PHRASES.chooseConfirmBtnTxt;
 
-		betPicker.self.addEventListener('change', function(e) {
-			coinsToJoin = betPicker.value;
-		});
+betPicker.self.addEventListener('change', function(e) {
+coinsToJoin = betPicker.value;
+});
 
-		$.challenge.add(betPicker);
-	}
+$.challenge.add(betPicker);
+}
 
-	$.challenge.add(Ti.UI.createView({
-		layout : 'vertical',
-		height : 10,
-		backgroundColor : '#303030',
-		width : '100%'
-	}));
+$.challenge.add(Ti.UI.createView({
+layout : 'vertical',
+height : 10,
+backgroundColor : '#303030',
+width : '100%'
+}));
 }
 
 // Answer / challenge view
 function createSubmitButtonView(buttonText, betkampenId, cid) {
-	var height = 100;
-	var top = 30;
+var height = 100;
+var top = 30;
 
-	var submitView = Titanium.UI.createView({
-		height : height,
-		width : '100%',
-		backgroundColor : '#303030'
-	});
+var submitView = Titanium.UI.createView({
+height : height,
+width : '100%',
+backgroundColor : '#303030'
+});
 
-	submitButton = Titanium.UI.createButton({
-		top : top,
-		width : '70%',
-		height : 40,
-		color : '#FFF',
-		backgroundColor : Alloy.Globals.themeColor(),
-		borderRadius : 6,
-		font : {
-			fontFamily : Alloy.Globals.getFont(),
-			fontSize : Alloy.Globals.getFontSize(2)
-		},
-		title : buttonText,
-		backgroundImage : 'none'
-	});
+submitButton = Titanium.UI.createButton({
+top : top,
+width : '70%',
+height : 40,
+color : '#FFF',
+backgroundColor : Alloy.Globals.themeColor(),
+borderRadius : 6,
+font : {
+fontFamily : Alloy.Globals.getFont(),
+fontSize : Alloy.Globals.getFontSize(2)
+},
+title : buttonText,
+backgroundImage : 'none'
+});
 
-	// on submit validate and post
-	submitButton.addEventListener('click', function() {
-		// 1 true 0 false
-		if (validate() == 1) {
-			if (roundId === -1) {
-				// show "loading indicator"
-				indicator.openIndicator();
-				submitButton.touchEnabled = false;
+// on submit validate and post
+submitButton.addEventListener('click', function() {
+// 1 true 0 false
+if (validate() == 1) {
+if (roundId === -1) {
+// show "loading indicator"
+indicator.openIndicator();
+submitButton.touchEnabled = false;
 
-				// normal challenge
-				postAnswer(betkampenId, cid, coinsToJoin);
+// normal challenge
+postAnswer(betkampenId, cid, coinsToJoin);
 
-			} else {
-				if (Alloy.Globals.checkConnection()) {
-					createChallengeAndChooseFriends(betkampenId, coinsToJoin);
-				} else {
-					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
-				}
-			}
+} else {
+if (Alloy.Globals.checkConnection()) {
+createChallengeAndChooseFriends(betkampenId, coinsToJoin);
+} else {
+Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+}
+}
 
-		} else {
-			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.notAllValuesErrorTxt);
-		}
-	});
+} else {
+Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.notAllValuesErrorTxt);
+}
+});
 
-	submitView.add(submitButton);
-	$.challenge.add(submitView);
+submitView.add(submitButton);
+$.challenge.add(submitView);
 }
 */
 // validate
 function validate() {
 	for (var i in gameArray) {
-		for (var y in gameArray[i].gameValue){
+		for (var y in gameArray[i].gameValue) {
 			if (gameArray[i].gameValue[y] === -1) {
 				return false;
-			}	
+			}
 		}
-		
+
 	}
 
 	return true;
 }
 
 // create the layout views
-function createLayout() {
-	
+function createLayout(gameObject) {
+	view = Ti.UI.createView({
+		height : 'auto',
+		width : 'auto',
+		layout : 'vertical'
+	});
+
 	var image = Ti.UI.createView({
 		width : '100%',
 		height : 70,
 		backgroundImage : '/images/profileBG.jpg'
 	});
-	
-	//Ti.API.info("LOGGGA: "+ JSON.stringify(args));
+
 	// fetch league name, if not set
 	if (leagueName.length === 0) {
 		for (var i in Alloy.Globals.LEAGUES) {
-			if (Alloy.Globals.LEAGUES[i].id == gameObjects[0].attributes.league_id) {
+			if (Alloy.Globals.LEAGUES[i].id == gameObject.attributes.league_id) {
 				leagueName = Alloy.Globals.LEAGUES[i].name;
 				break;
 			}
@@ -932,19 +912,22 @@ function createLayout() {
 		text : teamNames
 	}));
 
-	$.challenge.add(image);
-	
+	view.add(image);
+
 	if (roundId === -1 && challengeObject !== null) {
-		var currentGroupName = null;
-		
-		if(typeof challengeObject.attributes.group.name !== 'undefined') {
-			currentGroupName = challengeObject.attributes.group.name;
-		} else if(typeof challengeObject.attributes.group[0].name !== 'undefined') {
-			currentGroupName = challengeObject.attributes.group[0].name;
-		}
-		
-		if(currentGroupName !== null){
-			$.challenge.add(Ti.UI.createLabel({
+		/*
+		 var currentGroupName = null;
+
+		 if(typeof challengeObject.attributes.group.name !== 'undefined') {
+		 currentGroupName = challengeObject.attributes.group.name;
+		 } else if(typeof challengeObject.attributes.group[0].name !== 'undefined') {
+		 currentGroupName = challengeObject.attributes.group[0].name;
+		 }
+		 */
+		var currentGroupName = 'Debug';
+
+		if (currentGroupName !== null) {
+			view.add(Ti.UI.createLabel({
 				top : 5,
 				width : '100%',
 				textAlign : 'center',
@@ -957,8 +940,8 @@ function createLayout() {
 					fontWeight : 'bold'
 				}
 			}));
-			
-			$.challenge.add(Ti.UI.createLabel({
+
+			view.add(Ti.UI.createLabel({
 				top : 5,
 				width : '100%',
 				textAlign : 'center',
@@ -973,11 +956,8 @@ function createLayout() {
 		}
 	}
 
+	function doRest(gameObject) {
 
-	
-
-	function doRest() {
-		
 		if (roundId === -1) {
 			// tournament fix
 			coinsToJoin = gameObjects[0].attributes.pot;
@@ -986,38 +966,39 @@ function createLayout() {
 				coinsToJoin = parseInt(challengeObject.attributes.potential_pot) / challengeObject.attributes.opponents.length;
 			}
 		}
-		
+
 		///*******Create game types******///
-		var gametypes = gameObjects[0].attributes.game_types;
-		for(var y in gametypes){
-			createGameType(gametypes[y]);	
+		var gametypes = gameObject.attributes.game_types;
+		for (var y in gametypes) {
+			createGameType(gametypes[y], gameObject);
 		}
-		
-		
+
 		createBorderView();
 
 		/*if (roundId === -1) {
-			createBetCoinsView(coinsToJoin);
-		} else {
-			createBetCoinsChooseView();w
-		}
+		 createBetCoinsView(coinsToJoin);
+		 } else {
+		 createBetCoinsChooseView();w
+		 }
 
-		createBorderView();
+		 createBorderView();
 
-		if (roundId === -1) {
-			createSubmitButtonView('Svara', Alloy.Globals.BETKAMPENUID, challengeObject.attributes.id);
-		} else {
-			// -1 here indicates that we are creating a challenge
-			createSubmitButtonView(Alloy.Globals.PHRASES.challengeBtnTxt, Alloy.Globals.BETKAMPENUID, -1);
-		}*/
+		 if (roundId === -1) {
+		 createSubmitButtonView('Svara', Alloy.Globals.BETKAMPENUID, challengeObject.attributes.id);
+		 } else {
+		 // -1 here indicates that we are creating a challenge
+		 createSubmitButtonView(Alloy.Globals.PHRASES.challengeBtnTxt, Alloy.Globals.BETKAMPENUID, -1);
+		 }*/
 	}
 
 
-	Alloy.Globals.performTimeout(doRest());
+	Alloy.Globals.performTimeout(doRest(gameObject));
+	$.challenge.addView(view);
 }
 
 /* Flow */
 // used to create a new challenge
+var view;
 var args = arguments[0] || {};
 // roundId will be -1 as long as we are not creating a new challenge
 var uie = require('lib/IndicatorWindow');
@@ -1025,7 +1006,6 @@ var indicator = uie.createIndicatorWindow({
 	top : 200,
 	text : Alloy.Globals.PHRASES.loadingTxt
 });
-
 
 var roundId = -1;
 if ( typeof args.round !== 'undefined') {
@@ -1038,12 +1018,12 @@ if ( typeof args.leagueName !== 'undefined') {
 }
 
 var gameID = -1;
-if( typeof args.gameID !== 'undefined'){
+if ( typeof args.gameID !== 'undefined') {
 	gameID = args.gameID;
 }
 
 var teamNames = '';
-if( typeof args.teamNames !== 'undefined'){
+if ( typeof args.teamNames !== 'undefined') {
 	teamNames = args.teamNames;
 }
 
@@ -1176,51 +1156,57 @@ if (Alloy.Globals.checkConnection()) {
 	xhr.onload = function() {
 		if (this.status == '200') {
 			if (this.readyState == 4) {
-				Ti.API.info("HÄMTAT" + JSON.stringify(this.responseText));
 				var response = JSON.parse(this.responseText);
-				Ti.API.info("THIS " + JSON.stringify(response));
-				// the response is an array with the different game types
-				// create objects for each game type
-				
-					var teamOneName = response.team_1.team_name;
+				// Simple work around, if response ain't an array, then simpy add it to one, to use the same code
+				if (response.length == null) {
+					var array = [];
+					array.push(response);
+					response = array;
+					array = null;
+				}
+
+				// This response contains one or several games for a challenge. And each game contains a  set of game types valid for that game
+				for (resp in response) {
+					var res = response[resp];
+					var teamOneName = res.team_1.team_name;
 
 					if (teamOneName.length > 16) {
 						teamOneName = teamOneName.substring(0, 13) + '...';
 					}
 
-					var teamTwoName = response.team_2.team_name;
+					var teamTwoName = res.team_2.team_name;
 
 					if (teamTwoName.length > 16) {
 						teamTwoName = teamTwoName.substring(0, 13) + '...';
 					}
 
 					var team_1 = {
-						team_id : response.team_1.team_id,
-						team_logo : response.team_1.team_logo,
+						team_id : res.team_1.team_id,
+						team_logo : res.team_1.team_logo,
 						team_name : teamOneName
 					};
 					var team_2 = {
-						team_id : response.team_2.team_id,
-						team_logo : response.team_2.team_logo,
+						team_id : res.team_2.team_id,
+						team_logo : res.team_2.team_logo,
 						team_name : teamTwoName
 					};
 
 					var gameObject = Alloy.createModel('game', {
-						game_date : response.game_date,
-						game_id : response.game_id,
-						game_type : response.game_type,
-						game_types : response.game_types,
-						league_id : response.league_id,
-						league_name : response.league_name,
-						round_id : response.round_id,
-						status : response.status,
+						game_date : res.game_date,
+						game_id : res.game_id,
+						game_type : res.game_type,
+						game_types : res.game_types,
+						league_id : res.league_id,
+						league_name : res.league_name,
+						round_id : res.round_id,
+						status : res.status,
 						team_1 : team_1,
 						team_2 : team_2,
-						pot : response.pot
+						pot : res.pot
 					});
 					// add to an array
 					gameObjects.push(gameObject);
-				
+				}
 
 				// create the layout and check for coins
 				Alloy.Globals.checkCoins();
@@ -1235,7 +1221,10 @@ if (Alloy.Globals.checkConnection()) {
 					}
 				}
 
-				createLayout();
+				// create views for each gameObject
+				for (var i = 0; i < gameObjects.length; i++) {
+					createLayout(gameObjects[i]);
+				}
 			} else {
 				indicator.closeIndicator();
 				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);

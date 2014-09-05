@@ -5,12 +5,12 @@
 	backgroundColor:"#303030"
 },
 "#challenge":{
-	layout: 'vertical',
-    width: Ti.UI.FILL,
-    height: Ti.UI.FILL,
-    contentHeight: Ti.UI.SIZE,
-    contentWidth: Ti.UI.SIZE,
+	//layout: 'vertical',
+    //width: Ti.UI.FILL,
+    //height: Ti.UI.FILL,
+    //contentHeight: Ti.UI.SIZE,
+   // contentWidth: Ti.UI.SIZE,
     backgroundColor : '#303030',
-	showVerticalScrollIndicator: true,
-	showHorizontalScrollIndicator: false
+	//showVerticalScrollIndicator: true,
+	//showHorizontalScrollIndicator: false
 }
