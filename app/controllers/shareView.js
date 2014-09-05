@@ -249,7 +249,7 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 			if (fejjan == true) {
 				alert(Alloy.Globals.PHRASES.notInstalledTxt +' '+ 'facebook');
 			} else {
-				Titanium.Platform.openURL('fb://feed');
+				Titanium.Platform.openURL('fb://publish');
 			}
 
 		} else if (OS_ANDROID) {
@@ -421,7 +421,7 @@ twitterBtn.addEventListener('click', function(e) {
 		if (twitter == true) {
 			alert(Alloy.Globals.PHRASES.notInstalledTxt +' '+ 'Twitter');
 		} else {
-			Titanium.Platform.openURL('twitter://post?message=' + "'" + Alloy.Globals.PHRASES.twitterMsg + "'");
+			Titanium.Platform.openURL('twitter://post?message=' +  Alloy.Globals.PHRASES.twitterMsg);
 		}
 
 	} else if (OS_ANDROID) {
