@@ -214,7 +214,7 @@ function loginAuthenticated(fb) {
 					addEvent();
 					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 				};
-
+				
 				try {
 					xhr.open('POST', Alloy.Globals.BETKAMPENLOGINURL);
 					xhr.setRequestHeader("content-type", "application/json");
@@ -231,6 +231,7 @@ function loginAuthenticated(fb) {
 					if (this.status == '200') {
 						if (this.readyState == 4) {
 							var response = null;
+
 							try {
 								response = JSON.parse(this.responseText);
 							} catch(e) {
