@@ -697,6 +697,27 @@ function constructTableView(array) {
 
 	$.challenges_finished.add(table);
 }
+if (OS_ANDROID) {
+	font = 'fontawesome-webfont';
 
+	$.challenges_finished.orientationModes = [Titanium.UI.PORTRAIT];
+
+	$.challenges_finished.addEventListener('open', function() {
+		$.challenges_finished.activity.actionBar.onHomeIconItemSelected = function() {
+			$.challenges_finished.close();
+			$.challenges_finished = null;
+		};
+		$.challenges_finished.activity.actionBar.displayHomeAsUp = true;
+		$.challenges_finished.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
+		indicator.openIndicator();
+	});
+	/*
+	 $.newChallenge.addEventListener('androidback', function(){
+	 $.newChallenge.close();
+	 $.newChallenge = null;
+	 });
+	 */
+
+}
 constructTableView(Alloy.Globals.CHALLENGEOBJECTARRAY);
 

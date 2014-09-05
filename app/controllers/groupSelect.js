@@ -1,5 +1,9 @@
 /* Function */
-
+var args = arguments[0] || {};
+var coins = -1;
+if ( typeof args.coins !== 'undefined') {
+	coins = args.coins;
+}
 Ti.App.addEventListener("sliderToggled", function(e) {
 	if ( typeof table !== 'undefined') {
 		if (e.hasSlided) {
@@ -20,6 +24,47 @@ Ti.App.addEventListener("groupSelectRefresh", function(e) {
 	indicator.openIndicator();
 	getGroups();
 });
+
+function createMemberRow(member, subRow){
+	//profilepicture
+				var image = '/images/no_pic.png';
+				Ti.API.info("MEMBERS : " + JSON.stringify(member));
+				if(member.fbid != null) {
+					image = "https://graph.facebook.com/"+ member.fbid +"/picture?type=large";
+				} else {
+					// get betkampen image
+					image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + member.id + '.png';
+				}
+				
+				//Ti.API.info("IMAGE : " + typeof image);
+				var profilePic = Ti.UI.createImageView({
+					image : image,
+					height : 40,
+					width : 40,
+					left : 10,
+					top : 5
+				});
+				
+				profilePic.addEventListener("error", function(e){
+					Ti.API.info("fel på bild");
+					e.source.image = '/images/no_pic.png';
+				});
+				subRow.add(profilePic);
+				subRow.add(Ti.UI.createLabel({
+					text : member.name,
+					top : -30,
+					left : 60,
+					width : 'auto',
+					font : {
+						fontSize : Alloy.Globals.getFontSize(1),
+						fontWeight : 'normal',
+						fontFamily : Alloy.Globals.getFont()
+					},
+					color : '#FFF',
+					backgroundColor : '#303030'
+				}));
+
+}
 
 function getFriends() {
 	selectedGroupIds = [];
@@ -175,26 +220,9 @@ function getGroups() {
 					// create the views
 					createViews(groupObjects, 1);
 				} else {
-					/*indicator.openIndicator();
-					setTimeout(function() {
-						var arg = {
-							param : params
-						};
-						var win = Alloy.createController('friendSelect', arg).getView();
-						Alloy.Globals.WINDOWS.push(win);
-
-						if (OS_IOS) {
-							Alloy.Globals.NAV.openWindow(win, {
-								animated : true
-							});
-						} else if (OS_ANDROID) {
-							win.open({
-								fullScreen : true
-							});
-						}
-
-						indicator.closeIndicator();
-					}, 1500);*/
+					tab_groups.setBackgroundColor("black");
+					tab_friends.setBackgroundColor(Alloy.Globals.themeColor());
+					getFriends();
 				}
 
 			} else {
@@ -214,7 +242,7 @@ function getGroups() {
 	};
 }
 
-function challengeGroup(array, param) {
+function challengeGroup(array) {
 	if (Alloy.Globals.checkConnection()) {
 		// show indicator and disable button
 		indicator.openIndicator();
@@ -269,13 +297,14 @@ function challengeGroup(array, param) {
 		};
 
 		try {
-			xhr.open('POST', Alloy.Globals.BETKAMPENCHALLENGEDONEURL);
+			xhr.open('POST', Alloy.Globals.BETKAMPENCHALLENGEGROUPURL);
 			xhr.setRequestHeader("content-type", "application/json");
-			//xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
+			xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
 			xhr.setTimeout(Alloy.Globals.TIMEOUT);
-
+			
+			var param = "";
 			// add groups to params
-			param += ',"uid": ' + Alloy.Globals.BETKAMPENUID + ', "groups": [{';
+			param += '{"cid": ' + Alloy.Globals.COUPON.id + ', "coins": '+coins+', "groups": [{';
 
 			for (var i = 0; i < array.length; i++) {
 				for (var x = 0; x < groupObjects.length; x++) {
@@ -295,7 +324,7 @@ function challengeGroup(array, param) {
 
 			param += '}]}';
 
-			Ti.API.log(param);
+			Ti.API.log("Params : "+ param);
 
 			xhr.send(param);
 		} catch(e) {
@@ -308,8 +337,9 @@ function challengeGroup(array, param) {
 				indicator.closeIndicator();
 
 				if (this.readyState == 4) {
+					Ti.API.info("RESPONSE NO PARSE : " + JSON.stringify(this.responseText));
 					var response = JSON.parse(this.responseText);
-
+					Ti.API.info("RESPONSE : " + JSON.stringify(response));
 					
 						response = response.replace(/(<br \/>)+/g, "\n");
 						// show dialog and if ok close window
@@ -320,25 +350,20 @@ function challengeGroup(array, param) {
 						});
 
 						alertWindow.addEventListener('click', function() {
-							submitButton.touchEnabled = true;
-							// change view
-							var arg = {
-								refresh : true
-							};
-
-							var obj = {
-								controller : 'challengesView',
-								arg : arg
-							};
-							Ti.App.fireEvent('app:updateView', obj);
-
-							for (win in Alloy.Globals.WINDOWS) {
-								Alloy.Globals.WINDOWS[win].close();
-
-								if (OS_ANDROID) {
-									Alloy.Globals.WINDOWS[win] = null;
+							var loginSuccessWindow = Alloy.createController('main', args).getView();
+								if (OS_IOS) {
+									loginSuccessWindow.open({
+										fullScreen : true,
+										transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
+									});
+								} else if (OS_ANDROID) {
+									loginSuccessWindow.open({
+										fullScreen : true,
+										navBarHidden : false,
+										orientationModes : [Titanium.UI.PORTRAIT]
+									});
 								}
-							}
+								loginSuccessWindow = null;
 						});
 						alertWindow.show();
 					
@@ -559,7 +584,7 @@ function createSubmitButtons(type) {
 			if (selectedGroupIds.length === 1) {
 			// call function to send to server
 				Ti.API.info("challenge : Group");
-				//challengeGroup(selectedGroupIds, params);
+				challengeGroup(selectedGroupIds);
 			} else {
 				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.groupChallengeErrorTxt);
 			}
@@ -663,41 +688,7 @@ function createViews(array, type) {
 		
 		
 			for (var x = 0; x < array[i].attributes.members.length; x++) {
-				//profilepicture
-				var image;
-				if(array[i].attributes.members[x].fbid !== null) {
-					image = "https://graph.facebook.com/"+ array[i].attributes.members[x].fbid +"/picture?type=large";
-				} else {
-					// get betkampen image
-					image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + array[i].attributes.members[x].id + '.png';
-				}
-				
-				
-				var profilePic = Ti.UI.createImageView({
-					image : image,
-					height : 40,
-					width : 40,
-					left : 10,
-					top : 5
-				});
-				profilePic.addEventListener('error',function(e){
-					// fallback for image
-					profilePic.image = '/images/no_pic.png';
-				});
-				subRow.add(profilePic);
-				subRow.add(Ti.UI.createLabel({
-					text : array[i].attributes.members[x].name,
-					top : -30,
-					left : 60,
-					width : 'auto',
-					font : {
-						fontSize : Alloy.Globals.getFontSize(1),
-						fontWeight : 'normal',
-						fontFamily : Alloy.Globals.getFont()
-					},
-					color : '#FFF',
-					backgroundColor : '#303030'
-				}));
+				createMemberRow(array[i].attributes.members[x], subRow);
 			}
 		
 			subRow.add(Ti.UI.createView({
@@ -1030,7 +1021,7 @@ function createViews(array, type) {
 }
 
 var args = arguments[0] || {};
-var params = args.param || null;
+//var params = args.param || null;
 var groupObjects = [];
 var friendObjects = [];
 var selectedGroupIds = [];

@@ -2,7 +2,7 @@
 
 function createGameType(gameType){
 	var type = gameType.type;
-	var viewHeight = "80dp";
+	var viewHeight = "100dp";
 
 	var gameTypeView = Ti.UI.createView({
 		width: Ti.UI.FILL,
