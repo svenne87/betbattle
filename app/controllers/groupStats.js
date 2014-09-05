@@ -41,6 +41,63 @@ var statsLabel = Ti.UI.createLabel({
 });
 statsView.add(statsLabel);
 
+var infoTxt = Ti.UI.createView({
+	backgroundColor : '#EA7337',
+	backgroundGradient : {
+		type : "linear",
+		startPoint : {
+			x : "0%",
+			y : "0%"
+		},
+		endPoint : {
+			x : "0%",
+			y : "100%"
+		},
+		colors : [{
+			color : "#F09C00",
+		}, {
+			color : "#D85000",
+		}]
+	},
+	width : "100%",
+	height : 30
+
+});
+scoreView.add(infoTxt);
+
+var nrInfo = Ti.UI.createLabel({
+	text : Alloy.Globals.PHRASES.positionTxt,
+	left : '2%',
+	color : "#fff",
+	font : {
+		fontSize : 18,
+		fontFamily : "Impact"
+	},
+});
+infoTxt.add(nrInfo);
+
+var nameInfo = Ti.UI.createLabel({
+	text : Alloy.Globals.PHRASES.nameTxt,
+	left : '40%',
+	color : "#fff",
+	font : {
+		fontSize : 18,
+		fontFamily : "Impact"
+	},
+});
+infoTxt.add(nameInfo);
+
+var scoreInfo = Ti.UI.createLabel({
+	text : Alloy.Globals.PHRASES.pointsTxt,
+	left : '83%',
+	color : "#fff",
+	font : {
+		fontSize : 18,
+		fontFamily : "Impact"
+	},
+});
+infoTxt.add(scoreInfo);
+
 function createGUI(obj, i) {
 
 	var totalLeader = Ti.UI.createView({
