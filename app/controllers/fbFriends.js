@@ -34,7 +34,7 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 	});
 	mainView.add(connectLabel);
 
-	/*var fb = require('facebook');
+	var fb = require('facebook');
 
 	// app id and permission's
 	fb.appid = Ti.App.Properties.getString('ti.facebook.appid');
@@ -52,34 +52,6 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 		if (Alloy.Globals.connect == false) {
 			if (e.success) {
 				var fbid = Ti.Network.createHTTPClient();
-				fbid.onload = function() {
-					Ti.API.info(this.responseText);
-					if (this.responseText == "konto finns-1") {
-						alert(Alloy.Globals.PHRASES.fbAccountExistsTxt);
-					} else {
-						if (OS_ANDROID) {
-							// close
-							Alloy.Globals.MAINWIN.close();
-							Alloy.Globals.LANDINGWIN.close();
-							$.settingsWindow.exitOnClose = true;
-							$.settingsWindow.close();
-
-							var activity = Titanium.Android.currentActivity;
-							activity.finish();
-
-							// start app again
-							var intent = Ti.Android.createIntent({
-								action : Ti.Android.ACTION_MAIN,
-								url : 'Betkampen.js'
-							});
-							intent.addCategory(Ti.Android.CATEGORY_LAUNCHER);
-							Ti.Android.currentActivity.startActivity(intent);
-						} else {
-							// restart app
-							Ti.App._restart();
-						}
-					}
-				}
 				fbid.open("POST", Alloy.Globals.BETKAMPENURL + '/api/connect_account_fb.php');
 				var params = {
 					fb_id : fb.uid,
@@ -87,7 +59,25 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 				};
 				fbid.send(params);
 				Ti.API.info(params);
+				if (OS_ANDROID) {
+					// close
+					Alloy.Globals.MAINWIN.close();
+					Alloy.Globals.LANDINGWIN.close();
 
+					var activity = Titanium.Android.currentActivity;
+					activity.finish();
+
+					// start app again
+					var intent = Ti.Android.createIntent({
+						action : Ti.Android.ACTION_MAIN,
+						url : 'Betkampen.js'
+					});
+					intent.addCategory(Ti.Android.CATEGORY_LAUNCHER);
+					Ti.Android.currentActivity.startActivity(intent);
+				} else {
+					// restart app
+					Ti.App._restart();
+				}
 			}
 		}
 	});
@@ -95,7 +85,7 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 	mainView.add(fb.createLoginButton({
 		top : 10,
 		style : fb.BUTTON_STYLE_WIDE
-	}));*/
+	}));
 
 } else {
 
@@ -172,11 +162,11 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 		member.add(name);
 
 		if (isInArray(fr, obj.id)) {
-			//if you are disable add button
+			//if you already are friends disable add button
 			var addBtn = Ti.UI.createButton({
 				width : '18%',
 				left : '81%',
-				id : obj.fid,
+				id : obj.id,
 				font : {
 					fontFamily : font,
 					fontSize : 27
@@ -195,7 +185,7 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 			var addBtn = Ti.UI.createButton({
 				width : '18%',
 				left : '81%',
-				id : obj.fid,
+				id : obj.id,
 				fName : obj.name,
 				font : {
 					fontFamily : font,
@@ -211,37 +201,39 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 			var click = 0;
 		}
 
-		/*addBtn.addEventListener('click', function(e) {
+		addBtn.addEventListener('click', function(e) {
 		 if (click == 0) {
-		 //add friend to friendlist
+		 //add fb friend to friendlist
 		 addBtn.backgroundColor = '#00ff00';
 		 addBtn.title = fontawesome.icon('fa-check');
 		 member.borderColor = '#00ff00';
-		 var addFriends = Ti.Network.createHTTPClient();
-		 addFriends.open("POST", Alloy.Globals.BETKAMPENADDFRIENDSURL);
-		 var params = {
-		 uid : Alloy.Globals.BETKAMPENUID,
-		 fid : e.source.id
+		 var getUID = Ti.Network.createHTTPClient();
+		 getUID.onload = function() {
+		 	Ti.API.info(this.responseText);
+		 	uid = JSON.parse(this.responseText);
+		 	name = e.source.fName; 
+		 	addFbFriend(uid, name);
+		 	click++;
 		 };
-		 addFriends.send(params);
-		 alert(Alloy.Globals.PHRASES.friendSuccess + ' ' + e.source.fName);
-		 click++;
+		 getUID.open('GET', Alloy.Globals.BETKAMPENURL + '/api/get_uid_from_fbid.php?fbid='+ e.source.id + '&lang=' + Alloy.Globals.LOCALE);
+		 getUID.send();
 		 } else if (click == 1) {
 		 //if you clicked on wrong person and click again you remove him from your friendlist
 		 addBtn.backgroundColor = '#fff';
 		 addBtn.title = fontawesome.icon('fa-plus');
 		 member.borderColor = '#fff';
-		 var removeFriend = Ti.Network.createHTTPClient();
-		 removeFriend.open("POST", Alloy.Globals.BETKAMPENDELETEFRIENDURL);
-		 var params = {
-		 uid : Alloy.Globals.BETKAMPENUID,
-		 fid : e.source.id
+		 var getUID = Ti.Network.createHTTPClient();
+		 getUID.onload = function() {
+		 	Ti.API.info(this.responseText);
+		 	uid = JSON.parse(this.responseText);
+		 	delFbFriend(uid);
+		 	click--;
 		 };
-		 removeFriend.send(params);
-		 click--;
+		 getUID.open('GET', Alloy.Globals.BETKAMPENURL + '/api/get_uid_from_fbid.php?fbid='+ e.source.id + '&lang=' + Alloy.Globals.LOCALE);
+		 getUID.send();
 		 }
 
-		 });*/
+		 });
 	}
 
 	//getInvitableFbFriends();
@@ -306,5 +298,25 @@ xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
 xhr.setTimeout(Alloy.Globals.TIMEOUT);
 
 xhr.send();
+
+function addFbFriend(uid, name){
+	var addFriends = Ti.Network.createHTTPClient();
+		 addFriends.open("POST", Alloy.Globals.BETKAMPENADDFRIENDSURL);
+		 var params = {
+		 uid : Alloy.Globals.BETKAMPENUID,
+		 fid : uid
+		 };
+		 addFriends.send(params);
+		 alert(Alloy.Globals.PHRASES.friendSuccess + ' ' + name);
+}
+function delFbFriend(uid, name){
+		 var removeFriend = Ti.Network.createHTTPClient();
+		 removeFriend.open("POST", Alloy.Globals.BETKAMPENDELETEFRIENDURL);
+		 var params = {
+		 uid : Alloy.Globals.BETKAMPENUID,
+		 fid : uid
+		 };
+		 removeFriend.send(params);
+}
 
 $.fbFriends.add(mainView);
