@@ -92,7 +92,7 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 	//USER IS CONNECTED WITH FACEBOOK-----------------------------------------------------------------------------------------------------------
 
 	var faceBookLabel = Ti.UI.createLabel({
-		text : Alloy.Globals.PHRASES.fbUserFriendLbl,
+		text : Alloy.Globals.PHRASES.fbUserFriendsLbl,
 		textAlign : "center",
 		top : 10,
 		font : {
