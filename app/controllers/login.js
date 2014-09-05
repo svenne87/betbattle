@@ -214,7 +214,7 @@ function loginAuthenticated(fb) {
 					addEvent();
 					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 				};
-
+				
 				try {
 					xhr.open('POST', Alloy.Globals.BETKAMPENLOGINURL);
 					xhr.setRequestHeader("content-type", "application/json");
@@ -231,6 +231,7 @@ function loginAuthenticated(fb) {
 					if (this.status == '200') {
 						if (this.readyState == 4) {
 							var response = null;
+
 							try {
 								response = JSON.parse(this.responseText);
 							} catch(e) {
@@ -328,16 +329,16 @@ if (OS_IOS) {
 }
 fb.forceDialogAuth = false;
 
-//Alloy.Globals.connect = true;
-//Ti.API.info(Alloy.Globals.connect);
+Alloy.Globals.connect = true;
+Ti.API.info(Alloy.Globals.connect);
 if (Alloy.Globals.FBERROR) {
 	// need to keep track if event was already added, since it is beeing added several times otherwise.
 	fb.addEventListener('login', function(e) {
-		//if (Alloy.Globals.connect == true) {
+		if (Alloy.Globals.connect == true) {
 		indicator.openIndicator();
-		//}
+		}
 		Alloy.Globals.FBERROR = false;
-		//if (Alloy.Globals.connect == true) {
+		if (Alloy.Globals.connect == true) {
 			if (e.success) {
 				removeEvent();
 				setTimeout(function() {
@@ -352,7 +353,7 @@ if (Alloy.Globals.FBERROR) {
 				indicator.closeIndicator();
 				//addEvent();
 			}
-		//}
+		}
 	});
 }
 
