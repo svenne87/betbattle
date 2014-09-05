@@ -233,12 +233,31 @@ googleBtn.add(googleLabel);
 // functions for the buttons
 
 // --------------------------------------------------------------- Share to FACEBOOK  ------------------------------------------------------------------------------
+// if user login with email
 if (Alloy.Globals.FACEBOOKOBJECT == null) {
+
+	if (OS_IOS) {
+		if (Titanium.Platform.canOpenURL('fb://')) {
+			fejjan = false;
+		} else {
+			fejjan = true;
+		}
+	}
+
 	fbBtn.addEventListener('click', function(e) {
-		alert('hej');
+		if (OS_IOS) {
+			if (fejjan == true) {
+				alert(Alloy.Globals.PHRASES.notInstalledTxt +' '+ 'facebook');
+			} else {
+				Titanium.Platform.openURL('fb://feed');
+			}
+
+		} else if (OS_ANDROID) {
+			//shareToFejjan();
+		}
 	});
 } else {
-
+//if user login with fb
 	fbUserBtn.addEventListener('click', function(e) {
 
 		if (Alloy.Globals.checkConnection()) {
@@ -389,10 +408,10 @@ if (OS_IOS) {
 				flags : Ti.Android.FLAG_ACTIVITY_NEW_TASK,
 				type : 'text/plain'
 			});
-			intTwitter.putExtra(Ti.Android.EXTRA_TEXT,  Alloy.Globals.PHRASES.twitterMsg);
+			intTwitter.putExtra(Ti.Android.EXTRA_TEXT, Alloy.Globals.PHRASES.twitterMsg);
 			Ti.Android.currentActivity.startActivity(intTwitter);
 		} catch(x) {
-			alert('Hittar inte Twitters app. Har du den installerad?');
+			alert(Alloy.Globals.PHRASES.notInstalledTxt +' '+ 'Twitter');
 		}
 	}
 
@@ -400,9 +419,9 @@ if (OS_IOS) {
 twitterBtn.addEventListener('click', function(e) {
 	if (OS_IOS) {
 		if (twitter == true) {
-			alert('du har inte installerat twitter');
+			alert(Alloy.Globals.PHRASES.notInstalledTxt +' '+ 'Twitter');
 		} else {
-			Titanium.Platform.openURL('twitter://post?message=hej%20hej%20betkampen');
+			Titanium.Platform.openURL('twitter://post?message=' + "'" + Alloy.Globals.PHRASES.twitterMsg + "'");
 		}
 
 	} else if (OS_ANDROID) {
