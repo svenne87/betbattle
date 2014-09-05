@@ -174,7 +174,8 @@ function createGUI(obj) {
 		image : image,
 			height : 25,
 			width : 25,
-			left : '2%'
+			left : '2%',
+			borderRadius: 5
 		});
 		profilePic.addEventListener('error',function(e){
 			// fallback for image
@@ -293,7 +294,8 @@ function createGUI(obj) {
 		image : image,
 			height : 25,
 			width : 25,
-			left : '2%'
+			left : '2%',
+			borderRadius: 5
 		});
 		profilePic.addEventListener('error',function(e){
 			// fallback for image
@@ -387,7 +389,8 @@ function createFriendGUI(friend, members) {
 		image : image,
 			height : 25,
 			width : 25,
-			left : '2%'
+			left : '2%',
+			borderRadius: 5 
 		});
 		profilePic.addEventListener('error',function(e){
 			// fallback for image

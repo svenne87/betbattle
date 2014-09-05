@@ -203,7 +203,28 @@ var buyTicketsLabel = Ti.UI.createLabel({
 buyTicketsBtn.add(buyTicketsLabel);
 
 botView.add(buyTicketsBtn);
+if (OS_ANDROID) {
+	font = 'fontawesome-webfont';
 
+	$.halfPot.orientationModes = [Titanium.UI.PORTRAIT];
+
+	$.halfPot.addEventListener('open', function() {
+		$.halfPot.activity.actionBar.onHomeIconItemSelected = function() {
+			$.halfPot.close();
+			$.halfPot = null;
+		};
+		$.halfPot.activity.actionBar.displayHomeAsUp = true;
+		$.halfPot.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
+		indicator.openIndicator();
+	});
+	/*
+	 $.newChallenge.addEventListener('androidback', function(){
+	 $.newChallenge.close();
+	 $.newChallenge = null;
+	 });
+	 */
+
+}
 
 $.halfPot.add(topView);
 $.halfPot.add(botView);

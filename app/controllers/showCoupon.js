@@ -4,6 +4,8 @@ var games = Alloy.Globals.COUPON.games;
 var modalPickersToHide = []; 
 var coinsToJoin = -1;
 var rows = [];
+var amount_games = games.length;
+var amount_deleted = 0;
  
 function removeCouponGame(gameID){
 	Ti.API.info("GAMEID : "+ gameID);
@@ -31,12 +33,16 @@ function removeCouponGame(gameID){
 					Ti.API.info("Tagit bort" + JSON.stringify(this.responseText));
 					response = JSON.parse(this.responseText);
 					Alloy.Globals.showFeedbackDialog("Matchen har tagits bort från kupongen");
+					amount_deleted++;
 					/*for(var i in games){
 						if(games[i].game_id == gameID){
 							var index = Alloy.Globals.COUPON.games.indexOf(games[i]);
 							Alloy.Globals.COUPON.games.splice(index, 1);		
 						}
 					}*/
+					if(amount_deleted == amount_games){
+						$.showCoupon.close();
+					}
 					Alloy.Globals.getCoupon();
 				}
 			} else {
@@ -80,16 +86,23 @@ function createSubmitButtonView(){
 	}));
 	
 	buttonView.addEventListener("click", function(e){
-		var win = Alloy.createController('groupSelect').getView();
-		Alloy.Globals.CURRENTVIEW =  win;
-		if (OS_IOS) {
-			Alloy.Globals.NAV.openWindow(win, {
-				animated : true
-			});
-		} else {
-			win.open({
-				fullScreen : true
-			});
+		if(validate()){
+			var arg = {
+				coins : coinsToJoin
+			};
+			var win = Alloy.createController('groupSelect', arg).getView();
+			Alloy.Globals.CURRENTVIEW =  win;
+			if (OS_IOS) {
+				Alloy.Globals.NAV.openWindow(win, {
+					animated : true
+				});
+			} else {
+				win.open({
+					fullScreen : true
+				});
+			}
+		}else{
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.coinsNoBetError);
 		}
 	});
 	wrapperView.add(buttonView);
@@ -305,6 +318,14 @@ for (var i in games){
 	rows[games[i].game_id] = row;	
 }
 
+function validate(){
+	if(coinsToJoin == -1){
+		return false;
+	}else{
+		return true;
+	}
+}
+
 //loop through rows array and add eventlistener to the deleteBtn.
 // This is done in order to remove the correct row when clicking and not the last one on the list
 //this is because of how titanium handles adding eventlisteners.
@@ -349,7 +370,28 @@ for(var i in rows){
 	}
 	createBorderView();
 }
+if (OS_ANDROID) {
+	font = 'fontawesome-webfont';
 
+	$.showCoupon.orientationModes = [Titanium.UI.PORTRAIT];
+
+	$.showCoupon.addEventListener('open', function() {
+		$.showCoupon.activity.actionBar.onHomeIconItemSelected = function() {
+			$.showCoupon.close();
+			$.showCoupon = null;
+		};
+		$.showCoupon.activity.actionBar.displayHomeAsUp = true;
+		$.showCoupon.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
+		indicator.openIndicator();
+	});
+	/*
+	 $.newChallenge.addEventListener('androidback', function(){
+	 $.newChallenge.close();
+	 $.newChallenge = null;
+	 });
+	 */
+
+}
 createCoinsView();
 createBorderView();
 createSubmitButtonView();
