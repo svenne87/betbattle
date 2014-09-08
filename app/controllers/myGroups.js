@@ -304,7 +304,7 @@ function createViews(array) {
 				left : '84%',
 				id : array[i].attributes.id,
 				admin : '0',
-				creator: array[i].attributes.creator,
+				creator : array[i].attributes.creator,
 				font : {
 					fontFamily : font,
 					fontSize : 27
@@ -433,6 +433,34 @@ function createViews(array) {
 			$.myGroups.close();
 		});
 
+		groupInfo.addEventListener('click', function(e) {
+			gid = e.source.id;
+			var win = Alloy.createController('groupStats', gid).getView();
+			if (OS_IOS) {
+				Alloy.Globals.NAV.openWindow(win, {
+					animated : true
+				});
+			} else {
+				win.open({
+					fullScreen : true
+				});
+				win = null;
+			}
+			$
+			
+			/*var getUID = Ti.Network.createHTTPClient();
+			getUID.onload = function() {
+				Ti.API.info(this.responseText);
+				var info = JSON.parse(this.responseText);
+
+				for (var i = 0; i < info.data.length; i++) {
+					membersGUI(info.data[i], i);
+				}
+			};
+			getUID.open('GET', Alloy.Globals.BETKAMPENGETGROUPMEMBERSURL + '?gid=' + e.source.id + '&lang=' + Alloy.Globals.LOCALE);
+			getUID.send();*/
+
+		});
 	}
 }
 
