@@ -417,6 +417,7 @@ function getAchievements(){
 	xhr.onload = function() {
 		if (this.status == '200') {
 			if (this.readyState == 4) {
+				Ti.API.info("CHEEVOS : "+ JSON.stringify(this.responseText));
 					var achievements = null;
 				try {
 					achievements = JSON.parse(this.responseText);

@@ -386,7 +386,7 @@ function challengeGroup(array) {
 }
 
 // challenge friends
-function challengeFriends(groupName) {
+function challengeFriends() {
 	if (Alloy.Globals.checkConnection()) {
 		// show indicator and disable button
 		indicator.openIndicator();
@@ -396,7 +396,7 @@ function challengeFriends(groupName) {
 		xhr.onerror = function(e) {
 			indicator.closeIndicator();
 			submitButton.touchEnabled = true;
-
+			Ti.API.info("ERROR PARSE : " + JSON.stringify(this.responseText));
 			if (JSON.parse(this.responseText).indexOf('coins') != -1) {
 				// not enough coins
 				// show dialog with "link" to the store
@@ -440,12 +440,12 @@ function challengeFriends(groupName) {
 		};
 
 		try {
-			xhr.open('POST', Alloy.Globals.BETKAMPENCHALLENGEDONEURL);
+			xhr.open('POST', Alloy.Globals.BETKAMPENCHALLENGEFRIENDSURL);
 			xhr.setRequestHeader("content-type", "application/json");
-			//xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
+			xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
 			xhr.setTimeout(Alloy.Globals.TIMEOUT);
-
-			param += ', "uid":"' + Alloy.Globals.BETKAMPENUID + '", "friends":[{';
+			var param = "";
+			param += '{"coins": '+coins+', "cid":"' + Alloy.Globals.COUPON.id + '", "friends":[{';
 
 			for (var i = 0; i < friendsChallenge.length; i++) {
 				param += '"' + friendsChallenge[i].id + '":"' + friendsChallenge[i].name;
@@ -473,7 +473,7 @@ function challengeFriends(groupName) {
 				indicator.closeIndicator();
 
 				if (this.readyState == 4) {
-					Ti.API.log(this.responseText);
+					Ti.API.log("RESPONSE FRIENDS : "+ JSON.stringify(this.responseText));
 					var response = JSON.parse(this.responseText);
 
 					
@@ -486,21 +486,20 @@ function challengeFriends(groupName) {
 						});
 
 						alertWindow.addEventListener('click', function() {
-							submitButton.touchEnabled = true;
-							// change view
-							var arg = {
-								refresh : true
-							};
-
-							var obj = {
-								controller : 'challengesView',
-								arg : arg
-							};
-							Ti.App.fireEvent('app:updateView', obj);
-
-							for (win in Alloy.Globals.WINDOWS) {
-								Alloy.Globals.WINDOWS[win].close();
-							}
+							var loginSuccessWindow = Alloy.createController('main', args).getView();
+								if (OS_IOS) {
+									loginSuccessWindow.open({
+										fullScreen : true,
+										transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
+									});
+								} else if (OS_ANDROID) {
+									loginSuccessWindow.open({
+										fullScreen : true,
+										navBarHidden : false,
+										orientationModes : [Titanium.UI.PORTRAIT]
+									});
+								}
+								loginSuccessWindow = null;
 						});
 						alertWindow.show();
 
@@ -593,7 +592,7 @@ function createSubmitButtons(type) {
 		if(type == 2){
 			if(friendsChallenge.length > 0){
 				Ti.API.info("challenge : Friends");
-			//challengeFriends(friendsChallenge, params);
+				challengeFriends();
 			}else{
 				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.friendChallengeErrorTxt);
 			}
@@ -731,6 +730,7 @@ function createViews(array, type) {
 		
 		}else{
 			//profilepicture
+			Ti.API.info("VÄNNEN : " + JSON.stringify(array[i].attributes));
 				var image;
 				if(array[i].attributes.fbid !== null) {
 					image = "https://graph.facebook.com/"+ array[i].attributes.fbid +"/picture?type=large";
@@ -912,9 +912,10 @@ function createViews(array, type) {
 				selectedGroupIds[0] = e.row.id;
 			}
 			if(type == 2){
-				Ti.API.info("selected: " + JSON.stringify(e.row));
+				
+				Ti.API.info("selected: " + JSON.stringify(e));
 				var friend = {
-					//name : e.source.text,
+					name : e.source.text,
 					id : e.row.id
 				};
 				Ti.API.info("Friend : " + JSON.stringify(friend));

@@ -234,6 +234,93 @@ function Controller() {
             };
         } else Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
     }
+    function challengeFriends() {
+        if (Alloy.Globals.checkConnection()) {
+            indicator.openIndicator();
+            submitButton.touchEnabled = false;
+            var xhr = Titanium.Network.createHTTPClient();
+            xhr.onerror = function(e) {
+                indicator.closeIndicator();
+                submitButton.touchEnabled = true;
+                Ti.API.info("ERROR PARSE : " + JSON.stringify(this.responseText));
+                if (-1 != JSON.parse(this.responseText).indexOf("coins")) {
+                    var alertWindow = Titanium.UI.createAlertDialog({
+                        title: Alloy.Globals.PHRASES.betbattleTxt,
+                        message: JSON.parse(this.responseText),
+                        buttonNames: [ Alloy.Globals.PHRASES.okConfirmBtnTxt, Alloy.Globals.PHRASES.storeTxt ]
+                    });
+                    alertWindow.addEventListener("click", function(e) {
+                        switch (e.index) {
+                          case 0:
+                            alertWindow.hide();
+                            break;
+
+                          case 1:
+                            var win = Alloy.createController("store").getView();
+                            Alloy.Globals.WINDOWS.push(win);
+                            Alloy.Globals.NAV.openWindow(win, {
+                                animated: true
+                            });
+                            alertWindow.hide();
+                        }
+                    });
+                    alertWindow.show();
+                } else Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
+                Ti.API.error("Bad Sever =>" + e.error);
+            };
+            try {
+                xhr.open("POST", Alloy.Globals.BETKAMPENCHALLENGEFRIENDSURL);
+                xhr.setRequestHeader("content-type", "application/json");
+                xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
+                xhr.setTimeout(Alloy.Globals.TIMEOUT);
+                var param = "";
+                param += '{"coins": ' + coins + ', "cid":"' + Alloy.Globals.COUPON.id + '", "friends":[{';
+                for (var i = 0; friendsChallenge.length > i; i++) {
+                    param += '"' + friendsChallenge[i].id + '":"' + friendsChallenge[i].name;
+                    param += i == friendsChallenge.length - 1 ? '"' : '", ';
+                }
+                param += "}]}";
+                Ti.API.log(param);
+                xhr.send(param);
+            } catch (e) {
+                indicator.closeIndicator();
+                submitButton.touchEnabled = true;
+                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+            }
+            xhr.onload = function() {
+                if ("200" == this.status) {
+                    indicator.closeIndicator();
+                    if (4 == this.readyState) {
+                        Ti.API.log("RESPONSE FRIENDS : " + JSON.stringify(this.responseText));
+                        var response = JSON.parse(this.responseText);
+                        response = response.replace(/(<br \/>)+/g, "\n");
+                        var alertWindow = Titanium.UI.createAlertDialog({
+                            title: Alloy.Globals.PHRASES.betbattleTxt,
+                            message: response,
+                            buttonNames: [ Alloy.Globals.PHRASES.okConfirmTxt ]
+                        });
+                        alertWindow.addEventListener("click", function() {
+                            var loginSuccessWindow = Alloy.createController("main", args).getView();
+                            loginSuccessWindow.open({
+                                fullScreen: true,
+                                transition: Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
+                            });
+                            loginSuccessWindow = null;
+                        });
+                        alertWindow.show();
+                    } else {
+                        submitButton.touchEnabled = true;
+                        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+                    }
+                } else {
+                    indicator.closeIndicator();
+                    submitButton.touchEnabled = true;
+                    Ti.API.error("Error =>" + this.response);
+                    Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
+                }
+            };
+        } else Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+    }
     function createSubmitButtons(type) {
         submitButton = null;
         var buttonHeight = 40;
@@ -279,7 +366,10 @@ function Controller() {
                 Ti.API.info("challenge : Group");
                 challengeGroup(selectedGroupIds);
             } else Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.groupChallengeErrorTxt);
-            2 == type && (friendsChallenge.length > 0 ? Ti.API.info("challenge : Friends") : Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.friendChallengeErrorTxt));
+            if (2 == type) if (friendsChallenge.length > 0) {
+                Ti.API.info("challenge : Friends");
+                challengeFriends();
+            } else Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.friendChallengeErrorTxt);
         });
         botView.add(submitButton);
     }
@@ -358,6 +448,7 @@ function Controller() {
                     color: "#FFF"
                 }));
             } else {
+                Ti.API.info("VÄNNEN : " + JSON.stringify(array[i].attributes));
                 var image;
                 image = null !== array[i].attributes.fbid ? "https://graph.facebook.com/" + array[i].attributes.fbid + "/picture?type=large" : Alloy.Globals.BETKAMPENURL + "/profile_images/" + array[i].attributes.id + ".png";
                 var row = $.UI.create("TableViewRow", {
@@ -457,8 +548,9 @@ function Controller() {
                     selectedGroupIds[0] = e.row.id;
                 }
                 if (2 == type) {
-                    Ti.API.info("selected: " + JSON.stringify(e.row));
+                    Ti.API.info("selected: " + JSON.stringify(e));
                     var friend = {
+                        name: e.source.text,
                         id: e.row.id
                     };
                     Ti.API.info("Friend : " + JSON.stringify(friend));

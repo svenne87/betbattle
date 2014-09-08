@@ -560,6 +560,7 @@ function constructTableView(array) {
 	// set this to 1 if there are no challenges
 
 	// looping array backwards to print out tournaments first
+	Ti.API.info("arrayen : " + JSON.stringify(array));
 	for (var x = array.length; x >= 0; x--) {
 		var arrayObj = array[x];
 
