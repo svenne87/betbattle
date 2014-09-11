@@ -1,4 +1,6 @@
 <Alloy>
-	<Window class="container" id="showChallenge">
+	<Window class="container" id="showChallengeWindow">
+		<ScrollableView id="showChallenge" showPagingControl="true">
+		</ScrollableView>
 	</Window>
 </Alloy>

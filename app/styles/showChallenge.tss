@@ -4,4 +4,14 @@
   	height: "100%",
   	layout: "absolute",
   	backgroundImage : "images/profileBG.jpg"
+},
+"#showChallenge":{
+	//layout: 'vertical',
+    //width: Ti.UI.FILL,
+    //height: Ti.UI.FILL,
+    //contentHeight: Ti.UI.SIZE,
+   // contentWidth: Ti.UI.SIZE,
+    //backgroundColor : '#303030',
+	//showVerticalScrollIndicator: true,
+	//showHorizontalScrollIndicator: false
 }

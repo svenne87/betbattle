@@ -713,6 +713,7 @@ function createViews(array, type) {
 				hasChild : hasChild,
 				isparent : true,
 				opened : false,
+				//name: array[i].attributes.name,
 				sub : subRowArray,
 			});
 			
@@ -745,6 +746,7 @@ function createViews(array, type) {
 				hasChild : hasChild,
 				isparent : true,
 				opened : false,
+				name: array[i].attributes.name,
 				height: 40,
 				//sub : subRowArray,
 			});
@@ -915,7 +917,7 @@ function createViews(array, type) {
 				
 				Ti.API.info("selected: " + JSON.stringify(e));
 				var friend = {
-					name : e.source.text,
+					name : e.row.name,
 					id : e.row.id
 				};
 				Ti.API.info("Friend : " + JSON.stringify(friend));

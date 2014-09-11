@@ -463,7 +463,7 @@ function constructTableView(array) {
 	});
 
 	var tableHeaderLabel = Ti.UI.createLabel({
-		text: "Pågående Utmaningar",
+		text: Alloy.Globals.PHRASES.finishedChallengesTxt,
 		textAlign: "center",
 		color: "#FFF",
 		font:{
@@ -609,7 +609,7 @@ function constructTableView(array) {
 							// view challenge
 							Alloy.Globals.CHALLENGEINDEX = e.rowData.id;
 							args = {
-								challengeID : obj.id,
+								cid : obj.id,
 							};
 							var win = Alloy.createController('showChallenge', args).getView();
 

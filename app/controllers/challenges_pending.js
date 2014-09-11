@@ -42,11 +42,12 @@ function getDynamicLeftPos(oppCount) {
 }
 
 function constructChallengeRows(obj, index, type) {
+	Ti.API.info("challengen : " + JSON.stringify(obj));
 	var child = true;
 	if (OS_ANDROID) {
 		child = false;
 	}
-
+	
 	var row = Ti.UI.createTableViewRow({
 		id : index,
 		hasChild : child,
@@ -463,7 +464,7 @@ function constructTableView(array) {
 	});
 
 	var tableHeaderLabel = Ti.UI.createLabel({
-		text: "Pågående Utmaningar",
+		text: Alloy.Globals.PHRASES.pendingChallengesTxt,
 		textAlign: "center",
 		color: "#FFF",
 		font:{
@@ -607,8 +608,12 @@ function constructTableView(array) {
 						var obj = Alloy.Globals.CHALLENGEOBJECTARRAY[1][e.rowData.id];
 						if (obj.attributes.show !== 0) {
 							// view challenge
+							var args = {
+								cid : obj.attributes.id
+							};
+							
 							Alloy.Globals.CHALLENGEINDEX = e.rowData.id;
-							var win = Alloy.createController('showChallenge').getView();
+							var win = Alloy.createController('showChallenge', args).getView();
 
 							if (OS_IOS) {
 								Alloy.Globals.NAV.openWindow(win, {

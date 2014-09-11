@@ -457,6 +457,7 @@ function Controller() {
                     hasChild: hasChild,
                     isparent: true,
                     opened: false,
+                    name: array[i].attributes.name,
                     height: 40
                 });
                 var detailsImg = Ti.UI.createImageView({
@@ -550,7 +551,7 @@ function Controller() {
                 if (2 == type) {
                     Ti.API.info("selected: " + JSON.stringify(e));
                     var friend = {
-                        name: e.source.text,
+                        name: e.row.name,
                         id: e.row.id
                     };
                     Ti.API.info("Friend : " + JSON.stringify(friend));

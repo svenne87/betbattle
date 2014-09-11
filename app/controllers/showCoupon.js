@@ -32,7 +32,7 @@ function removeCouponGame(gameID){
 					var response = null;
 					Ti.API.info("Tagit bort" + JSON.stringify(this.responseText));
 					response = JSON.parse(this.responseText);
-					Alloy.Globals.showFeedbackDialog("Matchen har tagits bort från kupongen");
+					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.couponGameRemoved);
 					amount_deleted++;
 					/*for(var i in games){
 						if(games[i].game_id == gameID){
@@ -338,9 +338,9 @@ for(var i in rows){
 			Ti.API.info("children : " + JSON.stringify(childrens[k]));
 			if (childrens[k].type == "deleteBtn"){
 				childrens[k].addEventListener("click", function(e){
-					var msg = "Är du säker på att du vill ta bort matchen från kupongen?";
+					var msg = Alloy.Globals.PHRASES.couponGameRemoveConfirm;
 					if(games.length == 1){
-						msg = "Är du säker på att du vill radera matchen? Hela kupongen kommer raderas";
+						msg = Alloy.Globals.PHRASES.couponGameRemoveFinalConfirm;
 					}
 					var alertWindow = Titanium.UI.createAlertDialog({
 						title: Alloy.Globals.PHRASES.betbattleTxt,

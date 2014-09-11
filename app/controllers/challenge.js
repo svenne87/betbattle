@@ -25,6 +25,7 @@ function createGameType(gameType, gameObject) {
 
 	// object to store game id and value
 	var gameObj = new Object();
+	gameObj.game_id = gameObject.attributes.game_id;
 	gameObj.gameType = gameType.type;
 	var valueArray = new Array(-1, -1);
 	gameObj.gameValue = valueArray;
@@ -77,15 +78,19 @@ function createGameType(gameType, gameObject) {
 		//add click event to all buttonviews. this is done here so that we can change color correctly when clicking one
 		for (var i in buttonViews) {
 			buttonViews[i].addEventListener("click", function(e) {
+				
 				Ti.API.info("Clickade " + JSON.stringify(e));
 				gameArray[index].gameValue[0] = e.source.value;
 				gameArray[index].gameValue[1] = 0;
 				changeColors(e);
 				Ti.API.info("gameArray : " + JSON.stringify(gameArray));
 				if (validate()) {
-					if (Alloy.Globals.COUPON != null) {
+					if (answer == 1) {
 						Ti.API.info("update");
 						updateChallenge();
+					} else if(Alloy.Globals.COUPON != null){
+						Ti.API.info("svara");
+						postAnswer(gameArray);
 					} else {
 						Ti.API.info("save");
 						saveChallenge();
@@ -134,15 +139,19 @@ function createGameType(gameType, gameObject) {
 
 				// on first picker change
 				picker.addEventListener('change', function(e) {
+					Ti.API.info("selcted");
 					e.selectedValue[0] = e.selectedValue[0].replace(/ /g, '');
 					gameArray[index].gameValue[i] = e.selectedValue[0];
 					if (gameType.number_of_values == 1) {
 						gameArray[index].gameValues[1] = 0;
 					}
 					if (validate()) {
-						if (Alloy.Globals.COUPON != null) {
+						if (answer == 1) {
 							Ti.API.info("update");
 							updateChallenge();
+						} else if(Alloy.Globals.COUPON != null){
+							Ti.API.info("svara");
+							postAnswer(gameArray);
 						} else {
 							Ti.API.info("save");
 							saveChallenge();
@@ -200,9 +209,10 @@ function createGameType(gameType, gameObject) {
 
 				var picker = null;
 				var count = i + 1;
-				var id = i + "_" + gameType.type + count;
+				var gameID = gameObject.attributes.game_id;
+				var id = i + "_" + gameType.type + count + "-" + gameID;
 				picker = new ModalPicker(visualPrefs, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt, Alloy.Globals.PHRASES.closeBtnTxt, id);
-				modalPickersToHide[gameType.type + count] = picker;
+				modalPickersToHide[gameType.type + count + gameID] = picker;
 
 				picker.text = '-';
 				//picker.text = '-';
@@ -213,9 +223,12 @@ function createGameType(gameType, gameObject) {
 					var id = e.source.id;
 					var ind = id.indexOf("_");
 					i = id.substring(0, ind);
-					var arrayIndex = id.substring(ind + 1, id.length);
-
-					picker.value = modalPickersToHide[arrayIndex].value;
+					var d = id.indexOf("-");
+					var gameID = id.substring(d+1, id.length);
+					var arrayIndex = id.substring(ind + 1, d);
+					Ti.API.info("INDEX : " + arrayIndex);
+					Ti.API.info("ID : " + gameID);
+					picker.value = modalPickersToHide[arrayIndex+gameID].value;
 
 					gameArray[index].gameValue[i] = picker.value;
 					if (gameType.number_of_values == 1) {
@@ -223,9 +236,11 @@ function createGameType(gameType, gameObject) {
 					}
 					Ti.API.info("gameArray : " + JSON.stringify(gameArray));
 					if (validate()) {
-						if (Alloy.Globals.COUPON != null) {
+						if (answer == 1) {
 							Ti.API.info("update");
 							updateChallenge();
+						} else if(Alloy.Globals.COUPON != null){
+							Ti.API.info("svara");
 						} else {
 							Ti.API.info("save");
 							saveChallenge();
@@ -245,6 +260,42 @@ function createGameType(gameType, gameObject) {
 	}
 	gameTypeView.add(optionsView);
 	view.add(gameTypeView);
+}
+
+
+function createSubmitButtonAnswer(){
+	var submitView = Titanium.UI.createView({
+		height : 70,
+		width : '100%',
+		backgroundColor : '#303030'
+	});
+
+	submitButton = Titanium.UI.createButton({
+		top : top,
+		width : '70%',
+		height : 40,
+		color : '#FFF',
+		backgroundColor : Alloy.Globals.themeColor(),
+		borderRadius : 6,
+		font : {
+		fontFamily : Alloy.Globals.getFont(),
+		fontSize : Alloy.Globals.getFontSize(2)
+		},
+		title : 'Svara',
+		backgroundImage : 'none'
+	});
+
+	submitButton.addEventListener("click", function(e){
+		Ti.API.info("submitChallenge");
+		if(validate()){
+			saveChallenge();	
+		}else{
+			Alloy.Globals.showFeedbackDialog('Du har inte fyllt i alla fält för att svara än');
+		}
+	});
+		
+	submitView.add(submitButton);
+
 }
 
 function updateChallenge() {
@@ -408,80 +459,15 @@ function saveChallenge() {
 	}
 }
 
-// create new challenge and choose friends to challenge
-function createChallengeAndChooseFriends(betkampenId, betAmount) {
-	// build the json string
-	var param = '{"lang" : "' + Alloy.Globals.LOCALE + '", "betkampen_id":"' + betkampenId + '", "server_url":"' + Alloy.Globals.BETKAMPENURL + '", "round":"' + roundId + '", "bet_amount":"' + betAmount + '", "gamevalue": [{';
-
-	for (var i in gameArray) {
-		if (gameArray[i].gameValue.length === undefined) {
-			// not an array
-			param += '"' + gameArray[i].gameId + '":' + '"' + gameArray[i].gameValue;
-
-			if (i != (gameArray.length - 1)) {
-				param += '", ';
-			} else {
-				// last one
-				param += '"';
-			}
-		} else {
-			// is array
-			param += '"' + gameArray[i].gameId + '": [';
-			for (var x in gameArray[i].gameValue) {
-				param += '"' + gameArray[i].gameValue[x];
-				if (x != (gameArray[i].gameValue.length - 1)) {
-					param += '", ';
-				} else {
-					// last one
-					param += '"';
-				}
-			}
-			if (i != (gameArray.length - 1)) {
-				param += '], ';
-			} else {
-				// last one
-				param += ']';
-			}
-		}
-	}
-	param += '}]';
-
-	var arg = {
-		param : param
-	};
-
-	/*
-	 // change view
-	 var obj = {
-	 controller : 'groupSelect',
-	 arg : arg
-	 };
-	 Ti.App.fireEvent('app:updateView', obj);
-	 TODO ANDROID
-	 */
-
-	var win = Alloy.createController('groupSelect', arg).getView();
-	Alloy.Globals.WINDOWS.push(win);
-
-	if (OS_IOS) {
-		Alloy.Globals.NAV.openWindow(win, {
-			animated : true
-		});
-	} else if (OS_ANDROID) {
-		win.open({
-			fullScreen : true
-		});
-	}
-}
 
 // post the challenge answer to server
-function postAnswer(betkampenId, cid, betAmount) {
+function postAnswer(gameArray) {
 	// check connection
 	if (Alloy.Globals.checkConnection()) {
 		var xhr = Titanium.Network.createHTTPClient();
 		xhr.onerror = function(e) {
 			indicator.closeIndicator();
-			submitButton.touchEnabled = true;
+			//submitButton.touchEnabled = true;
 
 			if (JSON.parse(this.responseText).indexOf('coins') != -1) {
 				// not enough coins
@@ -534,51 +520,57 @@ function postAnswer(betkampenId, cid, betAmount) {
 
 			if (tournamentIndex === -1) {
 				// for normal challenge
-				param = '{"lang" : "' + Alloy.Globals.LOCALE + '", "betkampen_id":"' + betkampenId + '", "cid":"' + cid + '", "bet_amount":"' + betAmount + '", "gamevalue": [{';
+				param = '{"lang" : "' + Alloy.Globals.LOCALE + '", "cid":"' + challengeObject.attributes.id + '", "gamevalue": {';
 			} else {
 				// for tournament
-				param = '{"lang" : "' + Alloy.Globals.LOCALE + '", "betkampen_id":"' + betkampenId + '", "tournament":"' + challengeObject.attributes.id + '", "round":"' + gameObjects[0].attributes.round_id + '", "league":"' + gameObjects[0].attributes.league_id + '", "gamevalue": [{';
+				param = '{"lang" : "' + Alloy.Globals.LOCALE + '", "betkampen_id":"' + betkampenId + '", "tournament":"' + challengeObject.attributes.id + '", "round":"' + gameObjects[0].attributes.round_id + '", "league":"' + gameObjects[0].attributes.league_id + '", "gamevalue": {';
 			}
-
+			var arr = [];
+			var count = 0;
+			Ti.API.info("INNAN ALLT : " + JSON.stringify(gameArray));
 			for (var i in gameArray) {
-				if (gameArray[i].gameValue.length === undefined) {
-					// not an array
-					param += '"' + gameArray[i].gameId + '":' + '"' + gameArray[i].gameValue;
-
-					if (i != (gameArray.length - 1)) {
+				Ti.API.info("skickar gameArray : " + JSON.stringify(gameArray[i]));
+				// is array
+				
+				Ti.API.info("arraaaay : "+ arr.indexOf(gameArray[i].game_id));
+				if(arr.indexOf(gameArray[i].game_id) == -1){
+					count++;
+					arr.push(gameArray[i].game_id);
+					Ti.API.info("ANTAL MATCHER : " + count);		
+				}
+				
+				
+				param += '"'+ i + '": {"gameID" : "' + gameArray[i].game_id + '", ';
+				param += '"gameType" : "' + gameArray[i].gameType + '", ';
+				param += '"values": [';
+				for (var x in gameArray[i].gameValue) {
+					param += '"' + gameArray[i].gameValue[x];
+					if (x != (gameArray[i].gameValue.length - 1)) {
 						param += '", ';
 					} else {
 						// last one
 						param += '"';
 					}
-				} else {
-					// is array
-					param += '"' + gameArray[i].gameId + '": [';
-					for (var x in gameArray[i].gameValue) {
-						param += '"' + gameArray[i].gameValue[x];
-						if (x != (gameArray[i].gameValue.length - 1)) {
-							param += '", ';
-						} else {
-							// last one
-							param += '"';
-						}
-					}
-					if (i != (gameArray.length - 1)) {
-						param += '], ';
-					} else {
-						// last one
-						param += ']';
-					}
 				}
-			}
-			param += '}]}';
+				if (i != (gameArray.length - 1)) {
+					param += ']}, ';
+				} else {
+					// last one
+					param += ']}';
+				}
 
-			Ti.API.log(param);
+			}
+			
+				
+			
+			param += '}}';
+			Ti.API.info("Match ARRAYEN : " + JSON.stringify(arr));
+			Ti.API.log("PARAM : " + param);
 
 			xhr.send(param);
 		} catch(e) {
 			indicator.closeIndicator();
-			submitButton.touchEnabled = true;
+			//submitButton.touchEnabled = true;
 			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 		}
 
@@ -587,6 +579,7 @@ function postAnswer(betkampenId, cid, betAmount) {
 				indicator.closeIndicator();
 
 				if (this.readyState == 4) {
+					Ti.API.info("POST ANSWER : " + JSON.stringify(this.responseText));
 					var response = JSON.parse(this.responseText);
 
 					// show dialog and if ok close window
@@ -597,7 +590,7 @@ function postAnswer(betkampenId, cid, betAmount) {
 					});
 
 					alertWindow.addEventListener('click', function() {
-						submitButton.touchEnabled = true;
+						//submitButton.touchEnabled = true;
 
 						// change view
 						var arg = {
@@ -614,12 +607,12 @@ function postAnswer(betkampenId, cid, betAmount) {
 					alertWindow.show();
 				} else {
 					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-					submitButton.touchEnabled = true;
+					//submitButton.touchEnabled = true;
 				}
 			} else {
 				Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
 				indicator.closeIndicator();
-				submitButton.touchEnabled = true;
+				//submitButton.touchEnabled = true;
 				Ti.API.error("Error =>" + this.response);
 			}
 		};
@@ -870,10 +863,11 @@ function validate() {
 
 // create the layout views
 function createLayout(gameObject) {
-	view = Ti.UI.createView({
+	view = Ti.UI.createScrollView({
 		height : 'auto',
 		width : 'auto',
-		layout : 'vertical'
+		layout : 'vertical',
+		showVerticalScrollIndicator: true,
 	});
 
 	var image = Ti.UI.createView({
@@ -892,14 +886,16 @@ function createLayout(gameObject) {
 		}
 	}
 
-	var fontSize = Alloy.Globals.getFontSize(3);
-
+	var fontSize = Alloy.Globals.getFontSize(2);
+	if(teamNames == null){
+		var teamNames = gameObject.attributes.team_1.team_name +" - "+ gameObject.attributes.team_2.team_name;  
+	}
 	if (teamNames.length > 20) {
-		fontSize = 28;
+		fontSize = 20;
 	}
 
 	image.add(Ti.UI.createLabel({
-		top : 0,
+		top : 30,
 		font : {
 			fontFamily : Alloy.Globals.getFont(),
 			fontSize : fontSize
@@ -971,14 +967,31 @@ function createLayout(gameObject) {
 		var gametypes = gameObject.attributes.game_types;
 		for (var y in gametypes) {
 			createGameType(gametypes[y], gameObject);
+			createBorderView();
 		}
 
 		createBorderView();
-
+		var slide = Ti.UI.createLabel({
+			text: Alloy.Globals.PHRASES.scrollNextGame,
+			textAlign: "center",
+			font: {
+				fontFamily : "Impact",
+				fontSize : 18,
+			},
+			color:"#FFF",
+		});
+		Ti.API.info("INDEX GAME : " + gameObjects.indexOf(gameObject));
+		Ti.API.info("ARRAY LENGTH :  " + gameObjects.length);
+		if(gameObjects.indexOf(gameObject) == (gameObjects.length-1)){
+			Ti.API.info("sista matchen");
+		}else{
+			view.add(slide);
+		}
+		
 		/*if (roundId === -1) {
 		 createBetCoinsView(coinsToJoin);
 		 } else {
-		 createBetCoinsChooseView();w
+		 createBetCoinsChooseView();
 		 }
 
 		 createBorderView();
@@ -1030,6 +1043,11 @@ if ( typeof args.teamNames !== 'undefined') {
 var leagueId = -1;
 if ( typeof args.leagueId !== 'undefined') {
 	leagueId = args.leagueId;
+}
+
+var answer = -1;
+if( typeof args.answer !== 'undefined'){
+	answer = args.answer;
 }
 
 // for posting answer on tournaments

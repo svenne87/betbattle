@@ -544,6 +544,16 @@ if (OS_IOS){
             			icon : 'images/ic_action_refresh.png'
         			});
         			
+        			
+        			
+        			
+        			ticket = e.menu.add({
+        				
+        				showAsAction : Ti.Android.SHOW_AS_ACTION_ALWAYS,
+        				icon: 'images/ticketBtn.png'
+        			});
+        			
+        			
        			 	refreshItem.addEventListener("click", function(e){
        			 		// update the correct view
        			 		switch(Alloy.Globals.CURRENTVIEW.id){

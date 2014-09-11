@@ -464,7 +464,7 @@ function constructTableView(array) {
 	});
 
 	var tableHeaderLabel = Ti.UI.createLabel({
-		text: "Nya Utmaningar",
+		text: Alloy.Globals.PHRASES.newChallengesTxt,
 		textAlign: "center",
 		color: "#FFF",
 		font:{
@@ -607,8 +607,11 @@ function constructTableView(array) {
 						var obj = Alloy.Globals.CHALLENGEOBJECTARRAY[0][e.rowData.id];
 						if (obj.attributes.show !== 0) {
 							// view challenge
+							var arg = {
+								answer: 1,
+							};
 							Alloy.Globals.CHALLENGEINDEX = e.rowData.id;
-							var win = Alloy.createController('challenge').getView();
+							var win = Alloy.createController('challenge', arg).getView();
 
 							if (OS_IOS) {
 								Alloy.Globals.NAV.openWindow(win, {
