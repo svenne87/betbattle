@@ -76,7 +76,8 @@ function getUserInfo() {
 
 	xhr.onload = function() {
 		if (this.status == '200') {
-			if (this.readyState == 4) {
+			if (this.readyState == 4){
+				Ti.API.info("USER FINO CHALLENGES : " + JSON.stringify(this.responseText));
 				var userInfo = null;
 				try {
 					userInfo = JSON.parse(this.responseText);
@@ -892,7 +893,7 @@ function constructTableView(array) {
 	sections[0].add(finishedRow);
 
 	//sections[0] =Alloy.Globals.PHRASES.newChallengesTxt createSectionsForTable(Alloy.Globals.PHRASES.tournamentsTxt);
-	sections[1] = createSectionsForTable("Just Nu");
+	sections[1] = createSectionsForTable(Alloy.Globals.PHRASES.challengesViewHot);
 	
 	//sections[2] = createSectionsForTable(Alloy.Globals.PHRASES.pendingChallengesTxt);
 	//sections[3] = createSectionsForTable(Alloy.Globals.PHRASES.finishedChallengesTxt);
@@ -948,8 +949,11 @@ function constructTableView(array) {
 						var obj = Alloy.Globals.CHALLENGEOBJECTARRAY[0][e.rowData.id];
 						if (obj.attributes.show !== 0) {
 							// view challenge
+							var args = {
+								answer : 1
+							};
 							Alloy.Globals.CHALLENGEINDEX = e.rowData.id;
-							var win = Alloy.createController('challenge').getView();
+							var win = Alloy.createController('challenge', args).getView();
 
 							if (OS_IOS) {
 								Alloy.Globals.NAV.openWindow(win, {

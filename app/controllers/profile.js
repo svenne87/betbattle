@@ -357,6 +357,7 @@ function getProfile(){
 		if (this.status == '200') {
 			if (this.readyState == 4) {
 					userInfo = null;
+					Ti.API.info("USERINFO : " + JSON.stringify(this.responseText));
 				try {
 					userInfo = JSON.parse(this.responseText);
 				} catch (e) {

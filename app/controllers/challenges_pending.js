@@ -608,8 +608,20 @@ function constructTableView(array) {
 						var obj = Alloy.Globals.CHALLENGEOBJECTARRAY[1][e.rowData.id];
 						if (obj.attributes.show !== 0) {
 							// view challenge
+							Ti.API.info("GRUPPEN : " + JSON.stringify(obj.attributes.group));
+							var group = null;
+							try {
+								group = obj.attributes.group[0].name;
+							} catch(e) {
+								group = null;
+							}
+
+							if ( typeof group === undefined) {
+								group = null;
+							}
 							var args = {
-								cid : obj.attributes.id
+								cid : obj.attributes.id,
+								group: group
 							};
 							
 							Alloy.Globals.CHALLENGEINDEX = e.rowData.id;

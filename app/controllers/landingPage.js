@@ -372,11 +372,11 @@ function getBeacons(){
 						   if (e.status != "on" && !dialogShown && appResume != 0) {
 						      dialogShown =  true;   
 						      	var dialog = Ti.UI.createAlertDialog({
-						      		message: 'Sätt på bluetooth för att få ut det mesta från appen.',
+						      		message: Alloy.Globals.PHRASES.activateBlutoothMsg,
 						      		title:'Bluetooth',
 						      		ok: 'Ok',
 						      	});
-						      	dialog.show();
+						      	//dialog.show();
 						   }
 						});
 						
@@ -384,6 +384,9 @@ function getBeacons(){
 						
 						function enterRegion(e) {
 							for(var i = 0; i < beacons.length; i++){
+								Ti.API.info("BEACON FOUND ID : " + e.identifier);
+								Ti.API.info("BEACON RETREIVED ID : " + beacons[i].identifier);
+								
 								if(e.identifier == beacons[i].identifier){
 									getPromotion(beacons[i].id);
 								}
@@ -504,7 +507,7 @@ if(OS_ANDROID) {
 function createBeaconDialog(msg, title, link, beacon){
 	var dialog = Ti.UI.createAlertDialog({
 	    cancel: 1,
-	    buttonNames: ['Confirm', 'Cancel'],
+	    buttonNames: [Alloy.Globals.PHRASES.confirmBtnTxt, Alloy.Globals.PHRASES.abortBtnTxt],
 	    message: msg,
 	    title: title,
 	});
@@ -639,7 +642,7 @@ function createPromoTypeTwo(promo){
 				layout: "vertical",
 				height: "90%",
 			});
-			b = Titanium.UI.createButton( {title: 'Close'} );
+			b = Titanium.UI.createButton( {title: Alloy.Globals.PHRASES.promoCloseBtnTxt} );
 
 			w.title = promo.title;
 			w.barColor = 'black';
@@ -665,7 +668,7 @@ function createPromoTypeThree(promo){
 				layout: "vertical",
 				height: "90%",
 			});
-			b = Titanium.UI.createButton( {title: 'Close'} );
+			b = Titanium.UI.createButton( {title: Alloy.Globals.PHRASES.promoCloseBtnTxt} );
 
 			w.title = promo.title;
 			w.barColor = 'black';

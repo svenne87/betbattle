@@ -76,7 +76,7 @@ function createSubmitButtonView(){
 	});
 	
 	buttonView.add(Ti.UI.createLabel({
-		text: "Utmana",
+		text: Alloy.Globals.PHRASES.challengeBtnTxt,
 		textAlign: "center",
 		font:{
 			fontSize: 18,
@@ -275,39 +275,51 @@ for (var i in games){
 	});
 	
 	var deleteBtn = Ti.UI.createView({
-		width: "50%",
+		width: "48%",
 		height: "50%",
 		left: 0,
 		type: "deleteBtn",
 		id: games[i].game_id,
+		borderRadius: 10,
+		borderWidth: 1,
+		borderColor: "#c5c5c5",
 	});
 	deleteBtn.add(Ti.UI.createLabel({
-		text: "delete",
+		text: Alloy.Globals.PHRASES.couponDeleteBtnText,
 		font: {
 			fontSize: 14,
 			fontFamily: "Impact",
 		},
-		backgroundColor: "red",
+		//backgroundColor: "red",
 		textAlign: "center",
 		type: "deleteBtn",
 		id: games[i].game_id,
+		color: "#FFF",
 	}));
 	
 	
 	
 	var editBtn = Ti.UI.createView({
-		width: "50%",
+		width: "48%",
 		height: "50%",
 		right: 0,
+		borderRadius: 10,
+		borderWidth: 1,
+		borderColor: "#c5c5c5",
+		id: games[i].game_id,
+		type: "editBtn",
 	});
 	editBtn.add(Ti.UI.createLabel({
-		text: "edit",
-		backgroundColor: "green",
+		text: Alloy.Globals.PHRASES.couponEditBtnText,
+		//backgroundColor: "green",
 		textAlign:"center",
 		font : {
 			fontSize:14,
 			fontFamily: "Impact",
-		}
+		},
+		color: "#FFF",
+		id: games[i].game_id,
+		type: "editBtn",
 	}));
 	
 	buttonsView.add(deleteBtn);
@@ -363,6 +375,24 @@ for(var i in rows){
 					
 					//rows[e.source.id].hide();
 					//removeCouponGame(e.source.id);
+				});
+			}else if(childrens[k].type == "editBtn"){
+				childrens[k].addEventListener("click", function(e){
+					var args = {
+						gameID : e.source.id,
+					};
+					
+					var win = Alloy.createController("editGame", args).getView();
+					Alloy.Globals.CURRENTVIEW =  win;
+					if (OS_IOS) {
+						Alloy.Globals.NAV.openWindow(win, {
+							animated : true
+						});
+					} else {
+						win.open({
+							fullScreen : true
+						});
+					}
 				});
 			}	
 		}

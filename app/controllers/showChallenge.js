@@ -1,6 +1,7 @@
 var args = arguments[0] || {};
 var view;
 var botView;
+var groupName = args.group;
 Ti.API.info("Args = " + JSON.stringify(args));
 
 
@@ -99,7 +100,7 @@ function createGameType(gameType, game, values){
 				
 				var color = "#303030";
 				if(correct){
-					color = "green";
+					color = "#58B101";
 				}
 				
 				var buttonView = Ti.UI.createButton({
@@ -268,9 +269,12 @@ function createLayout(game, values, games){
 	view.add(image);
 	view.add(botView);
 		
-	var currentGroupName = 'Debug';
-
-	if (currentGroupName !== null) {
+	var currentGroupName = groupName;
+	
+	Ti.API.info("grupp : " +currentGroupName);
+	if (currentGroupName == null || typeof currentGroupName == undefined) {
+		
+	}else{
 			botView.add(Ti.UI.createLabel({
 				top : 5,
 				width : '100%',

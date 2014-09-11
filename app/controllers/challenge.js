@@ -86,11 +86,11 @@ function createGameType(gameType, gameObject) {
 				Ti.API.info("gameArray : " + JSON.stringify(gameArray));
 				if (validate()) {
 					if (answer == 1) {
+						Ti.API.info("svara");
+						//postAnswer(gameArray);
+					} else if(Alloy.Globals.COUPON != null){
 						Ti.API.info("update");
 						updateChallenge();
-					} else if(Alloy.Globals.COUPON != null){
-						Ti.API.info("svara");
-						postAnswer(gameArray);
 					} else {
 						Ti.API.info("save");
 						saveChallenge();
@@ -147,11 +147,11 @@ function createGameType(gameType, gameObject) {
 					}
 					if (validate()) {
 						if (answer == 1) {
+							Ti.API.info("svara");
+							//postAnswer(gameArray);
+						} else if(Alloy.Globals.COUPON != null){
 							Ti.API.info("update");
 							updateChallenge();
-						} else if(Alloy.Globals.COUPON != null){
-							Ti.API.info("svara");
-							postAnswer(gameArray);
 						} else {
 							Ti.API.info("save");
 							saveChallenge();
@@ -234,13 +234,15 @@ function createGameType(gameType, gameObject) {
 					if (gameType.number_of_values == 1) {
 						gameArray[index].gameValue[1] = 0;
 					}
-					Ti.API.info("gameArray : " + JSON.stringify(gameArray));
+					Ti.API.info("gameArray : " + JSON.stringify(gameArray)); 
 					if (validate()) {
 						if (answer == 1) {
+							Ti.API.info("svara");
+							//postAnswer(gameArray);
+						} else if(Alloy.Globals.COUPON != null){
+						
 							Ti.API.info("update");
 							updateChallenge();
-						} else if(Alloy.Globals.COUPON != null){
-							Ti.API.info("svara");
 						} else {
 							Ti.API.info("save");
 							saveChallenge();
@@ -271,7 +273,7 @@ function createSubmitButtonAnswer(){
 	});
 
 	submitButton = Titanium.UI.createButton({
-		top : top,
+		top : 10,
 		width : '70%',
 		height : 40,
 		color : '#FFF',
@@ -281,21 +283,23 @@ function createSubmitButtonAnswer(){
 		fontFamily : Alloy.Globals.getFont(),
 		fontSize : Alloy.Globals.getFontSize(2)
 		},
-		title : 'Svara',
-		backgroundImage : 'none'
+		title : Alloy.Globals.PHRASES.respondTxt,
+		backgroundImage : 'none',
+		touchEnabled: true,
 	});
 
 	submitButton.addEventListener("click", function(e){
-		Ti.API.info("submitChallenge");
+		Ti.API.info("post answer");
 		if(validate()){
-			saveChallenge();	
+			postAnswer(gameArray);	
 		}else{
-			Alloy.Globals.showFeedbackDialog('Du har inte fyllt i alla fält för att svara än');
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.notAllValuesErrorTxt);
 		}
 	});
 		
 	submitView.add(submitButton);
-
+	
+	view.add(submitView);
 }
 
 function updateChallenge() {
@@ -393,7 +397,7 @@ function saveChallenge() {
 			xhr.setRequestHeader("content-type", "application/json");
 			xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
 			xhr.setTimeout(Alloy.Globals.TIMEOUT);
-
+			
 			// build the json string
 			var param = '{"lang" : "' + Alloy.Globals.LOCALE + '", "betkampen_id":"' + Alloy.Globals.BETKAMPENUID + '", "gameID": "' + gameID + '", "gamevalue": {';
 
@@ -441,21 +445,25 @@ function saveChallenge() {
 						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.couponSavedMsg);
 					} else {
 						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+						//submitButton.touchEnabled = true;
 					}
 
 					// show dialog and if ok close window
 				} else {
 					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+					//submitButton.touchEnabled = true;
 				}
 			} else {
 				indicator.closeIndicator();
 				Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
 				Ti.API.error("Error =>" + this.response);
+				//submitButton.touchEnabled = true;
 			}
 		};
 	} else {
 		indicator.closeIndicator();
 		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+		//submitButton.touchEnabled = true;
 	}
 }
 
@@ -464,10 +472,11 @@ function saveChallenge() {
 function postAnswer(gameArray) {
 	// check connection
 	if (Alloy.Globals.checkConnection()) {
+		submitButton.touchEnabled = false;
 		var xhr = Titanium.Network.createHTTPClient();
 		xhr.onerror = function(e) {
 			indicator.closeIndicator();
-			//submitButton.touchEnabled = true;
+			submitButton.touchEnabled = true;
 
 			if (JSON.parse(this.responseText).indexOf('coins') != -1) {
 				// not enough coins
@@ -570,7 +579,7 @@ function postAnswer(gameArray) {
 			xhr.send(param);
 		} catch(e) {
 			indicator.closeIndicator();
-			//submitButton.touchEnabled = true;
+			submitButton.touchEnabled = true;
 			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 		}
 
@@ -607,12 +616,12 @@ function postAnswer(gameArray) {
 					alertWindow.show();
 				} else {
 					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-					//submitButton.touchEnabled = true;
+					submitButton.touchEnabled = true;
 				}
 			} else {
 				Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
 				indicator.closeIndicator();
-				//submitButton.touchEnabled = true;
+				submitButton.touchEnabled = true;
 				Ti.API.error("Error =>" + this.response);
 			}
 		};
@@ -987,7 +996,9 @@ function createLayout(gameObject) {
 		}else{
 			view.add(slide);
 		}
-		
+		if(answer == 1){
+			createSubmitButtonAnswer();	
+		}
 		/*if (roundId === -1) {
 		 createBetCoinsView(coinsToJoin);
 		 } else {
