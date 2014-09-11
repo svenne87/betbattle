@@ -607,8 +607,20 @@ function constructTableView(array) {
 						var obj = Alloy.Globals.CHALLENGEOBJECTARRAY[0][e.rowData.id];
 						if (obj.attributes.show !== 0) {
 							// view challenge
+							var group = null;
+							try {
+								group = obj.attributes.group.name;
+							} catch(e) {
+								group = null;
+							}
+
+							if ( typeof group === undefined) {
+								group = null;
+							}
+							
 							var arg = {
 								answer: 1,
+								group: group
 							};
 							Alloy.Globals.CHALLENGEINDEX = e.rowData.id;
 							var win = Alloy.createController('challenge', arg).getView();

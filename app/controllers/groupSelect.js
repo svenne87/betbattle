@@ -545,7 +545,7 @@ function createSubmitButtons(type) {
 
 	if (iOSVersion < 7) {
 		submitButton = Titanium.UI.createButton({
-			title : 'Utmana',
+			title : Alloy.Globals.PHRASES.challengeBtnTxt,
 			height : 30,
 			//top : 0,
 			width : '70%',
@@ -562,7 +562,7 @@ function createSubmitButtons(type) {
 
 	} else {
 		submitButton = Titanium.UI.createButton({
-			title : 'Utmana',
+			title : Alloy.Globals.PHRASES.challengeBtnTxt,
 			height : buttonHeight,
 			//top : 0,
 			width : '70%',
@@ -1099,7 +1099,7 @@ var tab_groups = Ti.UI.createView({
 	});
 	
 	tab_groups.add(Ti.UI.createLabel({
-		text: "Grupper",
+		text: Alloy.Globals.PHRASES.GroupsTxt,
 		textAlign: "center",
 		color: "#FFFFFF",
 		font:{
@@ -1115,7 +1115,7 @@ var tab_groups = Ti.UI.createView({
 	});
 	
 	tab_friends.add(Ti.UI.createLabel({
-		text: "Vänner",
+		text: Alloy.Globals.PHRASES.FriendsTxt,
 		textAlign: "center",
 		color: "#c5c5c5",
 		font: {

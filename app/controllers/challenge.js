@@ -929,7 +929,7 @@ function createLayout(gameObject) {
 		 currentGroupName = challengeObject.attributes.group[0].name;
 		 }
 		 */
-		var currentGroupName = 'Debug';
+		var currentGroupName = groupName;
 
 		if (currentGroupName !== null) {
 			view.add(Ti.UI.createLabel({
@@ -1035,7 +1035,10 @@ var roundId = -1;
 if ( typeof args.round !== 'undefined') {
 	roundId = args.round;
 }
-
+var groupName = '';
+if( typeof args.group !== 'undefined'){
+	groupName = args.group;
+}
 var leagueName = '';
 if ( typeof args.leagueName !== 'undefined') {
 	leagueName = args.leagueName;
