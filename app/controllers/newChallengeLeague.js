@@ -8,6 +8,8 @@ Ti.App.addEventListener("sliderToggled", function(e) {
 	}
 });
 
+
+
 function openChallengesForLeague(league) {
 	var arg = {
 		leagueId : league

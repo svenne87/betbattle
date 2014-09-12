@@ -7,6 +7,98 @@ var rows = [];
 var amount_games = games.length;
 var amount_deleted = 0;
  
+function checkFriends(){
+	if(Alloy.Globals.checkConnection()){
+		var xhr = Titanium.Network.createHTTPClient();
+		xhr.onerror = function(e) {
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+			//alert(JSON.parse(this.responseText));
+			
+			
+			Ti.API.error('Bad Sever =>' + e.error);
+			
+			//$.facebookBtn.enabled = true;
+		};
+	
+		try {
+			xhr.open('GET', Alloy.Globals.BETKAMPENGETFRIENDSURL + '?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
+			xhr.setRequestHeader("challengesView-type", "application/json");
+			xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
+			xhr.setTimeout(Alloy.Globals.TIMEOUT);
+			xhr.send();
+		} catch(e) {
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+			//alert(JSON.parse(this.responseText));
+			
+		}
+		xhr.onload = function() {
+			if (this.status == '200') {
+				if (this.readyState == 4) {
+					var response = JSON.parse(this.responseText);
+					// construct array with objects
+					Ti.API.info("VÄNNER : " + response.length);
+					if(response.length > 0){
+						if(validate()){
+							var arg = {
+								coins : coinsToJoin
+							};
+							var win = Alloy.createController('groupSelect', arg).getView();
+							Alloy.Globals.CURRENTVIEW =  win;
+							if (OS_IOS) {
+								Alloy.Globals.NAV.openWindow(win, {
+									animated : true
+								});
+							} else {
+								win.open({
+									fullScreen : true
+								});
+							}
+						}else{
+							Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.coinsNoBetError);
+						}
+					}else{
+						
+						var message = Alloy.Globals.PHRASES.noFriendsChallengePrompt;			
+						var my_alert = Ti.UI.createAlertDialog({title:'Betkampen', message:message});
+			        	my_alert.show();
+			        	my_alert.addEventListener('click', function(e) {
+			        		
+							my_alert.hide();
+							
+							var win = Alloy.createController('friendZone').getView();
+							if (OS_IOS) {
+								Alloy.Globals.NAV.openWindow(win, {
+									animated : true
+								});
+							} else {
+								win.open({
+									fullScreen : true
+								});
+								win = null;
+							}
+							$.showCoupon.close();
+						
+						});
+					}
+					
+				} else {
+					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+					//$.facebookBtn.enabled = true;
+				}
+				
+			} else {
+				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+				
+				//$.facebookBtn.enabled = true;
+				Ti.API.error("Error =>" + this.response);
+			}
+		};
+	}else{
+		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+	}
+	
+} 
+ 
 function removeCouponGame(gameID){
 	Ti.API.info("GAMEID : "+ gameID);
 	if (Alloy.Globals.checkConnection()) {
@@ -86,24 +178,7 @@ function createSubmitButtonView(){
 	}));
 	
 	buttonView.addEventListener("click", function(e){
-		if(validate()){
-			var arg = {
-				coins : coinsToJoin
-			};
-			var win = Alloy.createController('groupSelect', arg).getView();
-			Alloy.Globals.CURRENTVIEW =  win;
-			if (OS_IOS) {
-				Alloy.Globals.NAV.openWindow(win, {
-					animated : true
-				});
-			} else {
-				win.open({
-					fullScreen : true
-				});
-			}
-		}else{
-			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.coinsNoBetError);
-		}
+		checkFriends();
 	});
 	wrapperView.add(buttonView);
 	$.showCoupon.add(wrapperView);

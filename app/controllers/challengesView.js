@@ -250,6 +250,7 @@ function createEmptyTableRow(text) {
 
 // build and return rows that are of the type 'Accept' , 'Pending' and 'Finished'
 function constructChallengeRows(obj, index, type) {
+	Ti.API.info("OBJECT: " + JSON.stringify(obj));
 	var child = true;
 	if (OS_ANDROID) {
 		child = false;
@@ -298,7 +299,11 @@ function constructChallengeRows(obj, index, type) {
 	var imageLocation;
 	if (type === 'tournament' || type === 'tournament_finished') {
 		imageLocation = '/images/Topplista.png';
-	} else {
+	} else if(type == 'accept'){
+		imageLocation = '/images/status_go.png';
+	}else if(type == 'pending'){
+		imageLocation = '/images/status_waiting.png';
+	}else{
 		imageLocation = '/images/ikon_spelanasta.png';
 	}
 
@@ -346,11 +351,16 @@ function constructChallengeRows(obj, index, type) {
 			betGroupName = obj.attributes.group[0].name;
 		} catch(e) {
 			// do nothing
+			betGroupName = "";
 		}
-
+		Ti.API.info("GRUPPNAMN: " + betGroupName);
+		if(betGroupName <= 0){
+			betGroupName = obj.attributes.name;
+		}
 		if (betGroupName.length > 9) {
 			betGroupName = betGroupName.substring(0, 7) + '...';
 		}
+		
 	} else {
 		// for tournament's
 		if ((type === 'tournament' && obj.attributes.opponents.length === 1) || (type === 'tournament_finished' && obj.attributes.opponents.length === 1)) {
@@ -901,7 +911,9 @@ function constructTableView(array) {
 	// there will be 3 types: 'tournaments'/'accept', 'pending' and finished (in that order)
 	var challengesTournamentsCount = 0;
 	// set this to 1 if there are no challenges
-
+	var rightNowRows = 0;
+	var acceptNowCount = 1;
+	var pendingNowCount = 1;
 	// looping array backwards to print out tournaments first
 	for (var x = array.length; x >= 0; x--) {
 		var arrayObj = array[x];
@@ -910,12 +922,30 @@ function constructTableView(array) {
 			// create 'accept' rows
 			if (arrayObj.length > 0) {
 				for (var i = 0; i < arrayObj.length; i++) {
-					sections[1].add(constructChallengeRows(arrayObj[i], i, 'accept'));
+					if(rightNowRows < 4){
+						rightNowRows++;
+						sections[1].add(constructChallengeRows(arrayObj[i], i, 'accept'));
+					}
 				}
 			} else if (arrayObj.length === 0 && challengesTournamentsCount > 0) {
-				sections[1].add(createEmptyTableRow(Alloy.Globals.PHRASES.challengesSmallTxt + '/' + Alloy.Globals.PHRASES.tournamentsSmallTxt));
+				acceptNowCount = 0;
 			}
-		} else if (x === 3) {
+		} else if(x === 1){
+			
+				if(arrayObj.length > 0){
+					for(var i = 0; i < arrayObj.length; i++){
+						if(rightNowRows < 4){
+							rightNowRows++;
+							sections[1].add(constructChallengeRows(arrayObj[i], i, 'pending'));
+						}
+					}
+				}else{
+					if(acceptNowCount == 0){
+						pendingNowCount = 0;	
+					}
+				}
+				
+		}else if (x === 3) {
 			// create 'accept' / 'pending' tournaments rows
 			if (arrayObj.length > 0) {
 				for (var i = 0; i < arrayObj.length; i++) {
@@ -924,6 +954,10 @@ function constructTableView(array) {
 			} else if (arrayObj.length === 0) {
 				challengesTournamentsCount = 1;
 			}
+		}
+		
+		if(pendingNowCount == 0){
+			sections[1].add(createEmptyTableRow(Alloy.Globals.PHRASES.challengesSmallTxt + '/' + Alloy.Globals.PHRASES.tournamentsSmallTxt));
 		}
 	}
 
@@ -1050,23 +1084,40 @@ function constructTableView(array) {
 
 						}
 					} else if (e.rowData.className === 'pending') {
-						// get correct object, 1 == pending
 						var obj = Alloy.Globals.CHALLENGEOBJECTARRAY[1][e.rowData.id];
-						// open a webview with the pending challenge
-						var group = null;
-						try {
-							group = obj.attributes.group[0].name;
-						} catch(e) {
-							group = null;
-						}
+						if (obj.attributes.show !== 0) {
+							// view challenge
+							Ti.API.info("GRUPPEN : " + JSON.stringify(obj.attributes.group));
+							var group = null;
+							try {
+								group = obj.attributes.group[0].name;
+							} catch(e) {
+								group = null;
+							}
 
-						if ( typeof group === undefined) {
-							group = null;
-						}
+							if ( typeof group === undefined) {
+								group = null;
+							}
+							var args = {
+								cid : obj.attributes.id,
+								group: group
+							};
+							
+							Alloy.Globals.CHALLENGEINDEX = e.rowData.id;
+							var win = Alloy.createController('showChallenge', args).getView();
 
-						showChallengeInWebView(obj.attributes.id, -1, group);
-						obj = null;
-						group = null;
+							if (OS_IOS) {
+								Alloy.Globals.NAV.openWindow(win, {
+									animated : true
+								});
+							} else if (OS_ANDROID) {
+								win.open({
+									fullScreen : true
+								});
+							}
+						} else {
+							Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.roundHasStartedErrorTxt);
+						}
 
 					} else if (e.rowData.className === 'finished') {
 						// get correct object, 2 == finished

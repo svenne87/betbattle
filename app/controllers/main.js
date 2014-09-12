@@ -30,6 +30,7 @@ if(Alloy.Globals.INDEXWIN !== null){
 var args = arguments[0] || {};
 
 var oldIndicator = args.dialog || null;
+var refresher = args.refresh || null;
 
 if(oldIndicator !== null){
 	oldIndicator.closeIndicator();
@@ -368,8 +369,10 @@ if(OS_IOS){
 
 // Pass data to widget leftTableView 
 $.ds.leftTableView.data = leftData;
-
-var currentView = Alloy.createController('challengesView').getView();
+var argu = {
+	refresh : refresher
+};
+var currentView = Alloy.createController('challengesView', argu).getView();
 $.ds.contentview.add(currentView);
 Alloy.Globals.CURRENTVIEW = currentView;
 

@@ -350,7 +350,10 @@ function challengeGroup(array) {
 						});
 
 						alertWindow.addEventListener('click', function() {
-							var loginSuccessWindow = Alloy.createController('main', args).getView();
+							var argu = {
+								refresh : 1
+							};
+							var loginSuccessWindow = Alloy.createController('main', argu).getView();
 								if (OS_IOS) {
 									loginSuccessWindow.open({
 										fullScreen : true,
@@ -486,7 +489,10 @@ function challengeFriends() {
 						});
 
 						alertWindow.addEventListener('click', function() {
-							var loginSuccessWindow = Alloy.createController('main', args).getView();
+							var argu = {
+								refresh : 1
+							};
+							var loginSuccessWindow = Alloy.createController('main', argu).getView();
 								if (OS_IOS) {
 									loginSuccessWindow.open({
 										fullScreen : true,

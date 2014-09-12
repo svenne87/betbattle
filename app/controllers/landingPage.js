@@ -244,6 +244,7 @@ var deviceToken;
 
 if(OS_IOS){
 	// only iOS		
+	if(appResume != 0)
 	 $.landingPage.addEventListener('open', function(){
 		var apns = require('lib/push_notifications_apns');
 		apns.apns();
@@ -304,7 +305,7 @@ if(OS_IOS){
 			// (again don't worry, we'll see more of this later)
 		
 			try{
-				Ti.App.fireEvent('challengesViewRefresh');
+				
 						
 				var alertWindow = Titanium.UI.createAlertDialog({
 					title : e.title,
@@ -314,6 +315,7 @@ if(OS_IOS){
 
 				alertWindow.addEventListener('click', function(e) {
 					alertWindow.hide();
+					Ti.App.fireEvent('challengesViewRefresh');
 				});
 				alertWindow.show();
 			} catch(e){
@@ -1153,6 +1155,7 @@ function getMatchOfTheDay(){
 					var match = null;
 				try {
 					match = JSON.parse(this.responseText);
+					Ti.API.info("MATCH : " + JSON.stringify(match));
 				} catch (e) {
 					match = null;
 					Ti.API.info("Match NULL");
@@ -1166,7 +1169,8 @@ function getMatchOfTheDay(){
 						var arg = {
 							round : match.roundID,
 							leagueName : match.leagueName,
-							leagueId : match.leagueID
+							leagueId : match.leagueID,
+							gameID : match.game_id
 						};
 					
 						var win = Alloy.createController('challenge', arg).getView();

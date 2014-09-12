@@ -306,6 +306,7 @@ function createEmptyTableRow(text) {
 
 // build and return rows that are of the type 'Accept' , 'Pending' and 'Finished'
 function constructChallengeRows(obj, index, type) {
+	Ti.API.info("OBJECT : " + JSON.stringify(obj));
 	var child = true;
 	if (OS_ANDROID) {
 		child = false;

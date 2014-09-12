@@ -213,7 +213,10 @@ function Controller() {
                             buttonNames: [ Alloy.Globals.PHRASES.okConfirmTxt ]
                         });
                         alertWindow.addEventListener("click", function() {
-                            var loginSuccessWindow = Alloy.createController("main", args).getView();
+                            var argu = {
+                                refresh: 1
+                            };
+                            var loginSuccessWindow = Alloy.createController("main", argu).getView();
                             loginSuccessWindow.open({
                                 fullScreen: true,
                                 transition: Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
@@ -300,7 +303,10 @@ function Controller() {
                             buttonNames: [ Alloy.Globals.PHRASES.okConfirmTxt ]
                         });
                         alertWindow.addEventListener("click", function() {
-                            var loginSuccessWindow = Alloy.createController("main", args).getView();
+                            var argu = {
+                                refresh: 1
+                            };
+                            var loginSuccessWindow = Alloy.createController("main", argu).getView();
                             loginSuccessWindow.open({
                                 fullScreen: true,
                                 transition: Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
@@ -335,7 +341,7 @@ function Controller() {
             id: "submitButtonsView"
         });
         submitButton = 7 > iOSVersion ? Titanium.UI.createButton({
-            title: "Utmana",
+            title: Alloy.Globals.PHRASES.challengeBtnTxt,
             height: 30,
             width: "70%",
             id: "submitButton",
@@ -348,7 +354,7 @@ function Controller() {
             color: "#FFF",
             backgroundImage: "none"
         }) : Titanium.UI.createButton({
-            title: "Utmana",
+            title: Alloy.Globals.PHRASES.challengeBtnTxt,
             height: buttonHeight,
             width: "70%",
             id: "submitButton",
@@ -715,7 +721,7 @@ function Controller() {
         backgroundColor: Alloy.Globals.themeColor()
     });
     tab_groups.add(Ti.UI.createLabel({
-        text: "Grupper",
+        text: Alloy.Globals.PHRASES.GroupsTxt,
         textAlign: "center",
         color: "#FFFFFF",
         font: {
@@ -729,7 +735,7 @@ function Controller() {
         backgroundColor: "black"
     });
     tab_friends.add(Ti.UI.createLabel({
-        text: "Vänner",
+        text: Alloy.Globals.PHRASES.FriendsTxt,
         textAlign: "center",
         color: "#c5c5c5",
         font: {

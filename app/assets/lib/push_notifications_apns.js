@@ -24,6 +24,7 @@ var apns = function(){
       Titanium.Media.vibrate();
       //var data = JSON.parse(e.data);
       var data = e.data;
+      Ti.API.info("DATA : " + JSON.stringify(data));
       var badge = data.badge;
       if(badge > 0){
         Titanium.UI.iPhone.appBadge = badge;
@@ -33,9 +34,30 @@ var apns = function(){
         var my_alert = Ti.UI.createAlertDialog({title:'Betkampen', message:message});
         my_alert.show();
         my_alert.addEventListener('click', function(e) {
+        	Ti.API.info("CLICKADE PÅ NOTIFICATION");
+        	Ti.API.info("BADGE : " + JSON.stringify(Ti.UI.iPhone.appBadge));
 			my_alert.hide();
-			Ti.App.fireEvent('challengesViewRefresh');
 			Ti.UI.iPhone.setAppBadge(0);
+			Titanium.UI.iPhone.appBadge = 0;
+			args = {
+				refresh : 1,
+			};
+			var loginSuccessWindow = Alloy.createController('main', args).getView();
+				if (OS_IOS) {
+					loginSuccessWindow.open({
+						fullScreen : true,
+						transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
+					});
+				} else if (OS_ANDROID) {
+					loginSuccessWindow.open({
+						fullScreen : true,
+						navBarHidden : false,
+						orientationModes : [Titanium.UI.PORTRAIT]
+					});
+				}
+				loginSuccessWindow = null;
+			
+			
 		});
         
       }
