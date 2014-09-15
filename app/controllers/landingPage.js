@@ -1079,9 +1079,14 @@ bot_img.addEventListener("click", function(e) {
 function createTopView(resp){
 
 	
-	
+	var img = "";
+	if(resp !== null){
+		img = resp.image;
+	}else{
+		img = "/images/top_img.png";
+	}
 	top_img = Ti.UI.createView({
-		backgroundImage: "/images/top_img.png",
+		backgroundImage: img,
 		height: "33.33%",
 		width:"100%"
 	});
@@ -1145,7 +1150,7 @@ function createTopView(resp){
 	});
 	var labelText = "";
 	var btnLabelTxt = "";
-	if(resp != null){
+	if(resp !== null){
 		labelText = resp.title;
 		btnLabelTxt = "";
 	}else{
@@ -1190,7 +1195,7 @@ function createTopView(resp){
 		bottom:10
 	}));
 	
-	if(resp != null){
+	if(resp !== null){
 		top_img.addEventListener("click", function(e){
 			var params = {
 				link: resp.url
@@ -1555,10 +1560,12 @@ function getTopImgView(){
 						Ti.API.info("RESPONSE TOP : " + JSON.stringify(resp));
 						createTopView(resp);
 						createBotView();
+						getMatchOfTheDay()
 					}else{
 						Ti.API.info("RESPONSE TOP = NULL");
 						createTopView(resp);
 						createBotView();
+						getMatchOfTheDay()
 					}
 				}
 				
@@ -1672,7 +1679,6 @@ var team2Logo;
 //fill each section and view with content
 
 getTopImgView();
-getMatchOfTheDay();
 
 $.landingPage.add(top_view);
 $.landingPage.add(bot_view);
