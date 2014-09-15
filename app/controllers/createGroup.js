@@ -2,10 +2,25 @@ var fontawesome = require('lib/IconicFont').IconicFont({
 	font : 'lib/FontAwesome'
 });
 
+var uie = require('lib/IndicatorWindow');
+var indicator = uie.createIndicatorWindow({
+	top : 200,
+	text : Alloy.Globals.PHRASES.loadingTxt
+});
+
 var font = 'FontAwesome';
 
 if (OS_ANDROID) {
 	font = 'fontawesome-webfont';
+
+	$.createGroup.addEventListener('open', function() {
+		$.createGroup.activity.actionBar.onHomeIconItemSelected = function() {
+			$.createGroup.close();
+			$.createGroup = null;
+		};
+		$.createGroup.activity.actionBar.displayHomeAsUp = true;
+		$.createGroup.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
+	});
 }
 Ti.API.info(Ti.App.Properties.getString('profileNameSetting'));
 

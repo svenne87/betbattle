@@ -82,7 +82,8 @@ Ti.App.addEventListener("groupSelectRefresh", function(e) {
 });
 
 function getGroups() {
-
+	groupObjects = [];
+	
 	if (OS_IOS) {
 		indicator.openIndicator();
 	}
@@ -212,23 +213,18 @@ function createBtn() {
 }
 
 function createViews(array) {
-	// check if table exists, and if it does simply remove it
 
-	if (OS_IOS) {
-		refresher = Ti.UI.createRefreshControl({
-			tintColor : Alloy.Globals.themeColor()
-		});
-
-		// will refresh on pull
-		refresher.addEventListener('refreshstart', function(e) {
-			if (Alloy.Globals.checkConnection()) {
-				getGroups();
-			} else {
-				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
-				refresher.endRefreshing();
-			}
-		});
-	}
+	// clear old views
+	   // TODO vy i vy i vy?
+	for(var child in mainView.children) {
+		for(var childChild in mainView.children[child].children){
+			mainView.children[child].children[childChild].removeAllChildren();
+			mainView.children[child].children[childChild] = null;
+		}
+		mainView.children[child].removeAllChildren();
+		mainView.children[child] = null;
+	}   
+	mainView.removeAllChildren();
 
 	// Rows
 	for (var i = 0; i < array.length; i++) {
@@ -430,7 +426,7 @@ function createViews(array) {
 				});
 				win = null;
 			}
-			$.myGroups.close();
+			//$.myGroups.close();
 		});
 
 		groupInfo.addEventListener('click', function(e) {

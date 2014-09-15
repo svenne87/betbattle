@@ -1,10 +1,19 @@
 var args = arguments[0] || {};
+var friends = null;
 
+var uie = require('lib/IndicatorWindow');
+var indicator = uie.createIndicatorWindow({
+	top : 200,
+	text : Alloy.Globals.PHRASES.loadingTxt
+});
+
+/*
 var b = Titanium.UI.createButton({
 	title : 'Back'
 });
-$.editGroup.leftNavButton = b;
-b.addEventListener('click', function() {
+$.editGroup.leftNavButton = b;*/
+$.editGroup.addEventListener('close', function() {
+/*
 	var win = Alloy.createController('myGroups').getView();
 	if (OS_IOS) {
 		Alloy.Globals.NAV.openWindow(win, {
@@ -15,10 +24,27 @@ b.addEventListener('click', function() {
 			fullScreen : true
 		});
 		win = null;
-	}
-
-	$.editGroup.close();
+	} */
+	indicator.closeIndicator();
+	//$.editGroup.close();
 });
+
+
+if(OS_ANDROID){
+	$.editGroup.addEventListener('open', function() {
+		$.editGroup.activity.actionBar.onHomeIconItemSelected = function() {
+			$.editGroup.close();
+			$.editGroup = null;
+		};
+		$.editGroup.activity.actionBar.displayHomeAsUp = true;
+		$.editGroup.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
+		
+		// sometimes the view remain in memory, then we don't need to show the "loading"
+		if(!friends) {
+			indicator.openIndicator();
+		}
+	});
+}
 
 var fontawesome = require('lib/IconicFont').IconicFont({
 	font : 'lib/FontAwesome'
@@ -104,6 +130,8 @@ if (gAdmin == Alloy.Globals.BETKAMPENUID) {
 				group_name : groupName.value,
 			};
 			editName.send(params);
+			///// TODO
+			/*
 			var win = Alloy.createController('myGroups').getView();
 			if (OS_IOS) {
 				Alloy.Globals.NAV.openWindow(win, {
@@ -115,7 +143,7 @@ if (gAdmin == Alloy.Globals.BETKAMPENUID) {
 				});
 				win = null;
 			}
-
+*/			Ti.App.fireEvent('groupSelectRefresh');
 			$.editGroup.close();
 		} else if (groupName.value.length < 3) {
 			alert(Alloy.Globals.PHRASES.shortGroupNameTxt);
@@ -587,22 +615,27 @@ client.send();
 
 //get friends from db
 function getFriends(members) {
+	if(OS_IOS) {
+		indicator.openIndicator();
+	}
+	
 	var xhr = Ti.Network.createHTTPClient({
 		// function called when the response data is available
 		onload : function(e) {
 			Ti.API.info("Received text: " + this.responseText);
-			var friends = JSON.parse(this.responseText);
+			friends = JSON.parse(this.responseText);
 
 			for (var i = 0; i < friends.length; i++) {
 				//alert(friends[i].name);
 				createFriendGUI(friends[i], members);
 			}
-
+			indicator.closeIndicator();
 		},
 		// function called when an error occurs, including a timeout
 		onerror : function(e) {
 			Ti.API.debug(e.error);
 			//alert('error');
+			indicator.closeIndicator();
 		},
 		timeout : Alloy.Globals.TIMEOUT // in milliseconds
 	});
