@@ -447,7 +447,51 @@ function updateCouponGame(){
 				Ti.API.info("UPPDATERAT ELLER : " + JSON.stringify(this.responseText));
 				response = JSON.parse(this.responseText);
 				if(response == 1){
-					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.couponEditedGameFeedback);
+					if (OS_ANDROID) {
+							var delToast = Ti.UI.createNotification({
+								duration : Ti.UI.NOTIFICATION_DURATION_LONG,
+								message : Alloy.Globals.PHRASES.couponEditedGameFeedback
+							});
+							delToast.show();
+					} else {
+						indWin = Titanium.UI.createWindow();
+
+						//  view
+						var indView = Titanium.UI.createView({
+							top : '80%',
+							height : 30,
+							width : '80%',
+							backgroundColor : '#000',
+							opacity : 0.9
+						});
+
+						indWin.add(indView);
+
+						// message
+						var message = Titanium.UI.createLabel({
+							text : Alloy.Globals.PHRASES.couponEditedGameFeedback,
+							color : '#fff',
+							width : 'auto',
+							height : 'auto',
+							textAlign : 'center',
+							font : {
+								fontSize : 12,
+								fontWeight : 'bold'
+							}
+						});
+
+						indView.add(message);
+						indWin.open();
+
+						var interval = interval ? interval : 1500;
+						setTimeout(function() {
+							indWin.close({
+								opacity : 0,
+								duration : 1000
+							});
+						}, interval);
+					}
+					$.editGame.close();
 				}
 			} else {
 				indicator.closeIndicator();
