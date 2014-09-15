@@ -339,15 +339,16 @@ shareBtn.addEventListener('click', function(e){
 		}
 });
 
-
-$.friendZone.addEventListener('open', function() {
-	$.friendZone.activity.actionBar.onHomeIconItemSelected = function() {
-		$.friendZone.close();
-		$.friendZone = null;
-	};
-	$.friendZone.activity.actionBar.displayHomeAsUp = true;
-	$.friendZone.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
-});
+if(OS_ANDROID){
+	$.friendZone.addEventListener('open', function() {
+		$.friendZone.activity.actionBar.onHomeIconItemSelected = function() {
+			$.friendZone.close();
+			$.friendZone = null;
+		};
+		$.friendZone.activity.actionBar.displayHomeAsUp = true;
+		$.friendZone.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
+	});
+}
 
 $.friendZone.add(mainView);
 

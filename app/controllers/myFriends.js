@@ -274,20 +274,21 @@ if(OS_IOS){
 
 xhr.send();
 
-$.myFriends.addEventListener('open', function() {
-	$.myFriends.activity.actionBar.onHomeIconItemSelected = function() {
-		$.myFriends.close();
-		$.myFriends = null;
-	};
-	$.myFriends.activity.actionBar.displayHomeAsUp = true;
-	$.myFriends.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
-		
-	// sometimes the view remain in memory, then we don't need to show the "loading"
-	if(!friends) {
-		indicator.openIndicator();
-	}
-});
-
+if(OS_ANDROID){
+	$.myFriends.addEventListener('open', function() {
+		$.myFriends.activity.actionBar.onHomeIconItemSelected = function() {
+			$.myFriends.close();
+			$.myFriends = null;
+		};
+		$.myFriends.activity.actionBar.displayHomeAsUp = true;
+		$.myFriends.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
+			
+		// sometimes the view remain in memory, then we don't need to show the "loading"
+		if(!friends) {
+			indicator.openIndicator();
+		}
+	});
+}
 $.myFriends.addEventListener('close', function() {
 	indicator.closeIndicator();
 });
