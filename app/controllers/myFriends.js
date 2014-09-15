@@ -1,5 +1,11 @@
 var args = arguments[0] || {};
 
+var uie = require('lib/IndicatorWindow');
+var indicator = uie.createIndicatorWindow({
+	top : 200,
+	text : Alloy.Globals.PHRASES.loadingTxt
+});
+
 var fontawesome = require('lib/IconicFont').IconicFont({
 	font : 'lib/FontAwesome'
 });
@@ -230,12 +236,13 @@ function createBtn() {
 	});
 
 }
+var friends = null;
 
 var xhr = Ti.Network.createHTTPClient({
 	// function called when the response data is available
 	onload : function(e) {
 		Ti.API.info("Received text: " + this.responseText);
-		var friends = JSON.parse(this.responseText);
+		friends = JSON.parse(this.responseText);
 		if (friends.length == 0) {
 			createBtn();
 		} else {
@@ -244,10 +251,12 @@ var xhr = Ti.Network.createHTTPClient({
 				createGUI(friends[i]);
 			}
 		}
+		indicator.closeIndicator();
 	},
 	// function called when an error occurs, including a timeout
 	onerror : function(e) {
 		Ti.API.debug(e.error);
+		indicator.closeIndicator();
 		//alert('error');
 	},
 	timeout : Alloy.Globals.TIMEOUT // in milliseconds
@@ -259,6 +268,29 @@ xhr.setRequestHeader("content-type", "application/json");
 xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
 xhr.setTimeout(Alloy.Globals.TIMEOUT);
 
+if(OS_IOS){
+	indicator.openIndicator();
+}
+
 xhr.send();
+
+$.myFriends.addEventListener('open', function() {
+	$.myFriends.activity.actionBar.onHomeIconItemSelected = function() {
+		$.myFriends.close();
+		$.myFriends = null;
+	};
+	$.myFriends.activity.actionBar.displayHomeAsUp = true;
+	$.myFriends.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
+		
+	// sometimes the view remain in memory, then we don't need to show the "loading"
+	if(!friends) {
+		indicator.openIndicator();
+	}
+});
+
+$.myFriends.addEventListener('close', function() {
+	indicator.closeIndicator();
+});
+
 
 $.myFriends.add(mainView);

@@ -485,15 +485,12 @@ if (OS_ANDROID) {
 		};
 		$.newChallenge.activity.actionBar.displayHomeAsUp = true;
 		$.newChallenge.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
-		indicator.openIndicator();
+		
+		// sometimes the view remain in memory, then we don't need to show the "loading"
+		if(totalNumberOfGames === 20) {
+			indicator.openIndicator();
+		}
 	});
-	/*
-	 $.newChallenge.addEventListener('androidback', function(){
-	 $.newChallenge.close();
-	 $.newChallenge = null;
-	 });
-	 */
-
 }
 
 $.newChallenge.addEventListener('close', function() {

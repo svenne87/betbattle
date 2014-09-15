@@ -446,7 +446,7 @@ function createViews(array) {
 				});
 				win = null;
 			}
-			$
+			
 			
 			/*var getUID = Ti.Network.createHTTPClient();
 			getUID.onload = function() {
@@ -487,5 +487,24 @@ if (Alloy.Globals.checkConnection()) {
 } else {
 	Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 }
+
+$.myGroups.addEventListener('open', function() {
+	$.myGroups.activity.actionBar.onHomeIconItemSelected = function() {
+		$.myGroups.close();
+		$.myGroups = null;
+	};
+	$.myGroups.activity.actionBar.displayHomeAsUp = true;
+	$.myGroups.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
+		
+	// sometimes the view remain in memory, then we don't need to show the "loading"
+	if(groupObjects.length === 0) {
+		indicator.openIndicator();
+	}
+});
+
+$.myGroups.addEventListener('close', function() {
+	indicator.closeIndicator();
+});
+
 
 $.myGroups.add(mainView);
