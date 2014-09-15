@@ -1,4 +1,5 @@
 var args = arguments[0] || {};
+var openWindows = [];
 
 if (OS_ANDROID) {
 	$.profile.addEventListener('open', function() {
@@ -508,6 +509,7 @@ function getAchievements(){
 									w = null;
 								});
 								
+								openWindows.push(w);
 								$.profile.add(w);
 							}else{
 								var t = Titanium.UI.create2DMatrix();
@@ -602,6 +604,7 @@ function getAchievements(){
 									transparent_overlay = null;
 								});
 								
+								openWindows.push(w);
 								transparent_overlay.add(w.open(a));
 								//w.open(a);
 								
@@ -628,4 +631,14 @@ $.profile.add(topView);
 $.profile.add(botView);
 getProfile();
 getAchievements();
+
+
+/* Close all open windows on window close */
+$.profile.addEventListener('close', function() {
+	if(openWindows.length > 0) {
+		for(var i = 0; i < openWindows.length; i++) {
+			openWindows[i].close();
+		}	
+	}
+});
 
