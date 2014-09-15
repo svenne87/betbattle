@@ -239,7 +239,7 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 	//getInvitableFbFriends();
 
 	function getFbFriendsWithApp() {
-		Titanium.Facebook.requestWithGraphPath('v2.1/me/friends', {
+		Titanium.Facebook.requestWithGraphPath('me/friends', {
 			fields : 'name'
 		}, 'GET', function(e) {
 			var data = JSON.parse(e.result);
