@@ -120,9 +120,10 @@ function createGUI(obj) {
 	function isInArray(fr, search) {
 		return (fr.indexOf(search) >= 0) ? true : false;
 	}
+
 	//you can not add yourself as a friend
 	if (obj.fid == Alloy.Globals.BETKAMPENUID) {
-		
+
 	} else {
 
 		a++;
@@ -167,20 +168,20 @@ function createGUI(obj) {
 		row.add(member);
 		//profilepicture
 		var image;
-		if(obj.fbid !== null) {
-			image = "https://graph.facebook.com/"+ obj.fbid +"/picture?type=large";
+		if (obj.fbid !== null) {
+			image = "https://graph.facebook.com/" + obj.fbid + "/picture?type=large";
 		} else {
 			// get betkampen image
 			image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + obj.fid + '.png';
 		}
 
 		var profilePic = Titanium.UI.createImageView({
-		image : image,
+			image : image,
 			height : 25,
 			width : 25,
 			left : '2%'
 		});
-		profilePic.addEventListener('error',function(e){
+		profilePic.addEventListener('error', function(e) {
 			// fallback for image
 			profilePic.image = '/images/no_pic.png';
 		});
@@ -254,7 +255,51 @@ function createGUI(obj) {
 					fid : e.source.id
 				};
 				addFriends.send(params);
-				alert(Alloy.Globals.PHRASES.friendSuccess + ' ' + e.source.fName);
+				//alert(Alloy.Globals.PHRASES.friendSuccess + ' ' + e.source.fName);
+				if (OS_ANDROID) {
+					var delToast = Ti.UI.createNotification({
+						duration : Ti.UI.NOTIFICATION_DURATION_LONG,
+						message : Alloy.Globals.PHRASES.friendSuccess + ' ' + e.source.fName
+					});
+					delToast.show();
+				} else {
+					indWin = Titanium.UI.createWindow();
+
+					//  view
+					var indView = Titanium.UI.createView({
+						top : '80%',
+						height : 30,
+						width : '80%',
+						backgroundColor : '#000',
+						opacity : 0.9
+					});
+
+					indWin.add(indView);
+
+					// message
+					var message = Titanium.UI.createLabel({
+						text : Alloy.Globals.PHRASES.friendSuccess + ' ' + e.source.fName,
+						color : '#fff',
+						width : 'auto',
+						height : 'auto',
+						textAlign : 'center',
+						font : {
+							fontSize : 12,
+							fontWeight : 'bold'
+						}
+					});
+
+					indView.add(message);
+					indWin.open();
+
+					var interval = interval ? interval : 1500;
+					setTimeout(function() {
+						indWin.close({
+							opacity : 0,
+							duration : 1000
+						});
+					}, interval);
+				}
 				click++;
 			} else if (click == 1) {
 				//if you clicked on wrong person and click again you remove him from your friendlist
