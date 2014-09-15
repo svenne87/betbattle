@@ -509,7 +509,6 @@ function getAchievements(){
 									w = null;
 								});
 								
-								openWindows.push(w);
 								$.profile.add(w);
 							}else{
 								var t = Titanium.UI.create2DMatrix();

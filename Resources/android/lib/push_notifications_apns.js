@@ -14,6 +14,7 @@ var apns = function() {
         callback: function(e) {
             Titanium.Media.vibrate();
             var data = e.data;
+            Ti.API.info("DATA : " + JSON.stringify(data));
             var badge = data.badge;
             badge > 0 && (Titanium.UI.iPhone.appBadge = badge);
             var message = data.alert;
@@ -24,9 +25,21 @@ var apns = function() {
                 });
                 my_alert.show();
                 my_alert.addEventListener("click", function() {
+                    Ti.API.info("CLICKADE PÅ NOTIFICATION");
+                    Ti.API.info("BADGE : " + JSON.stringify(Ti.UI.iPhone.appBadge));
                     my_alert.hide();
-                    Ti.App.fireEvent("challengesViewRefresh");
                     Ti.UI.iPhone.setAppBadge(0);
+                    Titanium.UI.iPhone.appBadge = 0;
+                    args = {
+                        refresh: 1
+                    };
+                    var loginSuccessWindow = Alloy.createController("main", args).getView();
+                    loginSuccessWindow.open({
+                        fullScreen: true,
+                        navBarHidden: false,
+                        orientationModes: [ Titanium.UI.PORTRAIT ]
+                    });
+                    loginSuccessWindow = null;
                 });
             }
         }

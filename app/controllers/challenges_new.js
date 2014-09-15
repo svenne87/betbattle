@@ -721,7 +721,6 @@ if (OS_ANDROID) {
 		};
 		$.challenges_new.activity.actionBar.displayHomeAsUp = true;
 		$.challenges_new.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
-		indicator.openIndicator();
 	});
 	/*
 	 $.newChallenge.addEventListener('androidback', function(){
