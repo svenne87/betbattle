@@ -1076,6 +1076,385 @@ bot_img.addEventListener("click", function(e) {
 	loginSuccessWindow = null;
 });
 
+function createTopView(resp){
+
+	
+	
+	top_img = Ti.UI.createView({
+		backgroundImage: "/images/top_img.png",
+		height: "33.33%",
+		width:"100%"
+	});
+	
+	mid_img = Ti.UI.createView({
+		backgroundImage: "/images/mid_img.png",
+		height: "33.33%",
+		width:"100%"
+	});
+	
+	bot_img = Ti.UI.createView({
+		backgroundImage: "/images/bot_img.png",
+		height: "33.33%",
+		width:"100%"
+	});
+	
+	//create views to act as borders
+	var border1 = Ti.UI.createView({
+		width:"100%",
+		height:2,
+		backgroundColor: "orange",
+		bottom:"0px"
+	});
+	
+	var border2 = Ti.UI.createView({
+		width:"100%",
+		height:2,
+		backgroundColor: "orange",
+		bottom:"0px"
+	});
+	
+	
+	var border3 = Ti.UI.createView({
+		width:"100%",
+		height:2,
+		backgroundColor: "orange",
+		bottom:"0px"
+	});
+	
+	//Add the black transparent view with the text inside.
+	var blackLabelTop = Ti.UI.createView({
+		height: "25%",
+		width:"100%",
+		backgroundColor: "#000",
+		opacity: "0.6",
+		bottom: 2
+	});
+	var blackLabelMid = Ti.UI.createView({
+		height: "25%",
+		width:"100%",
+		backgroundColor: "#000",
+		opacity: "0.6",
+		bottom: 2
+	});
+	var blackLabelBot = Ti.UI.createView({
+		height: "25%",
+		width:"100%",
+		backgroundColor: "#000",
+		opacity: "0.6",
+		bottom: 2
+	});
+	var labelText = "";
+	var btnLabelTxt = "";
+	if(resp != null){
+		labelText = resp.title;
+		btnLabelTxt = "";
+	}else{
+		labelText = Alloy.Globals.PHRASES.landingPageHalfPot;
+		btnLabelTxt = Alloy.Globals.PHRASES.landingPageHalfPotBtn;
+	}
+	top_img.add(Ti.UI.createLabel({
+		text: labelText,
+		zIndex:"100",
+		height:"25%",
+		width:"60%",
+		color:"#FFF",
+		left:10,
+		bottom:1,
+		font: {
+			fontSize: '20',
+			fontFamily: 'Impact'
+		}
+	}));
+	
+	
+	top_img.add(Ti.UI.createLabel({
+		text: btnLabelTxt,
+		zIndex : "100",
+		height:"25%",
+		width: "30%",
+		color:"#FFF",
+		textAlign: "right",
+		right:25,
+		bottom:1,
+		font:{
+			fontSize: '14',
+			fontFamily: 'Impact'
+		}
+	}));
+	top_img.add(Ti.UI.createView({
+		width:8,
+		height:8,
+		zIndex: "110",
+		backgroundImage: "/images/arrow.png",
+		right:10,
+		bottom:10
+	}));
+	
+	if(resp != null){
+		top_img.addEventListener("click", function(e){
+			var params = {
+				link: resp.url
+			};
+			var win = Alloy.createController('webview', params).getView();
+			if (OS_IOS) {
+				Alloy.Globals.NAV.openWindow(win, {
+					animated : true
+				});
+			} else {
+				win.open({
+					fullScreen : true
+				});
+			}
+		});
+	}else{
+		top_img.addEventListener("click", function(e){
+		
+			var win = Alloy.createController('halfPot').getView();
+			if (OS_IOS) {
+				Alloy.Globals.NAV.openWindow(win, {
+					animated : true
+				});
+			} else {
+				win.open({
+					fullScreen : true
+				});
+			}
+		});
+	}
+	
+	
+	mid_img.add(Ti.UI.createLabel({
+		text: Alloy.Globals.PHRASES.landingPageMatch,
+		zIndex:"100",
+		height:"25%",
+		width:"60%",
+		color:"#FFF",
+		left:10,
+		bottom:1,
+		font: {
+			fontSize: '20',
+			fontFamily: 'Impact'
+		}
+	}));
+	mid_img.add(Ti.UI.createLabel({
+		text:Alloy.Globals.PHRASES.landingPageMatchBtn,
+		zIndex : "100",
+		height:"25%",
+		width: "30%",
+		color:"#FFF",
+		textAlign: "right",
+		right:25,
+		bottom:1,
+		font:{
+			fontSize: '14',
+			fontFamily: 'Impact'
+		}
+	}));
+	mid_img.add(Ti.UI.createView({
+		width:8,
+		height:8,
+		zIndex: "110",
+		backgroundImage: "/images/arrow.png",
+		right:10,
+		bottom:10
+	}));
+	
+	
+	var custom_font = "Base02";
+	if(OS_ANDROID){
+		custom_font = "Base-02";
+	}
+	bot_img.add(Ti.UI.createLabel({
+		text: Alloy.Globals.PHRASES.landingPageZone,
+		zIndex:"100",
+		height:"25%",
+		width:"60%",
+		color:"#FFF",
+		left:10,
+		bottom:1,
+		font: {
+			fontSize: '20',
+			fontFamily: custom_font
+		}
+	}));
+	bot_img.add(Ti.UI.createLabel({
+		text:Alloy.Globals.PHRASES.landingPageZoneBtn,
+		zIndex : "100",
+		height:"25%",
+		width: "30%",
+		textAlign: "right",
+		color:"#FFF",
+		right:25,
+		bottom:1,
+		font:{
+			fontSize: '14',
+			fontFamily: 'Impact'
+		}
+	}));
+	bot_img.add(Ti.UI.createView({
+		width:8,
+		height:8,
+		zIndex: "110",
+		backgroundImage: "/images/arrow.png",
+		right:10,
+		bottom:10
+	}));
+	
+	bot_img.addEventListener("click", function(e){
+		var loginSuccessWindow = Alloy.createController('main', args).getView();
+		if (OS_IOS) {
+			loginSuccessWindow.open({
+				fullScreen : true,
+				transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
+			});
+		} else if (OS_ANDROID) {
+			loginSuccessWindow.open({
+				fullScreen : true,
+				navBarHidden : false,
+				orientationModes : [Titanium.UI.PORTRAIT]
+			});
+		}
+		loginSuccessWindow = null;
+	});
+		
+		///Get the match for "Matchens Mästare"
+	var matchWrapperView = Ti.UI.createView({
+		width: "50%",
+		height: "70%",
+		layout: "horizontal",
+		top: 0,
+	});
+	
+	team1Logo = Ti.UI.createImageView({
+		width: 50,
+		height: 50,
+	});
+	matchWrapperView.add(team1Logo);
+
+	var versusLabel = Ti.UI.createLabel({
+		width: "30%",
+		height: "100%",
+		text: "VS",
+		textAlign: "center",
+		color: "#FFFFFF",
+		font:{
+			fontSize: 22,
+			fontFamily: "Impact",
+		}
+	});
+	matchWrapperView.add(versusLabel);
+
+	team2Logo = Ti.UI.createImageView({
+		width: 50,
+		height: 50,	
+	});
+	matchWrapperView.add(team2Logo);
+
+
+	mid_img.add(matchWrapperView);
+
+	
+	top_img.add(border1);
+	mid_img.add(border2);
+	bot_img.add(border3);
+
+	top_img.add(blackLabelTop);
+	mid_img.add(blackLabelMid);
+	bot_img.add(blackLabelBot);
+
+	top_view.add(top_img);
+	top_view.add(mid_img);
+	top_view.add(bot_img);
+}
+
+
+
+function createBotView(){
+	//create the two buttons at the bottom
+	var inviteBtn = Ti.UI.createView({
+		width:"50%",
+		height:"100%",
+		backgroundImage: "/images/inviteBtn.png",
+		left: "0px"
+	});
+	
+	var profileBtn = Ti.UI.createView({
+		width:"50%",
+		height:"100%",
+		backgroundImage: "/images/profileBtn.png",
+		left: "0px"
+	});
+	
+	profileBtn.add(Ti.UI.createLabel({
+		height:"20%",
+		width:"100%",
+		textAlign: "center",
+		bottom: 20,
+		font: {
+			fontSize:'20',
+			fontFamily: 'Impact'
+		},
+		color: "#FFF",
+		text: Alloy.Globals.PHRASES.landingPageProfileBtn
+	}));
+	
+	profileBtn.addEventListener("click", function(e){
+		var win = Alloy.createController('profile').getView();
+			if (OS_IOS) {
+				Alloy.Globals.NAV.openWindow(win, {
+					animated : true
+				});
+			} else {
+				win.open({
+					fullScreen : true
+				});
+			}
+	});
+	
+	inviteBtn.add(Ti.UI.createLabel({
+		height:"20%",
+		width:"100%",
+		textAlign: "center",
+		bottom:"20%",
+		font:{
+			fontSize:'20',
+			fontFamily: 'Impact'
+		},
+		color:"#FFF",
+		text: Alloy.Globals.PHRASES.landingPageInviteBtnBot
+	}));
+	
+	inviteBtn.add(Ti.UI.createLabel({
+		height:"20%",
+		width:"100%",
+		textAlign: "left",
+		bottom:"40%",
+		left: "20%",
+		font:{
+			fontSize:'20',
+			fontFamily: 'Impact'
+		},
+		color:"#FFF",
+		text: Alloy.Globals.PHRASES.landingPageInviteBtnTop
+	}));
+	
+	inviteBtn.addEventListener("click", function(e){
+		var win = Alloy.createController('friendZone').getView();
+			if (OS_IOS) {
+				Alloy.Globals.NAV.openWindow(win, {
+					animated : true
+				});
+			} else {
+				win.open({
+					fullScreen : true
+				});
+				win = null;
+			}
+	});
+	bot_view.add(profileBtn);
+	bot_view.add(inviteBtn);
+}
+
 if (OS_IOS) {
 	Alloy.Globals.NAV = $.nav;
 	var iOSVersion;
@@ -1103,7 +1482,6 @@ if (OS_IOS) {
 	Ti.Gesture.addEventListener('orientationchange', function(e) {
 		Ti.Android.currentActivity.setRequestedOrientation(Ti.Android.SCREEN_ORIENTATION_PORTRAIT);
 	});
-
 	$.landingPage.orientationModes = [Titanium.UI.PORTRAIT];
 }
 
@@ -1141,6 +1519,58 @@ var team2Logo = Ti.UI.createImageView({
 matchWrapperView.add(team2Logo);
 
 mid_img.add(matchWrapperView);
+
+function getTopImgView(){
+	if(Alloy.Globals.checkConnection()){
+		var xhr = Titanium.Network.createHTTPClient();
+		xhr.onerror = function(e) {
+			versusLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
+			Ti.API.error('Bad Sever =>' + e.error);
+		};
+	
+		try {
+			xhr.open('GET', Alloy.Globals.BETKAMPENGETTOPLANDINGPAGE + '?lang=' + Alloy.Globals.LOCALE + '&location=landingPage');
+			xhr.setRequestHeader("content-type", "application/json");
+			xhr.setTimeout(Alloy.Globals.TIMEOUT);
+	
+			xhr.send();
+		} catch(e) {
+			versusLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
+		}
+	
+		xhr.onload = function() {
+			if (this.status == '200') {
+				if (this.readyState == 4) {
+						var resp = null;
+					try {
+						Ti.API.info("RESPONSE INNAN PARSE : " + JSON.stringify(this.responseText));
+						resp = JSON.parse(this.responseText);
+						
+					} catch (e) {
+						resp = null;
+						//Ti.API.info("Match NULL");
+					}
+	
+					if (resp !== null) {
+						Ti.API.info("RESPONSE TOP : " + JSON.stringify(resp));
+						createTopView(resp);
+						createBotView();
+					}else{
+						Ti.API.info("RESPONSE TOP = NULL");
+						createTopView(resp);
+						createBotView();
+					}
+				}
+				
+			} else {
+				versusLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
+				Ti.API.error("Error =>" + this.response);
+			}
+		};
+	}else{
+		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+	}
+}
 
 function getMatchOfTheDay() {
 	var xhr = Titanium.Network.createHTTPClient();
@@ -1212,20 +1642,36 @@ function getMatchOfTheDay() {
 
 };
 
-top_img.add(border1);
-mid_img.add(border2);
-bot_img.add(border3);
+//create the topView and the botView that will contain everything
+var top_view = Ti.UI.createView({
+	id: "top_view",
+	backgroundColor: "white",
+	height: "75%",
+	width: "100%",
+	//top: "10%",
+	layout: "vertical"
+});
+	
+var bot_view = Ti.UI.createView({
+	backgroundColor: "white",
+	id: "bot_view",
+	height:"25%",
+	width:"100%",
+	layout: "horizontal"
+});
 
-top_img.add(blackLabelTop);
-mid_img.add(blackLabelMid);
-bot_img.add(blackLabelBot);
+//declare the views for each section
+var top_img;
+var mid_img;
+var bot_img;
 
-top_view.add(top_img);
-top_view.add(mid_img);
-top_view.add(bot_img);
+//delcare the logo variables to getMatchOfTheDay function can access them
+var team1Logo;
+var team2Logo;
 
-bot_view.add(profileBtn);
-bot_view.add(inviteBtn);
+//fill each section and view with content
+
+getTopImgView();
 getMatchOfTheDay();
 
 $.landingPage.add(top_view);

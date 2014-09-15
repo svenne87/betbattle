@@ -111,6 +111,7 @@ Alloy.Globals.BETKAMPENCHALLENGEGROUPURL = Alloy.Globals.BETKAMPENURL + '/api/ch
 Alloy.Globals.BETKAMPENCHALLENGEFRIENDSURL = Alloy.Globals.BETKAMPENURL + '/api/challenge_friend.php';
 Alloy.Globals.BETKAMPENGAMETOEDITURL = Alloy.Globals.BETKAMPENURL + '/api/get_game_edit.php';
 Alloy.Globals.BETKAMPENSAVEEDITURL = Alloy.Globals.BETKAMPENURL + '/api/save_game_edit.php';
+Alloy.Globals.BETKAMPENGETTOPLANDINGPAGE = Alloy.Globals.BETKAMPENURL + '/api/get_dynamic_view.php';
 
 Alloy.Globals.performTimeout = function(func) {
 	if (OS_ANDROID) {
