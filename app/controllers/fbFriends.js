@@ -88,7 +88,10 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 	}));
 
 } else {
+var fb = require('facebook');
 
+	// app id and permission's
+	fb.appid = Ti.App.Properties.getString('ti.facebook.appid');
 	//USER IS CONNECTED WITH FACEBOOK-----------------------------------------------------------------------------------------------------------
 
 	var faceBookLabel = Ti.UI.createLabel({
@@ -239,7 +242,7 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 	//getInvitableFbFriends();
 
 	function getFbFriendsWithApp() {
-		Titanium.Facebook.requestWithGraphPath('me/friends', {
+		fb.requestWithGraphPath('v2.1/me/friends', {
 			fields : 'name'
 		}, 'GET', function(e) {
 			var data = JSON.parse(e.result);
