@@ -221,6 +221,12 @@ shareLabel = Titanium.UI.createLabel({
 shareBtn.add(shareLabel);
 
 fbFriendBtn.addEventListener('click', function(e){
+	// check connection
+	if (!Alloy.Globals.checkConnection()) {
+		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+		return;
+	}
+	
 	var win = Alloy.createController('fbFriends').getView();
 		if (OS_IOS) {
 			Alloy.Globals.NAV.openWindow(win, {
@@ -234,6 +240,12 @@ fbFriendBtn.addEventListener('click', function(e){
 		}
 });
 myFriendBtn.addEventListener('click', function(e){
+	// check connection
+	if (!Alloy.Globals.checkConnection()) {
+		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+		return;
+	}
+	
 	var win = Alloy.createController('myFriends').getView();
 		if (OS_IOS) {
 			Alloy.Globals.NAV.openWindow(win, {
@@ -248,6 +260,12 @@ myFriendBtn.addEventListener('click', function(e){
 });
 
 myGroupsBtn.addEventListener('click', function(e){
+	// check connection
+	if (!Alloy.Globals.checkConnection()) {
+		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+		return;
+	}
+	
 	var win = Alloy.createController('myGroups').getView();
 		if (OS_IOS) {
 			Alloy.Globals.NAV.openWindow(win, {
@@ -262,6 +280,12 @@ myGroupsBtn.addEventListener('click', function(e){
 });
 
 addFriendsBtn.addEventListener('click', function(e){
+	// check connection
+	if (!Alloy.Globals.checkConnection()) {
+		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+		return;
+	}
+	
 	var win = Alloy.createController('friendSearch').getView();
 		if (OS_IOS) {
 			Alloy.Globals.NAV.openWindow(win, {
@@ -276,6 +300,12 @@ addFriendsBtn.addEventListener('click', function(e){
 });
 
 createGroupBtn.addEventListener('click', function(e){
+	// check connection
+	if (!Alloy.Globals.checkConnection()) {
+		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+		return;
+	}
+	
 	var win = Alloy.createController('createGroup').getView();
 		if (OS_IOS) {
 			Alloy.Globals.NAV.openWindow(win, {
@@ -290,6 +320,12 @@ createGroupBtn.addEventListener('click', function(e){
 });
 
 shareBtn.addEventListener('click', function(e){
+	// check connection
+	if (!Alloy.Globals.checkConnection()) {
+		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+		return;
+	}
+	
 	var win = Alloy.createController('shareView').getView();
 		if (OS_IOS) {
 			Alloy.Globals.NAV.openWindow(win, {
@@ -303,8 +339,16 @@ shareBtn.addEventListener('click', function(e){
 		}
 });
 
-
-
+if(OS_ANDROID){
+	$.friendZone.addEventListener('open', function() {
+		$.friendZone.activity.actionBar.onHomeIconItemSelected = function() {
+			$.friendZone.close();
+			$.friendZone = null;
+		};
+		$.friendZone.activity.actionBar.displayHomeAsUp = true;
+		$.friendZone.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
+	});
+}
 
 $.friendZone.add(mainView);
 

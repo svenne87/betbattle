@@ -1015,7 +1015,6 @@ function createLayout(gameObject) {
 		 }*/
 	}
 
-
 	Alloy.Globals.performTimeout(doRest(gameObject));
 	$.challenge.addView(view);
 }
@@ -1242,7 +1241,6 @@ if (Alloy.Globals.checkConnection()) {
 
 				// create the layout and check for coins
 				Alloy.Globals.checkCoins();
-				indicator.closeIndicator();
 
 				if (OS_ANDROID) {
 					// clear old children
@@ -1257,6 +1255,7 @@ if (Alloy.Globals.checkConnection()) {
 				for (var i = 0; i < gameObjects.length; i++) {
 					createLayout(gameObjects[i]);
 				}
+				indicator.closeIndicator();
 			} else {
 				indicator.closeIndicator();
 				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);

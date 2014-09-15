@@ -259,7 +259,6 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 } else {
 //if user login with fb
 	fbUserBtn.addEventListener('click', function(e) {
-
 		if (Alloy.Globals.checkConnection()) {
 			var facebookModuleError = true;
 			var fb = Alloy.Globals.FACEBOOK;

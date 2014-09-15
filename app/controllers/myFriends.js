@@ -1,5 +1,11 @@
 var args = arguments[0] || {};
 
+var uie = require('lib/IndicatorWindow');
+var indicator = uie.createIndicatorWindow({
+	top : 200,
+	text : Alloy.Globals.PHRASES.loadingTxt
+});
+
 var fontawesome = require('lib/IconicFont').IconicFont({
 	font : 'lib/FontAwesome'
 });
@@ -160,7 +166,8 @@ function createGUI(obj) {
 			message : Alloy.Globals.PHRASES.removeFriendTxt + ' ' + e.source.fName,
 			buttonNames : ['OK', 'Cancel'],
 			cancel : 1,
-			id : e.source.id
+			id : e.source.id,
+			fName : e.source.fName
 		});
 
 		aL.addEventListener('click', function(e) {
@@ -174,8 +181,65 @@ function createGUI(obj) {
 				};
 				removeFriend.send(params);
 				//Ti.API.info(params);
-				deleteBtn.visible = false;
-				friendInfo.borderColor = '#ff0000';
+				//deleteBtn.visible = false;
+				//friendInfo.borderColor = '#ff0000';
+				var win = Alloy.createController('myFriends').getView();
+						if (OS_IOS) {
+							Alloy.Globals.NAV.openWindow(win, {
+								animated : false
+							});
+						} else {
+							win.open({
+								fullScreen : true
+							});
+							win = null;
+						}
+						$.myFriends.close();
+						
+						if (OS_ANDROID) {
+							var delToast = Ti.UI.createNotification({
+								duration : Ti.UI.NOTIFICATION_DURATION_LONG,
+								message : e.source.fName + ' ' + Alloy.Globals.PHRASES.groupMemberDeletedTxt
+							});
+							delToast.show();
+						} else {
+						indWin = Titanium.UI.createWindow();
+
+						//  view
+						var indView = Titanium.UI.createView({
+							top : '80%',
+							height : 30,
+							width : '80%',
+							backgroundColor : '#000',
+							opacity : 0.9
+						});
+
+						indWin.add(indView);
+
+						// message
+						var message = Titanium.UI.createLabel({
+							text : e.source.fName + ' ' + Alloy.Globals.PHRASES.groupMemberDeletedTxt,
+							color : '#fff',
+							width : 'auto',
+							height : 'auto',
+							textAlign : 'center',
+							font : {
+								fontSize : 12,
+								fontWeight : 'bold'
+							}
+						});
+
+						indView.add(message);
+						indWin.open();
+
+						var interval = interval ? interval : 1500;
+						setTimeout(function() {
+							indWin.close({
+								opacity : 0,
+								duration : 1000
+							});
+						}, interval);
+					}
 				break;
 			case 1:
 				Titanium.API.info('cancel');
@@ -230,12 +294,13 @@ function createBtn() {
 	});
 
 }
+var friends = null;
 
 var xhr = Ti.Network.createHTTPClient({
 	// function called when the response data is available
 	onload : function(e) {
 		Ti.API.info("Received text: " + this.responseText);
-		var friends = JSON.parse(this.responseText);
+		friends = JSON.parse(this.responseText);
 		if (friends.length == 0) {
 			createBtn();
 		} else {
@@ -244,10 +309,12 @@ var xhr = Ti.Network.createHTTPClient({
 				createGUI(friends[i]);
 			}
 		}
+		indicator.closeIndicator();
 	},
 	// function called when an error occurs, including a timeout
 	onerror : function(e) {
 		Ti.API.debug(e.error);
+		indicator.closeIndicator();
 		//alert('error');
 	},
 	timeout : Alloy.Globals.TIMEOUT // in milliseconds
@@ -259,6 +326,30 @@ xhr.setRequestHeader("content-type", "application/json");
 xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
 xhr.setTimeout(Alloy.Globals.TIMEOUT);
 
+if(OS_IOS){
+	indicator.openIndicator();
+}
+
 xhr.send();
+
+if(OS_ANDROID){
+	$.myFriends.addEventListener('open', function() {
+		$.myFriends.activity.actionBar.onHomeIconItemSelected = function() {
+			$.myFriends.close();
+			$.myFriends = null;
+		};
+		$.myFriends.activity.actionBar.displayHomeAsUp = true;
+		$.myFriends.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
+			
+		// sometimes the view remain in memory, then we don't need to show the "loading"
+		if(!friends) {
+			indicator.openIndicator();
+		}
+	});
+}
+$.myFriends.addEventListener('close', function() {
+	indicator.closeIndicator();
+});
+
 
 $.myFriends.add(mainView);

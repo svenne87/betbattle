@@ -1,5 +1,11 @@
 var args = arguments[0] || {};
 
+var uie = require('lib/IndicatorWindow');
+var indicator = uie.createIndicatorWindow({
+	top : 200,
+	text : Alloy.Globals.PHRASES.loadingTxt
+});
+
 var mainView = Ti.UI.createScrollView({
 	class : "topView",
 	height : "100%",
@@ -211,11 +217,13 @@ var client = Ti.Network.createHTTPClient({
 		for (var i = 0; i < name.length; i++) {
 			createGUI(name[i], i);
 		}
+		indicator.closeIndicator();
 	},
 	// function called when an error occurs, including a timeout
 	onerror : function(e) {
 		Ti.API.debug(e.error);
 		//alert('error');
+		indicator.closeIndicator();
 	},
 	timeout : Alloy.Globals.TIMEOUT // in milliseconds
 });
@@ -225,7 +233,32 @@ client.open("GET", Alloy.Globals.BETKAMPENURL + '/api/get_scoreboard.php?uid=' +
 client.setRequestHeader("content-type", "application/json");
 client.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
 client.setTimeout(Alloy.Globals.TIMEOUT);
+
+if(OS_IOS){
+	indicator.openIndicator();
+}
+
 // Send the request.
 client.send();
+
+if(OS_ANDROID){
+	$.scoreView.addEventListener('open', function() {
+		$.scoreView.activity.actionBar.onHomeIconItemSelected = function() {
+			$.scoreView.close();
+			$.scoreView = null;
+		};
+		$.scoreView.activity.actionBar.displayHomeAsUp = true;
+		$.scoreView.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
+		
+		// sometimes the view remain in memory, then we don't need to show the "loading"
+		if(!name){
+			indicator.openIndicator();
+		}	
+	});
+}
+
+$.scoreView.addEventListener('close', function(){
+	indicator.closeIndicator();
+});
 
 $.scoreView.add(mainView);
