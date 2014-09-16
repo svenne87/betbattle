@@ -359,7 +359,7 @@ var e = 0;
 function createFriendGUI(friend, members) {
 	var fr = [];
 	if (members.data.length == 0) {
-
+		
 	} else {
 		for (var s = 0; s < members.data.length; s++) {
 			fr.push(members.data[s].uid);

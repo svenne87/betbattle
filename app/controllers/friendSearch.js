@@ -25,7 +25,7 @@ if (OS_ANDROID) {
 }
 
 $.friendSearch.addEventListener('close', function() {
-	indicator.closeIndicator;
+	indicator.closeIndicator
 });
 var mainView = Ti.UI.createScrollView({
 	class : "topView",
@@ -87,11 +87,12 @@ searchView.add(searchBtn);
 //search starting when you click searchbutton
 searchBtn.addEventListener('click', function(e) {
 	getSearchResult();
+	//searchText.removeEventListener('return');
 });
 //or when you just click return on the keyboard
-searchText.addEventListener('return', function(e) {
-	getSearchResult();
-});
+/*searchText.addEventListener('return', function(e) {
+getSearchResult();
+});*/
 
 //refresh
 var refreshBtn = Ti.UI.createButton({
@@ -139,210 +140,225 @@ function createGUI(obj) {
 	}
 
 	//you can not add yourself as a friend
-	if (obj.fid == Alloy.Globals.BETKAMPENUID) {
 
-	} else {
-
-		a++;
-		//add label and line to view when results is showed
-		if (a == 1) {
-			var resultLabel = Ti.UI.createLabel({
-				text : Alloy.Globals.PHRASES.topresultsTxt + " " + searchText.value,
-				textAlign : "center",
-				top : 10,
-				font : {
-					fontSize : 18,
-					fontFamily : "Impact"
-				},
-				color : "#FFF"
-			});
-			mainView.add(resultLabel);
-
-			var line = Ti.UI.createView({
-				width : '100%',
-				height : '1%',
-				top : '1%',
-				backgroundColor : '#fff'
-			});
-			mainView.add(line);
-		}
-
-		var row = Ti.UI.createView({
-			width : '100%',
-			height : 35,
-			top : 2
+	a++;
+	//add label and line to view when results is showed
+	if (a == 1) {
+		var resultLabel = Ti.UI.createLabel({
+			text : Alloy.Globals.PHRASES.topresultsTxt + " " + searchText.value,
+			textAlign : "center",
+			top : 10,
+			font : {
+				fontSize : 18,
+				fontFamily : "Impact"
+			},
+			color : "#FFF"
 		});
-		mainView.add(row);
+		mainView.add(resultLabel);
 
-		var member = Ti.UI.createView({
-			width : '79%',
+		var line = Ti.UI.createView({
+			width : '100%',
+			height : '1%',
+			top : '1%',
+			backgroundColor : '#fff'
+		});
+		mainView.add(line);
+	}
+
+	var row = Ti.UI.createView({
+		width : '100%',
+		height : 35,
+		top : 2
+	});
+	mainView.add(row);
+
+	var member = Ti.UI.createView({
+		width : '79%',
+		backgroundColor : '#fff',
+		color : '#000',
+		opacity : 0.7,
+		borderRadius : 5,
+		left : '1%'
+	});
+	row.add(member);
+	//profilepicture
+	var image;
+	if (obj.fbid !== null) {
+		image = "https://graph.facebook.com/" + obj.fbid + "/picture?type=large";
+	} else {
+		// get betkampen image
+		image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + obj.fid + '.png';
+	}
+
+	var profilePic = Titanium.UI.createImageView({
+		image : image,
+		height : 25,
+		width : 25,
+		left : '2%'
+	});
+	profilePic.addEventListener('error', function(e) {
+		// fallback for image
+		profilePic.image = '/images/no_pic.png';
+	});
+	member.add(profilePic);
+	//short down username so its fits on the screen
+	boardName = obj.name.toString();
+	if (boardName.length > 26) {
+		boardName = boardName.substring(0, 26);
+	}
+	var name = Ti.UI.createLabel({
+		text : boardName,
+		left : '15%',
+		font : {
+			fontSize : 16,
+			fontFamily : "Impact"
+		},
+	});
+	member.add(name);
+
+	//check if you already are friends
+	if (isInArray(fr, obj.fid)) {
+		//if you are disable add button
+		var addBtn = Ti.UI.createButton({
+			width : '18%',
+			left : '81%',
+			id : obj.fid,
+			font : {
+				fontFamily : font,
+				fontSize : 27
+			},
+			title : fontawesome.icon('fa-check'),
+			backgroundColor : '#00ff00',
+			color : '#000',
+			opacity : 0.7,
+			borderRadius : 5,
+			enabled : false
+		});
+		row.add(addBtn);
+		var click = 1;
+	} else if (obj.fid == Alloy.Globals.BETKAMPENUID) {
+		var addBtn = Ti.UI.createButton({
+			width : '18%',
+			left : '81%',
+			id : obj.fid,
+			font : {
+				fontFamily : font,
+				fontSize : 27
+			},
+			title : fontawesome.icon('fa-times'),
+			backgroundColor : '#ff0000',
+			color : '#000',
+			opacity : 0.7,
+			borderRadius : 5,
+			enabled : false
+		});
+		row.add(addBtn);
+		var click = 1;
+	} else {
+		// add button for adding your new friend
+		var addBtn = Ti.UI.createButton({
+			width : '18%',
+			left : '81%',
+			id : obj.fid,
+			fName : obj.name,
+			font : {
+				fontFamily : font,
+				fontSize : 27
+			},
+			title : fontawesome.icon('fa-plus'),
 			backgroundColor : '#fff',
 			color : '#000',
 			opacity : 0.7,
 			borderRadius : 5,
-			left : '1%'
 		});
-		row.add(member);
-		//profilepicture
-		var image;
-		if (obj.fbid !== null) {
-			image = "https://graph.facebook.com/" + obj.fbid + "/picture?type=large";
-		} else {
-			// get betkampen image
-			image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + obj.fid + '.png';
-		}
-
-		var profilePic = Titanium.UI.createImageView({
-			image : image,
-			height : 25,
-			width : 25,
-			left : '2%'
-		});
-		profilePic.addEventListener('error', function(e) {
-			// fallback for image
-			profilePic.image = '/images/no_pic.png';
-		});
-		member.add(profilePic);
-		//short down username so its fits on the screen
-		boardName = obj.name.toString();
-		if (boardName.length > 26) {
-			boardName = boardName.substring(0, 26);
-		}
-		var name = Ti.UI.createLabel({
-			text : boardName,
-			left : '15%',
-			font : {
-				fontSize : 16,
-				fontFamily : "Impact"
-			},
-		});
-		member.add(name);
-
-		//check if you already are friends
-		if (isInArray(fr, obj.fid)) {
-			//if you are disable add button
-			var addBtn = Ti.UI.createButton({
-				width : '18%',
-				left : '81%',
-				id : obj.fid,
-				font : {
-					fontFamily : font,
-					fontSize : 27
-				},
-				title : fontawesome.icon('fa-check'),
-				backgroundColor : '#00ff00',
-				color : '#000',
-				opacity : 0.7,
-				borderRadius : 5,
-				enabled : false
-			});
-			row.add(addBtn);
-			var click = 1;
-		} else {
-			// add button for adding your new friend
-			var addBtn = Ti.UI.createButton({
-				width : '18%',
-				left : '81%',
-				id : obj.fid,
-				fName : obj.name,
-				font : {
-					fontFamily : font,
-					fontSize : 27
-				},
-				title : fontawesome.icon('fa-plus'),
-				backgroundColor : '#fff',
-				color : '#000',
-				opacity : 0.7,
-				borderRadius : 5,
-			});
-			row.add(addBtn);
-			var click = 0;
-		}
-
-		addBtn.addEventListener('click', function(e) {
-			if (click == 0) {
-				//add friend to friendlist
-				addBtn.backgroundColor = '#00ff00';
-				addBtn.title = fontawesome.icon('fa-check');
-				member.borderColor = '#00ff00';
-				var addFriends = Ti.Network.createHTTPClient();
-				addFriends.open("POST", Alloy.Globals.BETKAMPENADDFRIENDSURL);
-				var params = {
-					uid : Alloy.Globals.BETKAMPENUID,
-					fid : e.source.id
-				};
-				addFriends.send(params);
-				//alert(Alloy.Globals.PHRASES.friendSuccess + ' ' + e.source.fName);
-				if (OS_ANDROID) {
-					var delToast = Ti.UI.createNotification({
-						duration : Ti.UI.NOTIFICATION_DURATION_LONG,
-						message : Alloy.Globals.PHRASES.friendSuccess + ' ' + e.source.fName
-					});
-					delToast.show();
-				} else {
-					indWin = Titanium.UI.createWindow();
-
-					//  view
-					var indView = Titanium.UI.createView({
-						top : '80%',
-						height : 30,
-						width : '80%',
-						backgroundColor : '#000',
-						opacity : 0.9
-					});
-
-					indWin.add(indView);
-
-					// message
-					var message = Titanium.UI.createLabel({
-						text : Alloy.Globals.PHRASES.friendSuccess + ' ' + e.source.fName,
-						color : '#fff',
-						width : 'auto',
-						height : 'auto',
-						textAlign : 'center',
-						font : {
-							fontSize : 12,
-							fontWeight : 'bold'
-						}
-					});
-
-					indView.add(message);
-					indWin.open();
-
-					var interval = interval ? interval : 1500;
-					setTimeout(function() {
-						indWin.close({
-							opacity : 0,
-							duration : 1000
-						});
-					}, interval);
-				}
-				click++;
-			} else if (click == 1) {
-				//if you clicked on wrong person and click again you remove him from your friendlist
-				addBtn.backgroundColor = '#fff';
-				addBtn.title = fontawesome.icon('fa-plus');
-				member.borderColor = '#fff';
-				var removeFriend = Ti.Network.createHTTPClient();
-				removeFriend.open("POST", Alloy.Globals.BETKAMPENDELETEFRIENDURL);
-				var params = {
-					uid : Alloy.Globals.BETKAMPENUID,
-					fid : e.source.id
-				};
-				removeFriend.send(params);
-				click--;
-			}
-
-		});
+		row.add(addBtn);
+		var click = 0;
 	}
+
+	addBtn.addEventListener('click', function(e) {
+		if (click == 0) {
+			//add friend to friendlist
+			addBtn.backgroundColor = '#00ff00';
+			addBtn.title = fontawesome.icon('fa-check');
+			member.borderColor = '#00ff00';
+			var addFriends = Ti.Network.createHTTPClient();
+			addFriends.open("POST", Alloy.Globals.BETKAMPENADDFRIENDSURL);
+			var params = {
+				uid : Alloy.Globals.BETKAMPENUID,
+				fid : e.source.id
+			};
+			addFriends.send(params);
+			//alert(Alloy.Globals.PHRASES.friendSuccess + ' ' + e.source.fName);
+			if (OS_ANDROID) {
+				var delToast = Ti.UI.createNotification({
+					duration : Ti.UI.NOTIFICATION_DURATION_LONG,
+					message : Alloy.Globals.PHRASES.friendSuccess + ' ' + e.source.fName
+				});
+				delToast.show();
+			} else {
+				indWin = Titanium.UI.createWindow();
+
+				//  view
+				var indView = Titanium.UI.createView({
+					top : '80%',
+					height : 30,
+					width : '80%',
+					backgroundColor : '#000',
+					opacity : 0.9
+				});
+
+				indWin.add(indView);
+
+				// message
+				var message = Titanium.UI.createLabel({
+					text : Alloy.Globals.PHRASES.friendSuccess + ' ' + e.source.fName,
+					color : '#fff',
+					width : 'auto',
+					height : 'auto',
+					textAlign : 'center',
+					font : {
+						fontSize : 12,
+						fontWeight : 'bold'
+					}
+				});
+
+				indView.add(message);
+				indWin.open();
+
+				var interval = interval ? interval : 1500;
+				setTimeout(function() {
+					indWin.close({
+						opacity : 0,
+						duration : 1000
+					});
+				}, interval);
+			}
+			click++;
+		} else if (click == 1) {
+			//if you clicked on wrong person and click again you remove him from your friendlist
+			addBtn.backgroundColor = '#fff';
+			addBtn.title = fontawesome.icon('fa-plus');
+			member.borderColor = '#fff';
+			var removeFriend = Ti.Network.createHTTPClient();
+			removeFriend.open("POST", Alloy.Globals.BETKAMPENDELETEFRIENDURL);
+			var params = {
+				uid : Alloy.Globals.BETKAMPENUID,
+				fid : e.source.id
+			};
+			removeFriend.send(params);
+			click--;
+		}
+
+	});
 }
+
 
 function getSearchResult() {
 	if (!Alloy.Globals.checkConnection()) {
 		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 		return;
 	}
-	
+
 	if (searchText.value.length > 2) {
 		var client = Ti.Network.createHTTPClient({
 			// function called when the response data is available
