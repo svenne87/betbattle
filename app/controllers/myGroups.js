@@ -18,7 +18,7 @@ var mainView = Ti.UI.createScrollView({
 
 var groupLabel = Ti.UI.createLabel({
 	text : Alloy.Globals.PHRASES.myGroupsTxt,
-	class : 'no_remove',
+	classes : ['no_remove'],
 	textAlign : "center",
 	top : 10,
 	font : {
@@ -30,7 +30,7 @@ var groupLabel = Ti.UI.createLabel({
 mainView.add(groupLabel);
 
 var infoTxt = Ti.UI.createView({
-	class : 'no-remove',
+	classes : ['no-remove'],
 	top : 20,
 	backgroundColor : '#EA7337',
 	backgroundGradient : {
@@ -56,6 +56,7 @@ var infoTxt = Ti.UI.createView({
 mainView.add(infoTxt);
 
 var nameInfo = Ti.UI.createLabel({
+	classes : ['no-remove'],
 	text : Alloy.Globals.PHRASES.groupNameTxt,
 	left : '5%',
 	color : "#fff",
@@ -67,6 +68,7 @@ var nameInfo = Ti.UI.createLabel({
 infoTxt.add(nameInfo);
 
 var scoreInfo = Ti.UI.createLabel({
+	classes : ['no-remove'],
 	text : Alloy.Globals.PHRASES.editTxt + "/" + Alloy.Globals.PHRASES.deleteTxt,
 	left : '64%',
 	color : "#fff",
@@ -84,7 +86,7 @@ Ti.App.addEventListener("groupSelectRefresh", function(e) {
 
 function getGroups() {
 	groupObjects = [];
-	
+
 	if (OS_IOS) {
 		indicator.openIndicator();
 	}
@@ -173,6 +175,7 @@ function getGroups() {
 
 function createBtn() {
 	var addGroupLabel = Ti.UI.createLabel({
+		classes : ['no-remove'],
 		text : Alloy.Globals.PHRASES.noGroupsTxt,
 		textAlign : "center",
 		top : 10,
@@ -185,6 +188,7 @@ function createBtn() {
 	mainView.add(addGroupLabel);
 
 	var openCreateGroupBtn = Ti.UI.createButton({
+		classes : ['no-remove'],
 		height : 40,
 		width : '60%',
 		left : '20%',
@@ -214,31 +218,33 @@ function createBtn() {
 }
 
 function createViews(array) {
-
 	// clear old views
-	for(var child in mainView.children) {
-		//Ti.API.info("children : "+ JSON.stringify(mainView.children[child]));
-		//if(mainView.children[child].class !== 'no_remove') {
-			for(var childChild in mainView.children[child].children){
-				mainView.children[child].children[childChild].removeAllChildren();
-				mainView.children[child].children[childChild] = null;
+	for (var child in mainView.children) {
+		if (typeof mainView.children[child] === 'undefined' || mainView.children[child].classes[0] === 'remove') {
+			if (typeof mainView.children[child] !== 'undefined') {
+				for (var childChild in mainView.children[child].children) {
+					if (mainView.children[child].children[childChild].classes[0] === 'remove') {
+						mainView.children[child].children[childChild].removeAllChildren();
+						mainView.children[child].children[childChild] = null;
+						mainView.remove(mainView.children[child]);
+					}
+				}
+				mainView.children[child].removeAllChildren();
+				mainView.remove(mainView.children[child]);
 			}
-			mainView.children[child].removeAllChildren();
+
+			if (mainView.children[child]) {
+				mainView.remove(mainView.children[child]);
+			}
 			mainView.children[child] = null;
-			//mainView.remove(mainView.children[child]);
-		//}
-	}   
-	mainView.removeAllChildren();
-/*
- 	if(mainView.children[child].class !== 'no_remove') {
-		mainView.removeAllChildren();
+		}
 	}
- * */
 
 	// Rows
 	for (var i = 0; i < array.length; i++) {
 
 		var group = Ti.UI.createView({
+			classes : ['remove'],
 			top : 2,
 			width : "100%",
 			height : 40
@@ -247,6 +253,7 @@ function createViews(array) {
 		mainView.add(group);
 
 		var groupInfo = Ti.UI.createView({
+			classes : ['remove'],
 			backgroundColor : '#fff',
 			width : "67%",
 			id : array[i].attributes.id,
@@ -258,6 +265,7 @@ function createViews(array) {
 		group.add(groupInfo);
 
 		var name = Ti.UI.createLabel({
+			classes : ['remove'],
 			text : array[i].attributes.name,
 			left : '4%',
 			font : {
@@ -268,6 +276,7 @@ function createViews(array) {
 		groupInfo.add(name);
 
 		var editBtn = Ti.UI.createButton({
+			classes : ['remove'],
 			width : '15%',
 			left : '68.5%',
 			id : array[i].attributes.id,
@@ -287,6 +296,7 @@ function createViews(array) {
 
 		if (array[i].attributes.creator == Alloy.Globals.BETKAMPENUID) {
 			var deleteBtn = Ti.UI.createButton({
+				classes : ['remove'],
 				//height : '8%',
 				width : '15%',
 				left : '84%',
@@ -304,6 +314,7 @@ function createViews(array) {
 			});
 		} else {
 			var deleteBtn = Ti.UI.createButton({
+				classes : ['remove'],
 				//height : '8%',
 				width : '15%',
 				left : '84%',
@@ -451,19 +462,18 @@ function createViews(array) {
 				});
 				win = null;
 			}
-			
-			
-			/*var getUID = Ti.Network.createHTTPClient();
-			getUID.onload = function() {
-				Ti.API.info(this.responseText);
-				var info = JSON.parse(this.responseText);
 
-				for (var i = 0; i < info.data.length; i++) {
-					membersGUI(info.data[i], i);
-				}
-			};
-			getUID.open('GET', Alloy.Globals.BETKAMPENGETGROUPMEMBERSURL + '?gid=' + e.source.id + '&lang=' + Alloy.Globals.LOCALE);
-			getUID.send();*/
+			/*var getUID = Ti.Network.createHTTPClient();
+			 getUID.onload = function() {
+			 Ti.API.info(this.responseText);
+			 var info = JSON.parse(this.responseText);
+
+			 for (var i = 0; i < info.data.length; i++) {
+			 membersGUI(info.data[i], i);
+			 }
+			 };
+			 getUID.open('GET', Alloy.Globals.BETKAMPENGETGROUPMEMBERSURL + '?gid=' + e.source.id + '&lang=' + Alloy.Globals.LOCALE);
+			 getUID.send();*/
 
 		});
 	}
@@ -493,7 +503,7 @@ if (Alloy.Globals.checkConnection()) {
 	Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 }
 
-if(OS_ANDROID){
+if (OS_ANDROID) {
 	$.myGroups.addEventListener('open', function() {
 		$.myGroups.activity.actionBar.onHomeIconItemSelected = function() {
 			$.myGroups.close();
@@ -501,9 +511,9 @@ if(OS_ANDROID){
 		};
 		$.myGroups.activity.actionBar.displayHomeAsUp = true;
 		$.myGroups.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
-		
+
 		// sometimes the view remain in memory, then we don't need to show the "loading"
-		if(groupObjects.length === 0) {
+		if (groupObjects.length === 0) {
 			indicator.openIndicator();
 		}
 	});
@@ -511,6 +521,5 @@ if(OS_ANDROID){
 $.myGroups.addEventListener('close', function() {
 	indicator.closeIndicator();
 });
-
 
 $.myGroups.add(mainView);

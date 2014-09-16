@@ -276,6 +276,7 @@ function createFriendGUI(obj, groupId) {
 
 //get friends from db
 function getFriends(groupId) {
+	indicator.openIndicator();
 	var xhr = Ti.Network.createHTTPClient({
 		// function called when the response data is available
 		onload : function(e) {
@@ -316,11 +317,13 @@ function getFriends(groupId) {
 			}
 			$.createGroup.close();
 		});
+		indicator.closeIndicator();
 		},
 		// function called when an error occurs, including a timeout
 		onerror : function(e) {
 			Ti.API.debug(e.error);
 			//alert('error');
+			indicator.closeIndicator();
 		},
 		timeout : Alloy.Globals.TIMEOUT // in milliseconds
 	});
