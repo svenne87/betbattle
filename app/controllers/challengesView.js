@@ -88,6 +88,9 @@ function getUserInfo() {
 				if (userInfo !== null) {
 					userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.coinsInfoTxt + ": " + userInfo.totalCoins);
 					userInfoWinsLabel.setText(Alloy.Globals.PHRASES.scoreInfoTxt + ": " + userInfo.totalPoints);
+					
+					// Update menu
+					Ti.App.fireEvent('app:coinsMenuInfo', userInfo);
 				}
 			}
 		} else {
@@ -1203,6 +1206,9 @@ function getChallenges() {
 				var response = JSON.parse(this.responseText);
 				// construct array with objects
 				Alloy.Globals.CHALLENGEOBJECTARRAY = Alloy.Globals.constructChallenge(response);
+		
+				// Update menu with icon if there are new challenges
+				Ti.App.fireEvent('app:updateMenuNewChallenge', {count : Alloy.Globals.CHALLENGEOBJECTARRAY[0].length});
 
 				if (OS_ANDROID) {
 					$.challengesView.removeAllChildren();

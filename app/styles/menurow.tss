@@ -22,7 +22,7 @@
 },
 "#row": {
   	height : '50dp',
-  	width : '250dp',
+  	width : '250',
  	selectedBackgroundColor : '#303030',
  	selectedColor : 'white',
   	backgroundColor : '#40000000',
@@ -34,8 +34,17 @@
 "#icon[platform=android]": {
 	width : "22dp",
 	left : "5dp",
-}
-
+},
+"#rightIcon[platform=ios]": {
+  	width: "27dp",
+  	height : '15dp',
+    left: "140dp",
+},
+"#rightIcon[platform=android]": {
+	width : "27dp",
+	height : '15dp',
+    left : "140dp",
+},
 "#title": {
   	left: "34dp"
 }
