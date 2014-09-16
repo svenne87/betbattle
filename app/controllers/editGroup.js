@@ -7,26 +7,8 @@ var indicator = uie.createIndicatorWindow({
 	text : Alloy.Globals.PHRASES.loadingTxt
 });
 
-/*
-var b = Titanium.UI.createButton({
-	title : 'Back'
-});
-$.editGroup.leftNavButton = b;*/
 $.editGroup.addEventListener('close', function() {
-/*
-	var win = Alloy.createController('myGroups').getView();
-	if (OS_IOS) {
-		Alloy.Globals.NAV.openWindow(win, {
-			animated : true
-		});
-	} else {
-		win.open({
-			fullScreen : true
-		});
-		win = null;
-	} */
 	indicator.closeIndicator();
-	//$.editGroup.close();
 });
 
 
@@ -130,20 +112,7 @@ if (gAdmin == Alloy.Globals.BETKAMPENUID) {
 				group_name : groupName.value,
 			};
 			editName.send(params);
-			///// TODO
-			/*
-			var win = Alloy.createController('myGroups').getView();
-			if (OS_IOS) {
-				Alloy.Globals.NAV.openWindow(win, {
-					animated : true
-				});
-			} else {
-				win.open({
-					fullScreen : true
-				});
-				win = null;
-			}
-*/			Ti.App.fireEvent('groupSelectRefresh');
+			Ti.App.fireEvent('groupSelectRefresh');
 			$.editGroup.close();
 		} else if (groupName.value.length < 3) {
 			alert(Alloy.Globals.PHRASES.shortGroupNameTxt);

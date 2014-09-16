@@ -1,5 +1,11 @@
 var args = arguments[0] || {};
 
+var uie = require('lib/IndicatorWindow');
+var indicator = uie.createIndicatorWindow({
+	top : 200,
+	text : Alloy.Globals.PHRASES.loadingTxt
+});
+
 var fontawesome = require('lib/IconicFont').IconicFont({
 	font : 'lib/FontAwesome'
 });
@@ -8,8 +14,19 @@ var font = 'FontAwesome';
 
 if (OS_ANDROID) {
 	font = 'fontawesome-webfont';
+	$.friendSearch.addEventListener('open', function() {
+		$.friendSearch.activity.actionBar.onHomeIconItemSelected = function() {
+			$.friendSearch.close();
+			$.friendSearch = null;
+		};
+		$.friendSearch.activity.actionBar.displayHomeAsUp = true;
+		$.friendSearch.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
+	});
 }
 
+$.friendSearch.addEventListener('close', function() {
+	indicator.closeIndicator;
+});
 var mainView = Ti.UI.createScrollView({
 	class : "topView",
 	height : "100%",
@@ -321,6 +338,11 @@ function createGUI(obj) {
 }
 
 function getSearchResult() {
+	if (!Alloy.Globals.checkConnection()) {
+		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+		return;
+	}
+	
 	if (searchText.value.length > 2) {
 		var client = Ti.Network.createHTTPClient({
 			// function called when the response data is available
@@ -360,15 +382,18 @@ function getSearchResult() {
 
 					}
 				}
+				indicator.closeIndicator();
 			},
 			// function called when an error occurs, including a timeout
 			onerror : function(e) {
 				Ti.API.debug(e.error);
+				indicator.closeIndicator();
 			},
 			timeout : Alloy.Globals.TIMEOUT // in milliseconds
 		});
 		// Prepare the connection. search in users table after what you searched
 		client.open("GET", Alloy.Globals.BETKAMPENFRIENDSEARCHURL + '?search=' + searchText.value + '&lang=' + Alloy.Globals.LOCALE);
+		indicator.openIndicator();
 		// Send the request.
 		client.send();
 	} else {

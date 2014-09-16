@@ -22,6 +22,11 @@ if (OS_ANDROID) {
 		$.createGroup.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
 	});
 }
+
+$.createGroup.addEventListener('close', function() {
+	indicator.closeIndicator;
+});
+
 Ti.API.info(Ti.App.Properties.getString('profileNameSetting'));
 
 var mainView = Ti.UI.createScrollView({

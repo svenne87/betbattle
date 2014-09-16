@@ -18,6 +18,7 @@ var mainView = Ti.UI.createScrollView({
 
 var groupLabel = Ti.UI.createLabel({
 	text : Alloy.Globals.PHRASES.myGroupsTxt,
+	class : 'no_remove',
 	textAlign : "center",
 	top : 10,
 	font : {
@@ -29,6 +30,7 @@ var groupLabel = Ti.UI.createLabel({
 mainView.add(groupLabel);
 
 var infoTxt = Ti.UI.createView({
+	class : 'no-remove',
 	top : 20,
 	backgroundColor : '#EA7337',
 	backgroundGradient : {
@@ -77,7 +79,6 @@ infoTxt.add(scoreInfo);
 
 // refresh this view
 Ti.App.addEventListener("groupSelectRefresh", function(e) {
-	indicator.openIndicator();
 	getGroups();
 });
 
@@ -215,16 +216,24 @@ function createBtn() {
 function createViews(array) {
 
 	// clear old views
-	   // TODO vy i vy i vy?
 	for(var child in mainView.children) {
-		for(var childChild in mainView.children[child].children){
-			mainView.children[child].children[childChild].removeAllChildren();
-			mainView.children[child].children[childChild] = null;
-		}
-		mainView.children[child].removeAllChildren();
-		mainView.children[child] = null;
+		//Ti.API.info("children : "+ JSON.stringify(mainView.children[child]));
+		//if(mainView.children[child].class !== 'no_remove') {
+			for(var childChild in mainView.children[child].children){
+				mainView.children[child].children[childChild].removeAllChildren();
+				mainView.children[child].children[childChild] = null;
+			}
+			mainView.children[child].removeAllChildren();
+			mainView.children[child] = null;
+			//mainView.remove(mainView.children[child]);
+		//}
 	}   
 	mainView.removeAllChildren();
+/*
+ 	if(mainView.children[child].class !== 'no_remove') {
+		mainView.removeAllChildren();
+	}
+ * */
 
 	// Rows
 	for (var i = 0; i < array.length; i++) {
