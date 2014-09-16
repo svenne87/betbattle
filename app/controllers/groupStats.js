@@ -123,9 +123,9 @@ var scoreInfo = Ti.UI.createLabel({
 infoTxt.add(scoreInfo);
 
 function createGUI(obj, i) {
-
+	
 	var totalLeader = Ti.UI.createView({
-		top : 1,
+		//top : 1,
 		backgroundColor : '#fff',
 		width : "99%",
 		height : 35,
