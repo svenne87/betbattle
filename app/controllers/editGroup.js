@@ -11,8 +11,7 @@ $.editGroup.addEventListener('close', function() {
 	indicator.closeIndicator();
 });
 
-
-if(OS_ANDROID){
+if (OS_ANDROID) {
 	$.editGroup.addEventListener('open', function() {
 		$.editGroup.activity.actionBar.onHomeIconItemSelected = function() {
 			$.editGroup.close();
@@ -20,9 +19,9 @@ if(OS_ANDROID){
 		};
 		$.editGroup.activity.actionBar.displayHomeAsUp = true;
 		$.editGroup.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
-		
+
 		// sometimes the view remain in memory, then we don't need to show the "loading"
-		if(!friends) {
+		if (!friends) {
 			indicator.openIndicator();
 		}
 	});
@@ -250,43 +249,43 @@ function createGUI(obj) {
 							});
 							delToast.show();
 						} else {
-						indWin = Titanium.UI.createWindow();
+							indWin = Titanium.UI.createWindow();
 
-						//  view
-						var indView = Titanium.UI.createView({
-							top : '80%',
-							height : 30,
-							width : '80%',
-							backgroundColor : '#000',
-							opacity : 0.9
-						});
-
-						indWin.add(indView);
-
-						// message
-						var message = Titanium.UI.createLabel({
-							text : e.source.mName + ' ' + Alloy.Globals.PHRASES.groupMemberDeletedTxt,
-							color : '#fff',
-							width : 'auto',
-							height : 'auto',
-							textAlign : 'center',
-							font : {
-								fontSize : 12,
-								fontWeight : 'bold'
-							}
-						});
-
-						indView.add(message);
-						indWin.open();
-
-						var interval = interval ? interval : 1500;
-						setTimeout(function() {
-							indWin.close({
-								opacity : 0,
-								duration : 1000
+							//  view
+							var indView = Titanium.UI.createView({
+								top : '80%',
+								height : 30,
+								width : '80%',
+								backgroundColor : '#000',
+								opacity : 0.9
 							});
-						}, interval);
-					}
+
+							indWin.add(indView);
+
+							// message
+							var message = Titanium.UI.createLabel({
+								text : e.source.mName + ' ' + Alloy.Globals.PHRASES.groupMemberDeletedTxt,
+								color : '#fff',
+								width : 'auto',
+								height : 'auto',
+								textAlign : 'center',
+								font : {
+									fontSize : 12,
+									fontWeight : 'bold'
+								}
+							});
+
+							indView.add(message);
+							indWin.open();
+
+							var interval = interval ? interval : 1500;
+							setTimeout(function() {
+								indWin.close({
+									opacity : 0,
+									duration : 1000
+								});
+							}, interval);
+						}
 						break;
 					case 1:
 						Titanium.API.info('cancel');
@@ -563,7 +562,11 @@ var client = Ti.Network.createHTTPClient({
 	onload : function(e) {
 		Ti.API.info("Members: " + this.responseText);
 		var members = JSON.parse(this.responseText);
-
+		members.data.sort(function(a, b) {
+			var x = a.username.toLowerCase();
+			var y = b.username.toLowerCase();
+			return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+		});
 		for (var i = 0; i < members.data.length; i++) {
 			//alert(members.data[i].name);
 			createGUI(members.data[i]);
@@ -584,16 +587,20 @@ client.send();
 
 //get friends from db
 function getFriends(members) {
-	if(OS_IOS) {
+	if (OS_IOS) {
 		indicator.openIndicator();
 	}
-	
+
 	var xhr = Ti.Network.createHTTPClient({
 		// function called when the response data is available
 		onload : function(e) {
 			Ti.API.info("Received text: " + this.responseText);
 			friends = JSON.parse(this.responseText);
-
+			friends.sort(function(a, b) {
+				var x = a.name.toLowerCase();
+				var y = b.name.toLowerCase();
+				return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+			});
 			for (var i = 0; i < friends.length; i++) {
 				//alert(friends[i].name);
 				createFriendGUI(friends[i], members);
