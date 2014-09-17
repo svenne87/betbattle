@@ -507,6 +507,41 @@ function createPickers() {
 	}
 
 	if (OS_ANDROID) {
+		picker = Ti.UI.createLabel({
+			top : 10,
+			right : 40,
+			backgroundColor : '#FFF',
+			borderRadius : 2,
+			width : 100,
+			height : 40,
+			text : '-',
+			textAlign : 'center',
+			index : i
+		});
+		
+		picker.addEventListener('click', function(event) {
+			Alloy.createWidget('danielhanold.pickerWidget', {
+				id : 'sColumnLanguage',
+				outerView : $.challenge,
+				hideNavBar : false,
+				type : 'single-column',
+				selectedValues : [1],
+				pickerValues : [{
+					1 : '0',
+					2 : '1'
+				}],
+				onDone : function(e) {
+					if (e.data) {
+						// change language
+						changeLanguageConfirm(e.data[0].value);
+						pickerLabels[event.source.index].setText(e.data[0].value);
+					}
+				},
+			});
+		});
+
+		
+		/*
 		picker = Titanium.UI.createPicker({
 			type : Titanium.UI.PICKER_TYPE_PLAIN,
 			width : Ti.UI.SIZE,
@@ -524,6 +559,7 @@ function createPickers() {
 		picker.columns[0].width = Ti.UI.SIZE;
 		picker.columns[0].height = Ti.UI.SIZE;
 		picker.selectionIndicator = true;
+		*/
 
 	} else if (OS_IOS) {
 		var ModalPicker = require("lib/ModalPicker");
