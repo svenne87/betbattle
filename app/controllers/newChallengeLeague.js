@@ -14,7 +14,7 @@ function openChallengesForLeague(league) {
 	var arg = {
 		leagueId : league
 	};
-
+	Ti.API.info("leageID: " + league);
 	/*
 	// change view
 	var obj = {
