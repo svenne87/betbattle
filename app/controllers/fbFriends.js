@@ -1,14 +1,39 @@
 var args = arguments[0] || {};
 
+var uie = require('lib/IndicatorWindow');
+var indicator = uie.createIndicatorWindow({
+	top : 200,
+	text : Alloy.Globals.PHRASES.loadingTxt
+});
+
 var fontawesome = require('lib/IconicFont').IconicFont({
 	font : 'lib/FontAwesome'
 });
 
 var font = 'FontAwesome';
+var myFbFriends = null;
 
 if (OS_ANDROID) {
 	font = 'fontawesome-webfont';
+	
+	$.fbFriends.addEventListener('open', function() {
+		$.fbFriends.activity.actionBar.onHomeIconItemSelected = function() {
+			$.fbFriends.close();
+			$.fbFriends = null;
+		};
+		$.fbFriends.activity.actionBar.displayHomeAsUp = true;
+		$.fbFriends.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
+		
+		// sometimes the view remain in memory, then we don't need to show the "loading"
+		if(!myFbFriends) {
+			indicator.openIndicator();
+		}
+	});	
 }
+
+$.fbFriends.addEventListener('close', function() {
+	indicator.closeIndicator();
+});
 
 var mainView = Ti.UI.createScrollView({
 	class : "topView",
@@ -106,19 +131,18 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 	});
 	mainView.add(faceBookLabel);
 
-	getFbFriendsWithApp();
-
 	function createGUI(obj) {
 		var fr = [];
-		if (friendResp.length == null) {
-
-		} else {
+		
+		if (friendResp !== null) {
 			for (var s = 0; s < friendResp.length; s++) {
 				fr.push(friendResp[s].fbid);
 
 			}
 		}
+		// TODO
 		function isInArray(fr, search) {
+			if(fr.length === 0) return false;
 			return (fr.indexOf(search) >= 0) ? true : false;
 		}
 
@@ -163,7 +187,6 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 			},
 		});
 		member.add(name);
-
 		if (isInArray(fr, obj.id)) {
 			//if you already are friends disable add button
 			var addBtn = Ti.UI.createButton({
@@ -252,6 +275,7 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 			for (var i = 0; i < myFbFriends.length; i++) {
 				createGUI(myFbFriends[i]);
 			}
+			indicator.closeIndicator();
 		});
 
 	}
@@ -279,12 +303,13 @@ function sortByName(a, b) {
 }
 
 var friendResp = null;
+
 // get all users friends to see if you already are friends with the searchresult
 var xhr = Ti.Network.createHTTPClient({
 	onload : function(e) {
 		Ti.API.info("Received text: " + this.responseText);
 		friendResp = JSON.parse(this.responseText);
-
+		getFbFriendsWithApp();
 	},
 	// function called when an error occurs, including a timeout
 	onerror : function(e) {

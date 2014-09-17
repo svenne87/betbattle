@@ -4,5 +4,6 @@
     <View class="vgroup">
       <Label id="title"/>
     </View>
+    <Label id="rightIcon"/>
   </TableViewRow>
 </Alloy>

@@ -1,24 +1,31 @@
 var args = arguments[0] || {};
+var friends = null;
 
-var b = Titanium.UI.createButton({
-	title : 'Back'
+var uie = require('lib/IndicatorWindow');
+var indicator = uie.createIndicatorWindow({
+	top : 200,
+	text : Alloy.Globals.PHRASES.loadingTxt
 });
-$.editGroup.leftNavButton = b;
-b.addEventListener('click', function() {
-	var win = Alloy.createController('myGroups').getView();
-	if (OS_IOS) {
-		Alloy.Globals.NAV.openWindow(win, {
-			animated : true
-		});
-	} else {
-		win.open({
-			fullScreen : true
-		});
-		win = null;
-	}
 
-	$.editGroup.close();
+$.editGroup.addEventListener('close', function() {
+	indicator.closeIndicator();
 });
+
+if (OS_ANDROID) {
+	$.editGroup.addEventListener('open', function() {
+		$.editGroup.activity.actionBar.onHomeIconItemSelected = function() {
+			$.editGroup.close();
+			$.editGroup = null;
+		};
+		$.editGroup.activity.actionBar.displayHomeAsUp = true;
+		$.editGroup.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
+
+		// sometimes the view remain in memory, then we don't need to show the "loading"
+		if (!friends) {
+			indicator.openIndicator();
+		}
+	});
+}
 
 var fontawesome = require('lib/IconicFont').IconicFont({
 	font : 'lib/FontAwesome'
@@ -104,18 +111,7 @@ if (gAdmin == Alloy.Globals.BETKAMPENUID) {
 				group_name : groupName.value,
 			};
 			editName.send(params);
-			var win = Alloy.createController('myGroups').getView();
-			if (OS_IOS) {
-				Alloy.Globals.NAV.openWindow(win, {
-					animated : true
-				});
-			} else {
-				win.open({
-					fullScreen : true
-				});
-				win = null;
-			}
-
+			Ti.App.fireEvent('groupSelectRefresh');
 			$.editGroup.close();
 		} else if (groupName.value.length < 3) {
 			alert(Alloy.Globals.PHRASES.shortGroupNameTxt);
@@ -253,43 +249,43 @@ function createGUI(obj) {
 							});
 							delToast.show();
 						} else {
-						indWin = Titanium.UI.createWindow();
+							indWin = Titanium.UI.createWindow();
 
-						//  view
-						var indView = Titanium.UI.createView({
-							top : '80%',
-							height : 30,
-							width : '80%',
-							backgroundColor : '#000',
-							opacity : 0.9
-						});
-
-						indWin.add(indView);
-
-						// message
-						var message = Titanium.UI.createLabel({
-							text : e.source.mName + ' ' + Alloy.Globals.PHRASES.groupMemberDeletedTxt,
-							color : '#fff',
-							width : 'auto',
-							height : 'auto',
-							textAlign : 'center',
-							font : {
-								fontSize : 12,
-								fontWeight : 'bold'
-							}
-						});
-
-						indView.add(message);
-						indWin.open();
-
-						var interval = interval ? interval : 1500;
-						setTimeout(function() {
-							indWin.close({
-								opacity : 0,
-								duration : 1000
+							//  view
+							var indView = Titanium.UI.createView({
+								top : '80%',
+								height : 30,
+								width : '80%',
+								backgroundColor : '#000',
+								opacity : 0.9
 							});
-						}, interval);
-					}
+
+							indWin.add(indView);
+
+							// message
+							var message = Titanium.UI.createLabel({
+								text : e.source.mName + ' ' + Alloy.Globals.PHRASES.groupMemberDeletedTxt,
+								color : '#fff',
+								width : 'auto',
+								height : 'auto',
+								textAlign : 'center',
+								font : {
+									fontSize : 12,
+									fontWeight : 'bold'
+								}
+							});
+
+							indView.add(message);
+							indWin.open();
+
+							var interval = interval ? interval : 1500;
+							setTimeout(function() {
+								indWin.close({
+									opacity : 0,
+									duration : 1000
+								});
+							}, interval);
+						}
 						break;
 					case 1:
 						Titanium.API.info('cancel');
@@ -363,7 +359,7 @@ var e = 0;
 function createFriendGUI(friend, members) {
 	var fr = [];
 	if (members.data.length == 0) {
-
+		
 	} else {
 		for (var s = 0; s < members.data.length; s++) {
 			fr.push(members.data[s].uid);
@@ -566,7 +562,11 @@ var client = Ti.Network.createHTTPClient({
 	onload : function(e) {
 		Ti.API.info("Members: " + this.responseText);
 		var members = JSON.parse(this.responseText);
-
+		members.data.sort(function(a, b) {
+			var x = a.username.toLowerCase();
+			var y = b.username.toLowerCase();
+			return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+		});
 		for (var i = 0; i < members.data.length; i++) {
 			//alert(members.data[i].name);
 			createGUI(members.data[i]);
@@ -587,22 +587,31 @@ client.send();
 
 //get friends from db
 function getFriends(members) {
+	if (OS_IOS) {
+		indicator.openIndicator();
+	}
+
 	var xhr = Ti.Network.createHTTPClient({
 		// function called when the response data is available
 		onload : function(e) {
 			Ti.API.info("Received text: " + this.responseText);
-			var friends = JSON.parse(this.responseText);
-
+			friends = JSON.parse(this.responseText);
+			friends.sort(function(a, b) {
+				var x = a.name.toLowerCase();
+				var y = b.name.toLowerCase();
+				return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+			});
 			for (var i = 0; i < friends.length; i++) {
 				//alert(friends[i].name);
 				createFriendGUI(friends[i], members);
 			}
-
+			indicator.closeIndicator();
 		},
 		// function called when an error occurs, including a timeout
 		onerror : function(e) {
 			Ti.API.debug(e.error);
 			//alert('error');
+			indicator.closeIndicator();
 		},
 		timeout : Alloy.Globals.TIMEOUT // in milliseconds
 	});

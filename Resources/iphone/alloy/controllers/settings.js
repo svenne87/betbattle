@@ -51,7 +51,10 @@ function Controller() {
             xhr.onload = function() {
                 if ("200" == this.status) {
                     if (4 == this.readyState) {
-                        0 === type ? Ti.App.Properties.setBool("pushSetting", valueToStore) : 1 === type && (Alloy.Globals.PROFILENAME = valueToStore);
+                        if (0 === type) Ti.App.Properties.setBool("pushSetting", valueToStore); else if (1 === type) {
+                            Alloy.Globals.PROFILENAME = valueToStore;
+                            Ti.App.fireEvent("app:updateMenu");
+                        }
                         Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
                     }
                     indicator.closeIndicator();
@@ -205,6 +208,7 @@ function Controller() {
                                 var response = JSON.parse(this.responseText);
                                 Alloy.Globals.showFeedbackDialog(response);
                                 uploadIndicator.hide();
+                                Ti.App.fireEvent("app:updateMenu");
                             } else {
                                 uploadIndicator.hide();
                                 Ti.API.error("Error =>" + this.response);

@@ -72,6 +72,8 @@ function getUserInfo() {
 	} catch(e) {
 		userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
 		userInfoWinsLabel.setText('');
+		var error = { totalCoins : '', totalPoints : ''};
+		Ti.App.fireEvent('app:coinsMenuInfo', error);
 	}
 
 	xhr.onload = function() {
@@ -88,6 +90,9 @@ function getUserInfo() {
 				if (userInfo !== null) {
 					userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.coinsInfoTxt + ": " + userInfo.totalCoins);
 					userInfoWinsLabel.setText(Alloy.Globals.PHRASES.scoreInfoTxt + ": " + userInfo.totalPoints);
+					
+					// Update menu
+					Ti.App.fireEvent('app:coinsMenuInfo', userInfo);
 				}
 			}
 		} else {
@@ -1004,7 +1009,8 @@ function constructTableView(array) {
 
 					} else if (e.rowData.id === 'new') {
 						var win = Alloy.createController('challenges_new').getView();
-
+						Alloy.Globals.WINDOWS.push(win);
+						
 						if (OS_IOS) {
 							Alloy.Globals.NAV.openWindow(win, {
 								animated : true,
@@ -1203,6 +1209,9 @@ function getChallenges() {
 				var response = JSON.parse(this.responseText);
 				// construct array with objects
 				Alloy.Globals.CHALLENGEOBJECTARRAY = Alloy.Globals.constructChallenge(response);
+		
+				// Update menu with icon if there are new challenges
+				Ti.App.fireEvent('app:updateMenu');
 
 				if (OS_ANDROID) {
 					$.challengesView.removeAllChildren();

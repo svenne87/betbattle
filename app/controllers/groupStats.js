@@ -1,5 +1,29 @@
 var args = arguments[0] || {};
 
+var uie = require('lib/IndicatorWindow');
+var indicator = uie.createIndicatorWindow({
+	top : 200,
+	text : Alloy.Globals.PHRASES.loadingTxt
+});
+
+if (OS_ANDROID) {
+	$.groupStats.addEventListener('open', function() {
+		$.groupStats.activity.actionBar.onHomeIconItemSelected = function() {
+			$.groupStats.close();
+			$.groupStats = null;
+		};
+		$.groupStats.activity.actionBar.displayHomeAsUp = true;
+		$.groupStats.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
+		
+		indicator.openIndicator();
+	});
+}
+
+$.groupStats.addEventListener('close', function() {
+	indicator.closeIndicator;
+});
+
+
 var scoreView = Ti.UI.createScrollView({
 	class : "topView",
 	height : "50%",
@@ -99,14 +123,13 @@ var scoreInfo = Ti.UI.createLabel({
 infoTxt.add(scoreInfo);
 
 function createGUI(obj, i) {
-
+	
 	var totalLeader = Ti.UI.createView({
-		top : 1,
+		//top : 1,
 		backgroundColor : '#fff',
-		width : "99%",
+		width : "100%",
 		height : 35,
-		opacity : 0.7,
-		borderRadius : 5
+		opacity : 0.7
 
 	});
 
@@ -227,8 +250,19 @@ getUID.onload = function() {
 	for (var i = 0; i < info.data.length; i++) {
 		createGUI(info.data[i], i);
 	}
+	indicator.closeIndicator();
 };
+
+getUID.onerror = function() {
+	indicator.closeIndicator();
+};
+
 getUID.open('GET', Alloy.Globals.BETKAMPENGETGROUPMEMBERSURL + '?gid=' + gid + '&lang=' + Alloy.Globals.LOCALE);
+
+if(OS_IOS){
+	indicator.openIndicator();
+}
+
 getUID.send();
 
 $.groupStats.add(scoreView);

@@ -2,11 +2,31 @@ var fontawesome = require('lib/IconicFont').IconicFont({
 	font : 'lib/FontAwesome'
 });
 
+var uie = require('lib/IndicatorWindow');
+var indicator = uie.createIndicatorWindow({
+	top : 200,
+	text : Alloy.Globals.PHRASES.loadingTxt
+});
+
 var font = 'FontAwesome';
 
 if (OS_ANDROID) {
 	font = 'fontawesome-webfont';
+
+	$.createGroup.addEventListener('open', function() {
+		$.createGroup.activity.actionBar.onHomeIconItemSelected = function() {
+			$.createGroup.close();
+			$.createGroup = null;
+		};
+		$.createGroup.activity.actionBar.displayHomeAsUp = true;
+		$.createGroup.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
+	});
 }
+
+$.createGroup.addEventListener('close', function() {
+	indicator.closeIndicator;
+});
+
 Ti.API.info(Ti.App.Properties.getString('profileNameSetting'));
 
 var mainView = Ti.UI.createScrollView({
@@ -256,6 +276,7 @@ function createFriendGUI(obj, groupId) {
 
 //get friends from db
 function getFriends(groupId) {
+	indicator.openIndicator();
 	var xhr = Ti.Network.createHTTPClient({
 		// function called when the response data is available
 		onload : function(e) {
@@ -296,11 +317,13 @@ function getFriends(groupId) {
 			}
 			$.createGroup.close();
 		});
+		indicator.closeIndicator();
 		},
 		// function called when an error occurs, including a timeout
 		onerror : function(e) {
 			Ti.API.debug(e.error);
 			//alert('error');
+			indicator.closeIndicator();
 		},
 		timeout : Alloy.Globals.TIMEOUT // in milliseconds
 	});

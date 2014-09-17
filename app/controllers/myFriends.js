@@ -304,6 +304,11 @@ var xhr = Ti.Network.createHTTPClient({
 		if (friends.length == 0) {
 			createBtn();
 		} else {
+			friends.sort(function(a, b) {
+				var x = a.name.toLowerCase();
+				var y = b.name.toLowerCase();
+				return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+			});
 			for (var i = 0; i < friends.length; i++) {
 				//alert(friends[i].name);
 				createGUI(friends[i]);

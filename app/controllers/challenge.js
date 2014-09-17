@@ -472,6 +472,7 @@ function saveChallenge() {
 function postAnswer(gameArray) {
 	// check connection
 	if (Alloy.Globals.checkConnection()) {
+		indicator.openIndicator();
 		submitButton.touchEnabled = false;
 		var xhr = Titanium.Network.createHTTPClient();
 		xhr.onerror = function(e) {

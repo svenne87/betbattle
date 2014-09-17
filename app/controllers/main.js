@@ -1,5 +1,26 @@
 var refreshItem;
 
+var winsLabel;
+var coinsLabel;
+var nameLabel;
+
+/* Used to update the menu and add a indicator for a new challenge */
+Ti.App.addEventListener('app:updateMenu', function() {
+	// rebuild table rows
+	// Pass data to widget leftTableView 
+	leftData[0] = createSection();
+	$.ds.leftTableView.data = leftData;
+	
+	// set new profile name
+	nameLabel.setText(Alloy.Globals.PROFILENAME);
+});
+
+/* Used to update coins information */
+Ti.App.addEventListener('app:coinsMenuInfo', function(data) {
+	winsLabel.setText(data.totalPoints);
+	coinsLabel.setText(data.totalCoins);
+});
+
 // used to navigate between views
 Ti.App.addEventListener('app:updateView', function(obj){
 	var currentView = Alloy.Globals.CURRENTVIEW;
@@ -18,6 +39,178 @@ Ti.App.addEventListener('app:updateView', function(obj){
 	$.ds.contentview.add(currentView);
 	Alloy.Globals.CURRENTVIEW = currentView;	
 });
+
+/* Used to create the header view in menu */
+function createMenuHeader() {
+	var userInfoView = Ti.UI.createView({
+		top : 0,
+		height : 100,
+		layout : 'horizontal',
+		backgroundColor : "transparent",
+	});
+	
+	var leftViewPart = Ti.UI.createView({
+		width : 200,
+		height : 100,
+		layout : 'horizontal'
+	});
+	
+	var rightViewPart = Ti.UI.createView({
+		height: 100,
+		width : 50,
+		layout : 'horizontal'
+	});
+	
+	var image;
+	if (Alloy.Globals.FACEBOOKOBJECT) {
+		image = 'https://graph.facebook.com/' + Alloy.Globals.FACEBOOKOBJECT.id + '/picture';
+	} else {
+		image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + Alloy.Globals.BETKAMPENUID + '.png';
+	}
+
+	var centerImageView = Ti.UI.createImageView({
+		left : 10,
+		top : 30,
+		height : 40,
+		width : 40,
+		borderRadius : 20,
+		image : image
+	});
+	
+	centerImageView.addEventListener('error',function(e){
+		// fallback for image
+		centerImageView.image = '/images/no_pic.png';
+	});
+
+	leftViewPart.add(centerImageView);
+	
+	var profileName = Alloy.Globals.PROFILENAME;
+	
+	if(profileName.length > 18) {
+		profileName = profileName.substring(0, 15);
+		profileName = profileName + '...';
+	}
+	
+	var profileViewRow = Ti.UI.createView({
+		layout : 'horizontal',
+		top : 30,
+		left : 15,
+		height : 20
+	});	
+	
+	nameLabel = Ti.UI.createLabel({
+		text : profileName,
+		font : {
+			fontSize : 14
+		},
+		color : '#FFF',
+		left : 0
+	});
+	
+	profileViewRow.add(nameLabel);	
+		
+	leftViewPart.add(profileViewRow);
+
+	var coinsView = Ti.UI.createView({
+		height : 15,
+		left : 65,
+		top : -15,
+		layout : 'horizontal'
+	});
+
+	coinsView.add(Ti.UI.createImageView({
+		height : 15,
+		width : 20,
+		image : '/images/totalt_saldo.png'
+	}));
+	
+	coinsLabel = Ti.UI.createLabel({
+		text : Alloy.Globals.PHRASES.loadingTxt,
+		font : {
+			fontSize : 14
+		},
+		color : '#FFF',
+		left : 5
+	});
+	
+	coinsView.add(coinsLabel);
+
+	coinsView.add(Ti.UI.createImageView({
+		left : 10,
+		height : 15,
+		width : 20,
+		image : '/images/vinster_top.png'
+	}));
+	
+	winsLabel = Ti.UI.createLabel({
+		text : '',
+		font : {
+			fontSize : 14
+		},
+		color : '#FFF',
+		left : 5
+	}); 
+	
+	coinsView.add(winsLabel);
+	
+	leftViewPart.add(coinsView);
+	leftViewPart.add(Ti.UI.createView({
+		height : 0.5,
+		top : 30,
+		layout : 'horizontal',
+		backgroundColor : '#303030'
+	}));
+
+	leftViewPart.addEventListener('click', function() {
+		var win = Alloy.createController('profile').getView();
+		Alloy.Globals.CURRENTVIEW =  win;
+		if (OS_IOS) {
+			Alloy.Globals.NAV.openWindow(win, {
+				animated : true
+			});
+		} else {
+			win.open({
+				fullScreen : true
+			});
+		}
+	});
+	
+	rightViewPart.add(Ti.UI.createImageView({
+		width : 22,
+		height : 22,
+		top : 30,
+		image : '/images/settings.png'
+	}));
+	
+	//github add setting_white
+	
+	rightViewPart.add(Ti.UI.createView({
+		height : 0.5,
+		top : 48,
+		width : '100%',
+		layout : 'horizontal',
+		backgroundColor : '#303030'
+	}));
+	
+	rightViewPart.addEventListener('click', function() {
+		var win = Alloy.createController('settings').getView();
+		Alloy.Globals.CURRENTVIEW =  win;
+		if (OS_IOS) {
+			Alloy.Globals.NAV.openWindow(win, {
+				animated : true
+			});
+		} else {
+			win.open({
+				fullScreen : true
+			});
+		}
+	});
+	
+	userInfoView.add(leftViewPart);
+	userInfoView.add(rightViewPart);
+
+	return userInfoView;
+}
 
 exitOnClose: true;
 Alloy.Globals.MAINWIN = $.mainWin;
@@ -131,8 +324,15 @@ function createSection() {
 	var args1 = {
 		title : Alloy.Globals.PHRASES.challengesTxt,
 		customView : 'challengesView',
-		image : '/images/ikon_spelanasta.png'
+		image : '/images/ikon_spelanasta.png',
+		rightIcon : ''
 	};
+
+	// Update menu with icon if there are new challenges
+	if(Alloy.Globals.CHALLENGEOBJECTARRAY[0].length > 0) {
+		args1.rightIcon = Alloy.Globals.CHALLENGEOBJECTARRAY[0].length;
+	} 
+	
 	section.add(Alloy.createController('menurow', args1).getView());
 	
 	var args2 = {
@@ -141,14 +341,14 @@ function createSection() {
 		image : '/images/Skapa_Utmaning.png'
 	};
 	section.add(Alloy.createController('menurow', args2).getView());
-
+/*
 	var args3 = {
 		title : Alloy.Globals.PHRASES.myProfileTxt,
 		customView : 'profile',
 		image : '/images/Min_Profil.png'
 	};
 	section.add(Alloy.createController('menurow', args3).getView());
-
+*/
 	var args4 = {
 		title : Alloy.Globals.PHRASES.scoreboardTxt,
 		customView : 'topplistan',
@@ -176,14 +376,14 @@ function createSection() {
 		image : '/images/friendzone.png'
 	};
 	section.add(Alloy.createController('menurow', args7).getView());
-
+/*
 	var args8 = {
 		title : Alloy.Globals.PHRASES.settingsTxt,
 		customView : 'settings',
 		image : '/images/settings.png'
 	};
 	section.add(Alloy.createController('menurow', args8).getView());
-
+*/
 	var args9 = {
 		title : Alloy.Globals.PHRASES.signOutTxt,
 		customView : 'logout',
@@ -362,6 +562,8 @@ $.ds.leftTableView.footerView = Ti.UI.createView({
 	backgroundColor : '#303030'
 });
 
+$.ds.leftTableView.headerView = createMenuHeader();
+
 if(OS_IOS){
 	$.ds.leftTableView.separatorStyle = Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE;
 	$.ds.leftTableView.separatorInsets = {left:0,right:0};
@@ -372,6 +574,7 @@ $.ds.leftTableView.data = leftData;
 var argu = {
 	refresh : refresher
 };
+
 var currentView = Alloy.createController('challengesView', argu).getView();
 $.ds.contentview.add(currentView);
 Alloy.Globals.CURRENTVIEW = currentView;
