@@ -113,6 +113,7 @@ Alloy.Globals.BETKAMPENGAMETOEDITURL = Alloy.Globals.BETKAMPENURL + '/api/get_ga
 Alloy.Globals.BETKAMPENSAVEEDITURL = Alloy.Globals.BETKAMPENURL + '/api/save_game_edit.php';
 Alloy.Globals.BETKAMPENGETTOPLANDINGPAGE = Alloy.Globals.BETKAMPENURL + '/api/get_dynamic_view.php';
 Alloy.Globals.BETKAMPENUNLOCKACHIEVEMENTURL = Alloy.Globals.BETKAMPENURL + '/api/unlock_achievement.php';
+Alloy.Globals.BETKAMPENPOSTMATCHOTDURL = Alloy.Globals.BETKAMPENURL + '/api/respond_match_day.php';
 
 Alloy.Globals.performTimeout = function(func) {
 	if (OS_ANDROID) {
@@ -306,7 +307,7 @@ Alloy.Globals.unlockAchievement = function(achID){
 							left: 0,
 						});
 						var message = Titanium.UI.createLabel({
-							text : 'Du har låst upp utmärkelsen: '+Alloy.Globals.PHRASES.achievements[response.id].title,
+							text : Alloy.Globals.PHRASES.achievementUnlocked + Alloy.Globals.PHRASES.achievements[response.id].title,
 							right: 0,
 							color : '#fff',
 							width : '75%',
