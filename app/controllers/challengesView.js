@@ -11,7 +11,6 @@
 var mod = require('bencoding.blur');
 
 // update coins
-
 Ti.App.addEventListener('updateCoins', function(coins) {
 	var currentCoins = -1;
 	try {

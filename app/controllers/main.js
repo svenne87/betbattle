@@ -101,7 +101,8 @@ function createMenuHeader() {
 	nameLabel = Ti.UI.createLabel({
 		text : profileName,
 		font : {
-			fontSize : 14
+			fontSize : 14,
+			fontFamily : 'Impact'
 		},
 		color : '#FFF',
 		left : 0
@@ -127,7 +128,8 @@ function createMenuHeader() {
 	coinsLabel = Ti.UI.createLabel({
 		text : Alloy.Globals.PHRASES.loadingTxt,
 		font : {
-			fontSize : 14
+			fontSize : 14,
+			fontFamily : 'Impact'
 		},
 		color : '#FFF',
 		left : 5
@@ -145,7 +147,8 @@ function createMenuHeader() {
 	winsLabel = Ti.UI.createLabel({
 		text : '',
 		font : {
-			fontSize : 14
+			fontSize : 14,
+			fontFamily : 'Impact'
 		},
 		color : '#FFF',
 		left : 5

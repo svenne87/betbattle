@@ -224,24 +224,14 @@ function createBtn() {
 
 function createViews(array) {
 	// clear old views
-	for (var child in mainView.children) {
-		if (typeof mainView.children[child] === 'undefined' || mainView.children[child].classes[0] === 'remove') {
-			if (typeof mainView.children[child] !== 'undefined') {
-				for (var childChild in mainView.children[child].children) {
-					if (mainView.children[child].children[childChild].classes[0] === 'remove') {
-						mainView.children[child].children[childChild].removeAllChildren();
-						mainView.children[child].children[childChild] = null;
-						mainView.remove(mainView.children[child]);
-					}
-				}
-				mainView.children[child].removeAllChildren();
-				mainView.remove(mainView.children[child]);
+	var i = mainView.children.length;
+	while(i--) 
+	{
+		if(mainView.children[i]){
+			if(mainView.children[i].classes[0] === 'remove') {
+				mainView.children[i].removeAllChildren();
+				mainView.remove(mainView.children[i]);
 			}
-
-			if (mainView.children[child]) {
-				mainView.remove(mainView.children[child]);
-			}
-			mainView.children[child] = null;
 		}
 	}
 
