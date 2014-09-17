@@ -208,7 +208,6 @@ function Controller() {
                                 var response = JSON.parse(this.responseText);
                                 Alloy.Globals.showFeedbackDialog(response);
                                 uploadIndicator.hide();
-                                Ti.App.fireEvent("app:updateMenu");
                             } else {
                                 uploadIndicator.hide();
                                 Ti.API.error("Error =>" + this.response);
