@@ -128,6 +128,11 @@ function getGroups() {
 				var response = JSON.parse(this.responseText);
 
 				if (response.length > 0) {
+					response.sort(function(a, b) {
+				var x = a.name.toLowerCase();
+				var y = b.name.toLowerCase();
+				return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+			});
 					for (var i = 0; i < response.length; i++) {
 						var membersArray = [];
 						for (var x = 0; x < response[i].members.length; x++) {
@@ -365,6 +370,50 @@ function createViews(array) {
 						};
 						deleteGroup.send(params);
 						var win = Alloy.createController('myGroups').getView();
+						if (OS_ANDROID) {
+							var delToast = Ti.UI.createNotification({
+								duration : Ti.UI.NOTIFICATION_DURATION_LONG,
+								message : 'group deleted',//Alloy.Globals.PHRASES.groupMemberDeletedTxt,
+							});
+							delToast.show();
+						} else {
+							indWin = Titanium.UI.createWindow();
+
+							//  view
+							var indView = Titanium.UI.createView({
+								top : '80%',
+								height : 30,
+								width : '80%',
+								backgroundColor : '#000',
+								opacity : 0.9
+							});
+
+							indWin.add(indView);
+
+							// message
+							var message = Titanium.UI.createLabel({
+								text : 'group deleted',//Alloy.Globals.PHRASES.groupMemberDeletedTxt,
+								color : '#fff',
+								width : 'auto',
+								height : 'auto',
+								textAlign : 'center',
+								font : {
+									fontSize : 12,
+									fontWeight : 'bold'
+								}
+							});
+
+							indView.add(message);
+							indWin.open();
+
+							var interval = interval ? interval : 1500;
+							setTimeout(function() {
+								indWin.close({
+									opacity : 0,
+									duration : 1000
+								});
+							}, interval);
+						}
 						if (OS_IOS) {
 							Alloy.Globals.NAV.openWindow(win, {
 								animated : false

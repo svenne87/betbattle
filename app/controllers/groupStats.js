@@ -127,10 +127,9 @@ function createGUI(obj, i) {
 	var totalLeader = Ti.UI.createView({
 		//top : 1,
 		backgroundColor : '#fff',
-		width : "99%",
+		width : "100%",
 		height : 35,
-		opacity : 0.7,
-		borderRadius : 5
+		opacity : 0.7
 
 	});
 
