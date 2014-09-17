@@ -306,7 +306,7 @@ Alloy.Globals.unlockAchievement = function(achID){
 							left: 0,
 						});
 						var message = Titanium.UI.createLabel({
-							text : 'Du har låst upp utmärkelsen: '+Alloy.Globals.PHRASES.achievements[response.id].title,
+							text : Alloy.Globals.PHRASES.achievementUnlocked + Alloy.Globals.PHRASES.achievements[response.id].title,
 							right: 0,
 							color : '#fff',
 							width : '75%',
