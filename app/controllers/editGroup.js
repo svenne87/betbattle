@@ -474,9 +474,10 @@ function createFriendGUI(friend, members) {
 		addBtn.addEventListener('click', function(e) {
 			//delete member
 			var aL = Titanium.UI.createAlertDialog({
-				title : 'Alert',
-				message : Alloy.Globals.PHRASES.addMemberTxt + ' ' + e.source.fName,
+				title :  '',
+				message : Alloy.Globals.PHRASES.addMemberTxt + '\n' + e.source.fName + '?',
 				buttonNames : ['OK', 'Cancel'],
+				backgroundColor: '#000',
 				cancel : 1,
 				id : e.source.id,
 				fId : e.source.fId,

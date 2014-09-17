@@ -246,3 +246,7 @@ Resources/android/alloy/controllers/friendSelect.js
 Resources/iphone/alloy/controllers/settings.js
 
 Resources/android/lib/push_notifications_apns.js
+
+Resources/iphone/alloy/controllers/groupSelect.js
+
+Resources/iphone/alloy/controllers/settings.js
