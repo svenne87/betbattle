@@ -40,6 +40,16 @@ Ti.App.addEventListener('app:updateView', function(obj){
 	Alloy.Globals.CURRENTVIEW = currentView;	
 });
 
+
+/*
+ MENY _________ border och height på rad...
+Skicka till första "sida" efter match bet  (alert)
+Android Ticket
+Edit Game
+*/
+					
+
+
 /* Used to create the header view in menu */
 function createMenuHeader() {
 	var userInfoView = Ti.UI.createView({
@@ -86,8 +96,8 @@ function createMenuHeader() {
 	
 	var profileName = Alloy.Globals.PROFILENAME;
 	
-	if(profileName.length > 18) {
-		profileName = profileName.substring(0, 15);
+	if(profileName.length > 16) {
+		profileName = profileName.substring(0, 13);
 		profileName = profileName + '...';
 	}
 	
@@ -95,7 +105,8 @@ function createMenuHeader() {
 		layout : 'horizontal',
 		top : 30,
 		left : 15,
-		height : 20
+		height : 20,
+		width : Ti.UI.FILL
 	});	
 	
 	nameLabel = Ti.UI.createLabel({
@@ -111,11 +122,14 @@ function createMenuHeader() {
 	profileViewRow.add(nameLabel);	
 		
 	leftViewPart.add(profileViewRow);
+	
+	var topPos = -15;
+	if(OS_ANDROID) {topPos = 5;}
 
 	var coinsView = Ti.UI.createView({
 		height : 15,
 		left : 65,
-		top : -15,
+		top : topPos,
 		layout : 'horizontal'
 	});
 
