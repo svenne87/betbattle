@@ -1622,7 +1622,8 @@ function getMatchOfTheDay() {
 							round : match.roundID,
 							leagueName : match.leagueName,
 							leagueId : match.leagueID,
-							gameID : match.game_id
+							gameID : match.game_id,
+							matchOTD : 1,
 						};
 
 						var win = Alloy.createController('challenge', arg).getView();

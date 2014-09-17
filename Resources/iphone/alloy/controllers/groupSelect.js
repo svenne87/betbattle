@@ -273,7 +273,7 @@ function Controller() {
                 Ti.API.error("Bad Sever =>" + e.error);
             };
             try {
-                xhr.open("POST", Alloy.Globals.BETKAMPENCHALLENGEFRIENDSURL);
+                xhr.open("POST", Alloy.Globals.BETKAMPENCHALLENGEFRIENDSURL + "/?lang=" + Alloy.Globals.LOCALE);
                 xhr.setRequestHeader("content-type", "application/json");
                 xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
                 xhr.setTimeout(Alloy.Globals.TIMEOUT);

@@ -88,6 +88,8 @@ function createGameType(gameType, gameObject) {
 					if (answer == 1) {
 						Ti.API.info("svara");
 						//postAnswer(gameArray);
+					}else if(matchOTD == 1){
+						Ti.API.info("Matchens mästare");	
 					}else if (Alloy.Globals.COUPON != null) {
 						Ti.API.info("update");
 						updateChallenge();
@@ -176,7 +178,9 @@ function createGameType(gameType, gameObject) {
 									if (answer == 1) {
 										Ti.API.info("svara");
 										//postAnswer(gameArray);
-									} else if (Alloy.Globals.COUPON != null) {
+									} else if(matchOTD == 1){
+										Ti.API.info("MATCHENS MÄSTARE");	
+									}else if (Alloy.Globals.COUPON != null) {
 										Ti.API.info("update");
 										updateChallenge();
 									} else {
@@ -264,6 +268,8 @@ function createGameType(gameType, gameObject) {
 						if (answer == 1) {
 							Ti.API.info("svara");
 							//postAnswer(gameArray);
+						} else if(matchOTD == 1){
+							Ti.API.info("matchens mästare");
 						} else if (Alloy.Globals.COUPON != null) {
 
 							Ti.API.info("update");
@@ -327,13 +333,28 @@ function createSubmitButtonAnswer() {
 }
 
 function createSubmitButtonMatchOTD(){
-	var submitView = Ti.UI.createView({
-		
+	var submitView = Titanium.UI.createView({
+		height : 70,
+		width : '100%',
+		backgroundColor : '#303030'
 	});
-	
-	submitButton = Ti.UI.createButton({
-		
+
+	submitButton = Titanium.UI.createButton({
+		top : 10,
+		width : '70%',
+		height : 40,
+		color : '#FFF',
+		backgroundColor : Alloy.Globals.themeColor(),
+		borderRadius : 6,
+		font : {
+			fontFamily : Alloy.Globals.getFont(),
+			fontSize : Alloy.Globals.getFontSize(2)
+		},
+		title : Alloy.Globals.PHRASES.respondTxt,
+		backgroundImage : 'none',
+		touchEnabled : true,
 	});
+
 	
 	submitButton.addEventListener("click", function(e){
 		Ti.API.info("match of the day");
@@ -409,6 +430,8 @@ function postMatchOfTheDay(){
 					if (response == 1) {
 						//Svarat på match of the day
 						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.matchOfTheDayMsg);
+					} else if(response == 2){
+						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.alreadyPostedMatchOTD);
 					} else {
 						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 					}
