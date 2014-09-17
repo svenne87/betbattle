@@ -351,7 +351,8 @@ function challengeGroup(array) {
 
 						alertWindow.addEventListener('click', function() {
 							var argu = {
-								refresh : 1
+								refresh : 1,
+								sent_challenge : 1,
 							};
 							var loginSuccessWindow = Alloy.createController('main', argu).getView();
 								if (OS_IOS) {
@@ -490,7 +491,8 @@ function challengeFriends() {
 
 						alertWindow.addEventListener('click', function() {
 							var argu = {
-								refresh : 1
+								refresh : 1,
+								sent_challenge : 1
 							};
 							var loginSuccessWindow = Alloy.createController('main', argu).getView();
 								if (OS_IOS) {
