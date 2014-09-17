@@ -224,6 +224,7 @@ var args = arguments[0] || {};
 
 var oldIndicator = args.dialog || null;
 var refresher = args.refresh || null;
+var sent_challenge = args.sent_challenge || null;
 
 if(oldIndicator !== null){
 	oldIndicator.closeIndicator();
@@ -572,7 +573,8 @@ if(OS_IOS){
 // Pass data to widget leftTableView 
 $.ds.leftTableView.data = leftData;
 var argu = {
-	refresh : refresher
+	refresh : refresher,
+	sent_challenge : sent_challenge
 };
 
 var currentView = Alloy.createController('challengesView', argu).getView();

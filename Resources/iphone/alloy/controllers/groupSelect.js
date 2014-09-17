@@ -214,7 +214,8 @@ function Controller() {
                         });
                         alertWindow.addEventListener("click", function() {
                             var argu = {
-                                refresh: 1
+                                refresh: 1,
+                                sent_challenge: 1
                             };
                             var loginSuccessWindow = Alloy.createController("main", argu).getView();
                             loginSuccessWindow.open({
@@ -304,7 +305,8 @@ function Controller() {
                         });
                         alertWindow.addEventListener("click", function() {
                             var argu = {
-                                refresh: 1
+                                refresh: 1,
+                                sent_challenge: 1
                             };
                             var loginSuccessWindow = Alloy.createController("main", argu).getView();
                             loginSuccessWindow.open({
