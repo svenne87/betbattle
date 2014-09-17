@@ -214,6 +214,7 @@ if (OS_IOS) {
 					indicator.closeIndicator();
 					if (this.readyState == 4) {
 						Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
+						Alloy.Globals.unlockAchievement(3);
 					} else {
 						retry(identifier, receipt, JSON.parse(this.responseText));
 					}
@@ -423,7 +424,7 @@ if (OS_IOS) {
 					indicator.closeIndicator();
 					if (this.readyState == 4) {
 						Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
-
+						Alloy.Globals.unlockAchievement(3);
 					} else {
 						var alertWindow = Titanium.UI.createAlertDialog({
 							title : Alloy.Globals.PHRASES.commonErrorTxt,

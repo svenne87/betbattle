@@ -112,6 +112,7 @@ Alloy.Globals.BETKAMPENCHALLENGEFRIENDSURL = Alloy.Globals.BETKAMPENURL + '/api/
 Alloy.Globals.BETKAMPENGAMETOEDITURL = Alloy.Globals.BETKAMPENURL + '/api/get_game_edit.php';
 Alloy.Globals.BETKAMPENSAVEEDITURL = Alloy.Globals.BETKAMPENURL + '/api/save_game_edit.php';
 Alloy.Globals.BETKAMPENGETTOPLANDINGPAGE = Alloy.Globals.BETKAMPENURL + '/api/get_dynamic_view.php';
+Alloy.Globals.BETKAMPENUNLOCKACHIEVEMENTURL = Alloy.Globals.BETKAMPENURL + '/api/unlock_achievement.php';
 
 Alloy.Globals.performTimeout = function(func) {
 	if (OS_ANDROID) {
@@ -198,6 +199,153 @@ Alloy.Globals.showFeedbackDialog = function(msg) {
 	alertWindow.show();
 };
 
+Alloy.Globals.showToast = function(msg){
+	if (OS_ANDROID) {
+		var delToast = Ti.UI.createNotification({
+			duration : Ti.UI.NOTIFICATION_DURATION_LONG,
+			message : msg
+		});
+		delToast.show();
+	} else {
+		indWin = Titanium.UI.createWindow();
+
+		//  view
+		var indView = Titanium.UI.createView({
+			top : '80%',
+			height : 30,
+			width : '80%',
+			backgroundColor : '#000',
+			opacity : 0.9
+		});
+
+		indWin.add(indView);
+
+		// message
+		var message = Titanium.UI.createLabel({
+			text : msg,
+			color : '#fff',
+			width : 'auto',
+			height : 'auto',
+			textAlign : 'center',
+			font : {
+				fontSize : 12,
+				fontWeight : 'bold'
+			}
+		});
+
+		indView.add(message);
+		indWin.open();
+
+		var interval = interval ? interval : 1500;
+		setTimeout(function() {
+			indWin.close({
+				opacity : 0,
+				duration : 1000
+			});
+		}, interval);
+	}
+};
+
+
+Alloy.Globals.unlockAchievement = function(achID){
+	if (Alloy.Globals.checkConnection()) {
+		var xhr = Titanium.Network.createHTTPClient();
+		xhr.onerror = function(e) {
+			Ti.API.error('Bad Sever =>' + e.error);
+		};
+
+		try { 
+			xhr.open('POST', Alloy.Globals.BETKAMPENUNLOCKACHIEVEMENTURL + '?achID=' + achID + '&lang=' + Alloy.Globals.LOCALE);
+			xhr.setRequestHeader("content-type", "application/json");
+			xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
+			xhr.setTimeout(Alloy.Globals.TIMEOUT);
+
+			// build the json string
+			
+			xhr.send();
+		} catch(e) {
+			//
+		}
+
+		xhr.onload = function() {
+			if (this.status == '200') {
+				if (this.readyState == 4) {
+					var response = '';
+					try {
+						Ti.API.info("UNLOCK : " + JSON.stringify(this.responseText));
+						response = JSON.parse(this.responseText);
+					} catch(e) {
+
+					}
+					
+					Ti.API.log(response);
+					if(response == 1){
+						Ti.API.info("redan låst upp");
+					}else if(response.image != null){
+						Ti.API.info("visa toast");
+						var player = Ti.Media.createSound({url:"sound/unlocked.wav"});
+						indWin = Titanium.UI.createWindow();
+
+						//  view
+						var indView = Titanium.UI.createView({
+							top : '80%',
+							height : 50,
+							width : '100%',
+							backgroundColor : '#000',
+							opacity : 0.9,
+							layout: 'horizontal',
+						});
+				
+						indWin.add(indView);
+				
+						// message
+						var image = Ti.UI.createImageView({
+							image : Alloy.Globals.BETKAMPENURL + '/achievements/' +response.image,
+							width : "15%",
+							height : Ti.UI.SIZE,
+							left: 0,
+						});
+						var message = Titanium.UI.createLabel({
+							text : 'Du har låst upp utmärkelsen: '+Alloy.Globals.PHRASES.achievements[response.id].title,
+							right: 0,
+							color : '#fff',
+							width : '75%',
+							height : 'auto',
+							textAlign : 'center',
+							font : {
+								fontSize : 12,
+								fontWeight : 'bold'
+							}
+						});
+						indView.add(image);
+						indView.add(message);
+						indWin.open();
+						
+						player.play();
+				
+						var interval = interval ? interval : 2500;
+						setTimeout(function() {
+							indWin.close({
+								opacity : 0,
+								duration : 1000
+							});
+						}, interval);
+					}else{
+						Ti.API.info("nått fel");
+					}
+					
+					
+				} else {
+					Ti.API.log(this.response);
+				}
+			} else {
+				Ti.API.error("Error =>" + this.response);
+			}
+		};
+	} else {
+		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+	}
+};
 
 // check network
 Alloy.Globals.checkConnection = function() {
@@ -433,26 +581,31 @@ Alloy.Globals.getCoupon = function(uid){
 					if(response == 0){
 						Alloy.Globals.COUPON = null;
 						Alloy.Globals.hasCoupon = false;
-						var children = Alloy.Globals.NAV.getChildren();
-						for(var i in children){
-							if (children[i].id == "ticketView"){
-								var labels = children[i].getChildren();
-								for(var y in labels){
-									if(labels[y].id == "badge"){
-									labels[y].setBackgroundColor("transparent");
-									labels[y].setBorderColor("transparent");
-									labels[y].setText("");
-									}
-									if(labels[y].id == "label"){
-										labels[y].setColor("#303030");
+						if(OS_IOS){
+							var children = Alloy.Globals.NAV.getChildren();
+							for(var i in children){
+								if (children[i].id == "ticketView"){
+									var labels = children[i].getChildren();
+									for(var y in labels){
+										if(labels[y].id == "badge"){
+										labels[y].setBackgroundColor("transparent");
+										labels[y].setBorderColor("transparent");
+										labels[y].setText("");
+										}
+										if(labels[y].id == "label"){
+											labels[y].setColor("#303030");
+										}
 									}
 								}
 							}
+						}else if(OS_ANDROID){
+							//TODO lägg in ett sätt att updatera kupongen på android så det syns
 						}
 					}else if(Alloy.Globals.COUPON.games.length > 0){
-						Alloy.Globals.hasCoupon = true;
-						Ti.API.info("challenge succces");
-						var children = Alloy.Globals.NAV.getChildren();
+						if(OS_IOS){
+							Alloy.Globals.hasCoupon = true;
+							Ti.API.info("challenge succces");
+							var children = Alloy.Globals.NAV.getChildren();
 							for(var i in children){
 								if (children[i].id == "ticketView"){
 									var labels = children[i].getChildren();
@@ -469,6 +622,9 @@ Alloy.Globals.getCoupon = function(uid){
 									
 								}
 							}
+						}else if(OS_ANDROID){
+							//TODO lägg in ett sätt att updatera kupongen på android så det syns
+						}
 					}
 			} else {
 				Ti.API.error("Error =>" + this.response);
