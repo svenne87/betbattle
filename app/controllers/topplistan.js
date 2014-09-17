@@ -161,6 +161,9 @@ function createGUI(obj, i) {
 		boardName = boardName.substring(0, 22);
 	}
 	if (i == 0) {
+		if(obj.id == Alloy.Globals.BETKAMPENUID){
+			Alloy.Globals.unlockAchievement(4);
+		}
 		var name = Ti.UI.createLabel({
 			text : Alloy.Globals.PHRASES.chipleaderTxt + "\n" + boardName,
 			left : '27%',

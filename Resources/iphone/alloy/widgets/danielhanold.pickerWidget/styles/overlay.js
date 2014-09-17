@@ -9,7 +9,7 @@ module.exports = [ {
     priority: 10000.9003,
     key: "navLogo",
     style: {
-        image: "images/lakers_header.png",
+        image: "/images/lakers_header.png",
         left: 99,
         width: 130,
         height: 40
@@ -19,25 +19,10 @@ module.exports = [ {
     priority: 10000.9005,
     key: "challengesSection",
     style: {
-        backgroundColor: "#EA7337",
-        backgroundGradient: {
-            type: "linear",
-            startPoint: {
-                x: "0%",
-                y: "0%"
-            },
-            endPoint: {
-                x: "0%",
-                y: "100%"
-            },
-            colors: [ {
-                color: "#D85000",
-                offset: 0
-            }, {
-                color: "#F09C00",
-                offset: 1
-            } ]
-        }
+        height: 60,
+        backgroundColor: "#000000",
+        opacity: .6,
+        layout: "vertical"
     }
 }, {
     isId: true,
@@ -58,9 +43,9 @@ module.exports = [ {
     priority: 100000.90019999999,
     key: "facebookBtn",
     style: {
-        top: "75%",
-        height: "7%",
-        width: "68.5%",
+        top: "65%",
+        height: "9%",
+        width: "80%",
         backgroundColor: "#336699",
         borderRadius: 3
     }

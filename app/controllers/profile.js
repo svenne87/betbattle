@@ -429,11 +429,15 @@ function getAchievements(){
 				}
 
 				if (achievements !== null) {
-					Ti.API.info(JSON.stringify(achievements[2]));
+					Ti.API.info("ACHIEVEMENT  :  " + JSON.stringify(achievements[2]));
 					for (var i = 0; i < achievements.length; i++){
+						var ach_img = 'images/locked_ach.png';
+						if(achievements[i].unlocked == true){
+							ach_img = Alloy.Globals.BETKAMPENURL + "/achievements/"+achievements[i].image;
+						}
 						var achievement = Ti.UI.createImageView({
 							id: achievements[i].id,
-							image : Alloy.Globals.BETKAMPENURL + "/achievements/"+achievements[i].image,
+							image : ach_img,
 							width: 60,
 							height: 60,
 							left: 10,

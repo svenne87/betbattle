@@ -116,11 +116,11 @@ saveName.addEventListener('click', function(e) {
 					group_id : groupId,
 					id : Alloy.Globals.BETKAMPENUID,
 					name : Ti.App.Properties.getString('profileNameSetting'),
-			};
+				};
 			addMe.send(params);
 			
 			getFriends(groupId);
-
+			Alloy.Globals.unlockAchievement(10);
 			}
 		};
 		gName.open("POST", Alloy.Globals.BETKAMPENCREATEGROUPURL);

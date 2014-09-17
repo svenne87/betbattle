@@ -11,7 +11,6 @@
 var mod = require('bencoding.blur');
 
 // update coins
-
 Ti.App.addEventListener('updateCoins', function(coins) {
 	var currentCoins = -1;
 	try {
@@ -920,7 +919,7 @@ function constructTableView(array) {
 	var acceptNowCount = 1;
 	var pendingNowCount = 1;
 	// looping array backwards to print out tournaments first
-	for (var x = array.length; x >= 0; x--) {
+	for (var x = 0; x < array.length; x++) {
 		var arrayObj = array[x];
 
 		if (x === 0) {
@@ -1257,6 +1256,9 @@ if (args.refresh == 1) {
 		indicator.openIndicator();
 		getChallenges();
 		getUserInfo();
+		if(args.sent_challenge == 1){
+			Alloy.Globals.unlockAchievement(11);
+		}
 	} else {
 		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 		userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
@@ -1264,6 +1266,7 @@ if (args.refresh == 1) {
 	}
 
 }
+
 
 var iOSVersion;
 

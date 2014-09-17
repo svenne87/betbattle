@@ -76,6 +76,7 @@ function getChallengesAndStart() {
 				var response = null;
 
 				try {
+					Ti.API.info("LOG TEST : " + JSON.stringify(this.responseText));
 					response = JSON.parse(this.responseText);
 				} catch(e) {
 					indicator.closeIndicator();
@@ -164,8 +165,10 @@ function loginAuthenticated() {
 			if (this.readyState == 4) {
 				var response = null;
 				try {
+					Ti.API.info("LOG TEST 2 :" +  JSON.stringify(this.responseText));
 					response = JSON.parse(this.responseText);
 				} catch(e) {
+					Ti.API.info("LOG TEST 22 : " + JSON.stringify(this.responseText));
 					indicator.closeIndicator();
 					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 				}
@@ -235,6 +238,7 @@ function login(auto) {
 			if (this.status == '200') {
 				if (this.readyState == 4) {					
 					var json = this.responseText;
+					Ti.API.info("LOG TEST 3 :" + JSON.stringify(json));
 					var response = JSON.parse(json);
 					// token received, store it for API requests
 					Alloy.Globals.BETKAMPEN = {

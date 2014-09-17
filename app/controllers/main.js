@@ -101,7 +101,8 @@ function createMenuHeader() {
 	nameLabel = Ti.UI.createLabel({
 		text : profileName,
 		font : {
-			fontSize : 14
+			fontSize : 14,
+			fontFamily : 'Impact'
 		},
 		color : '#FFF',
 		left : 0
@@ -127,7 +128,8 @@ function createMenuHeader() {
 	coinsLabel = Ti.UI.createLabel({
 		text : Alloy.Globals.PHRASES.loadingTxt,
 		font : {
-			fontSize : 14
+			fontSize : 14,
+			fontFamily : 'Impact'
 		},
 		color : '#FFF',
 		left : 5
@@ -145,7 +147,8 @@ function createMenuHeader() {
 	winsLabel = Ti.UI.createLabel({
 		text : '',
 		font : {
-			fontSize : 14
+			fontSize : 14,
+			fontFamily : 'Impact'
 		},
 		color : '#FFF',
 		left : 5
@@ -224,6 +227,7 @@ var args = arguments[0] || {};
 
 var oldIndicator = args.dialog || null;
 var refresher = args.refresh || null;
+var sent_challenge = args.sent_challenge || null;
 
 if(oldIndicator !== null){
 	oldIndicator.closeIndicator();
@@ -572,7 +576,8 @@ if(OS_IOS){
 // Pass data to widget leftTableView 
 $.ds.leftTableView.data = leftData;
 var argu = {
-	refresh : refresher
+	refresh : refresher,
+	sent_challenge : sent_challenge
 };
 
 var currentView = Alloy.createController('challengesView', argu).getView();

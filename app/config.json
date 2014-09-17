@@ -11,6 +11,7 @@
 	"os:ios": {},
 	"os:mobileweb": {},
 	"dependencies": {
-		"ds.slideMenu" : "0.1"
+		"ds.slideMenu" : "0.1",
+		"danielhanold.pickerWidget" : "1.0"
 	}
 }
