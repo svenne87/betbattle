@@ -113,6 +113,7 @@ Alloy.Globals.BETKAMPENGAMETOEDITURL = Alloy.Globals.BETKAMPENURL + '/api/get_ga
 Alloy.Globals.BETKAMPENSAVEEDITURL = Alloy.Globals.BETKAMPENURL + '/api/save_game_edit.php';
 Alloy.Globals.BETKAMPENGETTOPLANDINGPAGE = Alloy.Globals.BETKAMPENURL + '/api/get_dynamic_view.php';
 Alloy.Globals.BETKAMPENUNLOCKACHIEVEMENTURL = Alloy.Globals.BETKAMPENURL + '/api/unlock_achievement.php';
+Alloy.Globals.BETKAMPENPOSTMATCHOTDURL = Alloy.Globals.BETKAMPENURL + '/api/respond_match_day.php';
 
 Alloy.Globals.performTimeout = function(func) {
 	if (OS_ANDROID) {
