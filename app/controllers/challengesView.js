@@ -72,6 +72,8 @@ function getUserInfo() {
 	} catch(e) {
 		userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
 		userInfoWinsLabel.setText('');
+		var error = { totalCoins : '', totalPoints : ''};
+		Ti.App.fireEvent('app:coinsMenuInfo', error);
 	}
 
 	xhr.onload = function() {
@@ -1208,7 +1210,7 @@ function getChallenges() {
 				Alloy.Globals.CHALLENGEOBJECTARRAY = Alloy.Globals.constructChallenge(response);
 		
 				// Update menu with icon if there are new challenges
-				Ti.App.fireEvent('app:updateMenuNewChallenge', {count : Alloy.Globals.CHALLENGEOBJECTARRAY[0].length});
+				Ti.App.fireEvent('app:updateMenu');
 
 				if (OS_ANDROID) {
 					$.challengesView.removeAllChildren();

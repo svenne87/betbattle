@@ -89,6 +89,7 @@ function sendSettingsServer(param, type, valueToStore) {
 					} else if(type === 1) {
 						// name change
 						Alloy.Globals.PROFILENAME = valueToStore;
+						Ti.App.fireEvent('app:updateMenu');
 					}
 					Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
 				}

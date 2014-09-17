@@ -4,29 +4,15 @@ var winsLabel;
 var coinsLabel;
 
 /* Used to update the menu and add a indicator for a new challenge */
-Ti.App.addEventListener('app:updateMenuNewChallenge', function(data) {
-	// find the row containing this languages translation of 'Challenges'
-	// then set correct icon to indicate that there are new challenges available
-	// count will contain the correct number of challenges
-	
-	var sections = $.ds.leftTableView.data;
-	for(var j = 0; j < sections[0].rowCount; j++) {
-		var row = sections[0].rows[j];
-    	if(row.customTitle.text === Alloy.Globals.PHRASES.challengesTxt){
-    		for(var i = 0; i < row.children.length; i++){
-    			if(row.children[i].id === 'rightIcon'){
-					row.children[i] = data.count;
-    				break;
-    			}
-    		}
-    		break;
-    	}
-	}
+Ti.App.addEventListener('app:updateMenu', function() {
+	// rebuild table rows
+	// Pass data to widget leftTableView 
+	leftData[0] = createSection();
+	$.ds.leftTableView.data = leftData;
 });
 
 /* Used to update coins information */
 Ti.App.addEventListener('app:coinsMenuInfo', function(data) {
-	Ti.API.log("------> " + JSON.stringify(data));
 	winsLabel.setText(data.totalPoints);
 	coinsLabel.setText(data.totalCoins);
 });
@@ -97,7 +83,7 @@ function createMenuHeader() {
 	var profileName = Alloy.Globals.PROFILENAME;
 	
 	if(profileName.length > 15) {
-		profileName = profileName.substring(12);
+		profileName = profileName.substring(0, 12);
 		profileName = profileName + '...';
 	}
 	
@@ -189,6 +175,8 @@ function createMenuHeader() {
 		top : 30,
 		image : '/images/settings.png'
 	}));
+	
+	//github add setting_white
 	
 	rightViewPart.add(Ti.UI.createView({
 		height : 0.5,
