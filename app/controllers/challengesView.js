@@ -1009,7 +1009,8 @@ function constructTableView(array) {
 
 					} else if (e.rowData.id === 'new') {
 						var win = Alloy.createController('challenges_new').getView();
-
+						Alloy.Globals.WINDOWS.push(win);
+						
 						if (OS_IOS) {
 							Alloy.Globals.NAV.openWindow(win, {
 								animated : true,

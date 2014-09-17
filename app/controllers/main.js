@@ -2,6 +2,7 @@ var refreshItem;
 
 var winsLabel;
 var coinsLabel;
+var nameLabel;
 
 /* Used to update the menu and add a indicator for a new challenge */
 Ti.App.addEventListener('app:updateMenu', function() {
@@ -9,6 +10,9 @@ Ti.App.addEventListener('app:updateMenu', function() {
 	// Pass data to widget leftTableView 
 	leftData[0] = createSection();
 	$.ds.leftTableView.data = leftData;
+	
+	// set new profile name
+	nameLabel.setText(Alloy.Globals.PROFILENAME);
 });
 
 /* Used to update coins information */
@@ -82,8 +86,8 @@ function createMenuHeader() {
 	
 	var profileName = Alloy.Globals.PROFILENAME;
 	
-	if(profileName.length > 15) {
-		profileName = profileName.substring(0, 12);
+	if(profileName.length > 18) {
+		profileName = profileName.substring(0, 15);
 		profileName = profileName + '...';
 	}
 	
@@ -94,14 +98,16 @@ function createMenuHeader() {
 		height : 20
 	});	
 	
-	profileViewRow.add(Ti.UI.createLabel({
+	nameLabel = Ti.UI.createLabel({
 		text : profileName,
 		font : {
 			fontSize : 14
 		},
 		color : '#FFF',
 		left : 0
-	}));	
+	});
+	
+	profileViewRow.add(nameLabel);	
 		
 	leftViewPart.add(profileViewRow);
 
