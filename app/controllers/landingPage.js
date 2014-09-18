@@ -1560,12 +1560,12 @@ function getTopImgView(){
 						Ti.API.info("RESPONSE TOP : " + JSON.stringify(resp));
 						createTopView(resp);
 						createBotView();
-						getMatchOfTheDay()
+						getMatchOfTheDay();
 					}else{
 						Ti.API.info("RESPONSE TOP = NULL");
 						createTopView(resp);
 						createBotView();
-						getMatchOfTheDay()
+						getMatchOfTheDay();
 					}
 				}
 				
@@ -1614,16 +1614,65 @@ function getMatchOfTheDay() {
 
 					mid_img.addEventListener("click", function(e) {
 						// check connection
-						if (!Alloy.Globals.checkConnection()) {
-							Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
-							return;
-						}
+						checkResponded(match);
+						
+					});
+				}
+			}
+
+		} else {
+			versusLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
+			Ti.API.error("Error =>" + this.response);
+		}
+	};
+
+};
+
+function checkResponded(match){
+	Ti.API.info("CLIKCADE MACHENS MÄSTARE");
+	indicator.openIndicator();
+	if(Alloy.Globals.checkConnection()){
+		var xhr = Titanium.Network.createHTTPClient();
+		xhr.onerror = function(e) {
+			versusLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
+			indicator.closeIndicator();
+			Ti.API.error('Bad Sever =>' + e.error);
+		};
+	
+		try {
+			xhr.open('GET', Alloy.Globals.BETKAMPENGETMATCHOTDSTATUSURL + '?lang=' + Alloy.Globals.LOCALE + '&gameID=' + match.game_id);
+			xhr.setRequestHeader("content-type", "application/json");
+			xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
+			xhr.setTimeout(Alloy.Globals.TIMEOUT);
+			xhr.send();
+		} catch(e) {
+			Ti.API.info("FAIL : " + JSON.stringify(e));
+			indicator.closeIndicator();
+		}
+	
+		xhr.onload = function() {
+			if (this.status == '200') {
+				if (this.readyState == 4) {
+						indicator.closeIndicator();
+						var resp = null;
+					try {
+						Ti.API.info("RESPONSE INNAN PARSENNNN : " + JSON.stringify(this.responseText));
+						resp = JSON.parse(this.responseText);
+						
+					} catch (e) {
+						resp = null;
+						//Ti.API.info("Match NULL");
+					}
+	
+					if (resp == 2) {
+						Ti.API.info("RESPONSE TOP : " + JSON.stringify(resp));
 						var arg = {
 							round : match.roundID,
 							leagueName : match.leagueName,
 							leagueId : match.leagueID,
 							gameID : match.game_id,
 							matchOTD : 1,
+							bet_amount : match.bet_amount
 						};
 
 						var win = Alloy.createController('challenge', arg).getView();
@@ -1638,17 +1687,36 @@ function getMatchOfTheDay() {
 								fullScreen : true
 							});
 						}
-					});
+					}else if(resp == 1){
+						var arg = {
+							gameID : match.game_id,
+						};
+
+						var win = Alloy.createController('showMatchOTD', arg).getView();
+						Alloy.Globals.WINDOWS.push(win);
+
+						if (OS_IOS) {
+							Alloy.Globals.NAV.openWindow(win, {
+								animated : true
+							});
+						} else if (OS_ANDROID) {
+							win.open({
+								fullScreen : true
+							});
+						}
+					}
 				}
+				
+			} else {
+				indicator.closeIndicator();
+				Ti.API.error("Error =>" + this.response);
 			}
-
-		} else {
-			versusLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
-			Ti.API.error("Error =>" + this.response);
-		}
-	};
-
-};
+		};
+	}else{
+		indicator.closeIndicator();
+		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+	}
+}
 
 //create the topView and the botView that will contain everything
 var top_view = Ti.UI.createView({
