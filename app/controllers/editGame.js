@@ -17,7 +17,7 @@ function createGameType(gameType, gameObject) {
 		width : Ti.UI.FILL,
 		height : viewHeight,
 		layout : "vertical",
-		backgroundColor: "#303030",
+		backgroundColor : "#303030",
 	});
 
 	var gameTypeDescription = Ti.UI.createLabel({
@@ -38,14 +38,14 @@ function createGameType(gameType, gameObject) {
 	gameObj.game_id = gameObject.attributes.game_id;
 	gameObj.gameType = gameType.type;
 	Ti.API.info("OBJECT ???? " + JSON.stringify(gameObject));
-	for (var i in gameObject.attributes.values){
+	for (var i in gameObject.attributes.values) {
 		var value = gameObject.attributes.values[i];
-		if(value.game_type == type){
+		if (value.game_type == type) {
 			var valueArray = new Array(value.value_1, value.value_2);
 		}
 		Ti.API.info("EN VALUE : " + JSON.stringify(value));
 	}
-	
+
 	gameObj.gameValue = valueArray;
 	gameArray.push(gameObj);
 	var index = gameArray.indexOf(gameObj);
@@ -96,19 +96,19 @@ function createGameType(gameType, gameObject) {
 		//add click event to all buttonviews. this is done here so that we can change color correctly when clicking one
 		for (var i in buttonViews) {
 			Ti.API.info("BUTTON : " + JSON.stringify(buttonViews[i]));
-			for(var k in gameObject.attributes.values){
-				if(buttonViews[i].value == gameArray[index].gameValue[0] && gameObject.attributes.values[k].game_type == type){
+			for (var k in gameObject.attributes.values) {
+				if (buttonViews[i].value == gameArray[index].gameValue[0] && gameObject.attributes.values[k].game_type == type) {
 					buttonViews[i].backgroundColor = "#6d6d6d";
-				}	
+				}
 			}
 			buttonViews[i].addEventListener("click", function(e) {
-				
+
 				Ti.API.info("Clickade " + JSON.stringify(e));
 				gameArray[index].gameValue[0] = e.source.value;
 				gameArray[index].gameValue[1] = 0;
 				changeColors(e);
 				Ti.API.info("gameArray : " + JSON.stringify(gameArray));
-				
+
 			});
 			optionsView.add(buttonViews[i]);
 		}
@@ -143,13 +143,13 @@ function createGameType(gameType, gameObject) {
 					borderRadius : 2,
 					width : 100,
 					height : 40,
-					text : 	gameArray[index].gameValue[i],
+					text : gameArray[index].gameValue[i],
 					textAlign : 'center',
 					index : i
 				});
 
 				pickerLabels.push(pickerLabel);
-				
+
 				// will be the selected value
 				var selectedIndex = (gameArray[index].gameValue[i] - 0) + 1;
 
@@ -240,7 +240,7 @@ function createGameType(gameType, gameObject) {
 				var id = i + "_" + gameType.type + count + "-" + gameID;
 				picker = new ModalPicker(visualPrefs, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt, Alloy.Globals.PHRASES.closeBtnTxt, id);
 				modalPickersToHide[gameType.type + count + gameID] = picker;
-				
+
 				picker.text = gameArray[index].gameValue[i];
 				//picker.text = '-';
 
@@ -251,18 +251,18 @@ function createGameType(gameType, gameObject) {
 					var ind = id.indexOf("_");
 					i = id.substring(0, ind);
 					var d = id.indexOf("-");
-					var gameID = id.substring(d+1, id.length);
+					var gameID = id.substring(d + 1, id.length);
 					var arrayIndex = id.substring(ind + 1, d);
 					Ti.API.info("INDEX : " + arrayIndex);
 					Ti.API.info("ID : " + gameID);
-					picker.value = modalPickersToHide[arrayIndex+gameID].value;
+					picker.value = modalPickersToHide[arrayIndex + gameID].value;
 
 					gameArray[index].gameValue[i] = picker.value;
 					if (gameType.number_of_values == 1) {
 						gameArray[index].gameValue[1] = 0;
 					}
-					Ti.API.info("gameArray : " + JSON.stringify(gameArray)); 
-					
+					Ti.API.info("gameArray : " + JSON.stringify(gameArray));
+
 				});
 
 				optionsView.add(picker);
@@ -296,7 +296,7 @@ function createLayout(gameObject) {
 		height : 'auto',
 		width : 'auto',
 		layout : 'vertical',
-		showVerticalScrollIndicator: true,
+		showVerticalScrollIndicator : true,
 	});
 
 	var image = Ti.UI.createView({
@@ -305,11 +305,9 @@ function createLayout(gameObject) {
 		//backgroundImage : '/images/profileBG.jpg'
 	});
 
-	
-
 	var fontSize = Alloy.Globals.getFontSize(2);
-	var teamNames = gameObject.attributes.team_1.team_name +" - "+ gameObject.attributes.team_2.team_name;  
-	
+	var teamNames = gameObject.attributes.team_1.team_name + " - " + gameObject.attributes.team_2.team_name;
+
 	if (teamNames.length > 20) {
 		fontSize = 20;
 	}
@@ -330,10 +328,7 @@ function createLayout(gameObject) {
 
 	view.add(image);
 
-
 	function doRest(gameObject) {
-
-		
 
 		///*******Create game types******///
 		var gametypes = gameObject.attributes.game_types;
@@ -343,9 +338,9 @@ function createLayout(gameObject) {
 		}
 
 		createBorderView();
-	
-		createSubmitButtonAnswer();	
-		
+
+		createSubmitButtonAnswer();
+
 		/*if (roundId === -1) {
 		 createBetCoinsView(coinsToJoin);
 		 } else {
@@ -376,7 +371,7 @@ function createBorderView() {
 	}));
 }
 
-function createSubmitButtonAnswer(){
+function createSubmitButtonAnswer() {
 	var submitView = Titanium.UI.createView({
 		height : 70,
 		width : '100%',
@@ -391,50 +386,50 @@ function createSubmitButtonAnswer(){
 		backgroundColor : Alloy.Globals.themeColor(),
 		borderRadius : 6,
 		font : {
-		fontFamily : Alloy.Globals.getFont(),
-		fontSize : Alloy.Globals.getFontSize(2)
+			fontFamily : Alloy.Globals.getFont(),
+			fontSize : Alloy.Globals.getFontSize(2)
 		},
 		title : Alloy.Globals.PHRASES.saveTxt,
 		backgroundImage : 'none',
-		touchEnabled: true,
+		touchEnabled : true,
 	});
 
-	submitButton.addEventListener("click", function(e){
+	submitButton.addEventListener("click", function(e) {
 		Ti.API.info("post answer");
-		if(validate()){
+		if (validate()) {
 			Ti.API.info("UPPDATERA");
 			updateCouponGame();
-		}else{
+		} else {
 			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.notAllValuesErrorTxt);
 		}
 	});
-		
+
 	submitView.add(submitButton);
-	
+
 	view.add(submitView);
 }
 
-function updateCouponGame(){
+function updateCouponGame() {
 	if (Alloy.Globals.checkConnection()) {
-	
-	// Get game to edit
-	var xhr = Titanium.Network.createHTTPClient();
-	xhr.onerror = function(e) {
-		indicator.closeIndicator();
-		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-		Ti.API.info("ERROREROROR " + JSON.stringify(e));
-		Ti.API.error('Bad Sever =>' + e.error);
-	};
+		indicator.openIndicator();
 
-	try {
-		
-		xhr.open('POST', Alloy.Globals.BETKAMPENSAVEEDITURL);
-		xhr.setRequestHeader("content-type", "application/json");
-		xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
-		xhr.setTimeout(Alloy.Globals.TIMEOUT);
-		
-		
-		// build the json string
+		// Get game to edit
+		var xhr = Titanium.Network.createHTTPClient();
+		xhr.onerror = function(e) {
+			indicator.closeIndicator();
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+			Ti.API.info("ERROREROROR " + JSON.stringify(e));
+			Ti.API.error('Bad Sever =>' + e.error);
+		};
+
+		try {
+
+			xhr.open('POST', Alloy.Globals.BETKAMPENSAVEEDITURL);
+			xhr.setRequestHeader("content-type", "application/json");
+			xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
+			xhr.setTimeout(Alloy.Globals.TIMEOUT);
+
+			// build the json string
 			var param = '{"lang" : "' + Alloy.Globals.LOCALE + '", "cid":"' + Alloy.Globals.COUPON.id + '", "gameID": "' + gameID + '", "gamevalue": {';
 
 			for (var i in gameArray) {
@@ -463,190 +458,191 @@ function updateCouponGame(){
 			Ti.API.info("JSON STRING : " + param);
 
 			xhr.send(param);
-	} catch(e) {
-		indicator.closeIndicator();
-		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-	}
-	xhr.onload = function() {
-		if (this.status == '200') {
-			if (this.readyState == 4) {
-				Ti.API.info("UPPDATERAT ELLER : " + JSON.stringify(this.responseText));
-				response = JSON.parse(this.responseText);
-				if(response == 1){
-					if (OS_ANDROID) {
+		} catch(e) {
+			indicator.closeIndicator();
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+		}
+		xhr.onload = function() {
+			if (this.status == '200') {
+				if (this.readyState == 4) {
+					Ti.API.info("UPPDATERAT ELLER : " + JSON.stringify(this.responseText));
+					response = JSON.parse(this.responseText);
+					if (response == 1) {
+						if (OS_ANDROID) {
 							var delToast = Ti.UI.createNotification({
 								duration : Ti.UI.NOTIFICATION_DURATION_LONG,
 								message : Alloy.Globals.PHRASES.couponEditedGameFeedback
 							});
 							delToast.show();
-					} else {
-						indWin = Titanium.UI.createWindow();
+						} else {
+							indWin = Titanium.UI.createWindow();
 
-						//  view
-						var indView = Titanium.UI.createView({
-							top : '80%',
-							height : 30,
-							width : '80%',
-							backgroundColor : '#000',
-							opacity : 0.9
-						});
-
-						indWin.add(indView);
-
-						// message
-						var message = Titanium.UI.createLabel({
-							text : Alloy.Globals.PHRASES.couponEditedGameFeedback,
-							color : '#fff',
-							width : 'auto',
-							height : 'auto',
-							textAlign : 'center',
-							font : {
-								fontSize : 12,
-								fontWeight : 'bold'
-							}
-						});
-
-						indView.add(message);
-						indWin.open();
-
-						var interval = interval ? interval : 1500;
-						setTimeout(function() {
-							indWin.close({
-								opacity : 0,
-								duration : 1000
+							//  view
+							var indView = Titanium.UI.createView({
+								top : '80%',
+								height : 30,
+								width : '80%',
+								backgroundColor : '#000',
+								opacity : 0.9
 							});
-						}, interval);
+
+							indWin.add(indView);
+
+							// message
+							var message = Titanium.UI.createLabel({
+								text : Alloy.Globals.PHRASES.couponEditedGameFeedback,
+								color : '#fff',
+								width : 'auto',
+								height : 'auto',
+								textAlign : 'center',
+								font : {
+									fontSize : 12,
+									fontWeight : 'bold'
+								}
+							});
+
+							indView.add(message);
+							indWin.open();
+
+							var interval = interval ? interval : 1500;
+							setTimeout(function() {
+								indWin.close({
+									opacity : 0,
+									duration : 1000
+								});
+							}, interval);
+						}
+						indicator.closeIndicator();
+						$.editGame.close();
 					}
-					$.editGame.close();
+				} else {
+					indicator.closeIndicator();
+					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 				}
+
 			} else {
 				indicator.closeIndicator();
 				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+				Ti.API.error("Error =>" + this.response);
 			}
-
-		} else {
-			indicator.closeIndicator();
-			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-			Ti.API.error("Error =>" + this.response);
-		}
-	};
+		};
 
 	} else {
 		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 	}
 }
 
-function getGame(){
+function getGame() {
 	if (Alloy.Globals.checkConnection()) {
-	
-	if(OS_IOS) {
-		indicator.openIndicator();
-	}
-	
-	// Get game to edit
-	var xhr = Titanium.Network.createHTTPClient();
-	xhr.onerror = function(e) {
-		indicator.closeIndicator();
-		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-		Ti.API.error('Bad Sever =>' + e.error);
-	};
 
-	try {
-		
-		xhr.open('GET', Alloy.Globals.BETKAMPENGAMETOEDITURL + '/?gid=' + gameID + '&cid=' +Alloy.Globals.COUPON.id + '&lang=' + Alloy.Globals.LOCALE);
-		xhr.setRequestHeader("content-type", "application/json");
-		xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
-		xhr.setTimeout(Alloy.Globals.TIMEOUT);
+		if (OS_IOS) {
+			indicator.openIndicator();
+		}
 
-		xhr.send();
-	} catch(e) {
-		indicator.closeIndicator();
-		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-	}
-	xhr.onload = function() {
-		if (this.status == '200') {
-			if (this.readyState == 4) {
-				Ti.API.info("RESPONSE : " + JSON.stringify(this.responseText));
-				var response = JSON.parse(this.responseText);
-				// Simple work around, if response ain't an array, then simpy add it to one, to use the same code
-				if (response.length == null) {
-					var array = [];
-					array.push(response);
-					response = array;
-					array = null;
-				}
-				Ti.API.info("PARSED RESPONSE: " + JSON.stringify(response));
-				// This response contains one or several games for a challenge. And each game contains a  set of game types valid for that game
-				for (resp in response) {
-					//Ti.API.info("EN RESPONSE: " + JSON.stringify(resp));
-					var res = response[resp];
-					var teamOneName = res.team_1.team_name;
+		// Get game to edit
+		var xhr = Titanium.Network.createHTTPClient();
+		xhr.onerror = function(e) {
+			indicator.closeIndicator();
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+			Ti.API.error('Bad Sever =>' + e.error);
+		};
 
-					if (teamOneName.length > 16) {
-						teamOneName = teamOneName.substring(0, 13) + '...';
+		try {
+
+			xhr.open('GET', Alloy.Globals.BETKAMPENGAMETOEDITURL + '/?gid=' + gameID + '&cid=' + Alloy.Globals.COUPON.id + '&lang=' + Alloy.Globals.LOCALE);
+			xhr.setRequestHeader("content-type", "application/json");
+			xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
+			xhr.setTimeout(Alloy.Globals.TIMEOUT);
+
+			xhr.send();
+		} catch(e) {
+			indicator.closeIndicator();
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+		}
+		xhr.onload = function() {
+			if (this.status == '200') {
+				if (this.readyState == 4) {
+					Ti.API.info("RESPONSE : " + JSON.stringify(this.responseText));
+					var response = JSON.parse(this.responseText);
+					// Simple work around, if response ain't an array, then simpy add it to one, to use the same code
+					if (response.length == null) {
+						var array = [];
+						array.push(response);
+						response = array;
+						array = null;
 					}
+					Ti.API.info("PARSED RESPONSE: " + JSON.stringify(response));
+					// This response contains one or several games for a challenge. And each game contains a  set of game types valid for that game
+					for (resp in response) {
+						//Ti.API.info("EN RESPONSE: " + JSON.stringify(resp));
+						var res = response[resp];
+						var teamOneName = res.team_1.team_name;
 
-					var teamTwoName = res.team_2.team_name;
+						if (teamOneName.length > 16) {
+							teamOneName = teamOneName.substring(0, 13) + '...';
+						}
 
-					if (teamTwoName.length > 16) {
-						teamTwoName = teamTwoName.substring(0, 13) + '...';
-					}
+						var teamTwoName = res.team_2.team_name;
 
-					var team_1 = {
-						team_id : res.team_1.team_id,
-						team_logo : res.team_1.team_logo,
-						team_name : teamOneName
-					};
-					var team_2 = {
-						team_id : res.team_2.team_id,
-						team_logo : res.team_2.team_logo,
-						team_name : teamTwoName
-					};
-					
-					var values = [];
-					Ti.API.info("VALUES : " + JSON.stringify(res.values));
-					for (var y in res.values){
-						var value = {
-							game_type : res.values[y].game_type,
-							value_1 : res.values[y].value_1,
-							value_2 : res.values[y].value_2,
+						if (teamTwoName.length > 16) {
+							teamTwoName = teamTwoName.substring(0, 13) + '...';
+						}
+
+						var team_1 = {
+							team_id : res.team_1.team_id,
+							team_logo : res.team_1.team_logo,
+							team_name : teamOneName
 						};
-						values.push(value);
+						var team_2 = {
+							team_id : res.team_2.team_id,
+							team_logo : res.team_2.team_logo,
+							team_name : teamTwoName
+						};
+
+						var values = [];
+						Ti.API.info("VALUES : " + JSON.stringify(res.values));
+						for (var y in res.values) {
+							var value = {
+								game_type : res.values[y].game_type,
+								value_1 : res.values[y].value_1,
+								value_2 : res.values[y].value_2,
+							};
+							values.push(value);
+						}
+
+						var gameObject = Alloy.createModel('game', {
+							game_date : res.game_date,
+							game_id : res.game_id,
+							game_type : res.game_type,
+							game_types : res.game_types,
+							league_id : res.league_id,
+							league_name : res.league_name,
+							round_id : res.round_id,
+							status : res.status,
+							team_1 : team_1,
+							team_2 : team_2,
+							pot : res.pot,
+							values : values
+						});
+						// add to an array
+						gameObjects.push(gameObject);
 					}
 
-					var gameObject = Alloy.createModel('game', {
-						game_date : res.game_date,
-						game_id : res.game_id,
-						game_type : res.game_type,
-						game_types : res.game_types,
-						league_id : res.league_id,
-						league_name : res.league_name,
-						round_id : res.round_id,
-						status : res.status,
-						team_1 : team_1,
-						team_2 : team_2,
-						pot : res.pot,
-						values : values
-					});
-					// add to an array
-					gameObjects.push(gameObject);
+					// create views for each gameObject
+					for (var i = 0; i < gameObjects.length; i++) {
+						createLayout(gameObjects[i]);
+					}
+				} else {
+					indicator.closeIndicator();
+					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 				}
 
-				// create views for each gameObject
-				for (var i = 0; i < gameObjects.length; i++) {
-					createLayout(gameObjects[i]);
-				}
 			} else {
 				indicator.closeIndicator();
 				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+				Ti.API.error("Error =>" + this.response);
 			}
-
-		} else {
-			indicator.closeIndicator();
-			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-			Ti.API.error("Error =>" + this.response);
-		}
-	};
+		};
 
 	} else {
 		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);

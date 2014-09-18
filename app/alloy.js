@@ -600,8 +600,6 @@ Alloy.Globals.getCoupon = function(uid){
 								}
 							}
 						}else if(OS_ANDROID){
-							//TODO lägg in ett sätt att updatera kupongen på android så det syns
-							
 							// will rebuild action bar menu
 							Ti.App.fireEvent('app:rebuildAndroidMenu');
 						}
@@ -628,11 +626,8 @@ Alloy.Globals.getCoupon = function(uid){
 								}
 							}
 						}else if(OS_ANDROID){
-							//TODO lägg in ett sätt att updatera kupongen på android så det syns
-							
 							// will rebuild action bar menu
-							Ti.App.fireEvent('app:rebuildAndroidMenu');
-							
+							Ti.App.fireEvent('app:rebuildAndroidMenu');	
 						}
 					}
 			} else {

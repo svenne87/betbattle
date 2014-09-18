@@ -767,19 +767,12 @@ if (OS_IOS){
                 actionBar.icon = "images/ButtonMenu.png";
                 actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
                 
-                var ticketIcon = '';
-      		
-        		if(Alloy.Globals.hasCoupon){
-        			ticketIcon = 'images/ticketBtnRed.png';
-        		} else {
-        			ticketIcon = 'images/ticketBtn.png';
-        		}
-Ti.API.log(ticketIcon); // TODO varför uppdateras det ej???
                 $.mainWin.activity.onCreateOptionsMenu = function(e) {
         			
         			ticket = e.menu.add(ticketIcon = {
         				showAsAction : Ti.Android.SHOW_AS_ACTION_ALWAYS,
-        				icon: ticketIcon
+        				icon: 'images/ticketBtn.png',
+        				itemId : 1
         			});
 
         			refreshItem = e.menu.add({
@@ -821,6 +814,18 @@ Ti.API.log(ticketIcon); // TODO varför uppdateras det ej???
 						}
 					});
     			};
+    			
+    			$.mainWin.activity.onPrepareOptionsMenu = function(e) {
+    				var menu = e.menu;
+    				
+    				if(Alloy.Globals.hasCoupon){
+    					menu.findItem(1).setIcon('images/ticketBtnRed.png');
+    				} else {
+    					menu.findItem(1).setIcon('images/ticketBtn.png');
+    				}
+
+    			};
+   
     			$.mainWin.activity.invalidateOptionsMenu();
                 
                 actionBar.onHomeIconItemSelected = function() {

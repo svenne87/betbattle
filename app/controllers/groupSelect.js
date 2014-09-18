@@ -15,9 +15,9 @@ Ti.App.addEventListener("sliderToggled", function(e) {
 });
 
 var tableWrapper = Ti.UI.createView({
-	height: "75%",
-	width: Ti.UI.FILL,
-		
+	height : "75%",
+	width : Ti.UI.FILL,
+
 });
 // refresh this view
 Ti.App.addEventListener("groupSelectRefresh", function(e) {
@@ -25,44 +25,44 @@ Ti.App.addEventListener("groupSelectRefresh", function(e) {
 	getGroups();
 });
 
-function createMemberRow(member, subRow){
+function createMemberRow(member, subRow) {
 	//profilepicture
-				var image = '/images/no_pic.png';
-				Ti.API.info("MEMBERS : " + JSON.stringify(member));
-				if(member.fbid != null) {
-					image = "https://graph.facebook.com/"+ member.fbid +"/picture?type=large";
-				} else {
-					// get betkampen image
-					image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + member.id + '.png';
-				}
-				
-				//Ti.API.info("IMAGE : " + typeof image);
-				var profilePic = Ti.UI.createImageView({
-					image : image,
-					height : 40,
-					width : 40,
-					left : 10,
-					top : 5
-				});
-				
-				profilePic.addEventListener("error", function(e){
-					Ti.API.info("fel på bild");
-					e.source.image = '/images/no_pic.png';
-				});
-				subRow.add(profilePic);
-				subRow.add(Ti.UI.createLabel({
-					text : member.name,
-					top : -30,
-					left : 60,
-					width : 'auto',
-					font : {
-						fontSize : Alloy.Globals.getFontSize(1),
-						fontWeight : 'normal',
-						fontFamily : Alloy.Globals.getFont()
-					},
-					color : '#FFF',
-					backgroundColor : '#303030'
-				}));
+	var image = '/images/no_pic.png';
+	Ti.API.info("MEMBERS : " + JSON.stringify(member));
+	if (member.fbid != null) {
+		image = "https://graph.facebook.com/" + member.fbid + "/picture?type=large";
+	} else {
+		// get betkampen image
+		image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + member.id + '.png';
+	}
+
+	//Ti.API.info("IMAGE : " + typeof image);
+	var profilePic = Ti.UI.createImageView({
+		image : image,
+		height : 40,
+		width : 40,
+		left : 10,
+		top : 5
+	});
+
+	profilePic.addEventListener("error", function(e) {
+		Ti.API.info("fel på bild");
+		e.source.image = '/images/no_pic.png';
+	});
+	subRow.add(profilePic);
+	subRow.add(Ti.UI.createLabel({
+		text : member.name,
+		top : -30,
+		left : 60,
+		width : 'auto',
+		font : {
+			fontSize : Alloy.Globals.getFontSize(1),
+			fontWeight : 'normal',
+			fontFamily : Alloy.Globals.getFont()
+		},
+		color : '#FFF',
+		backgroundColor : '#303030'
+	}));
 
 }
 
@@ -111,15 +111,13 @@ function getFriends() {
 				if (response.length > 0) {
 					friendObjects = [];
 					for (var i = 0; i < response.length; i++) {
-						
 
 						var friendObject = Alloy.createModel('friend', {
 							fbid : response[i].fbid,
 							id : response[i].id,
 							name : response[i].name
 						});
-						
-						
+
 						// add to array
 						friendObjects.push(friendObject);
 					}
@@ -145,9 +143,7 @@ function getFriends() {
 			Ti.API.error("Error =>" + this.response);
 		}
 	};
-	
-	
-	
+
 }
 
 function getGroups() {
@@ -211,8 +207,7 @@ function getGroups() {
 							name : response[i].name,
 							members : membersArray
 						});
-						
-						
+
 						// add to array
 						groupObjects.push(groupObject);
 					}
@@ -264,26 +259,26 @@ function challengeGroup(array) {
 
 				alertWindow.addEventListener('click', function(e) {
 					switch (e.index) {
-						case 0:
-							alertWindow.hide();
-							break;
-						case 1:
-							var win = Alloy.createController('store').getView();
-							Alloy.Globals.WINDOWS.push(win);
+					case 0:
+						alertWindow.hide();
+						break;
+					case 1:
+						var win = Alloy.createController('store').getView();
+						Alloy.Globals.WINDOWS.push(win);
 
-							if (OS_IOS) {
-								Alloy.Globals.NAV.openWindow(win, {
-									animated : true
-								});
-							} else if (OS_ANDROID) {
-								win.open({
-									fullScreen : false
-								});
-								win = null;
-							}
+						if (OS_IOS) {
+							Alloy.Globals.NAV.openWindow(win, {
+								animated : true
+							});
+						} else if (OS_ANDROID) {
+							win.open({
+								fullScreen : false
+							});
+							win = null;
+						}
 
-							alertWindow.hide();
-							break;
+						alertWindow.hide();
+						break;
 					}
 				});
 				alertWindow.show();
@@ -301,10 +296,10 @@ function challengeGroup(array) {
 			xhr.setRequestHeader("content-type", "application/json");
 			xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
 			xhr.setTimeout(Alloy.Globals.TIMEOUT);
-			
+
 			var param = "";
 			// add groups to params
-			param += '{"cid": ' + Alloy.Globals.COUPON.id + ', "coins": '+coins+', "groups": [{';
+			param += '{"cid": ' + Alloy.Globals.COUPON.id + ', "coins": ' + coins + ', "groups": [{';
 
 			for (var i = 0; i < array.length; i++) {
 				for (var x = 0; x < groupObjects.length; x++) {
@@ -324,7 +319,7 @@ function challengeGroup(array) {
 
 			param += '}]}';
 
-			Ti.API.log("Params : "+ param);
+			Ti.API.log("Params : " + param);
 
 			xhr.send(param);
 		} catch(e) {
@@ -340,37 +335,36 @@ function challengeGroup(array) {
 					Ti.API.info("RESPONSE NO PARSE : " + JSON.stringify(this.responseText));
 					var response = JSON.parse(this.responseText);
 					Ti.API.info("RESPONSE : " + JSON.stringify(response));
-					
-						response = response.replace(/(<br \/>)+/g, "\n");
-						// show dialog and if ok close window
-						var alertWindow = Titanium.UI.createAlertDialog({
-							title : Alloy.Globals.PHRASES.betbattleTxt,
-							message : response,
-							buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt]
-						});
 
-						alertWindow.addEventListener('click', function() {
-							var argu = {
-								refresh : 1,
-								sent_challenge : 1,
-							};
-							var loginSuccessWindow = Alloy.createController('main', argu).getView();
-								if (OS_IOS) {
-									loginSuccessWindow.open({
-										fullScreen : true,
-										transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
-									});
-								} else if (OS_ANDROID) {
-									loginSuccessWindow.open({
-										fullScreen : true,
-										navBarHidden : false,
-										orientationModes : [Titanium.UI.PORTRAIT]
-									});
-								}
-								loginSuccessWindow = null;
-						});
-						alertWindow.show();
-					
+					response = response.replace(/(<br \/>)+/g, "\n");
+					// show dialog and if ok close window
+					var alertWindow = Titanium.UI.createAlertDialog({
+						title : Alloy.Globals.PHRASES.betbattleTxt,
+						message : response,
+						buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt]
+					});
+
+					alertWindow.addEventListener('click', function() {
+						var argu = {
+							refresh : 1,
+							sent_challenge : 1,
+						};
+						var loginSuccessWindow = Alloy.createController('main', argu).getView();
+						if (OS_IOS) {
+							loginSuccessWindow.open({
+								fullScreen : true,
+								transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
+							});
+						} else if (OS_ANDROID) {
+							loginSuccessWindow.open({
+								fullScreen : true,
+								navBarHidden : false,
+								orientationModes : [Titanium.UI.PORTRAIT]
+							});
+						}
+						loginSuccessWindow = null;
+					});
+					alertWindow.show();
 
 				} else {
 					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
@@ -412,25 +406,25 @@ function challengeFriends() {
 
 				alertWindow.addEventListener('click', function(e) {
 					switch (e.index) {
-						case 0:
-							alertWindow.hide();
-							break;
-						case 1:
-							var win = Alloy.createController('store').getView();
-							Alloy.Globals.WINDOWS.push(win);
+					case 0:
+						alertWindow.hide();
+						break;
+					case 1:
+						var win = Alloy.createController('store').getView();
+						Alloy.Globals.WINDOWS.push(win);
 
-							if (OS_IOS) {
-								Alloy.Globals.NAV.openWindow(win, {
-									animated : true
-								});
-							} else if (OS_ANDROID) {
-								win.open({
-									fullScreen : false
-								});
-								win = null;
-							}
-							alertWindow.hide();
-							break;
+						if (OS_IOS) {
+							Alloy.Globals.NAV.openWindow(win, {
+								animated : true
+							});
+						} else if (OS_ANDROID) {
+							win.open({
+								fullScreen : false
+							});
+							win = null;
+						}
+						alertWindow.hide();
+						break;
 					}
 				});
 				alertWindow.show();
@@ -449,7 +443,7 @@ function challengeFriends() {
 			xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
 			xhr.setTimeout(Alloy.Globals.TIMEOUT);
 			var param = "";
-			param += '{"coins": '+coins+', "cid":"' + Alloy.Globals.COUPON.id + '", "friends":[{';
+			param += '{"coins": ' + coins + ', "cid":"' + Alloy.Globals.COUPON.id + '", "friends":[{';
 
 			for (var i = 0; i < friendsChallenge.length; i++) {
 				param += '"' + friendsChallenge[i].id + '":"' + friendsChallenge[i].name;
@@ -477,41 +471,39 @@ function challengeFriends() {
 				indicator.closeIndicator();
 
 				if (this.readyState == 4) {
-					Ti.API.log("RESPONSE FRIENDS : "+ JSON.stringify(this.responseText));
+					Ti.API.log("RESPONSE FRIENDS : " + JSON.stringify(this.responseText));
 					var response = JSON.parse(this.responseText);
 
-					
-						response = response.replace(/(<br \/>)+/g, "\n");
-						// show dialog and if ok close window
-						var alertWindow = Titanium.UI.createAlertDialog({
-							title : Alloy.Globals.PHRASES.betbattleTxt,
-							message : response,
-							buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt]
-						});
+					response = response.replace(/(<br \/>)+/g, "\n");
+					// show dialog and if ok close window
+					var alertWindow = Titanium.UI.createAlertDialog({
+						title : Alloy.Globals.PHRASES.betbattleTxt,
+						message : response,
+						buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt]
+					});
 
-						alertWindow.addEventListener('click', function() {
-							var argu = {
-								refresh : 1,
-								sent_challenge : 1
-							};
-							var loginSuccessWindow = Alloy.createController('main', argu).getView();
-								if (OS_IOS) {
-									loginSuccessWindow.open({
-										fullScreen : true,
-										transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
-									});
-								} else if (OS_ANDROID) {
-									loginSuccessWindow.open({
-										fullScreen : true,
-										navBarHidden : false,
-										orientationModes : [Titanium.UI.PORTRAIT]
-									});
-								}
-								loginSuccessWindow = null;
-						});
-						alertWindow.show();
+					alertWindow.addEventListener('click', function() {
+						var argu = {
+							refresh : 1,
+							sent_challenge : 1
+						};
+						var loginSuccessWindow = Alloy.createController('main', argu).getView();
+						if (OS_IOS) {
+							loginSuccessWindow.open({
+								fullScreen : true,
+								transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
+							});
+						} else if (OS_ANDROID) {
+							loginSuccessWindow.open({
+								fullScreen : true,
+								navBarHidden : false,
+								orientationModes : [Titanium.UI.PORTRAIT]
+							});
+						}
+						loginSuccessWindow = null;
+					});
+					alertWindow.show();
 
-					
 				} else {
 					submitButton.touchEnabled = true;
 					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
@@ -587,28 +579,27 @@ function createSubmitButtons(type) {
 	}
 
 	submitButton.addEventListener('click', function() {
-		if(type == 1){
+		if (type == 1) {
 			if (selectedGroupIds.length === 1) {
-			// call function to send to server
+				// call function to send to server
 				Ti.API.info("challenge : Group");
 				challengeGroup(selectedGroupIds);
 			} else {
 				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.groupChallengeErrorTxt);
 			}
 		}
-		
-		if(type == 2){
-			if(friendsChallenge.length > 0){
+
+		if (type == 2) {
+			if (friendsChallenge.length > 0) {
 				Ti.API.info("challenge : Friends");
 				challengeFriends();
-			}else{
+			} else {
 				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.friendChallengeErrorTxt);
 			}
-			
+
 		}
 
 	});
-	
 
 	//submitButtonsView.add();
 	botView.add(submitButton);
@@ -618,7 +609,7 @@ function createViews(array, type) {
 	// check if table exists, and if it does simply remove it
 	var children = tableWrapper.children;
 	for (var i = 0; i < children.length; i++) {
-		Ti.API.info("children : "+ JSON.stringify(children[i]));
+		Ti.API.info("children : " + JSON.stringify(children[i]));
 		if (children[i].id === 'groupsTable') {
 			tableWrapper.remove(children[i]);
 		}
@@ -627,7 +618,6 @@ function createViews(array, type) {
 		}
 		children[i] = null;
 	}
-	
 
 	if (OS_IOS) {
 		refresher = Ti.UI.createRefreshControl({
@@ -636,13 +626,13 @@ function createViews(array, type) {
 
 		// will refresh on pull
 		refresher.addEventListener('refreshstart', function(e) {
-			if(Alloy.Globals.checkConnection()){
-				if(type == 1){
-					getGroups();	
-				}else if(type == 2){
+			if (Alloy.Globals.checkConnection()) {
+				if (type == 1) {
+					getGroups();
+				} else if (type == 2) {
 					getFriends();
 				}
-				
+
 			} else {
 				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 				refresher.endRefreshing();
@@ -650,8 +640,6 @@ function createViews(array, type) {
 		});
 	}
 
-
-	
 	// Table
 	table = Ti.UI.createTableView({
 		height : '100%',
@@ -676,47 +664,45 @@ function createViews(array, type) {
 
 	// Rows
 	for (var i = 0; i < array.length; i++) {
-		if(type == 1){
+		if (type == 1) {
 			var subRow = Ti.UI.createTableViewRow({
 				layout : 'vertical',
 				backgroundColor : '#303030',
 				selectionStyle : 'none',
 				height : 'auto'
 			});
-	
+
 			subRow.footerView = Ti.UI.createView({
 				height : 0.5,
 				backgroundColor : '#6d6d6d'
 			});
-	
+
 			subRow.add(Ti.UI.createView({
 				height : 10
 			}));
-		
-		
+
 			for (var x = 0; x < array[i].attributes.members.length; x++) {
 				createMemberRow(array[i].attributes.members[x], subRow);
 			}
-		
+
 			subRow.add(Ti.UI.createView({
 				height : 20
 			}));
-	
+
 			// array with views for the sub in table row
 			var subRowArray = [];
 			subRowArray.push(subRow);
-	
+
 			var hasChild;
-	
+
 			if (OS_IOS) {
 				hasChild = true;
 			} else if (OS_ANDROID) {
 				hasChild = false;
 			}
-			
-			
+
 			var row = $.UI.create('TableViewRow', {
-				classes : ['challengesSectionDefault'], 
+				classes : ['challengesSectionDefault'],
 				id : array[i].attributes.id,
 				hasChild : hasChild,
 				isparent : true,
@@ -724,7 +710,7 @@ function createViews(array, type) {
 				//name: array[i].attributes.name,
 				sub : subRowArray,
 			});
-			
+
 			row.add(Ti.UI.createLabel({
 				text : array[i].attributes.name,
 				top : 6,
@@ -736,47 +722,47 @@ function createViews(array, type) {
 				},
 				color : '#FFF'
 			}));
-		
-		}else{
+
+		} else {
 			//profilepicture
 			Ti.API.info("VÄNNEN : " + JSON.stringify(array[i].attributes));
-				var image;
-				if(array[i].attributes.fbid !== null) {
-					image = "https://graph.facebook.com/"+ array[i].attributes.fbid +"/picture?type=large";
-				} else {
-					// get betkampen image
-					image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + array[i].attributes.id + '.png';
-				}
-			
+			var image;
+			if (array[i].attributes.fbid !== null) {
+				image = "https://graph.facebook.com/" + array[i].attributes.fbid + "/picture?type=large";
+			} else {
+				// get betkampen image
+				image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + array[i].attributes.id + '.png';
+			}
+
 			var row = $.UI.create('TableViewRow', {
-				classes : ['challengesSectionDefault'], 
+				classes : ['challengesSectionDefault'],
 				id : array[i].attributes.id,
 				hasChild : hasChild,
 				isparent : true,
 				opened : false,
-				name: array[i].attributes.name,
-				height: 40,
+				name : array[i].attributes.name,
+				height : 40,
 				//sub : subRowArray,
 			});
-			
+
 			var detailsImg = Ti.UI.createImageView({
 				name : 'profilePic',
 				width : 30,
 				height : 30,
 				//top : 11,
 				left : 5,
-				id : "img-"+array[i].attributes.id,
+				id : "img-" + array[i].attributes.id,
 				image : image
 			});
-			detailsImg.addEventListener('error',function(e){
-					// fallback for image
-					detailsImg.image = '/images/no_pic.png';
-				});
+			detailsImg.addEventListener('error', function(e) {
+				// fallback for image
+				detailsImg.image = '/images/no_pic.png';
+			});
 			row.add(detailsImg);
-			
+
 			row.add(Ti.UI.createLabel({
 				text : array[i].attributes.name,
-				textAlign: "center",
+				textAlign : "center",
 				left : 60,
 				font : {
 					fontSize : Alloy.Globals.getFontSize(1),
@@ -785,27 +771,25 @@ function createViews(array, type) {
 				},
 				color : '#FFF'
 			}));
-			
+
 			/*row.add(Ti.UI.createLabel({
-				id: 'selected',
-				text:fontawesome.icon('fa-check'),
-				textAlign: "center",
-				right: 10,
-				color: "#FFF",
-				parent: row,
-				font: {
-					fontSize: 30,
-					fontFamily: font,
-				},
-				height: "auto",
-				width: "auto",
-			}));*/
-			
-			
+			 id: 'selected',
+			 text:fontawesome.icon('fa-check'),
+			 textAlign: "center",
+			 right: 10,
+			 color: "#FFF",
+			 parent: row,
+			 font: {
+			 fontSize: 30,
+			 fontFamily: font,
+			 },
+			 height: "auto",
+			 width: "auto",
+			 }));*/
+
 		}
-		
-		
-		if(type == 1){
+
+		if (type == 1) {
 			row.add(Ti.UI.createLabel({
 				text : Alloy.Globals.PHRASES.nrOfMembersTxt + ': ' + array[i].attributes.members.length,
 				top : 26,
@@ -817,13 +801,13 @@ function createViews(array, type) {
 				},
 				color : '#FFF'
 			}));
-			
+
 			row.add(Ti.UI.createView({
 				top : 50,
 				layout : 'vertical',
 				height : 8
 			}));
-	
+
 			var detailsImg = Ti.UI.createImageView({
 				name : 'detailsBtn',
 				width : 35,
@@ -833,9 +817,9 @@ function createViews(array, type) {
 				id : array[i].attributes.round,
 				image : '/images/p.png'
 			});
-	
+
 			row.add(detailsImg);
-	
+
 			if (OS_ANDROID) {
 				row.add(Ti.UI.createLabel({
 					font : {
@@ -849,10 +833,10 @@ function createViews(array, type) {
 					width : 'auto'
 				}));
 			}
-	
+
 			row.className = 'one_image_per_row';
 		}
-		
+
 		data.push(row);
 	}
 
@@ -861,9 +845,9 @@ function createViews(array, type) {
 	// add event listener
 	table.addEventListener("click", function(e) {
 		// check if we press the button on the row
-		
+
 		if (e.source.name === 'detailsBtn') {
-			if(type == 1){
+			if (type == 1) {
 				// change Image
 				if (e.source.image == '/images/p.png') {
 					e.source.image = '/images/m.png';
@@ -892,7 +876,7 @@ function createViews(array, type) {
 			}
 		} else {
 			// change Image
-			if(type == 1){
+			if (type == 1) {
 				if (e.source.image == '/images/p.png') {
 					e.source.image = '/images/m.png';
 				} else {
@@ -901,7 +885,7 @@ function createViews(array, type) {
 			}
 			// This will show group members
 			//Is this a parent cell?
-			if(type == 1){
+			if (type == 1) {
 				if (e.row.isparent) {
 					//Is it opened?
 					if (e.row.opened) {
@@ -921,8 +905,8 @@ function createViews(array, type) {
 				}
 				selectedGroupIds[0] = e.row.id;
 			}
-			if(type == 2){
-				
+			if (type == 2) {
+
 				Ti.API.info("selected: " + JSON.stringify(e));
 				var friend = {
 					name : e.row.name,
@@ -937,18 +921,18 @@ function createViews(array, type) {
 						// friend already in list, store index to remove
 						//var string = "selected_"+e.row.id;
 						//$.string.setText();
-						
+
 						clicked = true;
 						index = i;
 						break;
 					}
 				}
-		
+
 				if (index != -1) {
-					
+
 					friendsChallenge.splice(index, 1);
 				} else {
-					
+
 					friendsChallenge.push(friend);
 				}
 			}
@@ -956,7 +940,7 @@ function createViews(array, type) {
 
 			for (var i = 0; i < buttonsPushed.length; i++) {
 				// change color of lastpressed buttons
-				if(type == 1){
+				if (type == 1) {
 					buttonsPushed[i].setBackgroundColor('#242424');
 					buttonsPushed[i].backgroundGradient = {
 						type : "linear",
@@ -980,9 +964,9 @@ function createViews(array, type) {
 			}
 			// since we are not selecting several groups right now
 			Ti.API.info("friend array: " + JSON.stringify(friendsChallenge));
-			if(clicked){
+			if (clicked) {
 				//e.row.children[(e.row.children.length)-1] = null;
-				e.row.remove(e.row.children[e.row.children.length-1]);
+				e.row.remove(e.row.children[e.row.children.length - 1]);
 				e.row.setBackgroundColor('#242424');
 				e.row.backgroundGradient = {
 					type : "linear",
@@ -1002,28 +986,27 @@ function createViews(array, type) {
 						offset : 1.0
 					}]
 				};
-			}else{
-				if(type == 2){
+			} else {
+				if (type == 2) {
 					e.row.add(Ti.UI.createLabel({
-						id: 'selected_'+e.row.id,
-						text:fontawesome.icon('fa-check'),
-						textAlign: "center",
-						right: 10,
-						color: "#FFF",
-						parent: row,
-						font: {
-							fontSize: 30,
-							fontFamily: font,
+						id : 'selected_' + e.row.id,
+						text : fontawesome.icon('fa-check'),
+						textAlign : "center",
+						right : 10,
+						color : "#FFF",
+						parent : row,
+						font : {
+							fontSize : 30,
+							fontFamily : font,
 						},
-						height: "auto",
-						width: "auto",
+						height : "auto",
+						width : "auto",
 					}));
 				}
 				e.row.setBackgroundColor(Alloy.Globals.themeColor());
 				e.row.backgroundGradient = {};
 			}
-			
-			
+
 		}
 	});
 	tableWrapper.removeAllChildren();
@@ -1089,65 +1072,65 @@ if (OS_IOS) {
 }
 
 var topView = Ti.UI.createView({
-	height: 40,
-	width: Ti.UI.FILL,
-	layout: 'horizontal',
+	height : 40,
+	width : Ti.UI.FILL,
+	layout : 'horizontal',
 });
 
 var botView = Ti.UI.createView({
-	height: 60,
-	width: Ti.UI.FILL,
-	layout: 'absolute',
+	height : 60,
+	width : Ti.UI.FILL,
+	layout : 'absolute',
 });
 
 var tab_groups = Ti.UI.createView({
-		height: 40,
-		width: "50%",
-		backgroundColor: Alloy.Globals.themeColor(),
-	});
-	
-	tab_groups.add(Ti.UI.createLabel({
-		text: Alloy.Globals.PHRASES.GroupsTxt,
-		textAlign: "center",
-		color: "#FFFFFF",
-		font:{
-			fontSize: 14,
-			fontFamily: "Impact",
-		}
-	}));
-	
-	var tab_friends = Ti.UI.createView({
-		height: 40,
-		width: "50%",
-		backgroundColor : "black",
-	});
-	
-	tab_friends.add(Ti.UI.createLabel({
-		text: Alloy.Globals.PHRASES.FriendsTxt,
-		textAlign: "center",
-		color: "#c5c5c5",
-		font: {
-			fontSize: 14,
-			fontFamily: "Impact",
-		}
-	}));
+	height : 40,
+	width : "50%",
+	backgroundColor : Alloy.Globals.themeColor(),
+});
+
+tab_groups.add(Ti.UI.createLabel({
+	text : Alloy.Globals.PHRASES.GroupsTxt,
+	textAlign : "center",
+	color : "#FFFFFF",
+	font : {
+		fontSize : 14,
+		fontFamily : "Impact",
+	}
+}));
+
+var tab_friends = Ti.UI.createView({
+	height : 40,
+	width : "50%",
+	backgroundColor : "black",
+});
+
+tab_friends.add(Ti.UI.createLabel({
+	text : Alloy.Globals.PHRASES.FriendsTxt,
+	textAlign : "center",
+	color : "#c5c5c5",
+	font : {
+		fontSize : 14,
+		fontFamily : "Impact",
+	}
+}));
 
 topView.add(tab_groups);
 topView.add(tab_friends);
 
 $.groupSelect.add(topView);
 
-	tab_groups.addEventListener("click", function(e){
-		tab_groups.setBackgroundColor(Alloy.Globals.themeColor());
-		tab_friends.setBackgroundColor("black");
-		getGroups();
-	});
-	
-	tab_friends.addEventListener("click", function(e){
-		tab_groups.setBackgroundColor("black");
-		tab_friends.setBackgroundColor(Alloy.Globals.themeColor());
-		getFriends();
-	});
+tab_groups.addEventListener("click", function(e) {
+	tab_groups.setBackgroundColor(Alloy.Globals.themeColor());
+	tab_friends.setBackgroundColor("black");
+	getGroups();
+});
+
+tab_friends.addEventListener("click", function(e) {
+	tab_groups.setBackgroundColor("black");
+	tab_friends.setBackgroundColor(Alloy.Globals.themeColor());
+	getFriends();
+});
 
 $.groupSelect.add(tableWrapper);
 $.groupSelect.add(botView);
