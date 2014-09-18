@@ -603,10 +603,14 @@ Alloy.Globals.getCoupon = function(uid){
 							}
 						}else if(OS_ANDROID){
 							//TODO lägg in ett sätt att updatera kupongen på android så det syns
+							
+							// will rebuild action bar menu
+							Ti.App.fireEvent('app:rebuildAndroidMenu');
 						}
 					}else if(Alloy.Globals.COUPON.games.length > 0){
+						Alloy.Globals.hasCoupon = true;
+						
 						if(OS_IOS){
-							Alloy.Globals.hasCoupon = true;
 							Ti.API.info("challenge succces");
 							var children = Alloy.Globals.NAV.getChildren();
 							for(var i in children){
@@ -627,6 +631,10 @@ Alloy.Globals.getCoupon = function(uid){
 							}
 						}else if(OS_ANDROID){
 							//TODO lägg in ett sätt att updatera kupongen på android så det syns
+							
+							// will rebuild action bar menu
+							Ti.App.fireEvent('app:rebuildAndroidMenu');
+							
 						}
 					}
 			} else {

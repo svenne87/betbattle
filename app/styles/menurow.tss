@@ -42,7 +42,7 @@
 },
 "#rightIcon[platform=android]": {
 	width : "27dp",
-	height : '15dp',
+	height : 'auto',
     left : "140dp",
 },
 "#title": {

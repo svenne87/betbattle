@@ -88,9 +88,9 @@ function createGameType(gameType, gameObject) {
 					if (answer == 1) {
 						Ti.API.info("svara");
 						//postAnswer(gameArray);
-					}else if(matchOTD == 1){
-						Ti.API.info("Matchens mästare");	
-					}else if (Alloy.Globals.COUPON != null) {
+					} else if (matchOTD == 1) {
+						Ti.API.info("Matchens mästare");
+					} else if (Alloy.Globals.COUPON != null) {
 						Ti.API.info("update");
 						updateChallenge();
 					} else {
@@ -121,10 +121,10 @@ function createGameType(gameType, gameObject) {
 			layout : layoutType,
 		});
 		var data = [];
-		
+
 		if (OS_ANDROID) {
 			var pickerLabels = [];
-			
+
 			for (var i = 0; i < gameType.options; i++) {
 				var pickerLabel = Ti.UI.createLabel({
 					top : 10,
@@ -137,7 +137,7 @@ function createGameType(gameType, gameObject) {
 					textAlign : 'center',
 					index : i
 				});
-				
+
 				pickerLabels.push(pickerLabel);
 
 				pickerLabel.addEventListener('click', function(event) {
@@ -178,9 +178,9 @@ function createGameType(gameType, gameObject) {
 									if (answer == 1) {
 										Ti.API.info("svara");
 										//postAnswer(gameArray);
-									} else if(matchOTD == 1){
-										Ti.API.info("MATCHENS MÄSTARE");	
-									}else if (Alloy.Globals.COUPON != null) {
+									} else if (matchOTD == 1) {
+										Ti.API.info("MATCHENS MÄSTARE");
+									} else if (Alloy.Globals.COUPON != null) {
 										Ti.API.info("update");
 										updateChallenge();
 									} else {
@@ -268,7 +268,7 @@ function createGameType(gameType, gameObject) {
 						if (answer == 1) {
 							Ti.API.info("svara");
 							//postAnswer(gameArray);
-						} else if(matchOTD == 1){
+						} else if (matchOTD == 1) {
 							Ti.API.info("matchens mästare");
 						} else if (Alloy.Globals.COUPON != null) {
 
@@ -332,7 +332,7 @@ function createSubmitButtonAnswer() {
 	view.add(submitView);
 }
 
-function createSubmitButtonMatchOTD(){
+function createSubmitButtonMatchOTD() {
 	var submitView = Titanium.UI.createView({
 		height : 70,
 		width : '100%',
@@ -355,21 +355,21 @@ function createSubmitButtonMatchOTD(){
 		touchEnabled : true,
 	});
 
-	
-	submitButton.addEventListener("click", function(e){
+	submitButton.addEventListener("click", function(e) {
 		Ti.API.info("match of the day");
-		if(validate()){
+		if (validate()) {
 			postMatchOfTheDay();
 		} else {
 			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.notAllValuesErrorTxt);
 		}
 	});
-	
+
 	submitView.add(submitButton);
-	
+
 	view.add(submitView);
 }
 
+<<<<<<< HEAD
 function createBetAmountView(){
 	var betAmountView = Ti.UI.createView({
 		height: 70,
@@ -404,6 +404,9 @@ function createBetAmountView(){
 }
 
 function postMatchOfTheDay(){
+=======
+function postMatchOfTheDay() {
+>>>>>>> 5dc9ee3afade0ff21a443e99db9ebe1b9367114c
 	if (Alloy.Globals.checkConnection()) {
 		indicator.openIndicator();
 		var xhr = Titanium.Network.createHTTPClient();
@@ -463,8 +466,12 @@ function postMatchOfTheDay(){
 					if (response == 1) {
 						//Svarat på match of the day
 						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.matchOfTheDayMsg);
+<<<<<<< HEAD
 						$.challengeWindow.close();
 					} else if(response == 2){
+=======
+					} else if (response == 2) {
+>>>>>>> 5dc9ee3afade0ff21a443e99db9ebe1b9367114c
 						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.alreadyPostedMatchOTD);
 						$.challengeWindow.close();
 					} else {
@@ -486,6 +493,43 @@ function postMatchOfTheDay(){
 		indicator.closeIndicator();
 		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 	}
+}
+
+/* Used to show alert with info on coupon save/update */
+function showCouponAlert() {
+	// show dialog with options to add more matches or go to ticket
+	var alertWindow = Titanium.UI.createAlertDialog({
+		title : Alloy.Globals.PHRASES.betbattleTxt,
+		message : Alloy.Globals.PHRASES.couponSavedMsg,
+		buttonNames : [Alloy.Globals.PHRASES.addMoreMatchesTxt, Alloy.Globals.PHRASES.goToTicketTxt]
+	});
+
+
+	alertWindow.addEventListener('click', function(e) {
+		switch (e.index) {
+		case 0:
+			alertWindow.hide();
+			$.challengeWindow.close();
+			break;
+		case 1:
+			alertWindow.hide();
+
+			var window = Alloy.createController('showCoupon').getView();
+			Alloy.Globals.CURRENTVIEW =  window;
+			
+			window.open({
+				fullScreen : true
+			});
+			
+			for (win in Alloy.Globals.WINDOWS) {
+				if(win !== 0){
+					Alloy.Globals.WINDOWS[win].close();
+				}
+			}
+			break;
+		}
+	});
+	alertWindow.show();
 }
 
 function updateChallenge() {
@@ -546,8 +590,9 @@ function updateChallenge() {
 					Ti.API.info("RESPONSE : " + JSON.stringify(this.responseText));
 					var response = JSON.parse(this.responseText);
 					if (response == 1) {
-						Alloy.Globals.getCoupon();
-						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.couponSavedMsg);
+						Alloy.Globals.getCoupon();			
+						//Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.couponSavedMsg);
+						showCouponAlert();
 					} else if (response == 2) {
 						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.couponGameExistsMsg);
 					}
@@ -626,9 +671,9 @@ function saveChallenge() {
 					Ti.API.info("RESPONSE : " + JSON.stringify(this.responseText));
 					var response = JSON.parse(this.responseText);
 					if (response == 1) {
-
 						Alloy.Globals.getCoupon();
-						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.couponSavedMsg);
+						//Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.couponSavedMsg);
+						showCouponAlert();
 					} else {
 						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 						//submitButton.touchEnabled = true;
@@ -782,8 +827,6 @@ function postAnswer(gameArray) {
 					});
 
 					alertWindow.addEventListener('click', function() {
-						//submitButton.touchEnabled = true;
-
 						// change view
 						var arg = {
 							refresh : true
@@ -1180,10 +1223,14 @@ function createLayout(gameObject) {
 		if (answer == 1) {
 			createSubmitButtonAnswer();
 		}
+<<<<<<< HEAD
 		if (matchOTD == 1){
 			if(bet_amount > 0){
 				createBetAmountView();
 			}
+=======
+		if (matchOTD == 1) {
+>>>>>>> 5dc9ee3afade0ff21a443e99db9ebe1b9367114c
 			createSubmitButtonMatchOTD();
 		
 		}
@@ -1253,7 +1300,7 @@ if ( typeof args.answer !== 'undefined') {
 }
 
 var matchOTD = -1;
-if( typeof args.matchOTD !== 'undefined') {
+if ( typeof args.matchOTD !== 'undefined') {
 	matchOTD = args.matchOTD;
 }
 

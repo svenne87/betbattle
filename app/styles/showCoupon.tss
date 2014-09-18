@@ -4,4 +4,11 @@
   	height: "100%",
   	layout: "vertical",
   	backgroundImage : "images/profileBG.jpg"
+},
+"#scrollView": {
+	width: "100%",
+  	height: "100%",
+  	layout: "vertical",
+  	backgroundColor : 'transparent',
+  	showVerticalScrollIndicator: true
 }
