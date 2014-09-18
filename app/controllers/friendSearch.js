@@ -101,8 +101,12 @@ var refreshBtn = Ti.UI.createButton({
 	height : 40,
 	top : '-8%',
 	visible : false,
-	title : 'new search',
+	title : Alloy.Globals.PHRASES.newSearchTxt,
 	backgroundColor : '#fff',
+	font : {
+				fontSize : 19,
+				fontFamily : "Impact"
+			},
 	color : '#000',
 	borderRadius : 5,
 });
@@ -167,13 +171,13 @@ function createGUI(obj) {
 
 	var row = Ti.UI.createView({
 		width : '100%',
-		height : 35,
+		height : 45,
 		top : 2
 	});
 	mainView.add(row);
 
 	var member = Ti.UI.createView({
-		width : '79%',
+		width : '78%',
 		backgroundColor : '#fff',
 		color : '#000',
 		opacity : 0.7,
@@ -191,10 +195,11 @@ function createGUI(obj) {
 	}
 
 	var profilePic = Titanium.UI.createImageView({
-		image : image,
-		height : 25,
-		width : 25,
-		left : '2%'
+	image : image,
+		height : 35,
+		width : 35,
+		left : '3%',
+		borderRadius: 16
 	});
 	profilePic.addEventListener('error', function(e) {
 		// fallback for image
@@ -203,14 +208,14 @@ function createGUI(obj) {
 	member.add(profilePic);
 	//short down username so its fits on the screen
 	boardName = obj.name.toString();
-	if (boardName.length > 26) {
-		boardName = boardName.substring(0, 26);
+	if (boardName.length > 22) {
+		boardName = boardName.substring(0, 22);
 	}
 	var name = Ti.UI.createLabel({
 		text : boardName,
-		left : '15%',
+		left : '20%',
 		font : {
-			fontSize : 16,
+			fontSize : 18,
 			fontFamily : "Impact"
 		},
 	});
@@ -220,12 +225,13 @@ function createGUI(obj) {
 	if (isInArray(fr, obj.fid)) {
 		//if you are disable add button
 		var addBtn = Ti.UI.createButton({
-			width : '18%',
-			left : '81%',
+			hight: 45,
+			width : '19%',
+			left : '80%',
 			id : obj.fid,
 			font : {
 				fontFamily : font,
-				fontSize : 27
+				fontSize : 32
 			},
 			title : fontawesome.icon('fa-check'),
 			backgroundColor : '#00ff00',
@@ -238,12 +244,13 @@ function createGUI(obj) {
 		var click = 1;
 	} else if (obj.fid == Alloy.Globals.BETKAMPENUID) {
 		var addBtn = Ti.UI.createButton({
-			width : '18%',
-			left : '81%',
+			height: 45,
+			width : '19%',
+			left : '80%',
 			id : obj.fid,
 			font : {
 				fontFamily : font,
-				fontSize : 27
+				fontSize : 32
 			},
 			title : fontawesome.icon('fa-times'),
 			backgroundColor : '#ff0000',
@@ -257,13 +264,13 @@ function createGUI(obj) {
 	} else {
 		// add button for adding your new friend
 		var addBtn = Ti.UI.createButton({
-			width : '18%',
-			left : '81%',
+			width : '19%',
+			left : '80%',
 			id : obj.fid,
 			fName : obj.name,
 			font : {
 				fontFamily : font,
-				fontSize : 27
+				fontSize : 32
 			},
 			title : fontawesome.icon('fa-plus'),
 			backgroundColor : '#fff',
@@ -289,50 +296,8 @@ function createGUI(obj) {
 			};
 			addFriends.send(params);
 			//alert(Alloy.Globals.PHRASES.friendSuccess + ' ' + e.source.fName);
-			if (OS_ANDROID) {
-				var delToast = Ti.UI.createNotification({
-					duration : Ti.UI.NOTIFICATION_DURATION_LONG,
-					message : Alloy.Globals.PHRASES.friendSuccess + ' ' + e.source.fName
-				});
-				delToast.show();
-			} else {
-				indWin = Titanium.UI.createWindow();
+			Alloy.Globals.showToast(Alloy.Globals.PHRASES.friendSuccess + ' ' + e.source.fName);
 
-				//  view
-				var indView = Titanium.UI.createView({
-					top : '80%',
-					height : 30,
-					width : '80%',
-					backgroundColor : '#000',
-					opacity : 0.9
-				});
-
-				indWin.add(indView);
-
-				// message
-				var message = Titanium.UI.createLabel({
-					text : Alloy.Globals.PHRASES.friendSuccess + ' ' + e.source.fName,
-					color : '#fff',
-					width : 'auto',
-					height : 'auto',
-					textAlign : 'center',
-					font : {
-						fontSize : 12,
-						fontWeight : 'bold'
-					}
-				});
-
-				indView.add(message);
-				indWin.open();
-
-				var interval = interval ? interval : 1500;
-				setTimeout(function() {
-					indWin.close({
-						opacity : 0,
-						duration : 1000
-					});
-				}, interval);
-			}
 			click++;
 		} else if (click == 1) {
 			//if you clicked on wrong person and click again you remove him from your friendlist
@@ -413,7 +378,7 @@ function getSearchResult() {
 		// Send the request.
 		client.send();
 	} else {
-		alert(Alloy.Globals.PHRASES.searchCharsTxt);
+		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.searchCharsTxt);
 	}
 }
 

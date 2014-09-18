@@ -88,14 +88,14 @@ function createGUI(obj) {
 		var friend = Ti.UI.createView({
 			top : 2,
 			width : "100%",
-			height : 35,
+			height : 45,
 		});
 			
 	mainView.add(friend);
 
 	var friendInfo = Ti.UI.createView({
 		backgroundColor : '#fff',
-		width : "82.5%",
+		width : "78%",
 		left : "1%",
 		opacity : 0.7,
 		borderRadius : 5
@@ -114,9 +114,10 @@ function createGUI(obj) {
 
 	var profilePic = Titanium.UI.createImageView({
 	image : image,
-		height : 25,
-		width : 25,
-		left : '2%'
+		height : 35,
+		width : 35,
+		left : '3%',
+		borderRadius: 16
 	});
 	profilePic.addEventListener('error',function(e){
 		// fallback for image
@@ -126,14 +127,14 @@ function createGUI(obj) {
 	friendInfo.add(profilePic);
 
 	boardName = obj.name.toString();
-	if (boardName.length > 26) {
-		boardName = boardName.substring(0, 26);
+	if (boardName.length > 22) {
+		boardName = boardName.substring(0, 22);
 	}
 	var name = Ti.UI.createLabel({
 		text : boardName,
-		left : '15%',
+		left : '20%',
 		font : {
-			fontSize : 16,
+			fontSize : 18,
 			fontFamily : "Impact"
 		},
 	});
@@ -141,14 +142,14 @@ function createGUI(obj) {
 
 	var deleteBtn = Ti.UI.createButton({
 		top : "0.4%",
-		//height : '8%',
-		width : '15%',
-		left : '84%',
+		height : 45,
+		width : '19%',
+		left : '80%',
 		id : obj.id,
 		fName : obj.name,
 		font : {
 			fontFamily : font,
-			fontSize : 27
+			fontSize : 32
 		},
 		title : fontawesome.icon('fa-trash-o'),
 		backgroundColor : '#fff',
@@ -162,9 +163,9 @@ function createGUI(obj) {
 
 		//deletefriend
 		var aL = Titanium.UI.createAlertDialog({
-			title : 'Alert',
+			title : Alloy.Globals.PHRASES.betbattleTxt,
 			message : Alloy.Globals.PHRASES.removeFriendTxt + ' ' + e.source.fName,
-			buttonNames : ['OK', 'Cancel'],
+			buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtnTxt],
 			cancel : 1,
 			id : e.source.id,
 			fName : e.source.fName
@@ -195,51 +196,8 @@ function createGUI(obj) {
 							win = null;
 						}
 						$.myFriends.close();
+						Alloy.Globals.showToast(e.source.fName + ' ' + Alloy.Globals.PHRASES.groupMemberDeletedTxt);
 						
-						if (OS_ANDROID) {
-							var delToast = Ti.UI.createNotification({
-								duration : Ti.UI.NOTIFICATION_DURATION_LONG,
-								message : e.source.fName + ' ' + Alloy.Globals.PHRASES.groupMemberDeletedTxt
-							});
-							delToast.show();
-						} else {
-						indWin = Titanium.UI.createWindow();
-
-						//  view
-						var indView = Titanium.UI.createView({
-							top : '80%',
-							height : 30,
-							width : '80%',
-							backgroundColor : '#000',
-							opacity : 0.9
-						});
-
-						indWin.add(indView);
-
-						// message
-						var message = Titanium.UI.createLabel({
-							text : e.source.fName + ' ' + Alloy.Globals.PHRASES.groupMemberDeletedTxt,
-							color : '#fff',
-							width : 'auto',
-							height : 'auto',
-							textAlign : 'center',
-							font : {
-								fontSize : 12,
-								fontWeight : 'bold'
-							}
-						});
-
-						indView.add(message);
-						indWin.open();
-
-						var interval = interval ? interval : 1500;
-						setTimeout(function() {
-							indWin.close({
-								opacity : 0,
-								duration : 1000
-							});
-						}, interval);
-					}
 				break;
 			case 1:
 				Titanium.API.info('cancel');

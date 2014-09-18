@@ -14,15 +14,14 @@ if (OS_ANDROID) {
 		};
 		$.groupStats.activity.actionBar.displayHomeAsUp = true;
 		$.groupStats.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
-		
+
 		indicator.openIndicator();
 	});
 }
 
 $.groupStats.addEventListener('close', function() {
-	indicator.closeIndicator;
+	indicator.closeIndicator
 });
-
 
 var scoreView = Ti.UI.createScrollView({
 	class : "topView",
@@ -123,9 +122,9 @@ var scoreInfo = Ti.UI.createLabel({
 infoTxt.add(scoreInfo);
 
 function createGUI(obj, i) {
-	
+
 	var totalLeader = Ti.UI.createView({
-		//top : 1,
+		top : 1,
 		backgroundColor : '#fff',
 		width : "100%",
 		height : 35,
@@ -143,32 +142,6 @@ function createGUI(obj, i) {
 	});
 	totalLeader.add(nr);
 
-	if (i == 0) {
-		var value = Titanium.UI.createImageView({
-			image : "/images/gold.png",
-			height : 20,
-			width : 20,
-			left : '6%'
-		});
-		totalLeader.add(value);
-	} else if (i == 1) {
-		var value = Titanium.UI.createImageView({
-			image : "/images/silver.png",
-			height : 20,
-			width : 20,
-			left : '6%'
-		});
-		totalLeader.add(value);
-	} else if (i == 2) {
-		var value = Titanium.UI.createImageView({
-			image : "/images/bronze.png",
-			height : 20,
-			width : 20,
-			left : '6%'
-		});
-		totalLeader.add(value);
-	}
-
 	var image;
 	if (obj.fbid !== null) {
 		image = "https://graph.facebook.com/" + obj.fbid + "/picture?type=large";
@@ -181,8 +154,8 @@ function createGUI(obj, i) {
 		image : image,
 		height : 30,
 		width : 30,
-		left : '15%',
-		borderRadius : 5
+		left : '10%',
+		borderRadius : 16
 	});
 	profilePic.addEventListener('error', function(e) {
 		// fallback for image
@@ -195,39 +168,16 @@ function createGUI(obj, i) {
 	if (boardName.length > 22) {
 		boardName = boardName.substring(0, 22);
 	}
-	if (i == 0) {
-		var name = Ti.UI.createLabel({
-			text : Alloy.Globals.PHRASES.chipleaderTxt + "\n" + boardName,
-			left : '27%',
-			font : {
-				fontSize : 14
-			},
-		});
-	} else if (i == 1) {
-		var name = Ti.UI.createLabel({
-			text : Alloy.Globals.PHRASES.runnerUppTxt + "\n" + boardName,
-			left : '27%',
-			font : {
-				fontSize : 14
-			},
-		});
-	} else if (i == 2) {
-		var name = Ti.UI.createLabel({
-			text : Alloy.Globals.PHRASES.thirdPlaceTxt + "\n" + boardName,
-			left : '27%',
-			font : {
-				fontSize : 14
-			},
-		});
-	} else {
-		var name = Ti.UI.createLabel({
-			text : boardName,
-			left : '27%',
-			font : {
-				fontSize : 14
-			},
-		});
-	}
+	var name = Ti.UI.createLabel({
+		text : boardName,
+		left : '22%',
+		font : {
+
+			fontSize : 16,
+			fontFamily : "Impact"
+		},
+	});
+
 	totalLeader.add(name);
 
 	var coins = Ti.UI.createLabel({
@@ -259,7 +209,7 @@ getUID.onerror = function() {
 
 getUID.open('GET', Alloy.Globals.BETKAMPENGETGROUPMEMBERSURL + '?gid=' + gid + '&lang=' + Alloy.Globals.LOCALE);
 
-if(OS_IOS){
+if (OS_IOS) {
 	indicator.openIndicator();
 }
 
