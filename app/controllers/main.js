@@ -15,6 +15,11 @@ Ti.App.addEventListener('app:updateMenu', function() {
 	nameLabel.setText(Alloy.Globals.PROFILENAME);
 });
 
+/* Used to rebuild the android action bar menu, to indicate that a ticket is available */
+Ti.App.addEventListener('app:rebuildAndroidMenu', function() {
+	$.mainWin.activity.invalidateOptionsMenu();
+});
+
 /* Used to update coins information */
 Ti.App.addEventListener('app:coinsMenuInfo', function(data) {
 	winsLabel.setText(data.totalPoints);
@@ -39,16 +44,6 @@ Ti.App.addEventListener('app:updateView', function(obj){
 	$.ds.contentview.add(currentView);
 	Alloy.Globals.CURRENTVIEW = currentView;	
 });
-
-
-/*
- MENY _________ border och height på rad...
-Skicka till första "sida" efter match bet  (alert)
-Android Ticket
-Edit Game
-*/
-					
-
 
 /* Used to create the header view in menu */
 function createMenuHeader() {
@@ -124,10 +119,13 @@ function createMenuHeader() {
 	leftViewPart.add(profileViewRow);
 	
 	var topPos = -15;
-	if(OS_ANDROID) {topPos = 5;}
+	var heightPos = 15;
+	var borderLeftTop = 30;
+	var borderRightTop = 48;
+	if(OS_ANDROID) {topPos = 5; heightPos = 26; borderLeftTop = 18; borderRightTop = 47;}
 
 	var coinsView = Ti.UI.createView({
-		height : 15,
+		height : heightPos,
 		left : 65,
 		top : topPos,
 		layout : 'horizontal'
@@ -173,7 +171,8 @@ function createMenuHeader() {
 	leftViewPart.add(coinsView);
 	leftViewPart.add(Ti.UI.createView({
 		height : 0.5,
-		top : 30,
+		top : borderLeftTop,
+		width : Ti.UI.FILL,
 		layout : 'horizontal',
 		backgroundColor : '#303030'
 	}));
@@ -199,11 +198,9 @@ function createMenuHeader() {
 		image : '/images/settings.png'
 	}));
 	
-	//github add setting_white
-	
 	rightViewPart.add(Ti.UI.createView({
 		height : 0.5,
-		top : 48,
+		top : borderRightTop,
 		width : '100%',
 		layout : 'horizontal',
 		backgroundColor : '#303030'
@@ -307,6 +304,14 @@ function logoutBetbattle(){
 						$.mainWin.close();
 						var activity = Titanium.Android.currentActivity;
     					activity.finish();
+    					
+    					// start app again
+						var intent = Ti.Android.createIntent({
+							action : Ti.Android.ACTION_MAIN,
+							url : 'Betkampen.js'
+						});
+						intent.addCategory(Ti.Android.CATEGORY_LAUNCHER);
+						Ti.Android.currentActivity.startActivity(intent);
 					} else if(OS_IOS) {
 						Alloy.Globals.FBERROR = false;							
 						Alloy.Globals.CURRENTVIEW  = null;
@@ -495,7 +500,6 @@ function rowSelect(e) {
 							var activity = Titanium.Android.currentActivity;
     						activity.finish();
     					
-    						/*
     						// start app again
 							var intent = Ti.Android.createIntent({
 								action : Ti.Android.ACTION_MAIN,
@@ -503,7 +507,6 @@ function rowSelect(e) {
 							});
 							intent.addCategory(Ti.Android.CATEGORY_LAUNCHER);
 							Ti.Android.currentActivity.startActivity(intent);
-    						*/
 						} else {
 							// Betkampen logout
 							logoutBetbattle();
@@ -576,7 +579,9 @@ $.ds.leftTableView.backgroundColor = '#000';
 $.ds.leftTableView.separatorColor = '#303030';
 
 $.ds.leftTableView.footerView = Ti.UI.createView({
-	height : 0.2,
+	top : 10,
+	height : 0.5,
+	width : Ti.UI.FILL,
 	backgroundColor : '#303030'
 });
 
@@ -738,7 +743,6 @@ if (OS_IOS){
 	
 	$.nav.add(btn);
 	
-	Ti.API.info("LOGGA NAV" + JSON.stringify($.nav.getChildren()));
 // TODO
 /*
 	$.mainWin.open({
@@ -758,27 +762,31 @@ if (OS_IOS){
             Ti.API.error("Can't access action bar on a lightweight window.");
         } else {
             actionBar = $.mainWin.activity.actionBar;
+            
             if (actionBar) {
                 actionBar.icon = "images/ButtonMenu.png";
                 actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
                 
+                var ticketIcon = '';
+      		
+        		if(Alloy.Globals.hasCoupon){
+        			ticketIcon = 'images/ticketBtnRed.png';
+        		} else {
+        			ticketIcon = 'images/ticketBtn.png';
+        		}
+Ti.API.log(ticketIcon); // TODO varför uppdateras det ej???
                 $.mainWin.activity.onCreateOptionsMenu = function(e) {
+        			
+        			ticket = e.menu.add(ticketIcon = {
+        				showAsAction : Ti.Android.SHOW_AS_ACTION_ALWAYS,
+        				icon: ticketIcon
+        			});
+
         			refreshItem = e.menu.add({
-            			//title : "Refresh",
             			showAsAction : Ti.Android.SHOW_AS_ACTION_ALWAYS,
             			icon : 'images/ic_action_refresh.png'
         			});
-        			
-        			
-        			
-        			
-        			ticket = e.menu.add({
-        				
-        				showAsAction : Ti.Android.SHOW_AS_ACTION_ALWAYS,
-        				icon: 'images/ticketBtn.png'
-        			});
-        			
-        			
+  
        			 	refreshItem.addEventListener("click", function(e){
        			 		// update the correct view
        			 		switch(Alloy.Globals.CURRENTVIEW.id){
@@ -794,6 +802,24 @@ if (OS_IOS){
        			 		}       			 		
     			 		
        				});
+       				
+       				var couponOpen = false;
+       				//Add event listener to ticket button
+					ticket.addEventListener("click", function(){
+						if(couponOpen) return;
+						if(Alloy.Globals.hasCoupon){
+							couponOpen = true;
+							var win = Alloy.createController('showCoupon').getView();
+							win.addEventListener('close', function(){
+								win = null;
+								couponOpen = false;	
+							});
+							win.open({
+								fullScreen : true
+							});
+							win = null;
+						}
+					});
     			};
     			$.mainWin.activity.invalidateOptionsMenu();
                 

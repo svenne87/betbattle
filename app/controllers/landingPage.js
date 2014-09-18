@@ -1560,12 +1560,12 @@ function getTopImgView(){
 						Ti.API.info("RESPONSE TOP : " + JSON.stringify(resp));
 						createTopView(resp);
 						createBotView();
-						getMatchOfTheDay()
+						getMatchOfTheDay();
 					}else{
 						Ti.API.info("RESPONSE TOP = NULL");
 						createTopView(resp);
 						createBotView();
-						getMatchOfTheDay()
+						getMatchOfTheDay();
 					}
 				}
 				

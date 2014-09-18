@@ -23,7 +23,7 @@ function Controller() {
         _.isArray(args.selectedValues) && !_.isEmpty(args.selectedValues) && (selectedIndex = getKeyIndexFromPairs(pickerValueArray, args.selectedValues[0]));
         optionsDialog = Ti.UI.createOptionDialog({
             options: pickerData,
-            buttonNames: [ "Cancel" ],
+            buttonNames: [ Alloy.Globals.PHRASES.abortBtnTxt ],
             selectedIndex: selectedIndex
         });
         optionsDialog.show();
