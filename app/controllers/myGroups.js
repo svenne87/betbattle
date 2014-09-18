@@ -242,7 +242,7 @@ function createViews(array) {
 			classes : ['remove'],
 			top : 2,
 			width : "100%",
-			height : 40
+			height : 45
 		});
 
 		mainView.add(group);
@@ -250,7 +250,7 @@ function createViews(array) {
 		var groupInfo = Ti.UI.createView({
 			classes : ['remove'],
 			backgroundColor : '#fff',
-			width : "67%",
+			width : "61%",
 			id : array[i].attributes.id,
 			left : "1%",
 			opacity : 0.7,
@@ -264,7 +264,7 @@ function createViews(array) {
 			text : array[i].attributes.name,
 			left : '4%',
 			font : {
-				fontSize : 16,
+				fontSize : 19,
 				fontFamily : "Impact"
 			},
 		});
@@ -272,14 +272,15 @@ function createViews(array) {
 
 		var editBtn = Ti.UI.createButton({
 			classes : ['remove'],
-			width : '15%',
-			left : '68.5%',
+			height: 45,
+			width : '18%',
+			left : '62.5%',
 			id : array[i].attributes.id,
 			gName : array[i].attributes.name,
 			admin : array[i].attributes.creator,
 			font : {
 				fontFamily : font,
-				fontSize : 27
+				fontSize : 30
 			},
 			title : fontawesome.icon('fa-wrench'),
 			backgroundColor : '#fff',
@@ -292,14 +293,14 @@ function createViews(array) {
 		if (array[i].attributes.creator == Alloy.Globals.BETKAMPENUID) {
 			var deleteBtn = Ti.UI.createButton({
 				classes : ['remove'],
-				//height : '8%',
-				width : '15%',
-				left : '84%',
+				height : 45,
+				width : '18%',
+				left : '81.2%',
 				id : array[i].attributes.id,
 				admin : '1',
 				font : {
 					fontFamily : font,
-					fontSize : 27
+					fontSize : 30
 				},
 				title : fontawesome.icon('fa-trash-o'),
 				backgroundColor : '#fff',
@@ -310,15 +311,15 @@ function createViews(array) {
 		} else {
 			var deleteBtn = Ti.UI.createButton({
 				classes : ['remove'],
-				//height : '8%',
-				width : '15%',
-				left : '84%',
+				height : 45,
+				width : '18%',
+				left : '81.2%',
 				id : array[i].attributes.id,
 				admin : '0',
 				creator : array[i].attributes.creator,
 				font : {
 					fontFamily : font,
-					fontSize : 27
+					fontSize : 30
 				},
 				title : fontawesome.icon('fa-ban'),
 				backgroundColor : '#fff',
@@ -334,9 +335,9 @@ function createViews(array) {
 			// delete group
 			if (e.source.admin == '1') {
 				var aD = Titanium.UI.createAlertDialog({
-					title : 'Alert',
+					title : Alloy.Globals.PHRASES.betbattleTxt,
 					message : Alloy.Globals.PHRASES.deleteGroupTxt,
-					buttonNames : ['OK', 'Cancel'],
+					buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtnTxt],
 					cancel : 1,
 					id : e.source.id
 				});
@@ -360,50 +361,8 @@ function createViews(array) {
 						};
 						deleteGroup.send(params);
 						var win = Alloy.createController('myGroups').getView();
-						if (OS_ANDROID) {
-							var delToast = Ti.UI.createNotification({
-								duration : Ti.UI.NOTIFICATION_DURATION_LONG,
-								message : 'group deleted',//Alloy.Globals.PHRASES.groupMemberDeletedTxt,
-							});
-							delToast.show();
-						} else {
-							indWin = Titanium.UI.createWindow();
+						Alloy.Globals.showToast(Alloy.Globals.PHRASES.groupDeletedTxt);
 
-							//  view
-							var indView = Titanium.UI.createView({
-								top : '80%',
-								height : 30,
-								width : '80%',
-								backgroundColor : '#000',
-								opacity : 0.9
-							});
-
-							indWin.add(indView);
-
-							// message
-							var message = Titanium.UI.createLabel({
-								text : 'group deleted',//Alloy.Globals.PHRASES.groupMemberDeletedTxt,
-								color : '#fff',
-								width : 'auto',
-								height : 'auto',
-								textAlign : 'center',
-								font : {
-									fontSize : 12,
-									fontWeight : 'bold'
-								}
-							});
-
-							indView.add(message);
-							indWin.open();
-
-							var interval = interval ? interval : 1500;
-							setTimeout(function() {
-								indWin.close({
-									opacity : 0,
-									duration : 1000
-								});
-							}, interval);
-						}
 						if (OS_IOS) {
 							Alloy.Globals.NAV.openWindow(win, {
 								animated : false
@@ -426,9 +385,9 @@ function createViews(array) {
 				//leave group
 			} else {
 				var aL = Titanium.UI.createAlertDialog({
-					title : 'Alert',
+					title : Alloy.Globals.PHRASES.betbattleTxt,
 					message : Alloy.Globals.PHRASES.leaveGroupTxt,
-					buttonNames : ['OK', 'Cancel'],
+					buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtnTxt],
 					cancel : 1,
 					id : e.source.id
 				});

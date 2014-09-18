@@ -6,7 +6,7 @@
     <property name="acs-oauth-secret-production" type="string">3QMdWetn5hSHrI9m5JoYqoxBCTE3NKVk</property>
     <property name="acs-oauth-key-production" type="string">XUDyrlVKb0NfXdL4QdaIU7VyLAPMsir3</property>
     <property name="acs-api-key-production" type="string">D7l0zo29uTpQCn5LktRmgfQKfEM55dlf</property>
-    <id>apps.topgame.betkampen</id>
+    <id>apps.jdlabs.betkampen</id>
     <name>Betkampen</name>
     <version>1.2.5</version>
     <publisher>Topgame</publisher>

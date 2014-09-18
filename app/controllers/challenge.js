@@ -369,7 +369,44 @@ function createSubmitButtonMatchOTD() {
 	view.add(submitView);
 }
 
+<<<<<<< HEAD
+function createBetAmountView(){
+	var betAmountView = Ti.UI.createView({
+		height: 70,
+		width: '100%',
+		backgroundColor : '#303030',
+		layout: 'vertical'
+	});
+	
+	var coinsLabel = Ti.UI.createLabel({
+		text: "Coins att satsa",
+		color:"#FFF",
+		font:{
+			fontSize: 18,
+			fontFamily: "Impact"
+		},
+		textAlign: "center",
+	});
+	
+	var coinsAmount = Ti.UI.createLabel({
+		text: bet_amount,
+		color:"#FFF",
+		font:{
+			fontSize:18,
+			fontFamily:"Impact",
+		},
+		textAlign:"center",
+	});
+	
+	betAmountView.add(coinsLabel);
+	betAmountView.add(coinsAmount);
+	view.add(betAmountView);
+}
+
+function postMatchOfTheDay(){
+=======
 function postMatchOfTheDay() {
+>>>>>>> 5dc9ee3afade0ff21a443e99db9ebe1b9367114c
 	if (Alloy.Globals.checkConnection()) {
 		indicator.openIndicator();
 		var xhr = Titanium.Network.createHTTPClient();
@@ -429,10 +466,17 @@ function postMatchOfTheDay() {
 					if (response == 1) {
 						//Svarat på match of the day
 						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.matchOfTheDayMsg);
+<<<<<<< HEAD
+						$.challengeWindow.close();
+					} else if(response == 2){
+=======
 					} else if (response == 2) {
+>>>>>>> 5dc9ee3afade0ff21a443e99db9ebe1b9367114c
 						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.alreadyPostedMatchOTD);
+						$.challengeWindow.close();
 					} else {
 						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+						$.challengeWindow.close();
 					}
 					Ti.API.info("response: " + JSON.stringify(response));
 
@@ -1179,8 +1223,16 @@ function createLayout(gameObject) {
 		if (answer == 1) {
 			createSubmitButtonAnswer();
 		}
+<<<<<<< HEAD
+		if (matchOTD == 1){
+			if(bet_amount > 0){
+				createBetAmountView();
+			}
+=======
 		if (matchOTD == 1) {
+>>>>>>> 5dc9ee3afade0ff21a443e99db9ebe1b9367114c
 			createSubmitButtonMatchOTD();
+		
 		}
 		/*if (roundId === -1) {
 		 createBetCoinsView(coinsToJoin);
@@ -1252,6 +1304,10 @@ if ( typeof args.matchOTD !== 'undefined') {
 	matchOTD = args.matchOTD;
 }
 
+var bet_amount = -1;
+if( typeof args.bet_amount !== 'undefined') {
+	bet_amount = args.bet_amount;
+}
 // for posting answer on tournaments
 var tournamentIndex = -1;
 if ( typeof args.tournamentIndex !== 'undefined') {
