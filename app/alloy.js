@@ -113,6 +113,9 @@ Alloy.Globals.BETKAMPENGAMETOEDITURL = Alloy.Globals.BETKAMPENURL + '/api/get_ga
 Alloy.Globals.BETKAMPENSAVEEDITURL = Alloy.Globals.BETKAMPENURL + '/api/save_game_edit.php';
 Alloy.Globals.BETKAMPENGETTOPLANDINGPAGE = Alloy.Globals.BETKAMPENURL + '/api/get_dynamic_view.php';
 Alloy.Globals.BETKAMPENUNLOCKACHIEVEMENTURL = Alloy.Globals.BETKAMPENURL + '/api/unlock_achievement.php';
+Alloy.Globals.BETKAMPENPOSTMATCHOTDURL = Alloy.Globals.BETKAMPENURL + '/api/respond_match_day.php';
+Alloy.Globals.BETKAMPENGETMATCHOTDSTATUSURL = Alloy.Globals.BETKAMPENURL + '/api/get_match_day_status.php';
+Alloy.Globals.BETKAMPENMATCHOTDSHOWURL = Alloy.Globals.BETKAMPENURL + '/api/get_match_day_show.php';
 
 Alloy.Globals.performTimeout = function(func) {
 	if (OS_ANDROID) {
@@ -306,7 +309,7 @@ Alloy.Globals.unlockAchievement = function(achID){
 							left: 0,
 						});
 						var message = Titanium.UI.createLabel({
-							text : 'Du har låst upp utmärkelsen: '+Alloy.Globals.PHRASES.achievements[response.id].title,
+							text : Alloy.Globals.PHRASES.achievementUnlocked + Alloy.Globals.PHRASES.achievements[response.id].title,
 							right: 0,
 							color : '#fff',
 							width : '75%',
@@ -600,10 +603,14 @@ Alloy.Globals.getCoupon = function(uid){
 							}
 						}else if(OS_ANDROID){
 							//TODO lägg in ett sätt att updatera kupongen på android så det syns
+							
+							// will rebuild action bar menu
+							Ti.App.fireEvent('app:rebuildAndroidMenu');
 						}
 					}else if(Alloy.Globals.COUPON.games.length > 0){
+						Alloy.Globals.hasCoupon = true;
+						
 						if(OS_IOS){
-							Alloy.Globals.hasCoupon = true;
 							Ti.API.info("challenge succces");
 							var children = Alloy.Globals.NAV.getChildren();
 							for(var i in children){
@@ -624,6 +631,10 @@ Alloy.Globals.getCoupon = function(uid){
 							}
 						}else if(OS_ANDROID){
 							//TODO lägg in ett sätt att updatera kupongen på android så det syns
+							
+							// will rebuild action bar menu
+							Ti.App.fireEvent('app:rebuildAndroidMenu');
+							
 						}
 					}
 			} else {

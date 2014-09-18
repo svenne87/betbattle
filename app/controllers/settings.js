@@ -492,18 +492,28 @@ function createGUI() {
 
 function createPickers() {
 	var data = [];
+	var dataAndroid = {};
 	var currentLocale = JSON.parse(Ti.App.Properties.getString('language'));
 	var currentLanguage;
+	var currentLangPosAndroid;
+	var pos = 0;
 	
 	for (var lang in Alloy.Globals.AVAILABLELANGUAGES) {
 		if (currentLocale.language == Alloy.Globals.AVAILABLELANGUAGES[lang].name) {
 			currentLanguage = Alloy.Globals.AVAILABLELANGUAGES[lang].description;
+			
+			// can't keep 0 index on android picker widget
+			currentLangPosAndroid = (lang - 0) + 1;
 		}
 
 		data.push(Titanium.UI.createPickerRow({
 			title : Alloy.Globals.AVAILABLELANGUAGES[lang].description,
 			value : lang
 		}));
+		
+		// for android picker widget
+		pos = (lang - 0) + 1;
+		dataAndroid[pos] = Alloy.Globals.AVAILABLELANGUAGES[lang].description;
 	}
 
 	if (OS_ANDROID) {
@@ -512,55 +522,29 @@ function createPickers() {
 			right : 40,
 			backgroundColor : '#FFF',
 			borderRadius : 2,
-			width : 100,
+			width : 120,
 			height : 40,
-			text : '-',
-			textAlign : 'center',
-			index : i
+			text : currentLanguage,
+			textAlign : 'center'
 		});
 		
-		picker.addEventListener('click', function(event) {
+		picker.addEventListener('click', function() {
 			Alloy.createWidget('danielhanold.pickerWidget', {
 				id : 'sColumnLanguage',
-				outerView : $.challenge,
+				outerView : $.settingsWindow,
 				hideNavBar : false,
 				type : 'single-column',
-				selectedValues : [1],
-				pickerValues : [{
-					1 : '0',
-					2 : '1'
-				}],
+				selectedValues : [currentLangPosAndroid],
+				pickerValues : [dataAndroid],
 				onDone : function(e) {
 					if (e.data) {
 						// change language
-						changeLanguageConfirm(e.data[0].value);
-						pickerLabels[event.source.index].setText(e.data[0].value);
+						// key can't be 0, that's why we need to "-1"
+						changeLanguageConfirm(e.data[0].key - 1);
 					}
 				},
 			});
 		});
-
-		
-		/*
-		picker = Titanium.UI.createPicker({
-			type : Titanium.UI.PICKER_TYPE_PLAIN,
-			width : Ti.UI.SIZE,
-			height : Ti.UI.SIZE,
-			right : 40
-		});
-
-		// on picker change
-		picker.addEventListener('change', function(e) {
-			changeLanguageConfirm(picker.getSelectedRow(0).value);
-		});
-
-		picker.add(data);
-
-		picker.columns[0].width = Ti.UI.SIZE;
-		picker.columns[0].height = Ti.UI.SIZE;
-		picker.selectionIndicator = true;
-		*/
-
 	} else if (OS_IOS) {
 		var ModalPicker = require("lib/ModalPicker");
 		var visualPrefs = {

@@ -90,7 +90,7 @@ function populateOptionsDialog() {
   // Create an options dialog.
   optionsDialog = Ti.UI.createOptionDialog({
     options: pickerData,
-    buttonNames: ['Cancel'],
+    buttonNames: [Alloy.Globals.PHRASES.abortBtnTxt],
     selectedIndex: selectedIndex
   });
   optionsDialog.show();

@@ -133,41 +133,66 @@ function createGameType(gameType, gameObject) {
 		});
 		var data = [];
 		if (OS_ANDROID) {
-			// create 1-15 values
-			for (var i = 0; i <= 15; i++) {
-				data.push(Titanium.UI.createPickerRow({
-					value : i,
-					title : '        ' + i + '    ',
-					fontSize : 30,
-					fontWeight : 'bold'
-				}));
-			};
+			var pickerLabels = [];
+
 			for (var i = 0; i < gameType.options; i++) {
-				var picker = Titanium.UI.createPicker({
-					top : 30,
-					left : 5,
-					width : Ti.UI.SIZE,
-					height : Ti.UI.SIZE
+				var pickerLabel = Ti.UI.createLabel({
+					top : 10,
+					left : 15,
+					backgroundColor : '#FFF',
+					borderRadius : 2,
+					width : 100,
+					height : 40,
+					text : 	gameArray[index].gameValue[i],
+					textAlign : 'center',
+					index : i
 				});
 
-				// on first picker change
-				picker.addEventListener('change', function(e) {
-					Ti.API.info("selcted");
-					e.selectedValue[0] = e.selectedValue[0].replace(/ /g, '');
-					gameArray[index].gameValue[i] = e.selectedValue[0];
-					if (gameType.number_of_values == 1) {
-						gameArray[index].gameValues[1] = 0;
-					}
-					
+				pickerLabels.push(pickerLabel);
+				
+				// will be the selected value
+				var selectedIndex = (gameArray[index].gameValue[i] - 0) + 1;
+
+				pickerLabel.addEventListener('click', function(event) {
+					Alloy.createWidget('danielhanold.pickerWidget', {
+						id : 'sColumn' + event.source.index,
+						outerView : $.editGame,
+						hideNavBar : false,
+						type : 'single-column',
+						selectedValues : [selectedIndex],
+						pickerValues : [{
+							1 : '0',
+							2 : '1',
+							3 : '2',
+							4 : '3',
+							5 : '4',
+							6 : '5',
+							7 : '6',
+							8 : '7',
+							9 : '8',
+							10 : '9',
+							11 : '10',
+							12 : '11',
+							13 : '12',
+							14 : '13',
+							15 : '14',
+							16 : '15'
+						}],
+						onDone : function(e) {
+							if (e.data) {
+								// set selected value
+								pickerLabels[event.source.index].setText(e.data[0].value);
+								gameArray[index].gameValue[event.source.index] = e.data[0].value;
+
+								if (gameType.number_of_values == 1) {
+									gameArray[index].gameValues[1] = 0;
+								}
+							}
+						},
+					});
 				});
-
-				picker.add(data);
-				picker.columns[0].width = Ti.UI.SIZE;
-				picker.columns[0].height = Ti.UI.SIZE;
-
-				optionsView.add(picker);
+				optionsView.add(pickerLabel);
 			}
-
 		} else if (OS_IOS) {
 
 			var pickers = [];
@@ -340,6 +365,7 @@ function createLayout(gameObject) {
 
 	Alloy.Globals.performTimeout(doRest(gameObject));
 	$.editGame.add(view);
+	indicator.closeIndicator();
 }
 
 function createBorderView() {
@@ -513,6 +539,10 @@ function updateCouponGame(){
 function getGame(){
 	if (Alloy.Globals.checkConnection()) {
 	
+	if(OS_IOS) {
+		indicator.openIndicator();
+	}
+	
 	// Get game to edit
 	var xhr = Titanium.Network.createHTTPClient();
 	xhr.onerror = function(e) {
@@ -602,17 +632,6 @@ function getGame(){
 					gameObjects.push(gameObject);
 				}
 
-				
-
-				if (OS_ANDROID) {
-					// clear old children
-					$.editGame.removeAllChildren();
-
-					for (child in $.challenge.children) {
-						$.editGame.children[child] = null;
-					}
-				}
-
 				// create views for each gameObject
 				for (var i = 0; i < gameObjects.length; i++) {
 					createLayout(gameObjects[i]);
@@ -635,3 +654,17 @@ function getGame(){
 }
 
 getGame();
+
+if (OS_ANDROID) {
+	$.editGame.orientationModes = [Titanium.UI.PORTRAIT];
+
+	$.editGame.addEventListener('open', function() {
+		$.editGame.activity.actionBar.onHomeIconItemSelected = function() {
+			$.editGame.close();
+			$.editGame = null;
+		};
+		$.editGame.activity.actionBar.displayHomeAsUp = true;
+		$.editGame.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
+		indicator.openIndicator();
+	});
+}

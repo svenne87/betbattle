@@ -145,7 +145,7 @@ function removeCouponGame(gameID){
 }
 
 function createBorderView() {
-	$.showCoupon.add(Titanium.UI.createView({
+	$.scrollView.add(Titanium.UI.createView({
 		height : '1dp',
 		width : '100%',
 		backgroundColor : '#6d6d6d'
@@ -181,7 +181,7 @@ function createSubmitButtonView(){
 		checkFriends();
 	});
 	wrapperView.add(buttonView);
-	$.showCoupon.add(wrapperView);
+	$.scrollView.add(wrapperView);
 }
 
 function createCoinsView(){
@@ -212,65 +212,42 @@ function createCoinsView(){
 		text : Alloy.Globals.PHRASES.chooseCoinsBetTxt
 	}));
 
-	$.showCoupon.add(betView);
+	$.scrollView.add(betView);
 
 	// create 20, 40, 60, 80, 100 values
 	var betArray = ['20', '40', '60', '80', '100'];
 	var data = [];
 
 	if (OS_ANDROID) {
-		// default
-		data.push(Titanium.UI.createPickerRow({
-			title : '        ' + Alloy.Globals.PHRASES.chooseConfirmBtnTxt,
-			value : -1
-		}));
-
-		for (var i = 0; i < betArray.length; i++) {
-			data.push(Titanium.UI.createPickerRow({
-				title : '         ' + betArray[i] + '    ',
-				height : 40,
-				value : betArray[i]
-			}));
-		}
-
-		// fix scroll
-		for (var i = 0; i < 8; i++) {
-			data.push(Titanium.UI.createPickerRow({
-				title : '          ---',
-				value : -1,
-				opacity : 0,
-				visible : false
-			}));
-		}
-
-		var betPicker = Titanium.UI.createPicker({
-			top : 0,
-			height : Ti.UI.SIZE,
-			width : Ti.UI.SIZE,
-			showVerticalScrollIndicator : true,
-			selectionIndicator : true
+		coinsToJoin = -1;
+		var betPicker = Ti.UI.createLabel({
+			top : 10,
+			backgroundColor : '#FFF',
+			borderRadius : 2,
+			width : 120,
+			height : 40,
+			text : Alloy.Globals.PHRASES.chooseConfirmBtnTxt,
+			textAlign : 'center'
+		});
+		
+		betPicker.addEventListener('click', function() {
+			Alloy.createWidget('danielhanold.pickerWidget', {
+				id : 'sColumnBetPicker',
+				outerView : $.showCoupon,
+				hideNavBar : false,
+				type : 'single-column',
+				selectedValues : [20],
+				pickerValues : [{20: '20', 40: '40', 60: '60', 80: '80', 100: '100'}],
+				onDone : function(e) {
+					if (e.data) {
+						betPicker.setText(e.data[0].value);
+						coinsToJoin = e.data[0].value;
+					}
+				},
+			});
 		});
 
-		betPicker.add(data);
-
-		betPicker.columns[0].width = Ti.UI.SIZE;
-		betPicker.columns[0].height = Ti.UI.SIZE;
-		betPicker.columns[0].font = {
-			fontSize : 40
-		};
-		betPicker.columns[0].fontSize = 40;
-
-		var spaceView = Ti.UI.createView({
-			height : 5,
-			id : 'spaceView'
-		});
-
-		betPicker.addEventListener('change', function(e) {
-			coinsToJoin = e.selectedValue[0].replace(/ /g, '');
-		});
-
-		$.showCoupon.add(betPicker);
-		$.showCoupon.add(spaceView);
+		$.scrollView.add(betPicker);
 
 	} else if (OS_IOS) {
 		// default
@@ -306,10 +283,10 @@ function createCoinsView(){
 			coinsToJoin = betPicker.value;
 		});
 
-		$.showCoupon.add(betPicker);
+		$.scrollView.add(betPicker);
 	}
 
-	$.showCoupon.add(Ti.UI.createView({
+	$.scrollView.add(Ti.UI.createView({
 		layout : 'vertical',
 		height : 10,
 		backgroundColor : 'transparent',
@@ -417,7 +394,7 @@ function validate(){
 // This is done in order to remove the correct row when clicking and not the last one on the list
 //this is because of how titanium handles adding eventlisteners.
 for(var i in rows){
-	$.showCoupon.add(rows[i]);
+	$.scrollView.add(rows[i]);
 	var children = rows[i].getChildren();
 	for(var y in children){
 		var childrens = children[y].getChildren();
@@ -487,14 +464,7 @@ if (OS_ANDROID) {
 		};
 		$.showCoupon.activity.actionBar.displayHomeAsUp = true;
 		$.showCoupon.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
-		indicator.openIndicator();
 	});
-	/*
-	 $.newChallenge.addEventListener('androidback', function(){
-	 $.newChallenge.close();
-	 $.newChallenge = null;
-	 });
-	 */
 
 }
 createCoinsView();
