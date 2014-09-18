@@ -382,7 +382,7 @@ function getProfile(){
 					Ti.API.info("Position :"+userInfo.position);
 					var level = userInfo.level.level;
 					
-					profileLevelIcon.setImage("https://secure.jimdavislabs.se/betkampen_vm/levels/shirt"+level+".png");
+					profileLevelIcon.setImage("http://31.216.36.213/betbattle/levels/shirt"+level+".png");
 					profileLevel.setText(Alloy.Globals.PHRASES.levels[level]);
 					
 					//userInfoCoinsLabel.setTexst(Alloy.Globals.PHRASES.coinsInfoTxt + ": " + userInfo.totalCoins);

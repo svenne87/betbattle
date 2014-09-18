@@ -369,7 +369,10 @@ function createSubmitButtonMatchOTD() {
 	view.add(submitView);
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 722cc4b581725e5f36cc67b287458b5d81dfafba
 function createBetAmountView(){
 	var betAmountView = Ti.UI.createView({
 		height: 70,
@@ -404,7 +407,10 @@ function createBetAmountView(){
 }
 
 function postMatchOfTheDay(){
+<<<<<<< HEAD
 
+=======
+>>>>>>> 722cc4b581725e5f36cc67b287458b5d81dfafba
 	if (Alloy.Globals.checkConnection()) {
 		indicator.openIndicator();
 		var xhr = Titanium.Network.createHTTPClient();
@@ -465,7 +471,11 @@ function postMatchOfTheDay(){
 						//Svarat på match of the day
 						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.matchOfTheDayMsg);
 						$.challengeWindow.close();
+<<<<<<< HEAD
 					} else if (response == 2) {
+=======
+					} else if(response == 2){
+>>>>>>> 722cc4b581725e5f36cc67b287458b5d81dfafba
 						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.alreadyPostedMatchOTD);
 						$.challengeWindow.close();
 					} else {
@@ -860,222 +870,6 @@ function createBorderView() {
 	}));
 }
 
-// Bet coins view, when answering a challenge
-/*function createBetCoinsView(coinsToJoin) {
-// handle if new bet
-
-var coinsView = Titanium.UI.createView({
-height : 50,
-width : '100%',
-backgroundColor : '#303030'
-});
-
-coinsView.add(Titanium.UI.createLabel({
-height : 40,
-width : '100%',
-top : 5,
-backgroundColor : '#303030',
-color : '#FFF',
-textAlign : 'center',
-font : {
-fontFamily : "Impact",
-fontSize : Alloy.Globals.getFontSize(2)
-},
-text : coinsToJoin + ' ' + Alloy.Globals.PHRASES.betbattleTxt + ' ' + Alloy.Globals.PHRASES.coinsTxt
-}));
-
-$.challenge.add(coinsView);
-}
-
-// when creating a challenge
-function createBetCoinsChooseView() {
-var viewHeight = 60;
-
-if (OS_ANDROID) {
-viewHeight = Ti.UI.SIZE;
-}
-
-var betView = Titanium.UI.createView({
-height : viewHeight,
-width : '100%',
-layout : 'vertical',
-backgroundColor : '#303030'
-});
-
-betView.add(Titanium.UI.createLabel({
-height : 40,
-width : '100%',
-top : 10,
-backgroundColor : '#303030',
-color : '#FFF',
-textAlign : 'center',
-font : {
-fontFamily : "Impact",
-fontSize : Alloy.Globals.getFontSize(2)
-},
-text : Alloy.Globals.PHRASES.chooseCoinsBetTxt
-}));
-
-$.challenge.add(betView);
-
-// create 20, 40, 60, 80, 100 values
-var betArray = ['20', '40', '60', '80', '100'];
-var data = [];
-
-if (OS_ANDROID) {
-// default
-data.push(Titanium.UI.createPickerRow({
-title : '        ' + Alloy.Globals.PHRASES.chooseConfirmBtnTxt,
-value : -1
-}));
-
-for (var i = 0; i < betArray.length; i++) {
-data.push(Titanium.UI.createPickerRow({
-title : '         ' + betArray[i] + '    ',
-height : 40,
-value : betArray[i]
-}));
-}
-
-// fix scroll
-for (var i = 0; i < 8; i++) {
-data.push(Titanium.UI.createPickerRow({
-title : '          ---',
-value : -1,
-opacity : 0,
-visible : false
-}));
-}
-
-var betPicker = Titanium.UI.createPicker({
-top : 0,
-height : Ti.UI.SIZE,
-width : Ti.UI.SIZE,
-showVerticalScrollIndicator : true,
-selectionIndicator : true
-});
-
-betPicker.add(data);
-
-betPicker.columns[0].width = Ti.UI.SIZE;
-betPicker.columns[0].height = Ti.UI.SIZE;
-betPicker.columns[0].font = {
-fontSize : 40
-};
-betPicker.columns[0].fontSize = 40;
-
-var spaceView = Ti.UI.createView({
-height : 5,
-id : 'spaceView'
-});
-
-betPicker.addEventListener('change', function(e) {
-coinsToJoin = e.selectedValue[0].replace(/ /g, '');
-});
-
-$.challenge.add(betPicker);
-$.challenge.add(spaceView);
-
-} else if (OS_IOS) {
-// default
-data.push(Titanium.UI.createPickerRow({
-title : Alloy.Globals.PHRASES.chooseConfirmBtnTxt,
-value : -1
-}));
-
-for (var i = 0; i < betArray.length; i++) {
-data.push(Titanium.UI.createPickerRow({
-title : '' + betArray[i],
-value : betArray[i]
-}));
-}
-
-var ModalPicker = require("lib/ModalPicker");
-var visualPrefs = {
-top : 0,
-opacity : 0.85,
-borderRadius : 3,
-backgroundColor : '#FFF',
-width : 140,
-height : 40,
-textAlign : 'center'
-};
-
-var betPicker = new ModalPicker(visualPrefs, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt, Alloy.Globals.PHRASES.closeBtnTxt);
-modalPickersToHide.push(betPicker);
-
-betPicker.text = Alloy.Globals.PHRASES.chooseConfirmBtnTxt;
-
-betPicker.self.addEventListener('change', function(e) {
-coinsToJoin = betPicker.value;
-});
-
-$.challenge.add(betPicker);
-}
-
-$.challenge.add(Ti.UI.createView({
-layout : 'vertical',
-height : 10,
-backgroundColor : '#303030',
-width : '100%'
-}));
-}
-
-// Answer / challenge view
-function createSubmitButtonView(buttonText, betkampenId, cid) {
-var height = 100;
-var top = 30;
-
-var submitView = Titanium.UI.createView({
-height : height,
-width : '100%',
-backgroundColor : '#303030'
-});
-
-submitButton = Titanium.UI.createButton({
-top : top,
-width : '70%',
-height : 40,
-color : '#FFF',
-backgroundColor : Alloy.Globals.themeColor(),
-borderRadius : 6,
-font : {
-fontFamily : Alloy.Globals.getFont(),
-fontSize : Alloy.Globals.getFontSize(2)
-},
-title : buttonText,
-backgroundImage : 'none'
-});
-
-// on submit validate and post
-submitButton.addEventListener('click', function() {
-// 1 true 0 false
-if (validate() == 1) {
-if (roundId === -1) {
-// show "loading indicator"
-indicator.openIndicator();
-submitButton.touchEnabled = false;
-
-// normal challenge
-postAnswer(betkampenId, cid, coinsToJoin);
-
-} else {
-if (Alloy.Globals.checkConnection()) {
-createChallengeAndChooseFriends(betkampenId, coinsToJoin);
-} else {
-Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
-}
-}
-
-} else {
-Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.notAllValuesErrorTxt);
-}
-});
-
-submitView.add(submitButton);
-$.challenge.add(submitView);
-}
-*/
 // validate
 function validate() {
 	for (var i in gameArray) {
@@ -1220,7 +1014,10 @@ function createLayout(gameObject) {
 			}
 			createSubmitButtonAnswer();
 		}
+<<<<<<< HEAD
 		
+=======
+>>>>>>> 722cc4b581725e5f36cc67b287458b5d81dfafba
 		if (matchOTD == 1){
 			if(bet_amount > 0){
 				createBetAmountView();

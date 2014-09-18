@@ -15,7 +15,7 @@ var myFbFriends = null;
 
 if (OS_ANDROID) {
 	font = 'fontawesome-webfont';
-	
+
 	$.fbFriends.addEventListener('open', function() {
 		$.fbFriends.activity.actionBar.onHomeIconItemSelected = function() {
 			$.fbFriends.close();
@@ -23,12 +23,12 @@ if (OS_ANDROID) {
 		};
 		$.fbFriends.activity.actionBar.displayHomeAsUp = true;
 		$.fbFriends.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
-		
+
 		// sometimes the view remain in memory, then we don't need to show the "loading"
-		if(!myFbFriends) {
+		if (!myFbFriends) {
 			indicator.openIndicator();
 		}
-	});	
+	});
 }
 
 $.fbFriends.addEventListener('close', function() {
@@ -133,7 +133,7 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 
 	function createGUI(obj) {
 		var fr = [];
-		
+
 		if (friendResp !== null) {
 			for (var s = 0; s < friendResp.length; s++) {
 				fr.push(friendResp[s].fbid);
@@ -142,19 +142,20 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 		}
 		// TODO
 		function isInArray(fr, search) {
-			if(fr.length === 0) return false;
+			if (fr.length === 0)
+				return false;
 			return (fr.indexOf(search) >= 0) ? true : false;
 		}
 
 		var row = Ti.UI.createView({
 			width : '100%',
-			height : 35,
+			height : 40,
 			top : 1
 		});
 		mainView.add(row);
 
 		var member = Ti.UI.createView({
-			width : '79%',
+			width : '78%',
 			backgroundColor : '#fff',
 			color : '#000',
 			opacity : 0.7,
@@ -167,22 +168,23 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 
 		var profilePic = Titanium.UI.createImageView({
 			image : image = "https://graph.facebook.com/" + obj.id + "/picture?type=large",
-			height : 25,
-			width : 25,
-			left : '2%'
+			height : 35,
+			width : 35,
+			left : '2%',
+			borderRadius: 16
 		});
 
 		member.add(profilePic);
 
 		boardName = obj.name.toString();
-		if (boardName.length > 26) {
-			boardName = boardName.substring(0, 26);
+		if (boardName.length > 22) {
+			boardName = boardName.substring(0, 22);
 		}
 		var name = Ti.UI.createLabel({
 			text : boardName,
-			left : '15%',
+			left : '20%',
 			font : {
-				fontSize : 16,
+				fontSize : 18,
 				fontFamily : "Impact"
 			},
 		});
@@ -190,12 +192,12 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 		if (isInArray(fr, obj.id)) {
 			//if you already are friends disable add button
 			var addBtn = Ti.UI.createButton({
-				width : '18%',
-				left : '81%',
+				width : '19%',
+				left : '80%',
 				id : obj.id,
 				font : {
 					fontFamily : font,
-					fontSize : 27
+					fontSize : 32
 				},
 				title : fontawesome.icon('fa-check'),
 				backgroundColor : '#00ff00',
@@ -209,13 +211,13 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 		} else {
 			// add button for adding your new friend
 			var addBtn = Ti.UI.createButton({
-				width : '18%',
-				left : '81%',
+				width : '19%',
+				left : '80%',
 				id : obj.id,
 				fName : obj.name,
 				font : {
 					fontFamily : font,
-					fontSize : 27
+					fontSize : 32
 				},
 				title : fontawesome.icon('fa-plus'),
 				backgroundColor : '#fff',
@@ -336,50 +338,7 @@ function addFbFriend(uid, name) {
 	};
 	addFriends.send(params);
 	//alert(Alloy.Globals.PHRASES.friendSuccess + ' ' + name);
-	if (OS_ANDROID) {
-		var delToast = Ti.UI.createNotification({
-			duration : Ti.UI.NOTIFICATION_DURATION_LONG,
-			message : Alloy.Globals.PHRASES.friendSuccess + ' ' + name
-		});
-		delToast.show();
-	} else {
-		indWin = Titanium.UI.createWindow();
-
-		//  view
-		var indView = Titanium.UI.createView({
-			top : '80%',
-			height : 30,
-			width : '80%',
-			backgroundColor : '#000',
-			opacity : 0.9
-		});
-
-		indWin.add(indView);
-
-		// message
-		var message = Titanium.UI.createLabel({
-			text : Alloy.Globals.PHRASES.friendSuccess + ' ' + name,
-			color : '#fff',
-			width : 'auto',
-			height : 'auto',
-			textAlign : 'center',
-			font : {
-				fontSize : 12,
-				fontWeight : 'bold'
-			}
-		});
-
-		indView.add(message);
-		indWin.open();
-
-		var interval = interval ? interval : 1500;
-		setTimeout(function() {
-			indWin.close({
-				opacity : 0,
-				duration : 1000
-			});
-		}, interval);
-	}
+	Alloy.Globals.showToast(Alloy.Globals.PHRASES.friendSuccess + ' ' + name);
 }
 
 function delFbFriend(uid, name) {
