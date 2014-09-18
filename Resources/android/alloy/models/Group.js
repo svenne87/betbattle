@@ -1,21 +1,35 @@
-var Alloy = require("alloy"), _ = require("alloy/underscore")._, model, collection;
+var Alloy = require('alloy'),
+    _ = require("alloy/underscore")._,
+	model, collection;
 
 exports.definition = {
-    config: {},
-    extendModel: function(Model) {
-        _.extend(Model.prototype, {});
-        return Model;
-    },
-    extendCollection: function(Collection) {
-        _.extend(Collection.prototype, {});
-        return Collection;
-    }
+	config: {
+	},
+	extendModel: function(Model) {
+		_.extend(Model.prototype, {
+			// extended functions and properties go here
+		});
+
+		return Model;
+	},
+	extendCollection: function(Collection) {
+		_.extend(Collection.prototype, {
+			// extended functions and properties go here
+		});
+
+		return Collection;
+	}
 };
 
-model = Alloy.M("group", exports.definition, []);
+model = Alloy.M('group',
+	exports.definition,
+	[]
+);
 
-collection = Alloy.C("group", exports.definition, model);
+collection = Alloy.C('group',
+	exports.definition,
+	model
+);
 
 exports.Model = model;
-
 exports.Collection = collection;

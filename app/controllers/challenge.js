@@ -369,7 +369,6 @@ function createSubmitButtonMatchOTD() {
 	view.add(submitView);
 }
 
-<<<<<<< HEAD
 function createBetAmountView(){
 	var betAmountView = Ti.UI.createView({
 		height: 70,
@@ -404,9 +403,6 @@ function createBetAmountView(){
 }
 
 function postMatchOfTheDay(){
-=======
-function postMatchOfTheDay() {
->>>>>>> 5dc9ee3afade0ff21a443e99db9ebe1b9367114c
 	if (Alloy.Globals.checkConnection()) {
 		indicator.openIndicator();
 		var xhr = Titanium.Network.createHTTPClient();
