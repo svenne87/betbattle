@@ -607,6 +607,7 @@ function constructTableView(array) {
 						var obj = Alloy.Globals.CHALLENGEOBJECTARRAY[0][e.rowData.id];
 						if (obj.attributes.show !== 0) {
 							// view challenge
+							Ti.API.info("OBJECT : " + JSON.stringify(obj));
 							var group = null;
 							try {
 								group = obj.attributes.group.name;
@@ -617,10 +618,14 @@ function constructTableView(array) {
 							if ( typeof group === undefined) {
 								group = null;
 							}
-							
+							var count = obj.attributes.opponents.length;
+						
+							var bet_amount = obj.attributes.potential_pot/count;
+							Ti.API.info("bet_amount : " + bet_amount);
 							var arg = {
 								answer: 1,
-								group: group
+								group: group,
+								bet_amount : bet_amount
 							};
 							Alloy.Globals.CHALLENGEINDEX = e.rowData.id;
 							var win = Alloy.createController('challenge', arg).getView();

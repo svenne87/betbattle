@@ -403,6 +403,7 @@ function createBetAmountView(){
 }
 
 function postMatchOfTheDay(){
+
 	if (Alloy.Globals.checkConnection()) {
 		indicator.openIndicator();
 		var xhr = Titanium.Network.createHTTPClient();
@@ -419,7 +420,7 @@ function postMatchOfTheDay(){
 			xhr.setTimeout(Alloy.Globals.TIMEOUT);
 
 			// build the json string
-			var param = '{"lang" : "' + Alloy.Globals.LOCALE + '", "gameID": "' + gameID + '", "gamevalue": {';
+			var param = '{"lang" : "' + Alloy.Globals.LOCALE + '", "bet_amount": "' + bet_amount + '", "gameID": "' + gameID + '", "gamevalue": {';
 
 			for (var i in gameArray) {
 				Ti.API.info("skickar gameArray : " + JSON.stringify(gameArray[i]));
@@ -463,6 +464,7 @@ function postMatchOfTheDay(){
 						//Svarat på match of the day
 						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.matchOfTheDayMsg);
 						$.challengeWindow.close();
+
 					} else if(response == 2){
 						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.alreadyPostedMatchOTD);
 						$.challengeWindow.close();
@@ -997,14 +999,19 @@ function createLayout(gameObject) {
 			view.add(slide);
 		}
 		if (answer == 1) {
+			if(bet_amount > 0){
+				createBetAmountView();	
+			}
 			createSubmitButtonAnswer();
 		}
+
 		if (matchOTD == 1){
 			if(bet_amount > 0){
 				createBetAmountView();
 			}
 			createSubmitButtonMatchOTD();
 		}
+		
 		/*if (roundId === -1) {
 		 createBetCoinsView(coinsToJoin);
 		 } else {
@@ -1213,6 +1220,7 @@ if (Alloy.Globals.checkConnection()) {
 				}
 
 				// This response contains one or several games for a challenge. And each game contains a  set of game types valid for that game
+				Ti.API.info("GAME OBJECT : " + JSON.stringify(response));
 				for (resp in response) {
 					var res = response[resp];
 					var teamOneName = res.team_1.team_name;
