@@ -17,7 +17,12 @@ Ti.App.addEventListener('app:updateMenu', function() {
 
 /* Used to rebuild the android action bar menu, to indicate that a ticket is available */
 Ti.App.addEventListener('app:rebuildAndroidMenu', function() {
-	$.mainWin.activity.invalidateOptionsMenu();
+	try {
+		$.mainWin.activity.invalidateOptionsMenu();
+	} catch(e){
+		
+	}
+	// TODO Exception här? funkar ändå?
 });
 
 /* Used to update coins information */

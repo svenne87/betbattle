@@ -69,9 +69,9 @@ function createMemberRow(member, subRow) {
 function getFriends() {
 	selectedGroupIds = [];
 	friendsChallenge = [];
-	if (OS_IOS) {
-		indicator.openIndicator();
-	}
+	
+	indicator.openIndicator();
+
 
 	// Get groups with members
 	var xhr = Titanium.Network.createHTTPClient();
@@ -149,7 +149,8 @@ function getFriends() {
 function getGroups() {
 	selectedGroupIds = [];
 	friendsChallenge = [];
-	if (OS_IOS) {
+	
+	if(OS_IOS || notFirstRun) {
 		indicator.openIndicator();
 	}
 
@@ -525,12 +526,13 @@ function createSubmitButtons(type) {
 	submitButton = null;
 	var buttonHeight = 40;
 	var viewHeight = '20%';
+
 	botView.removeAllChildren();
 	Ti.API.log(Titanium.Platform.displayCaps.platformHeight);
 	if (OS_ANDROID) {
 		if (Titanium.Platform.displayCaps.platformHeight < 600) {
 			buttonHeight = 30;
-			table.height = '75%';
+			table.setHeight('75%');
 			viewHeight = '25%';
 		}
 	}
@@ -609,7 +611,6 @@ function createViews(array, type) {
 	// check if table exists, and if it does simply remove it
 	var children = tableWrapper.children;
 	for (var i = 0; i < children.length; i++) {
-		Ti.API.info("children : " + JSON.stringify(children[i]));
 		if (children[i].id === 'groupsTable') {
 			tableWrapper.remove(children[i]);
 		}
@@ -641,26 +642,42 @@ function createViews(array, type) {
 	}
 
 	// Table
-	table = Ti.UI.createTableView({
-		height : '100%',
-		id : 'groupsTable',
-		refreshControl : refresher,
-		backgroundColor : '#303030'
-	});
+	if (OS_IOS) {
+		table = Ti.UI.createTableView({
+			height : '100%',
+			id : 'groupsTable',
+			refreshControl : refresher,
+			backgroundColor : '#303030'
+		});
+
+		table.separatorInsets = {
+			left : 0,
+			right : 0
+		};
+	} else {
+		table = Ti.UI.createTableView({
+			height : '100%',
+			id : 'groupsTable',
+			refreshControl : refresher,
+			backgroundColor : '#303030'
+		});
+
+	}
 
 	table.footerView = Ti.UI.createView({
 		height : 0.5,
 		backgroundColor : '#6d6d6d'
 	});
 
-	if (OS_IOS) {
-		table.separatorInsets = {
-			left : 0,
-			right : 0
-		};
-	}
-
 	var data = [];
+
+	var hasChild;
+
+	if (OS_IOS) {
+		hasChild = true;
+	} else if (OS_ANDROID) {
+		hasChild = false;
+	}
 
 	// Rows
 	for (var i = 0; i < array.length; i++) {
@@ -756,7 +773,7 @@ function createViews(array, type) {
 			});
 			detailsImg.addEventListener('error', function(e) {
 				// fallback for image
-				detailsImg.image = '/images/no_pic.png';
+				e.source.image = '/images/no_pic.png';
 			});
 			row.add(detailsImg);
 
@@ -1009,6 +1026,7 @@ function createViews(array, type) {
 
 		}
 	});
+
 	tableWrapper.removeAllChildren();
 	tableWrapper.add(table);
 	createSubmitButtons(type);
@@ -1026,6 +1044,7 @@ var buttonsPushed = [];
 var table;
 var friendsButton;
 var refresher;
+var notFirstRun = false;
 
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({
@@ -1057,12 +1076,6 @@ if (OS_ANDROID) {
 		$.groupSelectWindow.activity.title = Alloy.Globals.PHRASES.betbattleTxt;
 		indicator.openIndicator();
 	});
-	/*
-	 $.groupSelectWindow.addEventListener('androidback', function(){
-	 $.groupSelectWindow.close();
-	 $.groupSelectWindow = null;
-	 });
-	 */
 }
 
 var iOSVersion;
@@ -1137,6 +1150,7 @@ $.groupSelect.add(botView);
 // check connection
 if (Alloy.Globals.checkConnection()) {
 	getGroups();
+	notFirstRun = true;
 } else {
 	Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 }
