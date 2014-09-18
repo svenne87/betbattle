@@ -369,10 +369,6 @@ function createSubmitButtonMatchOTD() {
 	view.add(submitView);
 }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 722cc4b581725e5f36cc67b287458b5d81dfafba
 function createBetAmountView(){
 	var betAmountView = Ti.UI.createView({
 		height: 70,
@@ -407,10 +403,7 @@ function createBetAmountView(){
 }
 
 function postMatchOfTheDay(){
-<<<<<<< HEAD
 
-=======
->>>>>>> 722cc4b581725e5f36cc67b287458b5d81dfafba
 	if (Alloy.Globals.checkConnection()) {
 		indicator.openIndicator();
 		var xhr = Titanium.Network.createHTTPClient();
@@ -471,11 +464,8 @@ function postMatchOfTheDay(){
 						//Svarat på match of the day
 						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.matchOfTheDayMsg);
 						$.challengeWindow.close();
-<<<<<<< HEAD
-					} else if (response == 2) {
-=======
+
 					} else if(response == 2){
->>>>>>> 722cc4b581725e5f36cc67b287458b5d81dfafba
 						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.alreadyPostedMatchOTD);
 						$.challengeWindow.close();
 					} else {
@@ -1014,10 +1004,7 @@ function createLayout(gameObject) {
 			}
 			createSubmitButtonAnswer();
 		}
-<<<<<<< HEAD
-		
-=======
->>>>>>> 722cc4b581725e5f36cc67b287458b5d81dfafba
+
 		if (matchOTD == 1){
 			if(bet_amount > 0){
 				createBetAmountView();
