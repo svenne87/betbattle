@@ -462,12 +462,8 @@ function postMatchOfTheDay(){
 					if (response == 1) {
 						//Svarat på match of the day
 						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.matchOfTheDayMsg);
-<<<<<<< HEAD
 						$.challengeWindow.close();
 					} else if(response == 2){
-=======
-					} else if (response == 2) {
->>>>>>> 5dc9ee3afade0ff21a443e99db9ebe1b9367114c
 						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.alreadyPostedMatchOTD);
 						$.challengeWindow.close();
 					} else {
