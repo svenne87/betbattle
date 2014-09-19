@@ -117,7 +117,7 @@ function createLayout(resp){
 	
 	
 	var usersCountLabel = Ti.UI.createLabel({
-		text: "Antal deltagare: " + resp.stats.count,
+		text: Alloy.Globals.PHRASES.showMatchOTDusers + resp.stats.count,
 		font:{
 			fontFamily:"Impact",
 			fontSize: 22,
@@ -128,7 +128,7 @@ function createLayout(resp){
 	
 	var potSize = resp.stats.count*resp.stats.bet_amount;
 	var potSizeLabel = Ti.UI.createLabel({
-		text: "Storleken på potten: " + potSize,
+		text: Alloy.Globals.PHRASES.showMatchOTDpot + potSize,
 		font: {
 			fontFamily:"Impact",
 			fontSize: 22,
