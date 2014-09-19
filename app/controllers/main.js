@@ -604,10 +604,6 @@ var argu = {
 	sent_challenge : sent_challenge
 };
 
-var currentView = Alloy.createController('challengesView', argu).getView();
-$.ds.contentview.add(currentView);
-Alloy.Globals.CURRENTVIEW = currentView;
-
 // Swap views on menu item click
 $.ds.leftTableView.addEventListener('click', function selectRow(e) {
 	rowSelect(e);
@@ -748,13 +744,9 @@ if (OS_IOS){
 	
 	$.nav.add(btn);
 	
-// TODO
-/*
-	$.mainWin.open({
-		transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
-	});
-	*/
-	//$.nav.open();
+	var currentView = Alloy.createController('challengesView', argu).getView();
+	$.ds.contentview.add(currentView);
+	Alloy.Globals.CURRENTVIEW = currentView;	
 	
 } else {
 	Ti.Gesture.addEventListener('orientationchange', function(e) {
@@ -762,7 +754,7 @@ if (OS_IOS){
     });
 	
 	$.mainWin.orientationModes = [Titanium.UI.PORTRAIT];	
-	$.mainWin.addEventListener('open', function(){		
+	$.mainWin.addEventListener('open', function(){	
 		 if (! $.mainWin.activity) {
             Ti.API.error("Can't access action bar on a lightweight window.");
         } else {
@@ -839,6 +831,23 @@ if (OS_IOS){
                 };
             }
         }		
-       	$.mainWin.open();
+        
+        var loadingLabel = Ti.UI.createLabel({
+        	top : 100,
+        	height : Ti.UI.SIZE,
+        	width : Ti.UI.SIZE,
+        	color : '#FFF',
+        	font : {
+				fontSize : 19,
+				fontFamily : "Impact"
+			},
+			text : Alloy.Globals.PHRASES.loadingTxt
+        });
+        
+       	$.ds.contentview.add(loadingLabel);
+        var currentView = Alloy.createController('challengesView', argu).getView();
+		$.ds.contentview.add(currentView);
+		Alloy.Globals.CURRENTVIEW = currentView;
+		$.ds.contentview.remove(loadingLabel);
 	});
 }

@@ -8,6 +8,27 @@ var indicator = uie.createIndicatorWindow({
 	text : Alloy.Globals.PHRASES.loadingTxt
 });
 
+var loadingView = Ti.UI.createView({
+	height : Ti.UI.FILL,
+	width : Ti.UI.FILL,
+	backgroundColor : '#303030'
+});
+
+var loadingLabel = Ti.UI.createLabel({
+	top : 100,
+    height : Ti.UI.SIZE,
+    width : Ti.UI.SIZE,
+    color : '#FFF',
+    font : {
+		fontSize : 19,
+		fontFamily : "Impact"
+	},
+	text : Alloy.Globals.PHRASES.loadingTxt
+});
+		
+loadingView.add(loadingLabel);
+$.landingPage.add(loadingView);
+
 function showFbLogin() {
 	Alloy.Globals.CURRENTVIEW = null;
 	Alloy.Globals.NAV.close();
@@ -496,11 +517,6 @@ function getBeacons() {
 	}
 }
 
-if (OS_ANDROID) {
-	$.landingPage.addEventListener('open', function() {
-		$.landingPage.activity.actionBar.hide();
-	});
-}
 function createBeaconDialog(msg, title, link, beacon) {
 	var dialog = Ti.UI.createAlertDialog({
 		cancel : 1,
@@ -755,7 +771,7 @@ function createPromoTypeThree(promo) {
 
 var top_view = Ti.UI.createView({
 	id : "top_view",
-	backgroundColor : "white",
+	backgroundColor : "#303030",
 	height : "75%",
 	width : "100%",
 	//top: "10%",
@@ -763,7 +779,7 @@ var top_view = Ti.UI.createView({
 });
 
 var bot_view = Ti.UI.createView({
-	backgroundColor : "white",
+	backgroundColor : "#303030",
 	id : "bot_view",
 	height : "25%",
 	width : "100%",
@@ -1721,7 +1737,7 @@ function checkResponded(match){
 //create the topView and the botView that will contain everything
 var top_view = Ti.UI.createView({
 	id: "top_view",
-	backgroundColor: "white",
+	backgroundColor: "#303030",
 	height: "75%",
 	width: "100%",
 	//top: "10%",
@@ -1729,7 +1745,7 @@ var top_view = Ti.UI.createView({
 });
 	
 var bot_view = Ti.UI.createView({
-	backgroundColor: "white",
+	backgroundColor: "#303030",
 	id: "bot_view",
 	height:"25%",
 	width:"100%",
@@ -1745,13 +1761,37 @@ var bot_img;
 var team1Logo;
 var team2Logo;
 
-//fill each section and view with content
+if (OS_ANDROID) {
+	$.landingPage.addEventListener('open', function() {
+		$.landingPage.activity.actionBar.hide();
+		
+		//fill each section and view with content
+		getTopImgView();
 
-getTopImgView();
+		loadingView.remove(loadingLabel);
+		$.landingPage.remove(loadingView);
 
-$.landingPage.add(top_view);
-$.landingPage.add(bot_view);
-getBeacons();
+		$.landingPage.add(top_view);
+		$.landingPage.add(bot_view);
+		getBeacons();
+	});
+} else if(OS_IOS){
+	$.landingPage.addEventListener('open', function() {
+		//fill each section and view with content
+		getTopImgView();
+
+		loadingView.remove(loadingLabel);
+		$.landingPage.remove(loadingView);
+
+		$.landingPage.add(top_view);
+		$.landingPage.add(bot_view);
+		getBeacons();
+	});
+}
+
+
+
+
 /*var test = {
  title: "Hamburgarmeny!",
  text: "Passa på idag! Innan matchen är slut kostar en meny endast 25kr. Visa oss att du har appen installerad på mobilen för att få ta del av erbjudandet.",
