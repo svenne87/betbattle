@@ -42,7 +42,7 @@ module.exports = [ {
     }
 }, {
     isId: true,
-    priority: 100100.0013,
+    priority: 100100.0018,
     key: "pickerView",
     style: {
         backgroundColor: "white",
@@ -52,7 +52,7 @@ module.exports = [ {
     }
 }, {
     isId: true,
-    priority: 100100.0014,
+    priority: 100100.0019,
     key: "toolbar",
     style: {
         top: 0,
@@ -60,7 +60,7 @@ module.exports = [ {
     }
 }, {
     isId: true,
-    priority: 100100.0015,
+    priority: 100100.002,
     key: "picker",
     style: {
         top: 44,

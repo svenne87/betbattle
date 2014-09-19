@@ -987,10 +987,12 @@ function constructTableView(array) {
 						var obj = Alloy.Globals.CHALLENGEOBJECTARRAY[0][e.rowData.id];
 						if (obj.attributes.show !== 0) {
 							// view challenge
+							
 							var count = obj.attributes.opponents.length;
 						
 							var bet_amount = obj.attributes.potential_pot/count;
-							
+							Ti.API.info("count : " + count);
+							Ti.API.info("bet_amount" + bet_amount);
 							
 							var args = {
 								answer : 1,

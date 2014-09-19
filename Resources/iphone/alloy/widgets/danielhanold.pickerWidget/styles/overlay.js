@@ -26,7 +26,7 @@ module.exports = [ {
     }
 }, {
     isId: true,
-    priority: 100000.001,
+    priority: 100000.0015,
     key: "overlay",
     style: {
         width: Ti.UI.FILL,
@@ -51,7 +51,7 @@ module.exports = [ {
     }
 }, {
     isId: true,
-    priority: 100101.0011,
+    priority: 100101.0016,
     key: "overlay",
     style: {
         opacity: .25
