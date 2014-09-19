@@ -4,6 +4,12 @@ var gameID = args.gameID;
 var topView;
 var botView;
 
+var uie = require('lib/IndicatorWindow');
+var indicator = uie.createIndicatorWindow({
+	top : 200,
+	text : Alloy.Globals.PHRASES.loadingTxt
+});
+
 function createGameType(type, values, game){
 	var gameTypeView = Ti.UI.createView({
 		height: 70,
