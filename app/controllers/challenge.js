@@ -511,10 +511,16 @@ function showCouponAlert() {
 			var window = Alloy.createController('showCoupon').getView();
 			Alloy.Globals.CURRENTVIEW =  window;
 			
-			window.open({
-				fullScreen : true
-			});
-			
+			if(OS_ANDROID){
+				window.open({
+					fullScreen : true
+				});
+			} else if (OS_IOS){
+				Alloy.Globals.NAV.openWindow(window, {
+						animated : true
+					});
+			}
+		
 			for (win in Alloy.Globals.WINDOWS) {
 				if(win !== 0){
 					Alloy.Globals.WINDOWS[win].close();

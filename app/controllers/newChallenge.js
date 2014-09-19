@@ -417,13 +417,14 @@ function getGames(league, firstTime, start, end) {
 						numberOfGamesFetched = end; 
 					}
 					setDisplayText();
-
+// TODO load more...
 					if (array.length > 0) {
 						if(firstTime){
 							// if this is the first time we are calling this method or if this is a refresh, then rebuild table
 							createAndShowTableView(league, array);
 						} else {
 							// not first time, then just add rows
+							Ti.API.log(array[0]);
 							appendToRow(array);
 						}
 					} else {
