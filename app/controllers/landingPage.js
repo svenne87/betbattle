@@ -8,14 +8,8 @@ var indicator = uie.createIndicatorWindow({
 	text : Alloy.Globals.PHRASES.loadingTxt
 });
 
-var loadingView = Ti.UI.createView({
-	height : Ti.UI.FILL,
-	width : Ti.UI.FILL,
-	backgroundColor : '#303030'
-});
-
 var loadingLabel = Ti.UI.createLabel({
-	top : 100,
+	top : 80,
     height : Ti.UI.SIZE,
     width : Ti.UI.SIZE,
     color : '#FFF',
@@ -25,9 +19,6 @@ var loadingLabel = Ti.UI.createLabel({
 	},
 	text : Alloy.Globals.PHRASES.loadingTxt
 });
-		
-loadingView.add(loadingLabel);
-$.landingPage.add(loadingView);
 
 function showFbLogin() {
 	Alloy.Globals.CURRENTVIEW = null;
@@ -379,9 +370,9 @@ function getBeacons() {
 			if (this.status == '200') {
 
 				if (this.readyState == 4) {
-					//Ti.API.log("respoooonse: " +this.responseText);
+					Ti.API.log("respoooonse-------------->: " +this.responseText);
 					var beacons = JSON.parse(this.responseText);
-
+					
 					if (OS_IOS) {
 						Alloy.Globals.TiBeacon.addEventListener("changeAuthorizationStatus", function(e) {
 							if (e.status != "authorized") {
@@ -451,8 +442,9 @@ function getBeacons() {
 						}
 
 					} else if (OS_ANDROID) {
-
+	
 						if (Ti.Platform.version >= 4.3) {
+
 							Alloy.Globals.TiBeacon.initBeacon({
 								success : onSuccess,
 								error : onError,
@@ -1075,6 +1067,9 @@ bot_img.addEventListener("click", function(e) {
 		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 		return;
 	}
+	
+	indicator.openIndicator();
+	args.dialog = indicator;
 
 	var loginSuccessWindow = Alloy.createController('main', args).getView();
 	if (OS_IOS) {
@@ -1094,7 +1089,6 @@ bot_img.addEventListener("click", function(e) {
 
 function createTopView(resp){
 
-	
 	var img = "";
 	if(resp !== null){
 		img = resp.image;
@@ -1322,6 +1316,9 @@ function createTopView(resp){
 	}));
 	
 	bot_img.addEventListener("click", function(e){
+		indicator.openIndicator();
+		args.dialog = indicator;
+		
 		var loginSuccessWindow = Alloy.createController('main', args).getView();
 		if (OS_IOS) {
 			loginSuccessWindow.open({
@@ -1386,6 +1383,8 @@ function createTopView(resp){
 	top_view.add(top_img);
 	top_view.add(mid_img);
 	top_view.add(bot_img);
+	
+	$.landingPage.remove(loadingLabel);
 }
 
 
@@ -1543,6 +1542,7 @@ mid_img.add(matchWrapperView);
 
 function getTopImgView(){
 	if(Alloy.Globals.checkConnection()){
+		$.landingPage.add(loadingLabel);
 		var xhr = Titanium.Network.createHTTPClient();
 		xhr.onerror = function(e) {
 			versusLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
@@ -1557,6 +1557,7 @@ function getTopImgView(){
 			xhr.send();
 		} catch(e) {
 			versusLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
+			$.landingPage.remove(loadingLabel);
 		}
 	
 		xhr.onload = function() {
@@ -1586,6 +1587,7 @@ function getTopImgView(){
 				}
 				
 			} else {
+				$.landingPage.remove(loadingLabel);
 				versusLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
 				Ti.API.error("Error =>" + this.response);
 			}
@@ -1596,10 +1598,19 @@ function getTopImgView(){
 }
 
 function getMatchOfTheDay() {
+	// check connection
+	if (!Alloy.Globals.checkConnection()) {
+		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+		return;
+	}
+	
+	$.landingPage.add(loadingLabel);
+	
 	var xhr = Titanium.Network.createHTTPClient();
 	xhr.onerror = function(e) {
 		versusLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
 		Ti.API.error('Bad Sever =>' + e.error);
+		$.landingPage.remove(loadingLabel);
 	};
 
 	try {
@@ -1610,11 +1621,13 @@ function getMatchOfTheDay() {
 		xhr.send();
 	} catch(e) {
 		versusLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
+		$.landingPage.remove(loadingLabel);
 	}
 
 	xhr.onload = function() {
 		if (this.status == '200') {
 			if (this.readyState == 4) {
+				$.landingPage.remove(loadingLabel);
 				var match = null;
 				try {
 					match = JSON.parse(this.responseText);
@@ -1622,8 +1635,8 @@ function getMatchOfTheDay() {
 				} catch (e) {
 					match = null;
 					Ti.API.info("Match NULL");
-				}
-
+				}	
+					
 				if (match !== null) {
 					team1Logo.image = Alloy.Globals.BETKAMPENURL + match.team1_image;
 					team2Logo.image = Alloy.Globals.BETKAMPENURL + match.team2_image;
@@ -1639,6 +1652,7 @@ function getMatchOfTheDay() {
 		} else {
 			versusLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
 			Ti.API.error("Error =>" + this.response);
+			$.landingPage.remove(loadingLabel);
 		}
 	};
 
@@ -1764,25 +1778,16 @@ var team2Logo;
 if (OS_ANDROID) {
 	$.landingPage.addEventListener('open', function() {
 		$.landingPage.activity.actionBar.hide();
-		
-		//fill each section and view with content
 		getTopImgView();
-
-		loadingView.remove(loadingLabel);
-		$.landingPage.remove(loadingView);
-
 		$.landingPage.add(top_view);
 		$.landingPage.add(bot_view);
 		getBeacons();
+	
 	});
 } else if(OS_IOS){
 	$.landingPage.addEventListener('open', function() {
 		//fill each section and view with content
 		getTopImgView();
-
-		loadingView.remove(loadingLabel);
-		$.landingPage.remove(loadingView);
-
 		$.landingPage.add(top_view);
 		$.landingPage.add(bot_view);
 		getBeacons();

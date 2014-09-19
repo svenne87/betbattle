@@ -462,11 +462,11 @@ function postMatchOfTheDay(){
 					var response = JSON.parse(this.responseText);
 					if (response == 1) {
 						//Svarat på match of the day
-						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.matchOfTheDayMsg);
+						Alloy.Globals.showToast(Alloy.Globals.PHRASES.matchOfTheDayMsg);
 						$.challengeWindow.close();
 
 					} else if(response == 2){
-						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.alreadyPostedMatchOTD);
+						Alloy.Globals.showToast(Alloy.Globals.PHRASES.alreadyPostedMatchOTD);
 						$.challengeWindow.close();
 					} else {
 						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
@@ -517,8 +517,8 @@ function showCouponAlert() {
 				});
 			} else if (OS_IOS){
 				Alloy.Globals.NAV.openWindow(window, {
-						animated : true
-					});
+					animated : true
+				});
 			}
 		
 			for (win in Alloy.Globals.WINDOWS) {
@@ -594,7 +594,7 @@ function updateChallenge() {
 						//Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.couponSavedMsg);
 						showCouponAlert();
 					} else if (response == 2) {
-						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.couponGameExistsMsg);
+						Alloy.Globals.showToast(Alloy.Globals.PHRASES.couponGameExistsMsg);
 					}
 					Ti.API.info("response: " + JSON.stringify(response));
 

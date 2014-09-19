@@ -245,11 +245,6 @@ var oldIndicator = args.dialog || null;
 var refresher = args.refresh || null;
 var sent_challenge = args.sent_challenge || null;
 
-if(oldIndicator !== null){
-	oldIndicator.closeIndicator();
-	oldIndicator = null;
-}
-
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({
 	top : 200,
@@ -748,6 +743,11 @@ if (OS_IOS){
 	$.ds.contentview.add(currentView);
 	Alloy.Globals.CURRENTVIEW = currentView;	
 	
+	if(oldIndicator !== null){
+		oldIndicator.closeIndicator();
+		oldIndicator = null;
+	}
+	
 } else {
 	Ti.Gesture.addEventListener('orientationchange', function(e) {
  		Ti.Android.currentActivity.setRequestedOrientation(Ti.Android.SCREEN_ORIENTATION_PORTRAIT);
@@ -755,6 +755,19 @@ if (OS_IOS){
 	
 	$.mainWin.orientationModes = [Titanium.UI.PORTRAIT];	
 	$.mainWin.addEventListener('open', function(){	
+		var loadingLabel = Ti.UI.createLabel({
+        	top : 50,
+        	height : Ti.UI.SIZE,
+        	width : Ti.UI.SIZE,
+        	color : '#FFF',
+        	font : {
+				fontSize : 19,
+				fontFamily : "Impact"
+			},
+			text : Alloy.Globals.PHRASES.loadingTxt
+        });
+        $.ds.contentview.add(loadingLabel);
+		
 		 if (! $.mainWin.activity) {
             Ti.API.error("Can't access action bar on a lightweight window.");
         } else {
@@ -831,20 +844,12 @@ if (OS_IOS){
                 };
             }
         }		
+        		
+		if(oldIndicator !== null){
+			oldIndicator.closeIndicator();
+			oldIndicator = null;
+		}
         
-        var loadingLabel = Ti.UI.createLabel({
-        	top : 100,
-        	height : Ti.UI.SIZE,
-        	width : Ti.UI.SIZE,
-        	color : '#FFF',
-        	font : {
-				fontSize : 19,
-				fontFamily : "Impact"
-			},
-			text : Alloy.Globals.PHRASES.loadingTxt
-        });
-        
-       	$.ds.contentview.add(loadingLabel);
         var currentView = Alloy.createController('challengesView', argu).getView();
 		$.ds.contentview.add(currentView);
 		Alloy.Globals.CURRENTVIEW = currentView;

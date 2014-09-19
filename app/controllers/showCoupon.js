@@ -132,6 +132,11 @@ function removeCouponGame(gameID){
 							Alloy.Globals.COUPON.games.splice(index, 1);		
 						}
 					}*/
+					
+					// remove view
+					$.scrollView.remove(rows[gameID]);
+					rows[gameID] = null;
+					
 					if(amount_deleted == amount_games){
 						$.showCoupon.close();
 					}
@@ -379,6 +384,13 @@ for (var i in games){
 	
 	row.add(teamsView);
 	row.add(buttonsView);
+	
+	row.add(Titanium.UI.createView({
+		height : '1dp',
+		width : '100%',
+		backgroundColor : '#6d6d6d'
+	}));
+
 	rows[games[i].game_id] = row;	
 }
 
@@ -416,7 +428,6 @@ for(var i in rows){
 						Ti.API.info("valde : "+ e.source.id);
 						alertWindow.hide();
 						if(d.index == 0){
-							rows[e.source.id].hide();
 							removeCouponGame(e.source.id);
 						}else if(d.index == 1){
 							
@@ -424,9 +435,6 @@ for(var i in rows){
 					});
 					
 					alertWindow.show();
-					
-					//rows[e.source.id].hide();
-					//removeCouponGame(e.source.id);
 				});
 			}else if(childrens[k].type == "editBtn"){
 				childrens[k].addEventListener("click", function(e){
@@ -450,7 +458,6 @@ for(var i in rows){
 		}
 		
 	}
-	createBorderView();
 }
 if (OS_ANDROID) {
 	font = 'fontawesome-webfont';
