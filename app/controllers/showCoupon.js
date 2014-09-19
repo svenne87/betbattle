@@ -1,6 +1,14 @@
 var args = arguments[0] || {};
 
-var games = Alloy.Globals.COUPON.games;
+var games = null;
+if(Alloy.Globals.COUPON && Alloy.Globals.COUPON.games.length > 0){
+	games = Alloy.Globals.COUPON.games;
+} else {
+	Alloy.Globals.showToast("Fel i coupons....");
+	$.showCoupon.close();
+}
+
+
 var modalPickersToHide = []; 
 var coinsToJoin = -1;
 var rows = [];
