@@ -88,6 +88,19 @@ if (gAdmin == Alloy.Globals.BETKAMPENUID) {
 	});
 	mainView.add(groupName);
 
+	if (OS_ANDROID) {
+
+		var first = true;
+		groupName.addEventListener('focus', function f(e) {
+			if (first) {
+				first = false;
+				groupName.blur();
+			} else {
+				groupName.removeEventListener('focus', f);
+			}
+		});
+	}
+
 	var groupNameBtn = Ti.UI.createButton({
 		height : 40,
 		width : '60%',
@@ -177,7 +190,7 @@ function createGUI(obj) {
 			height : 35,
 			width : 35,
 			left : '3%',
-			borderRadius : 16
+			borderRadius : 17
 		});
 		profilePic.addEventListener('error', function(e) {
 			// fallback for image
@@ -299,7 +312,7 @@ function createGUI(obj) {
 			height : 35,
 			width : 35,
 			left : '3%',
-			borderRadius : 16
+			borderRadius : 17
 		});
 		profilePic.addEventListener('error', function(e) {
 			// fallback for image
@@ -394,7 +407,7 @@ function createFriendGUI(friend, members) {
 			height : 35,
 			width : 35,
 			left : '3%',
-			borderRadius : 16
+			borderRadius : 17
 		});
 		profilePic.addEventListener('error', function(e) {
 			// fallback for image

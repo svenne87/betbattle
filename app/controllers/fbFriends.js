@@ -171,7 +171,7 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 			height : 35,
 			width : 35,
 			left : '2%',
-			borderRadius: 16
+			borderRadius: 17
 		});
 
 		member.add(profilePic);

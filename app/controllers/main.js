@@ -17,7 +17,12 @@ Ti.App.addEventListener('app:updateMenu', function() {
 
 /* Used to rebuild the android action bar menu, to indicate that a ticket is available */
 Ti.App.addEventListener('app:rebuildAndroidMenu', function() {
-	$.mainWin.activity.invalidateOptionsMenu();
+	try {
+		$.mainWin.activity.invalidateOptionsMenu();
+	} catch(e){
+		
+	}
+	// TODO Exception här? funkar ändå?
 });
 
 /* Used to update coins information */
@@ -373,9 +378,9 @@ function createSection() {
 	section.add(Alloy.createController('menurow', args3).getView());
 */
 	var args4 = {
-		title : Alloy.Globals.PHRASES.scoreboardTxt,
-		customView : 'topplistan',
-		image : "/images/Topplista.png"
+		title : Alloy.Globals.PHRASES.friendZoneTxt,
+		customView : 'friendZone',
+		image : "/images/friendzone.png"
 	};
 	section.add(Alloy.createController('menurow', args4).getView());
 	
@@ -387,16 +392,16 @@ function createSection() {
 	section.add(Alloy.createController('menurow', args5).getView());
 
 	var args6 = {
-		title : Alloy.Globals.PHRASES.termsTxt,
-		customView : 'terms',
-		image : '/images/villkor.png'
+		title : Alloy.Globals.PHRASES.scoreboardTxt,
+		customView : 'topplistan',
+		image : '/images/Topplista.png'
 	};
 	section.add(Alloy.createController('menurow', args6).getView());
 	
 	var args7 = {
-		title : Alloy.Globals.PHRASES.friendZoneTxt,
-		customView : 'friendZone',
-		image : '/images/friendzone.png'
+		title : Alloy.Globals.PHRASES.termsTxt,
+		customView : 'terms',
+		image : '/images/villkor.png'
 	};
 	section.add(Alloy.createController('menurow', args7).getView());
 /*

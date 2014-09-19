@@ -228,7 +228,7 @@ function createMyGroup() {
 			height : 35,
 			width : 35,
 			left : '3%',
-			borderRadius : 16
+			borderRadius : 17
 		});
 		profilePic.addEventListener('error', function(e) {
 			// fallback for image
