@@ -457,11 +457,14 @@ function getAchievements(){
 									left: 0,
 									zIndex: "1000",
 								});
-								
+								var ach_img = 'images/locked_ach.png';
+								if(achievements[i].unlocked == true){
+									ach_img = e.source.image;
+								}
 								var blur = mod.createBasicBlurView({
 									width: 150,
 									height: 150,
-									image : e.source.image,
+									image : ach_img,
 									borderRadius: 10,
 									blurRadius : 35,
 									//opacity: '0.5',
