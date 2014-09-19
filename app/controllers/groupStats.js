@@ -15,12 +15,13 @@ if (OS_ANDROID) {
 		$.groupStats.activity.actionBar.displayHomeAsUp = true;
 		$.groupStats.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
 
+		getStats();
 		indicator.openIndicator();
 	});
 }
 
 $.groupStats.addEventListener('close', function() {
-	indicator.closeIndicator;
+	indicator.closeIndicator();
 });
 
 var scoreView = Ti.UI.createScrollView({
@@ -192,28 +193,31 @@ function createGUI(obj, i) {
 	scoreView.add(totalLeader);
 }
 
-var getUID = Ti.Network.createHTTPClient();
-getUID.onload = function() {
-	Ti.API.info(this.responseText);
-	var info = JSON.parse(this.responseText);
+function getStats() {
+	var getUID = Ti.Network.createHTTPClient();
+	getUID.onload = function() {
+		Ti.API.info(this.responseText);
+		var info = JSON.parse(this.responseText);
+		indicator.closeIndicator();
 
-	for (var i = 0; i < info.data.length; i++) {
-		createGUI(info.data[i], i);
-	}
-	indicator.closeIndicator();
-};
+		for (var i = 0; i < info.data.length; i++) {
+			createGUI(info.data[i], i);
+		}
 
-getUID.onerror = function() {
-	indicator.closeIndicator();
-};
+	};
 
-getUID.open('GET', Alloy.Globals.BETKAMPENGETGROUPMEMBERSURL + '?gid=' + gid + '&lang=' + Alloy.Globals.LOCALE);
+	getUID.onerror = function() {
+		indicator.closeIndicator();
+	};
 
-if (OS_IOS) {
-	indicator.openIndicator();
+	getUID.open('GET', Alloy.Globals.BETKAMPENGETGROUPMEMBERSURL + '?gid=' + gid + '&lang=' + Alloy.Globals.LOCALE);
+	getUID.send();
 }
 
-getUID.send();
+if (OS_IOS) {
+	getStats();
+	indicator.openIndicator();
+}
 
 $.groupStats.add(scoreView);
 $.groupStats.add(statsView);

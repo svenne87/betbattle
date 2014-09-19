@@ -1,5 +1,4 @@
 /* Functions */
-
 function createGameType(gameType, gameObject) {
 	var type = gameType.type;
 	var viewHeight = "100dp";
@@ -988,27 +987,49 @@ function createLayout(gameObject) {
 			createGameType(gametypes[y], gameObject);
 		}
 
+		var slideView = Ti.UI.createView({
+			width : Ti.UI.FILL,
+			height : Ti.UI.SIZE,
+			layout : 'horizontal'
+		});
+
 		var slide = Ti.UI.createLabel({
-			text : Alloy.Globals.PHRASES.scrollNextGame,
+			left : 20,
+			height : 'auto',
+			text : Alloy.Globals.PHRASES.scrollNextGame + '  ',
 			textAlign : "center",
 			font : {
 				fontFamily : "Impact",
-				fontSize : 18,
+				fontSize : 20,
 			},
-			color : "#FFF",
+			color : Alloy.Globals.themeColor()
 		});
+		
+		var slideIcon = Ti.UI.createLabel({
+			height : 'auto',
+			width : 'auto',
+			text : fontawesome.icon('icon-chevron-right'),
+			font : {
+				fontFamily : fontAwe
+			},
+			color : Alloy.Globals.themeColor()
+		});
+		
+		slideView.add(slide);
+		slideView.add(slideIcon);	
+		
 		Ti.API.info("INDEX GAME : " + gameObjects.indexOf(gameObject));
 		Ti.API.info("ARRAY LENGTH :  " + gameObjects.length);
 		if (gameObjects.indexOf(gameObject) == (gameObjects.length - 1)) {
-			Ti.API.info("sista matchen");
-		} else {
-			view.add(slide);
-		}
-		if (answer == 1) {
-			if(bet_amount > 0){
-				createBetAmountView();	
+			// last game
+			if (answer == 1) {
+				if(bet_amount > 0){
+					createBetAmountView();	
+				}
 			}
 			createSubmitButtonAnswer();
+		} else {
+			view.add(slideView);
 		}
 
 		if (matchOTD == 1){
@@ -1049,6 +1070,16 @@ var indicator = uie.createIndicatorWindow({
 	top : 200,
 	text : Alloy.Globals.PHRASES.loadingTxt
 });
+
+var fontawesome = require('lib/IconicFont').IconicFont({
+	font : 'lib/FontAwesome'
+});
+
+var fontAwe = 'FontAwesome';
+
+if (OS_ANDROID) {
+	fontAwe = 'fontawesome-webfont';
+}
 
 var roundId = -1;
 if ( typeof args.round !== 'undefined') {
@@ -1131,12 +1162,6 @@ var gameObjects = [];
 var gameArray = [];
 
 // needs to be global in this context
-// create indicator window
-var uie = require('lib/IndicatorWindow');
-var indicator = uie.createIndicatorWindow({
-	top : 200,
-	text : Alloy.Globals.PHRASES.loadingTxt
-});
 var submitButton;
 
 // create menu label
