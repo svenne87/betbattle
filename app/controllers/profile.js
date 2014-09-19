@@ -431,7 +431,7 @@ function getAchievements(){
 				if (achievements !== null) {
 					Ti.API.info("ACHIEVEMENT  :  " + JSON.stringify(achievements[2]));
 					for (var i = 0; i < achievements.length; i++){
-						var ach_img = 'images/locked_ach.png';
+						var ach_img = '/images/locked_ach.png';
 						if(achievements[i].unlocked == true){
 							ach_img = Alloy.Globals.BETKAMPENURL + "/achievements/"+achievements[i].image;
 						}
