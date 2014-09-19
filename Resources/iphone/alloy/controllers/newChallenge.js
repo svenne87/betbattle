@@ -261,7 +261,10 @@ function Controller() {
                         totalNumberOfGames = response.totalCount;
                         numberOfGamesFetched = end >= totalNumberOfGames ? totalNumberOfGames : end;
                         setDisplayText();
-                        array.length > 0 ? firstTime ? createAndShowTableView(league, array) : appendToRow(array) : createNoGamesView();
+                        if (array.length > 0) if (firstTime) createAndShowTableView(league, array); else {
+                            Ti.API.log(array[0]);
+                            appendToRow(array);
+                        } else createNoGamesView();
                     } else Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                     indicator.closeIndicator();
                 } else {
