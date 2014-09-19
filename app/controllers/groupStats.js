@@ -20,7 +20,7 @@ if (OS_ANDROID) {
 }
 
 $.groupStats.addEventListener('close', function() {
-	indicator.closeIndicator
+	indicator.closeIndicator;
 });
 
 var scoreView = Ti.UI.createScrollView({
@@ -155,7 +155,7 @@ function createGUI(obj, i) {
 		height : 30,
 		width : 30,
 		left : '10%',
-		borderRadius : 16
+		borderRadius : 15
 	});
 	profilePic.addEventListener('error', function(e) {
 		// fallback for image

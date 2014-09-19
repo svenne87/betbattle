@@ -57,7 +57,7 @@ fbFriendBtn.add(fbIconLabel);
 var fbLabel = Titanium.UI.createLabel({
 	text:  Alloy.Globals.PHRASES.fbFriendsTxt,
 	font: {
-		fontSize: 18,
+		fontSize: 22,
 		fontFamily: "Impact"
 	},
 	color: "#fff"
@@ -88,7 +88,7 @@ myFriendBtn.add(mFIconLabel);
 var mFriendLabel = Titanium.UI.createLabel({
 	text: Alloy.Globals.PHRASES.myFriendsTxt,
 	font: {
-		fontSize: 18,
+		fontSize: 22,
 		fontFamily: "Impact"
 	},
 	color: "#000000"
@@ -120,7 +120,7 @@ myGroupsBtn.add(mgIconLabel);
 var mGroupLabel = Titanium.UI.createLabel({
 	text: Alloy.Globals.PHRASES.myGroupsTxt,
 	font: {
-		fontSize: 18,
+		fontSize: 22,
 		fontFamily: "Impact"
 	},
 	color: "#000000"
@@ -151,7 +151,7 @@ addFriendsBtn.add(afIconLabel);
 var aFriendLabel = Titanium.UI.createLabel({
 	text: Alloy.Globals.PHRASES.addFriendsTxt,
 	font: {
-		fontSize: 18,
+		fontSize: 22,
 		fontFamily: "Impact"
 	},
 	color: "#000000"
@@ -182,7 +182,7 @@ createGroupBtn.add(cgIconLabel);
 cGroupLabel = Titanium.UI.createLabel({
 	text: Alloy.Globals.PHRASES.createGroupTxt,
 	font: {
-		fontSize: 18,
+		fontSize: 22,
 		fontFamily: "Impact"
 	},
 	color: "#000000"
@@ -213,7 +213,7 @@ shareBtn.add(sIconLabel);
 shareLabel = Titanium.UI.createLabel({
 	text: Alloy.Globals.PHRASES.inviteFriendsTxt,
 	font: {
-		fontSize: 18,
+		fontSize: 22,
 		fontFamily: "Impact"
 	},
 	color: "#000000"
