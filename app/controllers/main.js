@@ -459,7 +459,6 @@ function rowSelect(e) {
 		}
 	}
 	
-	
 	if(e.row.customView === 'landingPage') {
 		if(OS_IOS){
 			Alloy.Globals.NAV.close();
@@ -469,7 +468,7 @@ function rowSelect(e) {
 			start.open({modal : false});
 			start = null;
 		} else if (OS_ANDROID){
-			// TODO
+			$.mainWin.close();
 		}
 	}
 	
