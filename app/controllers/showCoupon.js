@@ -6,6 +6,7 @@ var coinsToJoin = -1;
 var rows = [];
 var amount_games = games.length;
 var amount_deleted = 0;
+var added = false;
  
 function checkFriends(){
 	if(Alloy.Globals.checkConnection()){
@@ -16,7 +17,7 @@ function checkFriends(){
 			
 			
 			Ti.API.error('Bad Sever =>' + e.error);
-			
+			added = false;
 			//$.facebookBtn.enabled = true;
 		};
 	
@@ -29,9 +30,10 @@ function checkFriends(){
 		} catch(e) {
 			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 			//alert(JSON.parse(this.responseText));
-			
+			added = false;
 		}
 		xhr.onload = function() {
+			added = false;
 			if (this.status == '200') {
 				if (this.readyState == 4) {
 					var response = JSON.parse(this.responseText);
@@ -94,6 +96,7 @@ function checkFriends(){
 			}
 		};
 	}else{
+		added = false;
 		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 	}
 	
@@ -124,7 +127,7 @@ function removeCouponGame(gameID){
 					var response = null;
 					Ti.API.info("Tagit bort" + JSON.stringify(this.responseText));
 					response = JSON.parse(this.responseText);
-					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.couponGameRemoved);
+					 Alloy.Globals.showToast(Alloy.Globals.PHRASES.couponGameRemoved);
 					amount_deleted++;
 					/*for(var i in games){
 						if(games[i].game_id == gameID){
@@ -183,7 +186,11 @@ function createSubmitButtonView(){
 	}));
 	
 	buttonView.addEventListener("click", function(e){
-		checkFriends();
+		if(!added){
+			checkFriends();
+			added = true;
+		}
+		
 	});
 	wrapperView.add(buttonView);
 	$.scrollView.add(wrapperView);
@@ -474,6 +481,8 @@ if (OS_ANDROID) {
 	});
 
 }
+
+
 createCoinsView();
 createBorderView();
 createSubmitButtonView();

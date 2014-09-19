@@ -207,24 +207,18 @@ function Controller() {
                         var response = JSON.parse(this.responseText);
                         Ti.API.info("RESPONSE : " + JSON.stringify(response));
                         response = response.replace(/(<br \/>)+/g, "\n");
-                        var alertWindow = Titanium.UI.createAlertDialog({
-                            title: Alloy.Globals.PHRASES.betbattleTxt,
-                            message: response,
-                            buttonNames: [ Alloy.Globals.PHRASES.okConfirmTxt ]
+                        Alloy.Globals.showToast(response);
+                        var argu = {
+                            refresh: 1,
+                            sent_challenge: 1
+                        };
+                        var loginSuccessWindow = Alloy.createController("main", argu).getView();
+                        loginSuccessWindow.open({
+                            fullScreen: true,
+                            transition: Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
                         });
-                        alertWindow.addEventListener("click", function() {
-                            var argu = {
-                                refresh: 1,
-                                sent_challenge: 1
-                            };
-                            var loginSuccessWindow = Alloy.createController("main", argu).getView();
-                            loginSuccessWindow.open({
-                                fullScreen: true,
-                                transition: Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
-                            });
-                            loginSuccessWindow = null;
-                        });
-                        alertWindow.show();
+                        loginSuccessWindow = null;
+                        for (win in Alloy.Globals.WINDOWS) 0 !== win && Alloy.Globals.WINDOWS[win].close();
                     } else {
                         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                         submitButton.touchEnabled = true;
@@ -298,24 +292,18 @@ function Controller() {
                         Ti.API.log("RESPONSE FRIENDS : " + JSON.stringify(this.responseText));
                         var response = JSON.parse(this.responseText);
                         response = response.replace(/(<br \/>)+/g, "\n");
-                        var alertWindow = Titanium.UI.createAlertDialog({
-                            title: Alloy.Globals.PHRASES.betbattleTxt,
-                            message: response,
-                            buttonNames: [ Alloy.Globals.PHRASES.okConfirmTxt ]
+                        Alloy.Globals.showToast(response);
+                        var argu = {
+                            refresh: 1,
+                            sent_challenge: 1
+                        };
+                        var loginSuccessWindow = Alloy.createController("main", argu).getView();
+                        loginSuccessWindow.open({
+                            fullScreen: true,
+                            transition: Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
                         });
-                        alertWindow.addEventListener("click", function() {
-                            var argu = {
-                                refresh: 1,
-                                sent_challenge: 1
-                            };
-                            var loginSuccessWindow = Alloy.createController("main", argu).getView();
-                            loginSuccessWindow.open({
-                                fullScreen: true,
-                                transition: Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
-                            });
-                            loginSuccessWindow = null;
-                        });
-                        alertWindow.show();
+                        loginSuccessWindow = null;
+                        for (win in Alloy.Globals.WINDOWS) 0 !== win && Alloy.Globals.WINDOWS[win].close();
                     } else {
                         submitButton.touchEnabled = true;
                         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);

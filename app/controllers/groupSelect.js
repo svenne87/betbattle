@@ -69,9 +69,8 @@ function createMemberRow(member, subRow) {
 function getFriends() {
 	selectedGroupIds = [];
 	friendsChallenge = [];
-	
-	indicator.openIndicator();
 
+	indicator.openIndicator();
 
 	// Get groups with members
 	var xhr = Titanium.Network.createHTTPClient();
@@ -149,8 +148,8 @@ function getFriends() {
 function getGroups() {
 	selectedGroupIds = [];
 	friendsChallenge = [];
-	
-	if(OS_IOS || notFirstRun) {
+
+	if (OS_IOS || notFirstRun) {
 		indicator.openIndicator();
 	}
 
@@ -339,33 +338,32 @@ function challengeGroup(array) {
 
 					response = response.replace(/(<br \/>)+/g, "\n");
 					// show dialog and if ok close window
-					var alertWindow = Titanium.UI.createAlertDialog({
-						title : Alloy.Globals.PHRASES.betbattleTxt,
-						message : response,
-						buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt]
-					});
 
-					alertWindow.addEventListener('click', function() {
-						var argu = {
-							refresh : 1,
-							sent_challenge : 1,
-						};
-						var loginSuccessWindow = Alloy.createController('main', argu).getView();
-						if (OS_IOS) {
-							loginSuccessWindow.open({
-								fullScreen : true,
-								transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
-							});
-						} else if (OS_ANDROID) {
-							loginSuccessWindow.open({
-								fullScreen : true,
-								navBarHidden : false,
-								orientationModes : [Titanium.UI.PORTRAIT]
-							});
+					Alloy.Globals.showToast(response);
+					var argu = {
+						refresh : 1,
+						sent_challenge : 1,
+					};
+					var loginSuccessWindow = Alloy.createController('main', argu).getView();
+					if (OS_IOS) {
+						loginSuccessWindow.open({
+							fullScreen : true,
+							transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
+						});
+					} else if (OS_ANDROID) {
+						loginSuccessWindow.open({
+							fullScreen : true,
+							navBarHidden : false,
+							orientationModes : [Titanium.UI.PORTRAIT]
+						});
+					}
+
+					loginSuccessWindow = null;
+					for (win in Alloy.Globals.WINDOWS) {
+						if (win !== 0) {
+							Alloy.Globals.WINDOWS[win].close();
 						}
-						loginSuccessWindow = null;
-					});
-					alertWindow.show();
+					}
 
 				} else {
 					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
@@ -477,33 +475,32 @@ function challengeFriends() {
 
 					response = response.replace(/(<br \/>)+/g, "\n");
 					// show dialog and if ok close window
-					var alertWindow = Titanium.UI.createAlertDialog({
-						title : Alloy.Globals.PHRASES.betbattleTxt,
-						message : response,
-						buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt]
-					});
 
-					alertWindow.addEventListener('click', function() {
-						var argu = {
-							refresh : 1,
-							sent_challenge : 1
-						};
-						var loginSuccessWindow = Alloy.createController('main', argu).getView();
-						if (OS_IOS) {
-							loginSuccessWindow.open({
-								fullScreen : true,
-								transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
-							});
-						} else if (OS_ANDROID) {
-							loginSuccessWindow.open({
-								fullScreen : true,
-								navBarHidden : false,
-								orientationModes : [Titanium.UI.PORTRAIT]
-							});
+					Alloy.Globals.showToast(response);
+					var argu = {
+						refresh : 1,
+						sent_challenge : 1
+					};
+					var loginSuccessWindow = Alloy.createController('main', argu).getView();
+					if (OS_IOS) {
+						loginSuccessWindow.open({
+							fullScreen : true,
+							transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
+						});
+					} else if (OS_ANDROID) {
+						loginSuccessWindow.open({
+							fullScreen : true,
+							navBarHidden : false,
+							orientationModes : [Titanium.UI.PORTRAIT]
+						});
+					}
+					loginSuccessWindow = null;
+
+					for (win in Alloy.Globals.WINDOWS) {
+						if (win !== 0) {
+							Alloy.Globals.WINDOWS[win].close();
 						}
-						loginSuccessWindow = null;
-					});
-					alertWindow.show();
+					}
 
 				} else {
 					submitButton.touchEnabled = true;

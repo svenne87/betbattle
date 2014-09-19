@@ -818,27 +818,18 @@ function postAnswer(gameArray) {
 					Ti.API.info("POST ANSWER : " + JSON.stringify(this.responseText));
 					var response = JSON.parse(this.responseText);
 
-					// show dialog and if ok close window
-					var alertWindow = Titanium.UI.createAlertDialog({
-						title : Alloy.Globals.PHRASES.betbattleTxt,
-						message : response,
-						buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt]
-					});
+					Alloy.Globals.showToast(response);
 
-					alertWindow.addEventListener('click', function() {
-						// change view
-						var arg = {
-							refresh : true
-						};
-						var obj = {
-							controller : 'challengesView',
-							arg : arg
-						};
-						Ti.App.fireEvent('app:updateView', obj);
-						$.challengeWindow.close();
-
-					});
-					alertWindow.show();
+					// change view
+					var arg = {
+						refresh : true
+					};
+					var obj = {
+						controller : 'challengesView',
+						arg : arg
+					};
+					Ti.App.fireEvent('app:updateView', obj);
+					$.challengeWindow.close();
 				} else {
 					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 					submitButton.touchEnabled = true;
@@ -1026,8 +1017,9 @@ function createLayout(gameObject) {
 				if(bet_amount > 0){
 					createBetAmountView();	
 				}
+				createSubmitButtonAnswer();
 			}
-			createSubmitButtonAnswer();
+			
 		} else {
 			view.add(slideView);
 		}
