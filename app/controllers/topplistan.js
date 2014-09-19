@@ -144,10 +144,10 @@ function createGUI(obj, i) {
 
 	var profilePic = Titanium.UI.createImageView({
 		image : image,
-		height : 30,
-		width : 30,
+		height : 35,
+		width : 35,
 		left : '15%',
-		borderRadius: 5
+		borderRadius: 17
 	});
 	profilePic.addEventListener('error',function(e){
 		// fallback for image
@@ -157,8 +157,8 @@ function createGUI(obj, i) {
 	totalLeader.add(profilePic);
 
 	boardName = obj.name.toString();
-	if (boardName.length > 22) {
-		boardName = boardName.substring(0, 22);
+	if (boardName.length > 18) {
+		boardName = boardName.substring(0, 18);
 	}
 	if (i == 0) {
 		if(obj.uid == Alloy.Globals.BETKAMPENUID){
@@ -166,33 +166,33 @@ function createGUI(obj, i) {
 		}
 		var name = Ti.UI.createLabel({
 			text : Alloy.Globals.PHRASES.chipleaderTxt + "\n" + boardName,
-			left : '27%',
+			left : '29%',
 			font : {
-				fontSize : 14
+				fontSize : 16
 			},
 		});
 	} else if (i == 1) {
 		var name = Ti.UI.createLabel({
 			text : Alloy.Globals.PHRASES.runnerUppTxt + "\n" + boardName,
-			left : '27%',
+			left : '29%',
 			font : {
-				fontSize : 14
+				fontSize : 16
 			},
 		});
 	} else if (i == 2) {
 		var name = Ti.UI.createLabel({
 			text : Alloy.Globals.PHRASES.thirdPlaceTxt + "\n" + boardName,
-			left : '27%',
+			left : '29%',
 			font : {
-				fontSize : 14
+				fontSize : 16
 			},
 		});
 	} else {
 		var name = Ti.UI.createLabel({
 			text : boardName,
-			left : '27%',
+			left : '29%',
 			font : {
-				fontSize : 14
+				fontSize : 16
 			},
 		});
 	}
