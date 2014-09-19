@@ -517,8 +517,8 @@ function showCouponAlert() {
 				});
 			} else if (OS_IOS){
 				Alloy.Globals.NAV.openWindow(window, {
-						animated : true
-					});
+					animated : true
+				});
 			}
 		
 			for (win in Alloy.Globals.WINDOWS) {
