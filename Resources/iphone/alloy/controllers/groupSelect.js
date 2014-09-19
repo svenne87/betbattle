@@ -384,7 +384,6 @@ function Controller() {
     function createViews(array, type) {
         var children = tableWrapper.children;
         for (var i = 0; children.length > i; i++) {
-            Ti.API.info("children : " + JSON.stringify(children[i]));
             "groupsTable" === children[i].id && tableWrapper.remove(children[i]);
             "submitButtonsView" === children[i].id && $.groupSelect.remove(children[i]);
             children[i] = null;
@@ -404,15 +403,17 @@ function Controller() {
             refreshControl: refresher,
             backgroundColor: "#303030"
         });
-        table.footerView = Ti.UI.createView({
-            height: .5,
-            backgroundColor: "#6d6d6d"
-        });
         table.separatorInsets = {
             left: 0,
             right: 0
         };
+        table.footerView = Ti.UI.createView({
+            height: .5,
+            backgroundColor: "#6d6d6d"
+        });
         var data = [];
+        var hasChild;
+        hasChild = true;
         for (var i = 0; array.length > i; i++) {
             if (1 == type) {
                 var subRow = Ti.UI.createTableViewRow({
@@ -476,8 +477,8 @@ function Controller() {
                     id: "img-" + array[i].attributes.id,
                     image: image
                 });
-                detailsImg.addEventListener("error", function() {
-                    detailsImg.image = "/images/no_pic.png";
+                detailsImg.addEventListener("error", function(e) {
+                    e.source.image = "/images/no_pic.png";
                 });
                 row.add(detailsImg);
                 row.add(Ti.UI.createLabel({
@@ -693,6 +694,7 @@ function Controller() {
     var buttonsPushed = [];
     var table;
     var refresher;
+    var notFirstRun = false;
     var uie = require("lib/IndicatorWindow");
     var indicator = uie.createIndicatorWindow({
         top: 200,
@@ -760,7 +762,10 @@ function Controller() {
     });
     $.groupSelect.add(tableWrapper);
     $.groupSelect.add(botView);
-    Alloy.Globals.checkConnection() ? getGroups() : Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+    if (Alloy.Globals.checkConnection()) {
+        getGroups();
+        notFirstRun = true;
+    } else Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
     _.extend($, exports);
 }
 
