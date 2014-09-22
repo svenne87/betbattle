@@ -518,19 +518,23 @@ function checkRatestatus() {
 					switch(e.index){
 						case 0:
 							if (OS_IOS){
-								Ti.Platform.openURL("https://itunes.apple.com/se/app/apple-store/id884939881?mt=8");
+								Ti.Platform.openURL("http://itunes.apple.com/app/id884939881");
+								//Ti.Platform.openURL('itms-apps://itunes.apple.com/app/id884939881');
 							}else if(OS_ANDROID){
 								Ti.Platform.openURL("market://details?id=apps.topgame.betkampen");
 							}
 							rate_status = 2;
+							setRateStatus(rate_status);
 							break;
 						case 1: 
 							alert('du vill bli påmind :|');
 							rate_status = 0;
+							setRateStatus(rate_status);
 							break;
 						case 2: 
 							alert('dumma dig :(');
 							rate_status = 1;
+							setRateStatus(rate_status);
 							break;
 					}
 				});
@@ -553,6 +557,16 @@ function checkRatestatus() {
 	xhr.setTimeout(Alloy.Globals.TIMEOUT);
 
 	xhr.send();
+}
+function setRateStatus(rate_status){
+	Ti.API.info(rate_status);
+	var addFriends = Ti.Network.createHTTPClient();
+			addFriends.open("POST", Alloy.Globals.BETKAMPENSETRATESTATUS);
+			var params = {
+				uid : Alloy.Globals.BETKAMPENUID,
+				rate_status : rate_status
+			};
+			addFriends.send(params);
 }
 
 $.share.add(mainView); 
