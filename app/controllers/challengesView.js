@@ -12,6 +12,8 @@ var mod = require('bencoding.blur');
 
 // update coins
 Ti.App.addEventListener('updateCoins', function(coins) {
+
+	/*
 	var currentCoins = -1;
 	try {
 		var currentCoinsText = userInfoCoinsLabel.getText();
@@ -25,7 +27,9 @@ Ti.App.addEventListener('updateCoins', function(coins) {
 		currentCoins = currentCoins + coins;
 		userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.coinsInfoTxt + ": " + currentCoins.toString());
 	}
+	*/
 });
+
 
 // refresh this view
 Ti.App.addEventListener("challengesViewRefresh", function(e) {
@@ -46,8 +50,8 @@ Ti.App.addEventListener("challengesViewRefresh", function(e) {
 		getChallenges();
 	} else {
 		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
-		userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
-		userInfoWinsLabel.setText('');
+		//userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
+		//userInfoWinsLabel.setText('');
 	}
 });
 
@@ -56,8 +60,8 @@ function getUserInfo() {
 
 	var xhr = Titanium.Network.createHTTPClient();
 	xhr.onerror = function(e) {
-		userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
-		userInfoWinsLabel.setText('');
+		//userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
+		//userInfoWinsLabel.setText('');
 		Ti.API.error('Bad Sever =>' + e.error);
 	};
 
@@ -69,8 +73,8 @@ function getUserInfo() {
 
 		xhr.send();
 	} catch(e) {
-		userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
-		userInfoWinsLabel.setText('');
+		//userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
+		//userInfoWinsLabel.setText('');
 		var error = { totalCoins : '', totalPoints : ''};
 		Ti.App.fireEvent('app:coinsMenuInfo', error);
 	}
@@ -87,16 +91,16 @@ function getUserInfo() {
 				}
 
 				if (userInfo !== null) {
-					userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.coinsInfoTxt + ": " + userInfo.totalCoins);
-					userInfoWinsLabel.setText(Alloy.Globals.PHRASES.scoreInfoTxt + ": " + userInfo.totalPoints);
+					//userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.coinsInfoTxt + ": " + userInfo.totalCoins);
+					//userInfoWinsLabel.setText(Alloy.Globals.PHRASES.scoreInfoTxt + ": " + userInfo.totalPoints);
 					
 					// Update menu
 					Ti.App.fireEvent('app:coinsMenuInfo', userInfo);
 				}
 			}
 		} else {
-			userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
-			userInfoWinsLabel.setText('');
+			//userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
+			//userInfoWinsLabel.setText('');
 			Ti.API.error("Error =>" + this.response);
 		}
 	};
@@ -127,7 +131,7 @@ function checkActiveUsers(array) {
 	}
 	return activeUserCount;
 }
-
+/*
 function getDynamicLeftPos(oppCount) {
 	if (OS_IOS) {
 		var dynamicLeftPos = 80;
@@ -138,9 +142,7 @@ function getDynamicLeftPos(oppCount) {
 		} else if (oppCount > 99 && oppCount <= 999) {
 			dynamicLeftPos = 90;
 		}
-		/* else if (oppCount > 999) {
-		 dynamicLeftPos = 100;
-		 }*/
+
 
 	} else if (OS_ANDROID) {
 		var dynamicLeftPos = 80;
@@ -151,13 +153,12 @@ function getDynamicLeftPos(oppCount) {
 		} else if (oppCount > 99 && oppCount <= 999) {
 			dynamicLeftPos = 95;
 		}
-		/* else if (oppCount > 999) {
-		 dynamicLeftPos = 105;
-		 }*/
+
 	}
 
 	return dynamicLeftPos;
 }
+*/
 
 // show pending and finished challenges and tournaments in a webview
 function showChallengeInWebView(challengeId, roundId, groupName) {
@@ -254,7 +255,6 @@ function createEmptyTableRow(text) {
 
 // build and return rows that are of the type 'Accept' , 'Pending' and 'Finished'
 function constructChallengeRows(obj, index, type) {
-	Ti.API.info("OBJECT: " + JSON.stringify(obj));
 	var child = true;
 	if (OS_ANDROID) {
 		child = false;
@@ -266,7 +266,7 @@ function constructChallengeRows(obj, index, type) {
 		width : Ti.UI.FILL,
 		left : 0,
 		className : type,
-		height : 70
+		height : 100
 	});
 
 	// add custom icon on Android to symbol that the row has child
@@ -314,37 +314,14 @@ function constructChallengeRows(obj, index, type) {
 	row.add(Ti.UI.createImageView({
 		image : imageLocation,
 		left : 15,
-		top : 20,
 		width : 30,
 		height : 30
 	}));
 
-	var date = obj.attributes.time;
-	date = date.substring(0, 10);
-	date = date.substring(5);
-
-	// check first char
-	if (date.charAt(0) == '0') {
-		date = date.substring(1);
-	}
-
-	// change position
-	var datePartOne = date.substring(date.lastIndexOf('-'));
-	datePartOne = datePartOne.replace('-', '');
-	if (datePartOne.charAt(0) == '0') {
-		datePartOne = datePartOne.substring(1);
-	}
-
-	var datePartTwo = date.substring(0, date.indexOf('-'));
-	date = datePartOne + '/' + datePartTwo;
-
-	var time = obj.attributes.time;
-	time = time.substring(time.length - 8);
-	time = time.substring(0, 5);
-
 	var firstRowView = Ti.UI.createView({
-		layout : 'hotizontal',
-		top : -22
+		top : -44,
+		layout : 'absolute', 
+		width : 'auto'
 	});
 
 	var betGroupName = Alloy.Globals.PHRASES.unknownGroupTxt;
@@ -361,8 +338,8 @@ function constructChallengeRows(obj, index, type) {
 		if(betGroupName <= 0){
 			betGroupName = obj.attributes.name;
 		}
-		if (betGroupName.length > 9) {
-			betGroupName = betGroupName.substring(0, 7) + '...';
+		if (betGroupName.length > 15) {
+			betGroupName = betGroupName.substring(0, 12) + '...';
 		}
 		
 	} else {
@@ -382,8 +359,8 @@ function constructChallengeRows(obj, index, type) {
 				betGroupName = Alloy.Globals.PHRASES.betbattleTxt;
 			}
 
-			if (betGroupName.length > 9) {
-				betGroupName = betGroupName.substring(0, 7) + '...';
+			if (betGroupName.length > 15) {
+				betGroupName = betGroupName.substring(0, 12) + '...';
 			}
 		}
 	}
@@ -399,49 +376,10 @@ function constructChallengeRows(obj, index, type) {
 		color : Alloy.Globals.themeColor()
 	}));
 
-	var startTextLeftPos = 150;
-	var textLeftPos = 200;
-	var potTextPos = 171;
-
-	if (OS_ANDROID) {
-		startTextLeftPos = 155;
-		textLeftPos = 205;
-		potTextPos = 167;
-	}
-
-	firstRowView.add(Ti.UI.createLabel({
-		left : startTextLeftPos,
-		font : {
-			fontSize : Alloy.Globals.getFontSize(1),
-			fontWeight : 'bold',
-			fontFamily : Alloy.Globals.getFont()
-		},
-		text : Alloy.Globals.PHRASES.startTxt + ': ',
-		color : '#FFF'
-	}));
-
-	var topPos = 35;
-	var size = Alloy.Globals.getFontSize(1);
-	if (OS_IOS && iOSVersion < 7) {
-		size = 15;
-		topPos = 36;
-	}
-
-	firstRowView.add(Ti.UI.createLabel({
-		left : textLeftPos,
-		text : ' ' + date + ' ' + time,
-		font : {
-			fontSize : size,
-			fontWeight : 'normal',
-			fontFamily : Alloy.Globals.getFont()
-		},
-		color : '#FFF',
-		top : topPos
-	}));
-
 	var secondRowView = Ti.UI.createView({
-		layout : 'hotizontal',
-		top : 28
+		top : 4,
+		layout : 'absolute', 
+		width : 'auto'
 	});
 
 	var oppCount = 0;
@@ -456,19 +394,21 @@ function constructChallengeRows(obj, index, type) {
 		}
 	}
 
-	secondRowView.add(Ti.UI.createLabel({
+	var participantsValueLabel = Ti.UI.createLabel({
 		left : 60,
-		text : oppCount.toString(),
+		text : oppCount.toString() + ' ',
 		font : {
 			fontSize : Alloy.Globals.getFontSize(1),
 			fontWeight : 'bold',
 			fontFamily : Alloy.Globals.getFont()
 		},
 		color : Alloy.Globals.themeColor()
-	}));
+	});
+	
+	secondRowView.add(participantsValueLabel);
 
-	secondRowView.add(Ti.UI.createLabel({
-		left : getDynamicLeftPos(oppCount),
+	var participantsTextLabel = Ti.UI.createLabel({
+		left : (60 + participantsValueLabel.toImage().width + 2),
 		text : Alloy.Globals.PHRASES.participantTxt,
 		font : {
 			fontSize : Alloy.Globals.getFontSize(1),
@@ -476,10 +416,12 @@ function constructChallengeRows(obj, index, type) {
 			fontFamily : Alloy.Globals.themeColor()
 		},
 		color : '#FFF'
-	}));
+	});
 
-	secondRowView.add(Ti.UI.createLabel({
-		left : potTextPos,
+	secondRowView.add(participantsTextLabel);
+
+	var potTextLabel =Ti.UI.createLabel({
+		left : (60 + participantsValueLabel.toImage().width + 2 + participantsTextLabel.toImage().width + 6),
 		text : Alloy.Globals.PHRASES.potTxt + ':',
 		font : {
 			fontSize : Alloy.Globals.getFontSize(1),
@@ -487,7 +429,9 @@ function constructChallengeRows(obj, index, type) {
 			fontFamily : Alloy.Globals.getFont()
 		},
 		color : '#FFF'
-	}));
+	});
+
+	secondRowView.add(potTextLabel);
 
 	var currentPot = Alloy.Globals.PHRASES.unknownSmallTxt;
 
@@ -512,19 +456,77 @@ function constructChallengeRows(obj, index, type) {
 		}
 	}
 
-	secondRowView.add(Ti.UI.createLabel({
-		left : textLeftPos,
-		text : ' ' + currentPot,
+	var potValueLabel = Ti.UI.createLabel({
+		left :  (60 + participantsValueLabel.toImage().width + 2 + participantsTextLabel.toImage().width + 6 + potTextLabel.toImage().width + 2),
+		text : '' + currentPot,
 		font : {
 			fontSize : Alloy.Globals.getFontSize(1),
 			fontFamily : Alloy.Globals.getFont()
 		},
 		color : '#FFF'
-	}));
+	});
+	
+	secondRowView.add(potValueLabel);
+	
+	var thirdRowView = Ti.UI.createView({
+		top : 48,
+		layout : 'absolute', 
+		width : 'auto'
+	});
+	
+	var date = obj.attributes.time;
+	date = date.substring(0, 10);
+	date = date.substring(5);
+
+	// check first char
+	if (date.charAt(0) == '0') {
+		date = date.substring(1);
+	}
+
+	// change position
+	var datePartOne = date.substring(date.lastIndexOf('-'));
+	datePartOne = datePartOne.replace('-', '');
+	if (datePartOne.charAt(0) == '0') {
+		datePartOne = datePartOne.substring(1);
+	}
+
+	var datePartTwo = date.substring(0, date.indexOf('-'));
+	date = datePartOne + '/' + datePartTwo;
+
+	var time = obj.attributes.time;
+	time = time.substring(time.length - 8);
+	time = time.substring(0, 5);
+	
+	var startTextLabel = Ti.UI.createLabel({
+		left : 60,
+		font : {
+			fontSize : Alloy.Globals.getFontSize(1),
+			fontWeight : 'bold',
+			fontFamily : Alloy.Globals.getFont()
+		},
+		text : Alloy.Globals.PHRASES.startTxt + ': ',
+		color : '#FFF'
+	});
+
+	thirdRowView.add(startTextLabel);
+
+	var startTextValueLabel = Ti.UI.createLabel({
+		left : (60 + startTextLabel.toImage().width + 2),
+		text : '' + date + ' ' + time,
+		font : {
+			fontSize : Alloy.Globals.getFontSize(1),
+			fontWeight : 'normal',
+			fontFamily : Alloy.Globals.getFont()
+		},
+		color : '#FFF'
+	});
+
+	thirdRowView.add(startTextValueLabel);
 
 	// Add info to the created row
 	row.add(firstRowView);
 	row.add(secondRowView);
+	row.add(thirdRowView);
 
 	row.add(Ti.UI.createView({
 		top : 60,
@@ -559,8 +561,8 @@ function constructTableView(array) {
 			} else {
 				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 				refresher.endRefreshing();
-				userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
-				userInfoWinsLabel.setText('');
+				//userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
+				//userInfoWinsLabel.setText('');
 			}
 
 		});
@@ -577,6 +579,7 @@ function constructTableView(array) {
 
 	var sections = [];
 
+/*
 	var tableHeaderView = Ti.UI.createView({
 		height : 70,
 		backgroundColor : 'transparent',
@@ -727,7 +730,14 @@ function constructTableView(array) {
 	 backgroundColor : '#6d6d6d'
 	 }));*/
 
-	tableHeaderView.add(userInfoView);
+//	tableHeaderView.add(userInfoView);
+
+	var tableHeaderView = Ti.UI.createView({
+		height : 0,
+		width : Ti.UI.FILL,
+		backgroundColor : 'transparent',
+		layout : "absolute",
+	});
 
 	if (OS_IOS) {
 		var separatorS;
@@ -838,6 +848,7 @@ function constructTableView(array) {
 		},
 		text : Alloy.Globals.PHRASES.newChallengesTxt,
 		color : '#FFF',
+		left : 20,
 		height : 'auto',
 		width : 'auto'
 	}));
@@ -862,6 +873,7 @@ function constructTableView(array) {
 		},
 		text : Alloy.Globals.PHRASES.pendingChallengesTxt,
 		color : '#FFF',
+		left : 20,
 		height : 'auto',
 		width : 'auto'
 	}));
@@ -885,6 +897,7 @@ function constructTableView(array) {
 		},
 		text : Alloy.Globals.PHRASES.finishedChallengesTxt,
 		color : '#FFF',
+		left : 20,
 		height : 'auto',
 		width : 'auto'
 	}));
@@ -1254,8 +1267,8 @@ var indicator = uie.createIndicatorWindow({
 });
 var refresher;
 var table;
-var userInfoCoinsLabel;
-var userInfoWinsLabel;
+//var userInfoCoinsLabel;
+//var userInfoWinsLabel;
 
 var args = arguments[0] || {};
 if (args.refresh == 1) {
@@ -1269,8 +1282,8 @@ if (args.refresh == 1) {
 		}
 	} else {
 		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
-		userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
-		userInfoWinsLabel.setText('');
+		//userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
+		//userInfoWinsLabel.setText('');
 	}
 
 }

@@ -170,6 +170,7 @@ function createBorderView() {
 function createSubmitButtonView(){
 	wrapperView = Ti.UI.createView({
 		height: 50,
+		top : 20,
 		width: Ti.UI.FILL,
 		layout: 'absolute',
 		backgroundColor: "transparent",
