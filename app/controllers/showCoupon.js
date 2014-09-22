@@ -8,7 +8,6 @@ if(Alloy.Globals.COUPON && Alloy.Globals.COUPON.games.length > 0){
 	$.showCoupon.close();
 }
 
-
 var modalPickersToHide = []; 
 var coinsToJoin = -1;
 var rows = [];
@@ -194,9 +193,25 @@ function createSubmitButtonView(){
 	}));
 	
 	buttonView.addEventListener("click", function(e){
-		if(!added){
+		var gameDatesValid = true;
+		
+		// check if any of the games in the coupon has started / already finished.
+		for(var i = 0; i < games.length; i++) {
+			var gameDateMilli = games[i].game_date + "000";
+			var gameDate = new Date((gameDateMilli - 0));
+			var now = new Date();
+			
+			if(now.getTime() > gameDate.getTime()){
+				gameDatesValid = false;
+			}
+			
+		}
+			
+		if(!added && gameDatesValid) {
 			checkFriends();
 			added = true;
+		} else if(!gameDatesValid) {
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.invalidDatesTxt);
 		}
 		
 	});

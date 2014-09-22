@@ -244,28 +244,65 @@ function createAndShowTableView(league, array) {
 
 	var footerView = Ti.UI.createView({
 		height : 60,
-		backgroundColor : 'transparent',
+		width: '100%',
+		backgroundColor: '#242424',
+		backgroundGradient: {
+			type: "linear",
+			startPoint: {
+				x: "0%",
+				y: "0%"
+			},
+			endPoint: {
+				x: "0%",
+				y: "100%"
+			},
+			colors: [
+				{
+					color: "#2E2E2E",
+					offset: 0.0
+				}, {
+					color: "#151515",
+					offset: 1.0
+				}
+			]
+		},
 		layout : 'vertical'
 	});
 
+	footerView.add(Ti.UI.createView({
+		top : 0,
+		height : 0.5,
+		width : Ti.UI.FILL,
+		backgroundColor : '#FFF'
+	}));
+
 	footerView.add(Ti.UI.createLabel({
 		text : footerViewText,
-		textAlign : "center",
-		color : Alloy.Globals.themeColor(),
+		top : 10,
+		left : 20,
+		color : '#FFF',
 		font : {
-			fontSize : 10,
+			fontSize : Alloy.Globals.getFontSize(1),
 			fontFamily : Alloy.Globals.getFont(),
 		}
 	}));
 
 	footerView.add(Ti.UI.createLabel({
+		top : 10,
 		text : loadMoreTxt,
-		textAlign : "center",
-		color : Alloy.Globals.themeColor(),
+		left : 20,
+		color : '#FFF',
 		font : {
-			fontSize : 10,
+			fontSize : Alloy.Globals.getFontSize(1),
 			fontFamily : Alloy.Globals.getFont(),
 		}
+	}));
+	
+	footerView.add(Ti.UI.createView({
+		top : 0,
+		height : 0.5,
+		width : Ti.UI.FILL,
+		backgroundColor : '#FFF'
 	}));
 
 	footerView.addEventListener('click', function() {
