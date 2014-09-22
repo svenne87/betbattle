@@ -570,6 +570,8 @@ if (OS_ANDROID) {
 	$.friendSelectWindow.orientationModes = [Titanium.UI.PORTRAIT];
 
 	$.friendSelectWindow.addEventListener('open', function() {
+		Alloy.Globals.setAndroidCouponMenu($.friendSelectWindow.activity);
+		
 		$.friendSelectWindow.activity.actionBar.onHomeIconItemSelected = function() {
 			$.friendSelectWindow.close();
 			$.friendSelectWindow = null;

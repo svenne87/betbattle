@@ -8,6 +8,8 @@ var indicator = uie.createIndicatorWindow({
 
 if (OS_ANDROID) {
 	$.groupStats.addEventListener('open', function() {
+		Alloy.Globals.setAndroidCouponMenu($.groupStats.activity);
+		
 		$.groupStats.activity.actionBar.onHomeIconItemSelected = function() {
 			$.groupStats.close();
 			$.groupStats = null;

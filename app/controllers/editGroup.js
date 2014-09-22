@@ -13,6 +13,8 @@ $.editGroup.addEventListener('close', function() {
 
 if (OS_ANDROID) {
 	$.editGroup.addEventListener('open', function() {
+		Alloy.Globals.setAndroidCouponMenu($.editGroup.activity);
+		
 		$.editGroup.activity.actionBar.onHomeIconItemSelected = function() {
 			$.editGroup.close();
 			$.editGroup = null;

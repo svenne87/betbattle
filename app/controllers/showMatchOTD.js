@@ -220,6 +220,8 @@ if(OS_ANDROID){
 	$.showMatchOTD.orientationModes = [Titanium.UI.PORTRAIT];
 
 	$.showMatchOTD.addEventListener('open', function(){
+		Alloy.Globals.setAndroidCouponMenu($.showMatchOTD.activity);
+		
 		$.showMatchOTD.activity.actionBar.onHomeIconItemSelected = function() { $.showMatchOTD.close(); $.showMatchOTD = null; };
    		$.showMatchOTD.activity.actionBar.displayHomeAsUp = true;
    		$.showMatchOTD.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;

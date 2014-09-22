@@ -17,6 +17,8 @@ if (OS_ANDROID) {
 	font = 'fontawesome-webfont';
 
 	$.fbFriends.addEventListener('open', function() {
+		Alloy.Globals.setAndroidCouponMenu($.fbFriends.activity);
+		
 		$.fbFriends.activity.actionBar.onHomeIconItemSelected = function() {
 			$.fbFriends.close();
 			$.fbFriends = null;

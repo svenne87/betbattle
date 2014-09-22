@@ -1167,43 +1167,7 @@ if (OS_ANDROID) {
 	$.challengeWindow.orientationModes = [Titanium.UI.PORTRAIT];
 
 	$.challengeWindow.addEventListener('open', function() {
-		 $.challengeWindow.activity.onCreateOptionsMenu = function(e) {
-        			ticket = e.menu.add(ticketIcon = {
-        				showAsAction : Ti.Android.SHOW_AS_ACTION_ALWAYS,
-        				icon: 'images/ticketBtn.png',
-        				itemId : 1
-        			});
-       				
-       				var couponOpen = false;
-       				//Add event listener to ticket button
-					ticket.addEventListener("click", function(){
-						if(couponOpen) return;
-						if(Alloy.Globals.hasCoupon){
-							couponOpen = true;
-							var win = Alloy.createController('showCoupon').getView();
-							win.addEventListener('close', function(){
-								win = null;
-								couponOpen = false;	
-							});
-							win.open({
-								fullScreen : true
-							});
-							win = null;
-						}
-					});
-    			};
-    			
-    			$.challengeWindow.activity.onPrepareOptionsMenu = function(e) {
-    				var menu = e.menu;
-    				
-    				if(Alloy.Globals.hasCoupon){
-    					menu.findItem(1).setIcon('images/ticketBtnRed.png');
-    				} else {
-    					menu.findItem(1).setIcon('images/ticketBtn.png');
-    				}
-    			};
-   
-    			$.challengeWindow.activity.invalidateOptionsMenu();
+		Alloy.Globals.setAndroidCouponMenu($.challengeWindow.activity);
 		
 		$.challengeWindow.activity.actionBar.onHomeIconItemSelected = function() {
 			$.challengeWindow.close();
@@ -1213,12 +1177,6 @@ if (OS_ANDROID) {
 		$.challengeWindow.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
 		indicator.openIndicator();
 	});
-
-	/*
-	 $.challengeWindow.addEventListener('androidback', function(){
-	 $.challengeWindow.close();
-	 $.challengeWindow = null;
-	 }); */
 }
 
 $.challengeWindow.addEventListener('close', function() {

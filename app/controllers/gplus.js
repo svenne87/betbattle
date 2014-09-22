@@ -11,6 +11,8 @@ if(OS_ANDROID){
 	$.gplus.orientationModes = [Titanium.UI.PORTRAIT];
 
 	$.gplus.addEventListener('open', function(){
+		Alloy.Globals.setAndroidCouponMenu($.gplus.activity);
+		
 		$.gplus.activity.actionBar.onHomeIconItemSelected = function() { $.gplus.close(); $.gplus = null; };
    		$.gplus.activity.actionBar.displayHomeAsUp = true;
    		$.gplus.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;

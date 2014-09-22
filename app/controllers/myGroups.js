@@ -503,6 +503,8 @@ if (Alloy.Globals.checkConnection()) {
 
 if (OS_ANDROID) {
 	$.myGroups.addEventListener('open', function() {
+		Alloy.Globals.setAndroidCouponMenu($.myGroups.activity);
+		
 		$.myGroups.activity.actionBar.onHomeIconItemSelected = function() {
 			$.myGroups.close();
 			$.myGroups = null;

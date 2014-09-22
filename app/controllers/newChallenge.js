@@ -517,6 +517,8 @@ if (OS_ANDROID) {
 	$.newChallenge.orientationModes = [Titanium.UI.PORTRAIT];
 
 	$.newChallenge.addEventListener('open', function() {
+		 Alloy.Globals.setAndroidCouponMenu($.newChallenge.activity);
+		
 		$.newChallenge.activity.actionBar.onHomeIconItemSelected = function() {
 			$.newChallenge.close();
 			$.newChallenge = null;
