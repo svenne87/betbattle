@@ -10,6 +10,8 @@ if (OS_ANDROID) {
 		$.share.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
 	});
 }
+checkRatestatus();
+
 
 var fontawesome = require('lib/IconicFont').IconicFont({
 	font : 'lib/FontAwesome'
@@ -243,27 +245,27 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 			fejjan = true;
 		}
 	} else if (OS_ANDROID) {
-	function shareToFejjan() {
-		try {
-			var intFejs = Ti.Android.createIntent({
-				action : Ti.Android.ACTION_SEND,
-				packageName : 'com.facebook.katana',
-				flags : Ti.Android.FLAG_ACTIVITY_NEW_TASK,
-				type : 'text/plain'
-			});
-			intFejs.putExtra(Ti.Android.EXTRA_TEXT, Alloy.Globals.PHRASES.twitterMsg);
-			Ti.Android.currentActivity.startActivity(intTwitter);
-		} catch(x) {
-			alert(Alloy.Globals.PHRASES.notInstalledTxt +' '+ 'Facebook');
+		function shareToFejjan() {
+			try {
+				var intFejs = Ti.Android.createIntent({
+					action : Ti.Android.ACTION_SEND,
+					packageName : 'com.facebook.katana',
+					flags : Ti.Android.FLAG_ACTIVITY_NEW_TASK,
+					type : 'text/plain'
+				});
+				intFejs.putExtra(Ti.Android.EXTRA_TEXT, Alloy.Globals.PHRASES.twitterMsg);
+				Ti.Android.currentActivity.startActivity(intTwitter);
+			} catch(x) {
+				alert(Alloy.Globals.PHRASES.notInstalledTxt + ' ' + 'Facebook');
+			}
 		}
-	}
 
-}
+	}
 
 	fbBtn.addEventListener('click', function(e) {
 		if (OS_IOS) {
 			if (fejjan == true) {
-				alert(Alloy.Globals.PHRASES.notInstalledTxt +' '+ 'facebook');
+				alert(Alloy.Globals.PHRASES.notInstalledTxt + ' ' + 'facebook');
 			} else {
 				Titanium.Platform.openURL('fb://publish');
 			}
@@ -273,7 +275,7 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 		}
 	});
 } else {
-//if user login with fb
+	//if user login with fb
 	fbUserBtn.addEventListener('click', function(e) {
 		if (Alloy.Globals.checkConnection()) {
 			var facebookModuleError = true;
@@ -426,7 +428,7 @@ if (OS_IOS) {
 			intTwitter.putExtra(Ti.Android.EXTRA_TEXT, Alloy.Globals.PHRASES.twitterMsg);
 			Ti.Android.currentActivity.startActivity(intTwitter);
 		} catch(x) {
-			alert(Alloy.Globals.PHRASES.notInstalledTxt +' '+ 'Twitter');
+			alert(Alloy.Globals.PHRASES.notInstalledTxt + ' ' + 'Twitter');
 		}
 	}
 
@@ -434,9 +436,9 @@ if (OS_IOS) {
 twitterBtn.addEventListener('click', function(e) {
 	if (OS_IOS) {
 		if (twitter == true) {
-			alert(Alloy.Globals.PHRASES.notInstalledTxt +' '+ 'Twitter');
+			alert(Alloy.Globals.PHRASES.notInstalledTxt + ' ' + 'Twitter');
 		} else {
-			Titanium.Platform.openURL('twitter://post?message=' +  Alloy.Globals.PHRASES.twitterMsg);
+			Titanium.Platform.openURL('twitter://post?message=' + Alloy.Globals.PHRASES.twitterMsg);
 		}
 
 	} else if (OS_ANDROID) {
@@ -498,5 +500,59 @@ if (OS_IOS) {
 
 }
 
-$.share.add(mainView);
+function checkRatestatus() {
+	var rate_status = 0;
+	var xhr = Ti.Network.createHTTPClient({
+		onload : function(e) {
+			Ti.API.info("Received text: " + this.responseText);
+			var status = JSON.parse(this.responseText);
+			//alert(status.data[0].rated);
+			if (status.data[0].rated == 0){
+				var rateAlert = Ti.UI.createAlertDialog({
+					title: Alloy.Globals.PHRASES.betbattleTxt,
+					message: Alloy.Globals.PHRASES.rateMeTxt,
+					buttonNames: [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.remindMeTxt, Alloy.Globals.PHRASES.dontRemindMeTxt],
+					cancel: 2
+				});
+				rateAlert.addEventListener('click', function(e){
+					switch(e.index){
+						case 0:
+							if (OS_IOS){
+								Ti.Platform.openURL();
+							}else if(OS_ANDROID){
+								Ti.Platform.openURL();
+							}
+							rate_status = 2;
+							break;
+						case 1: 
+							alert('du vill bli påmind :|');
+							rate_status = 0;
+							break;
+						case 2: 
+							alert('dumma dig :(');
+							rate_status = 1;
+							break;
+					}
+				});
+				rateAlert.show(); 
+			}
+			
+		},
+		// function called when an error occurs, including a timeout
+		onerror : function(e) {
+			Ti.API.debug(e.error);
+			//alert('error');
+		},
+		timeout : Alloy.Globals.TIMEOUT // in milliseconds
+	});
+	// Prepare the connection.
+	xhr.open('GET', Alloy.Globals.BETKAMPENCHECKRATESTATUS + '?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
 
+	xhr.setRequestHeader("content-type", "application/json");
+	xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
+	xhr.setTimeout(Alloy.Globals.TIMEOUT);
+
+	xhr.send();
+}
+
+$.share.add(mainView); 

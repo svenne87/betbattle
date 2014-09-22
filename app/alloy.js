@@ -116,6 +116,7 @@ Alloy.Globals.BETKAMPENUNLOCKACHIEVEMENTURL = Alloy.Globals.BETKAMPENURL + '/api
 Alloy.Globals.BETKAMPENPOSTMATCHOTDURL = Alloy.Globals.BETKAMPENURL + '/api/respond_match_day.php';
 Alloy.Globals.BETKAMPENGETMATCHOTDSTATUSURL = Alloy.Globals.BETKAMPENURL + '/api/get_match_day_status.php';
 Alloy.Globals.BETKAMPENMATCHOTDSHOWURL = Alloy.Globals.BETKAMPENURL + '/api/get_match_day_show.php';
+Alloy.Globals.BETKAMPENCHECKRATESTATUS = Alloy.Globals.BETKAMPENURL + '/api/check_rate_status.php'; // check if user has rated app Google play/appstore
 
 Alloy.Globals.performTimeout = function(func) {
 	if (OS_ANDROID) {

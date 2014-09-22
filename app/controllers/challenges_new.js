@@ -443,6 +443,12 @@ function constructTableView(array) {
 			}
 
 		});
+	} else if (OS_ANDROID){
+		var scrollView = Ti.UI.createScrollView({
+			contantHeight : 'auto',
+			layout: 'vertical',
+			showVerticalScrollIndicator: true
+		});
 	}
 
 	// check if table exists, and if it does simply remove it
