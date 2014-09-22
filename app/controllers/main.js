@@ -22,13 +22,31 @@ Ti.App.addEventListener('app:rebuildAndroidMenu', function() {
 	} catch(e){
 		
 	}
-	// TODO Exception här? funkar ändå?
+	// TODO Exception här? funkar ändå? Uppdatera alla ticket vyer här??
 });
 
 /* Used to update coins information */
 Ti.App.addEventListener('app:coinsMenuInfo', function(data) {
 	winsLabel.setText(data.totalPoints);
 	coinsLabel.setText(data.totalCoins);
+});
+
+
+// update coins
+Ti.App.addEventListener('updateCoins', function(coins) {
+	var currentCoins = -1;
+	try {
+		var currentCoinsText = coinsLabel.getText();
+		currentCoins = parseInt(currentCoinsText);
+		coins = parseInt(coins.coins);
+	} catch (e) {
+
+	}
+
+	if (currentCoins > -1) {
+		currentCoins = currentCoins + coins;
+		coinsLabel.setText(Alloy.Globals.PHRASES.coinsInfoTxt + ": " + currentCoins.toString());
+	}
 });
 
 // used to navigate between views

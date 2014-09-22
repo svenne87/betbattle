@@ -246,6 +246,44 @@ client.send();
 
 if(OS_ANDROID){
 	$.scoreView.addEventListener('open', function() {
+		 $.scoreView.activity.onCreateOptionsMenu = function(e) {
+        			ticket = e.menu.add(ticketIcon = {
+        				showAsAction : Ti.Android.SHOW_AS_ACTION_ALWAYS,
+        				icon: 'images/ticketBtn.png',
+        				itemId : 1
+        			});
+       				
+       				var couponOpen = false;
+       				//Add event listener to ticket button
+					ticket.addEventListener("click", function(){
+						if(couponOpen) return;
+						if(Alloy.Globals.hasCoupon){
+							couponOpen = true;
+							var win = Alloy.createController('showCoupon').getView();
+							win.addEventListener('close', function(){
+								win = null;
+								couponOpen = false;	
+							});
+							win.open({
+								fullScreen : true
+							});
+							win = null;
+						}
+					});
+    			};
+    			
+    			$.scoreView.activity.onPrepareOptionsMenu = function(e) {
+    				var menu = e.menu;
+    				
+    				if(Alloy.Globals.hasCoupon){
+    					menu.findItem(1).setIcon('images/ticketBtnRed.png');
+    				} else {
+    					menu.findItem(1).setIcon('images/ticketBtn.png');
+    				}
+    			};
+   
+    			$.scoreView.activity.invalidateOptionsMenu();
+		
 		$.scoreView.activity.actionBar.onHomeIconItemSelected = function() {
 			$.scoreView.close();
 			$.scoreView = null;

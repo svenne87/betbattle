@@ -10,27 +10,6 @@
  });*/
 var mod = require('bencoding.blur');
 
-// update coins
-Ti.App.addEventListener('updateCoins', function(coins) {
-
-	/*
-	var currentCoins = -1;
-	try {
-		var currentCoinsText = userInfoCoinsLabel.getText();
-		currentCoins = parseInt(currentCoinsText);
-		coins = parseInt(coins.coins);
-	} catch (e) {
-
-	}
-
-	if (currentCoins > -1) {
-		currentCoins = currentCoins + coins;
-		userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.coinsInfoTxt + ": " + currentCoins.toString());
-	}
-	*/
-});
-
-
 // refresh this view
 Ti.App.addEventListener("challengesViewRefresh", function(e) {
 	if (Alloy.Globals.checkConnection()) {

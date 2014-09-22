@@ -696,6 +696,44 @@ if (OS_ANDROID) {
 	$.challenges_pending.orientationModes = [Titanium.UI.PORTRAIT];
 
 	$.challenges_pending.addEventListener('open', function() {
+		 $.challenges_pending.activity.onCreateOptionsMenu = function(e) {
+        			ticket = e.menu.add(ticketIcon = {
+        				showAsAction : Ti.Android.SHOW_AS_ACTION_ALWAYS,
+        				icon: 'images/ticketBtn.png',
+        				itemId : 1
+        			});
+       				
+       				var couponOpen = false;
+       				//Add event listener to ticket button
+					ticket.addEventListener("click", function(){
+						if(couponOpen) return;
+						if(Alloy.Globals.hasCoupon){
+							couponOpen = true;
+							var win = Alloy.createController('showCoupon').getView();
+							win.addEventListener('close', function(){
+								win = null;
+								couponOpen = false;	
+							});
+							win.open({
+								fullScreen : true
+							});
+							win = null;
+						}
+					});
+    			};
+    			
+    			$.challenges_pending.activity.onPrepareOptionsMenu = function(e) {
+    				var menu = e.menu;
+    				
+    				if(Alloy.Globals.hasCoupon){
+    					menu.findItem(1).setIcon('images/ticketBtnRed.png');
+    				} else {
+    					menu.findItem(1).setIcon('images/ticketBtn.png');
+    				}
+    			};
+   
+    			$.challenges_pending.activity.invalidateOptionsMenu();
+		
 		$.challenges_pending.activity.actionBar.onHomeIconItemSelected = function() {
 			$.challenges_pending.close();
 			$.challenges_pending = null;
