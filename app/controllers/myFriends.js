@@ -15,6 +15,8 @@ var font = 'FontAwesome';
 if (OS_ANDROID) {
 	font = 'fontawesome-webfont';
 }
+var mod = require('bencoding.blur');
+var openWindows = [];
 
 var mainView = Ti.UI.createScrollView({
 	class : "topView",
@@ -102,6 +104,155 @@ function createGUI(obj) {
 	});
 
 	friend.add(friendInfo);
+	friendInfo.addEventListener("click", function(e){
+							
+							if(OS_ANDROID){
+								var w = Ti.UI.createView({
+									height: "100%",
+									width: "100%",
+									backgroundColor: 'transparent',
+									top: 0,
+									left: 0,
+									zIndex: "1000",
+								});
+								
+								var blur = mod.createBasicBlurView({
+									width: 150,
+									height: 150,
+									//image : e.source.image,
+									borderRadius: 10,
+									blurRadius : 35,
+									//opacity: '0.5',
+								});
+								w.add(blur);
+								
+								var modal = Ti.UI.createView({
+									height: 250,
+									width: 250,
+									backgroundColor: '#c5c5c5',
+									borderRadius: 10,
+									opacity: 0.5,
+								});
+								w.add(modal);
+								
+								var textWrapper = Ti.UI.createView({
+									width: 150,
+									height: 150,
+								});
+								w.add(textWrapper);
+								
+								var achievementTitle = Ti.UI.createLabel({
+									text: Alloy.Globals.PHRASES.abortBtnTxt,
+									textAlign: "center",
+									color: "#FFFFFF",
+									zIndex: "2000",
+									font: {
+										fontSize: 18,
+										fontFamily: "Impact",
+									},
+									top:25,
+								});
+								textWrapper.add(achievementTitle);
+								
+								var achievementDescription = Ti.UI.createLabel({
+									text: Alloy.Globals.PHRASES.abortBtnTxt,
+									textAlign: "center",
+									color: "#FFFFFF",
+									width: "90%",
+									zIndex: "2000",
+									top: 50,
+								});
+								textWrapper.add(achievementDescription);
+								
+								textWrapper.addEventListener("click", function(e){
+									modal.hide();
+									w.hide();
+									modal = null;
+									w = null;
+								});
+								
+								$.myFriends.add(w);
+							}else{//iphone
+								var t = Titanium.UI.create2DMatrix();
+								t = t.scale(0);
+								
+								//create a transparent overlay that fills the screen to prevent openingen multiple windows
+								var transparent_overlay = Ti.UI.createView({
+									width: Ti.UI.FILL,
+									height: Ti.UI.FILL,
+									backgroundColor : 'transparent',
+									top: 0, 
+									left: 0,
+									zIndex: 100,
+								});
+								$.myFriends.add(transparent_overlay);
+								
+								var w = Titanium.UI.createWindow({
+									backgroundColor:'#ff00ff',
+									//borderWidth:8,
+									//borderColor:'#999',
+									height:250,
+									width:250,
+									borderRadius:10,
+									opacity:1,
+									zIndex : 1000,
+									transform:t
+								});
+								// create first transform to go beyond normal size
+								var t1 = Titanium.UI.create2DMatrix();
+								t1 = t1.scale(1.1);
+								var a = Titanium.UI.createAnimation();
+								a.transform = t1;
+								a.duration = 200;
+							
+								// when this animation completes, scale to normal size
+								a.addEventListener('complete', function()
+								{
+									Titanium.API.info('here in complete');
+									var t2 = Titanium.UI.create2DMatrix();
+									t2 = t2.scale(1.0);
+									w.animate({transform:t2, duration:200});
+							
+								});
+								
+							
+								var friendStats = Ti.UI.createLabel({
+									text: 'Score',//Alloy.Globals.PHRASES.abortBtnTxt,
+									textAlign: "center",
+									color: "#FFFFFF",
+									top:25,
+									font: {
+										fontSize: 18,
+										fontFamily: "Impact",
+									}
+								});
+								w.add(achievementTitle);
+								
+								var achievementDescription = Ti.UI.createLabel({
+									text: Alloy.Globals.PHRASES.abortBtnTxt,
+									textAlign: "center",
+									color: "#FFFFFF",
+									width: "90%",
+									top: 50,
+								});
+								w.add(achievementDescription);
+								
+								w.addEventListener('click', function()
+								{
+									var t3 = Titanium.UI.create2DMatrix();
+									t3 = t3.scale(0);
+									w.close({transform:t3,duration:300});
+									transparent_overlay.hide();
+									transparent_overlay = null;
+								});
+								
+								openWindows.push(w);
+								transparent_overlay.add(w.open(a));
+								//w.open(a);
+								
+							}
+							
+						});
 	
 	//profilepicture
 	var image;
@@ -316,3 +467,11 @@ $.myFriends.addEventListener('close', function() {
 
 
 $.myFriends.add(mainView);
+
+$.myFriends.addEventListener('close', function() {
+	if(openWindows.length > 0) {
+		for(var i = 0; i < openWindows.length; i++) {
+			openWindows[i].close();
+		}	
+	}
+});
