@@ -520,7 +520,7 @@ function checkRatestatus() {
 							if (OS_IOS){
 								Ti.Platform.openURL("https://itunes.apple.com/se/app/apple-store/id884939881?mt=8");
 							}else if(OS_ANDROID){
-								Ti.Platform.openURL();
+								Ti.Platform.openURL("market://details?id=app.topgame.betkampen");
 							}
 							rate_status = 2;
 							break;
