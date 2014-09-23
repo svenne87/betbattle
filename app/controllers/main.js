@@ -4,7 +4,7 @@ var winsLabel;
 var coinsLabel;
 var nameLabel;
 
-checkRatestatus();
+//checkRatestatus();
 /* Used to update the menu and add a indicator for a new challenge */
 Ti.App.addEventListener('app:updateMenu', function() {
 	// rebuild table rows
