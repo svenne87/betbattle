@@ -128,23 +128,11 @@ Alloy.Globals.BETKAMPENUNLOCKACHIEVEMENTURL = Alloy.Globals.BETKAMPENURL + '/api
 Alloy.Globals.BETKAMPENPOSTMATCHOTDURL = Alloy.Globals.BETKAMPENURL + '/api/respond_match_day.php';
 Alloy.Globals.BETKAMPENGETMATCHOTDSTATUSURL = Alloy.Globals.BETKAMPENURL + '/api/get_match_day_status.php';
 Alloy.Globals.BETKAMPENMATCHOTDSHOWURL = Alloy.Globals.BETKAMPENURL + '/api/get_match_day_show.php';
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> FETCH_HEAD
-Alloy.Globals.BETKAMPENCHECKRATESTATUS = Alloy.Globals.BETKAMPENURL + '/api/check_rate_status.php';
-// check if user has rated app Google play/appstore
-Alloy.Globals.BETKAMPENSETRATESTATUS = Alloy.Globals.BETKAMPENURL + '/api/update_rate_status.php';
-// update rate status. 0 remind me/1 dont remind me/2 has rated
-<<<<<<< HEAD
-=======
 Alloy.Globals.BETKAMPENCHECKRATESTATUS = Alloy.Globals.BETKAMPENURL + '/api/check_rate_status.php'; // check if user has rated app Google play/appstore
 Alloy.Globals.BETKAMPENSETRATESTATUS = Alloy.Globals.BETKAMPENURL + '/api/update_rate_status.php'; // update rate status. 0 remind me/1 dont remind me/2 has rated
 Alloy.Globals.BETKAMPENADDBONUSCOINS = Alloy.Globals.BETKAMPENURL + '/api/add_bonus_coins.php'; //send amount and uid to add bonus coins
 Alloy.Globals.BETKAMPENADDEXPERIENCE = Alloy.Globals.BETKAMPENURL + '/api/add_xp.php'; //send xp_amount and uid to add experience
->>>>>>> Add experience and coins in alloy
-=======
->>>>>>> FETCH_HEAD
+
 
 Alloy.Globals.performTimeout = function(func) {
 	if (OS_ANDROID) {
@@ -278,10 +266,6 @@ Alloy.Globals.showFeedbackDialog = function(msg) {
 	alertWindow.show();
 };
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-Alloy.Globals.showToast = function(msg) {
-=======
 //adding experience
 Alloy.Globals.addExperience = function(uid,xp) {
 	var experience = Ti.Network.createHTTPClient();
@@ -305,11 +289,7 @@ Alloy.Globals.addBonusCoins = function(uid,amount) {
 	Ti.API.info(params);
 };
 
-Alloy.Globals.showToast = function(msg){
->>>>>>> Add experience and coins in alloy
-=======
 Alloy.Globals.showToast = function(msg) {
->>>>>>> FETCH_HEAD
 	if (OS_ANDROID) {
 		var delToast = Ti.UI.createNotification({
 			duration : Ti.UI.NOTIFICATION_DURATION_LONG,
