@@ -118,6 +118,8 @@ Alloy.Globals.BETKAMPENGETMATCHOTDSTATUSURL = Alloy.Globals.BETKAMPENURL + '/api
 Alloy.Globals.BETKAMPENMATCHOTDSHOWURL = Alloy.Globals.BETKAMPENURL + '/api/get_match_day_show.php';
 Alloy.Globals.BETKAMPENCHECKRATESTATUS = Alloy.Globals.BETKAMPENURL + '/api/check_rate_status.php'; // check if user has rated app Google play/appstore
 Alloy.Globals.BETKAMPENSETRATESTATUS = Alloy.Globals.BETKAMPENURL + '/api/update_rate_status.php'; // update rate status. 0 remind me/1 dont remind me/2 has rated
+Alloy.Globals.BETKAMPENADDBONUSCOINS = Alloy.Globals.BETKAMPENURL + '/api/add_bonus_coins.php'; //send amount and uid to add bonus coins
+Alloy.Globals.BETKAMPENADDEXPERIENCE = Alloy.Globals.BETKAMPENURL + '/api/add_xp.php'; //send xp_amount and uid to add experience
 
 Alloy.Globals.performTimeout = function(func) {
 	if (OS_ANDROID) {
@@ -202,6 +204,29 @@ Alloy.Globals.showFeedbackDialog = function(msg) {
 		}
 	});
 	alertWindow.show();
+};
+
+//adding experience
+Alloy.Globals.addExperience = function(uid,xp) {
+	var experience = Ti.Network.createHTTPClient();
+	experience.open("POST", Alloy.Globals.BETKAMPENADDEXPERIENCE);
+	var params = {
+		uid : uid,
+		xp : xp,
+	};
+	experience.send(params);
+};
+
+//adding coins
+Alloy.Globals.addBonusCoins = function(uid,amount) {
+	var bonusCoins = Ti.Network.createHTTPClient();
+	bonusCoins.open("POST", Alloy.Globals.BETKAMPENADDBONUSCOINS);
+	var params = {
+		uid : uid,
+		amount : amount,
+	};
+	bonusCoins.send(params);
+	Ti.API.info(params);
 };
 
 Alloy.Globals.showToast = function(msg){
