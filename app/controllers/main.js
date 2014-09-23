@@ -4,7 +4,7 @@ var winsLabel;
 var coinsLabel;
 var nameLabel;
 
-//checkRatestatus();
+checkRatestatus();
 /* Used to update the menu and add a indicator for a new challenge */
 Ti.App.addEventListener('app:updateMenu', function() {
 	// rebuild table rows
@@ -884,52 +884,58 @@ if (OS_IOS){
 //check if user has rated app if not dialog shows up
 function checkRatestatus() {
 	var rate_status = 0;
+	var now = new Date().getTime();
+	var reminder = Ti.App.Properties.getString('Reminder');
+
 	var xhr = Ti.Network.createHTTPClient({
 		onload : function(e) {
 			Ti.API.info("Received text: " + this.responseText);
 			var status = JSON.parse(this.responseText);
-			numba = status.data[0].visit_count;
-			var even;
-			if (numba & 1) {
-				even = false;
-			} else {
-				even = true;
-			}
-			if (status.data[0].rated == 0) {
-				if (even) {
-					var rateAlert = Ti.UI.createAlertDialog({
-						title : Alloy.Globals.PHRASES.betbattleTxt,
-						message : Alloy.Globals.PHRASES.rateMeTxt,
-						buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.remindMeTxt, Alloy.Globals.PHRASES.dontRemindMeTxt],
-						cancel : 2
-					});
-					rateAlert.addEventListener('click', function(e) {
-						switch(e.index) {
+			/*numba = status.data[0].visit_count;
+			 var even;
+			 if (numba & 1) {
+			 even = false;
+			 } else {
+			 even = true;
+			 }*/
+			if (!reminder) {
+				Ti.App.Properties.setString('Reminder', now);
+			} else if (reminder < now) {
+				if (status.data[0].rated == 0) {
+						var rateAlert = Ti.UI.createAlertDialog({
+							title : Alloy.Globals.PHRASES.betbattleTxt,
+							message : Alloy.Globals.PHRASES.rateMeTxt,
+							buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.remindMeTxt, Alloy.Globals.PHRASES.dontRemindMeTxt],
+							cancel : 2
+						});
+						rateAlert.addEventListener('click', function(e) {
+							switch(e.index) {
 							//Google play or app store opens and user gets coins + xp
-						case 0:
-							if (OS_IOS) {
-								Ti.Platform.openURL("http://itunes.apple.com/app/id884939881");
-							} else if (OS_ANDROID) {
-								Ti.Platform.openURL("market://details?id=apps.topgame.betkampen");
+							case 0:
+								if (OS_IOS) {
+									Ti.Platform.openURL("http://itunes.apple.com/app/id884939881");
+								} else if (OS_ANDROID) {
+									Ti.Platform.openURL("market://details?id=apps.topgame.betkampen");
+								}
+								rate_status = 2;
+								setRateStatus(rate_status);
+								Alloy.Globals.addBonusCoins(Alloy.Globals.BETKAMPENUID, 20);
+								Alloy.Globals.addExperience(Alloy.Globals.BETKAMPENUID, 50);
+								break;
+							case 1:
+								//user pick not now and the dialog wait 2 days to be shown again
+								rate_status = 0;
+								setRateStatus(rate_status);
+								Ti.App.Properties.setString('Reminder', now + (1000 * 60 * 60 * 24));
+								break;
+							case 2:
+								//user pick never and is never asked again
+								rate_status = 1;
+								setRateStatus(rate_status);
+								break;
 							}
-							rate_status = 2;
-							setRateStatus(rate_status);
-							Alloy.Globals.addBonusCoins(Alloy.Globals.BETKAMPENUID, 20);
-							Alloy.Globals.addExperience(Alloy.Globals.BETKAMPENUID, 50);
-							break;
-						case 1:
-						//user pick not now and the dialog wait 2 days to be shown again
-							rate_status = 0;
-							setRateStatus(rate_status);
-							break;
-						case 2:
-						//user pick never and is never asked again
-							rate_status = 1;
-							setRateStatus(rate_status);
-							break;
-						}
-					});
-					rateAlert.show();
+						});
+						rateAlert.show();
 				}
 			}
 

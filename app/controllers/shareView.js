@@ -3,7 +3,7 @@ if (OS_ANDROID) {
 
 	$.share.addEventListener('open', function() {
 		Alloy.Globals.setAndroidCouponMenu($.share.activity);
-		
+
 		$.share.activity.actionBar.onHomeIconItemSelected = function() {
 			$.share.close();
 			$.share = null;
