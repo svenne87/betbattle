@@ -448,6 +448,8 @@ xhr.send();
 
 if(OS_ANDROID){
 	$.myFriends.addEventListener('open', function() {
+		Alloy.Globals.setAndroidCouponMenu($.myFriends.activity);
+		
 		$.myFriends.activity.actionBar.onHomeIconItemSelected = function() {
 			$.myFriends.close();
 			$.myFriends = null;

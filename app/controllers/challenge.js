@@ -1167,6 +1167,8 @@ if (OS_ANDROID) {
 	$.challengeWindow.orientationModes = [Titanium.UI.PORTRAIT];
 
 	$.challengeWindow.addEventListener('open', function() {
+		Alloy.Globals.setAndroidCouponMenu($.challengeWindow.activity);
+		
 		$.challengeWindow.activity.actionBar.onHomeIconItemSelected = function() {
 			$.challengeWindow.close();
 			$.challengeWindow = null;
@@ -1175,12 +1177,6 @@ if (OS_ANDROID) {
 		$.challengeWindow.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
 		indicator.openIndicator();
 	});
-
-	/*
-	 $.challengeWindow.addEventListener('androidback', function(){
-	 $.challengeWindow.close();
-	 $.challengeWindow = null;
-	 }); */
 }
 
 $.challengeWindow.addEventListener('close', function() {

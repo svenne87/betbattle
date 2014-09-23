@@ -1065,6 +1065,8 @@ if (OS_ANDROID) {
 	$.groupSelectWindow.orientationModes = [Titanium.UI.PORTRAIT];
 
 	$.groupSelectWindow.addEventListener('open', function() {
+		Alloy.Globals.setAndroidCouponMenu($.groupSelectWindow.activity);
+		
 		$.groupSelectWindow.activity.actionBar.onHomeIconItemSelected = function() {
 			$.groupSelectWindow.close();
 			$.groupSelectWindow = null;

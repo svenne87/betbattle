@@ -31,6 +31,24 @@ Ti.App.addEventListener('app:coinsMenuInfo', function(data) {
 	coinsLabel.setText(data.totalCoins);
 });
 
+
+// update coins
+Ti.App.addEventListener('updateCoins', function(coins) {
+	var currentCoins = -1;
+	try {
+		var currentCoinsText = coinsLabel.getText();
+		currentCoins = parseInt(currentCoinsText);
+		coins = parseInt(coins.coins);
+	} catch (e) {
+
+	}
+
+	if (currentCoins > -1) {
+		currentCoins = currentCoins + coins;
+		coinsLabel.setText(Alloy.Globals.PHRASES.coinsInfoTxt + ": " + currentCoins.toString());
+	}
+});
+
 // used to navigate between views
 Ti.App.addEventListener('app:updateView', function(obj){
 	var currentView = Alloy.Globals.CURRENTVIEW;
@@ -836,13 +854,19 @@ if (OS_IOS){
     			};
    
     			$.mainWin.activity.invalidateOptionsMenu();
+    			
+    			// set onResume for each activity in order to keep them updated with correct coupon
+				$.mainWin.activity.addEventListener("resume", function() {
+					// will rebuild menu and keep coupon up to date
+					$.mainWin.activity.invalidateOptionsMenu();
+				});
                 
                 actionBar.onHomeIconItemSelected = function() {
 					// show / hide slide menu
                     $.ds.toggleLeftSlider();
                 };
             }
-        }		
+        }	
         		
 		if(oldIndicator !== null){
 			oldIndicator.closeIndicator();

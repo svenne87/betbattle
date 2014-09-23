@@ -246,6 +246,8 @@ client.send();
 
 if(OS_ANDROID){
 	$.scoreView.addEventListener('open', function() {
+		Alloy.Globals.setAndroidCouponMenu($.scoreView.activity);
+		
 		$.scoreView.activity.actionBar.onHomeIconItemSelected = function() {
 			$.scoreView.close();
 			$.scoreView = null;

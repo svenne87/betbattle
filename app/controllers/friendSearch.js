@@ -15,6 +15,8 @@ var font = 'FontAwesome';
 if (OS_ANDROID) {
 	font = 'fontawesome-webfont';
 	$.friendSearch.addEventListener('open', function() {
+		Alloy.Globals.setAndroidCouponMenu($.friendSearch.activity);
+		
 		$.friendSearch.activity.actionBar.onHomeIconItemSelected = function() {
 			$.friendSearch.close();
 			$.friendSearch = null;

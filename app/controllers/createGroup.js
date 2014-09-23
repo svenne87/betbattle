@@ -14,6 +14,8 @@ if (OS_ANDROID) {
 	font = 'fontawesome-webfont';
 
 	$.createGroup.addEventListener('open', function() {
+		Alloy.Globals.setAndroidCouponMenu($.createGroup.activity);
+		
 		$.createGroup.activity.actionBar.onHomeIconItemSelected = function() {
 			$.createGroup.close();
 			$.createGroup = null;

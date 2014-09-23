@@ -189,16 +189,12 @@ if(OS_ANDROID){
 	$.newChallengeLeague.orientationModes = [Titanium.UI.PORTRAIT];
 	
 	$.newChallengeLeague.addEventListener('open', function(){
+		Alloy.Globals.setAndroidCouponMenu($.newChallengeLeague.activity);
+		
 		$.newChallengeLeague.activity.actionBar.onHomeIconItemSelected = function() { $.newChallengeLeague.close(); $.newChallengeLeague = null; };
    		$.newChallengeLeague.activity.actionBar.displayHomeAsUp = true;
    		$.newChallengeLeague.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
 	});
-/*
-	$.newChallengeLeague.addEventListener('androidback', function(){
-    	$.newChallengeLeague.close();   	
-    	$.newChallengeLeague = null;
-	});
-*/
 }
 
 $.newChallengeLeague.add(table);

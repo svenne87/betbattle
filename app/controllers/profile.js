@@ -3,6 +3,8 @@ var openWindows = [];
 
 if (OS_ANDROID) {
 	$.profile.addEventListener('open', function() {
+		Alloy.Globals.setAndroidCouponMenu($.profile.activity);
+		
 		$.profile.activity.actionBar.onHomeIconItemSelected = function() {
 			$.profile.close();
 			$.profile = null;

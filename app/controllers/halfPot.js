@@ -209,6 +209,8 @@ if (OS_ANDROID) {
 	$.halfPot.orientationModes = [Titanium.UI.PORTRAIT];
 
 	$.halfPot.addEventListener('open', function() {
+		Alloy.Globals.setAndroidCouponMenu($.halfPot.activity);
+		
 		$.halfPot.activity.actionBar.onHomeIconItemSelected = function() {
 			$.halfPot.close();
 			$.halfPot = null;

@@ -341,6 +341,8 @@ shareBtn.addEventListener('click', function(e){
 
 if(OS_ANDROID){
 	$.friendZone.addEventListener('open', function() {
+		Alloy.Globals.setAndroidCouponMenu($.friendZone.activity);
+		
 		$.friendZone.activity.actionBar.onHomeIconItemSelected = function() {
 			$.friendZone.close();
 			$.friendZone = null;

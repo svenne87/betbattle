@@ -2,8 +2,12 @@ var args = arguments[0] || {};
 var view;
 var botView;
 var groupName = args.group;
-Ti.API.info("Args = " + JSON.stringify(args));
 
+var uie = require('lib/IndicatorWindow');
+var indicator = uie.createIndicatorWindow({
+	top : 200,
+	text : Alloy.Globals.PHRASES.loadingTxt
+});
 
 
 function createGameType(gameType, game, values){
@@ -307,10 +311,8 @@ function createLayout(game, values, games){
 		var gametypes = game.game_types;
 		for (var y in gametypes) {
 			createGameType(gametypes[y], game, values);
-			createBorderView();
 		}
 
-		createBorderView();
 		var slide = Ti.UI.createLabel({
 			text: Alloy.Globals.PHRASES.scrollNextGame,
 			textAlign: "center",
@@ -344,6 +346,7 @@ function getChallengeShow(){
 		//alert(JSON.parse(this.responseText));
 		Ti.API.info('FEL : ' + JSON.stringify(this.responseText));
 		Ti.API.error('Bad Sever =>' + e.error);
+		indicator.closeIndicator();
 		//$.facebookBtn.enabled = true;
 	};
 
@@ -355,6 +358,7 @@ function getChallengeShow(){
 		xhr.send();
 	} catch(e) {
 		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+		indicator.closeIndicator();
 		//alert(JSON.parse(this.responseText));
 		
 	}
@@ -376,6 +380,7 @@ function getChallengeShow(){
 			//$.facebookBtn.enabled = true;
 			Ti.API.error("Error =>" + this.response);
 		}
+		indicator.closeIndicator();
 	};
 	
 }
@@ -395,24 +400,20 @@ function showResults(challenge){
 	
 }
 if (OS_ANDROID) {
-	$.challenge.scrollType = 'vertical';
-	$.challengeWindow.orientationModes = [Titanium.UI.PORTRAIT];
+	$.showChallengeWindow.scrollType = 'vertical';
+	$.showChallengeWindow.orientationModes = [Titanium.UI.PORTRAIT];
 
-	$.challengeWindow.addEventListener('open', function() {
-		$.challengeWindow.activity.actionBar.onHomeIconItemSelected = function() {
-			$.challengeWindow.close();
-			$.challengeWindow = null;
+	$.showChallengeWindow.addEventListener('open', function() {
+		Alloy.Globals.setAndroidCouponMenu($.showChallengeWindow.activity);
+		
+		$.showChallengeWindow.activity.actionBar.onHomeIconItemSelected = function() {
+			$.showChallengeWindow.close();
+			$.showChallengeWindow = null;
 		};
-		$.challengeWindow.activity.actionBar.displayHomeAsUp = true;
-		$.challengeWindow.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
+		$.showChallengeWindow.activity.actionBar.displayHomeAsUp = true;
+		$.showChallengeWindow.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
 		indicator.openIndicator();
 	});
-
-	/*
-	 $.challengeWindow.addEventListener('androidback', function(){
-	 $.challengeWindow.close();
-	 $.challengeWindow = null;
-	 }); */
 }
 if (Alloy.Globals.checkConnection()) {
 	getChallengeShow();

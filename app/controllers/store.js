@@ -384,6 +384,8 @@ if (OS_IOS) {
 	$.store.orientationModes = [Titanium.UI.PORTRAIT];
 
 	$.store.addEventListener('open', function() {
+		Alloy.Globals.setAndroidCouponMenu($.store.activity);
+		
 		$.store.activity.actionBar.onHomeIconItemSelected = function() {
 			$.store.close();
 		};

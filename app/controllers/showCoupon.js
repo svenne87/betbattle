@@ -1,4 +1,9 @@
 var args = arguments[0] || {};
+var uie = require('lib/IndicatorWindow');
+var indicator = uie.createIndicatorWindow({
+	top : 200,
+	text : Alloy.Globals.PHRASES.loadingTxt
+});
 
 var games = null;
 if(Alloy.Globals.COUPON && Alloy.Globals.COUPON.games.length > 0){
@@ -112,8 +117,10 @@ function checkFriends(){
 function removeCouponGame(gameID){
 	Ti.API.info("GAMEID : "+ gameID);
 	if (Alloy.Globals.checkConnection()) {
+		indicator.openIndicator();
 		var xhr = Titanium.Network.createHTTPClient();
 		xhr.onerror = function(e) {
+			indicator.closeIndicator();
 			Ti.API.error('Bad Sever =>' + e.error);
 		};
 
@@ -126,6 +133,7 @@ function removeCouponGame(gameID){
 			xhr.send();
 		} catch(e) {
 			//
+			indicator.closeIndicator();
 		}
 
 		xhr.onload = function() {
@@ -134,14 +142,16 @@ function removeCouponGame(gameID){
 					var response = null;
 					Ti.API.info("Tagit bort" + JSON.stringify(this.responseText));
 					response = JSON.parse(this.responseText);
-					 Alloy.Globals.showToast(Alloy.Globals.PHRASES.couponGameRemoved);
+					Alloy.Globals.showToast(Alloy.Globals.PHRASES.couponGameRemoved);
 					amount_deleted++;
-					/*for(var i in games){
+					
+					// make sure match is removed so that we can check the dates for matches in the array
+					for(var i in games){
 						if(games[i].game_id == gameID){
 							var index = Alloy.Globals.COUPON.games.indexOf(games[i]);
 							Alloy.Globals.COUPON.games.splice(index, 1);		
 						}
-					}*/
+					}
 					
 					// remove view
 					$.scrollView.remove(rows[gameID]);
@@ -155,6 +165,7 @@ function removeCouponGame(gameID){
 			} else {
 				Ti.API.error("Error =>" + this.response);
 			}
+			indicator.closeIndicator();
 		};
 	}
 }

@@ -655,6 +655,8 @@ if (OS_ANDROID) {
 	$.editGame.orientationModes = [Titanium.UI.PORTRAIT];
 
 	$.editGame.addEventListener('open', function() {
+		Alloy.Globals.setAndroidCouponMenu($.editGame.activity);
+		
 		$.editGame.activity.actionBar.onHomeIconItemSelected = function() {
 			$.editGame.close();
 			$.editGame = null;
