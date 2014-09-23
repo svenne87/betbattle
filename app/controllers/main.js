@@ -22,7 +22,7 @@ Ti.App.addEventListener('app:rebuildAndroidMenu', function() {
 	} catch(e){
 		
 	}
-	// TODO Exception här? funkar ändå? Uppdatera alla ticket vyer här??
+	// TODO Exception här? funkar ändå?
 });
 
 /* Used to update coins information */
@@ -854,13 +854,19 @@ if (OS_IOS){
     			};
    
     			$.mainWin.activity.invalidateOptionsMenu();
+    			
+    			// set onResume for each activity in order to keep them updated with correct coupon
+				$.mainWin.activity.addEventListener("resume", function() {
+					// will rebuild menu and keep coupon up to date
+					$.mainWin.activity.invalidateOptionsMenu();
+				});
                 
                 actionBar.onHomeIconItemSelected = function() {
 					// show / hide slide menu
                     $.ds.toggleLeftSlider();
                 };
             }
-        }		
+        }	
         		
 		if(oldIndicator !== null){
 			oldIndicator.closeIndicator();

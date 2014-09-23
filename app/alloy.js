@@ -12,22 +12,22 @@
 
 // Global variables
 Alloy.Globals.APPID = "9999SWEDENTEST";
-Alloy.Globals.FACEBOOKOBJECT
-Alloy.Globals.BETKAMPEN
-Alloy.Globals.DEVICETOKEN
-Alloy.Globals.FACEBOOK
+Alloy.Globals.FACEBOOKOBJECT;
+Alloy.Globals.BETKAMPEN;
+Alloy.Globals.DEVICETOKEN;
+Alloy.Globals.FACEBOOK;
 Alloy.Globals.CHALLENGEOBJECTARRAY = [];
 Alloy.Globals.BETKAMPENUID = 0;
-Alloy.Globals.PROFILENAME
-Alloy.Globals.CHALLENGEINDEX
-Alloy.Globals.LEAGUES
-Alloy.Globals.AVAILABLELANGUAGES
+Alloy.Globals.PROFILENAME;
+Alloy.Globals.CHALLENGEINDEX;
+Alloy.Globals.LEAGUES;
+Alloy.Globals.AVAILABLELANGUAGES;
 Alloy.Globals.SLIDERZINDEX = 1;
 Alloy.Globals.TIMEOUT = 30000;
-Alloy.Globals.CURRENTVIEW
-Alloy.Globals.PREVIOUSVIEW
+Alloy.Globals.CURRENTVIEW;
+Alloy.Globals.PREVIOUSVIEW;
 Alloy.Globals.NAV = null;
-Alloy.Globals.MAINVIEW
+Alloy.Globals.MAINVIEW;
 Alloy.Globals.MAINWIN = null;
 Alloy.Globals.LANDINGWIN = null;
 Alloy.Globals.WINDOWS = [];
@@ -40,7 +40,7 @@ Alloy.Globals.TiBeacon = null;
 Alloy.Globals.AcceptedBeacon1 = false;
 Alloy.Globals.AcceptedBeacon2 = false;
 Alloy.Globals.AcceptedBeacon3 = false;
-Alloy.Globals.connect
+Alloy.Globals.connect;
 Alloy.Globals.COUPON = null;
 Alloy.Globals.hasCoupon = false;
 
@@ -191,6 +191,12 @@ Alloy.Globals.setAndroidCouponMenu = function(activity) {
 	};
 
 	activity.invalidateOptionsMenu();
+	
+	// set onResume for each activity in order to keep them updated with correct coupon
+	activity.addEventListener("resume", function() {
+		// will rebuild menu and keep coupon up to date
+		activity.invalidateOptionsMenu();
+	});
 };
 
 Alloy.Globals.themeColor = function() {
