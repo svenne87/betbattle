@@ -15,7 +15,7 @@ if ( typeof args.password !== 'undefined') {
 	passwordReg = args.password;
 }
 
-if(emailReg !== -1 && passwordReg !== -1) {
+if (emailReg !== -1 && passwordReg !== -1) {
 	// auto login
 	login(true);
 }
@@ -39,13 +39,13 @@ function createLeagueAndUidObj(response) {
 	}
 	for (var i = 0; response.languages.length > i; i++) {
 		var language = {
-            id : response.languages[i].id,
-            name: response.languages[i].name,
-            imageLocation: response.languages[i].imageLocation,
-            description: response.languages[i].description
-        };
-       	Alloy.Globals.AVAILABLELANGUAGES.push(language);
-   	}
+			id : response.languages[i].id,
+			name : response.languages[i].name,
+			imageLocation : response.languages[i].imageLocation,
+			description : response.languages[i].description
+		};
+		Alloy.Globals.AVAILABLELANGUAGES.push(language);
+	}
 }
 
 function getChallengesAndStart() {
@@ -85,7 +85,7 @@ function getChallengesAndStart() {
 				}
 
 				// construct array with objects
-				if(response !== null) {
+				if (response !== null) {
 					Alloy.Globals.CHALLENGEOBJECTARRAY = Alloy.Globals.constructChallenge(response);
 				}
 
@@ -94,33 +94,87 @@ function getChallengesAndStart() {
 					dialog : indicator
 				};
 
-				if (OS_IOS) {
-					var loginSuccessWindow = Alloy.createController('landingPage', args).getView();
-					loginSuccessWindow.open({
-						fullScreen : true,
-						transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
-					});
-					loginSuccessWindow = null;
+				var teamInfo = Ti.Network.createHTTPClient({
+					onload : function(e) {
+						Ti.API.info("Received text: " + this.responseText);
+						var team = JSON.parse(this.responseText);
+						if (team.data.length > 0) {
+							if (OS_IOS) {
+								//Ti.API.info(Alloy.Globals.BETKAMPENUID);
+								var loginSuccessWindow = Alloy.createController('landingPage', args).getView();
+								loginSuccessWindow.open({
+									fullScreen : true,
+									transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
+								});
+								loginSuccessWindow = null;
 
-				} else if (OS_ANDROID) {
-					var loginSuccessWindow = Alloy.createController('landingPage', args).getView();
-					loginSuccessWindow.open({
-						fullScreen : true,
-						orientationModes : [Titanium.UI.PORTRAIT]
-					});
-					loginSuccessWindow = null;
-				}
+							} else if (OS_ANDROID) {
+								var loginSuccessWindow = Alloy.createController('landingPage', args).getView();
+								loginSuccessWindow.open({
+									fullScreen : true,
+									orientationModes : [Titanium.UI.PORTRAIT]
+								});
+								loginSuccessWindow = null;
+							}
 
-				$.loginView.close();
+							$.loginView.close();
 
-				if (Alloy.Globals.INDEXWIN !== null) {
-					Alloy.Globals.INDEXWIN.close();
-				}
+							if (Alloy.Globals.INDEXWIN !== null) {
+								Alloy.Globals.INDEXWIN.close();
+							}
 
-				if (OS_ANDROID) {
-					var activity = Titanium.Android.currentActivity;
-					activity.finish();
-				}
+							if (OS_ANDROID) {
+								var activity = Titanium.Android.currentActivity;
+								activity.finish();
+							}
+
+						} else {
+							if (OS_IOS) {
+								//Ti.API.info(Alloy.Globals.BETKAMPENUID);
+								var loginSuccessWindow = Alloy.createController('pickTeam', args).getView();
+								loginSuccessWindow.open({
+									fullScreen : true,
+									transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
+								});
+								loginSuccessWindow = null;
+
+							} else if (OS_ANDROID) {
+								var loginSuccessWindow = Alloy.createController('pickTeam', args).getView();
+								loginSuccessWindow.open({
+									fullScreen : true,
+									orientationModes : [Titanium.UI.PORTRAIT]
+								});
+								loginSuccessWindow = null;
+							}
+
+							$.loginView.close();
+
+							if (Alloy.Globals.INDEXWIN !== null) {
+								Alloy.Globals.INDEXWIN.close();
+							}
+
+							if (OS_ANDROID) {
+								var activity = Titanium.Android.currentActivity;
+								activity.finish();
+							}
+						}
+
+					},
+					// function called when an error occurs, including a timeout
+					onerror : function(e) {
+						Ti.API.debug(e.error);
+						//alert('error');
+					},
+					timeout : Alloy.Globals.TIMEOUT // in milliseconds
+				});
+				// Prepare the connection.
+				teamInfo.open('GET', Alloy.Globals.BETKAMPENGETUSERTEAM + '?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
+
+				teamInfo.setRequestHeader("content-type", "application/json");
+				teamInfo.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
+				teamInfo.setTimeout(Alloy.Globals.TIMEOUT);
+
+				teamInfo.send();
 
 			} else {
 				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
@@ -136,8 +190,7 @@ function getChallengesAndStart() {
 	};
 }
 
-
-  // TODO Handle if registered with fb and no password stored, if we want to login using betkampen?
+// TODO Handle if registered with fb and no password stored, if we want to login using betkampen?
 
 function loginAuthenticated() {
 	// Get betkampenID with valid token
@@ -160,12 +213,12 @@ function loginAuthenticated() {
 		$.signInBtn.enabled = true;
 	}
 
-	xhr.onload = function() {		
+	xhr.onload = function() {
 		if (this.status == '200') {
 			if (this.readyState == 4) {
 				var response = null;
 				try {
-					Ti.API.info("LOG TEST 2 :" +  JSON.stringify(this.responseText));
+					Ti.API.info("LOG TEST 2 :" + JSON.stringify(this.responseText));
 					response = JSON.parse(this.responseText);
 				} catch(e) {
 					Ti.API.info("LOG TEST 22 : " + JSON.stringify(this.responseText));
@@ -197,14 +250,13 @@ function loginAuthenticated() {
 			indicator.closeIndicator();
 			$.signInBtn.enabled = true;
 		}
-	};			
+	};
 }
-
 
 function login(auto) {
 	var user;
 	var pass;
-	if(auto) {
+	if (auto) {
 		// login from register
 		user = emailReg;
 		pass = passwordReg;
@@ -236,7 +288,7 @@ function login(auto) {
 
 		loginReq.onload = function() {
 			if (this.status == '200') {
-				if (this.readyState == 4) {					
+				if (this.readyState == 4) {
 					var json = this.responseText;
 					Ti.API.info("LOG TEST 3 :" + JSON.stringify(json));
 					var response = JSON.parse(json);
@@ -248,7 +300,7 @@ function login(auto) {
 					};
 
 					Alloy.Globals.storeToken();
-					loginAuthenticated();	
+					loginAuthenticated();
 				}
 			} else {
 				Ti.API.log(this.responseText);
@@ -259,12 +311,12 @@ function login(auto) {
 			Ti.API.error('Bad Sever =>' + JSON.stringify(e));
 			$.signInBtn.enabled = true;
 			indicator.closeIndicator();
-			if(e.code === 400) {
+			if (e.code === 400) {
 				// OAuth return 400 on credentials error
 				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.loginCredentialsError);
 			} else {
 				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-			}	
+			}
 		};
 	} else {
 		indicator.closeIndicator();
@@ -279,7 +331,7 @@ $.signInBtn.addEventListener('click', function(e) {
 			top : 200,
 			text : Alloy.Globals.PHRASES.loadingTxt
 		});
-		
+
 		indicator.openIndicator();
 		login(false);
 	} else {
@@ -292,3 +344,4 @@ $.abortLoginBtn.addEventListener('click', function(e) {
 	login.open();
 	$.loginView.close();
 });
+

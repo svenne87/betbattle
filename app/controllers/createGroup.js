@@ -156,6 +156,7 @@ function createMyGroup() {
 
 					getFriends(groupId);
 					Alloy.Globals.unlockAchievement(10);
+					Alloy.Globals.addExperience(5);
 				}
 			};
 			gName.open("POST", Alloy.Globals.BETKAMPENCREATEGROUPURL);

@@ -68,7 +68,6 @@ Alloy.Globals.BETKAMPENURL = 'http://31.216.36.213/betbattle';
 Alloy.Globals.BETKAMPENLOGINURL = Alloy.Globals.BETKAMPENURL + '/api/login.php';
 Alloy.Globals.BETKAMPENCHALLENGESURL = Alloy.Globals.BETKAMPENURL + '/api/challenges_v2.php';
 Alloy.Globals.BETKAMPENUSERURL = Alloy.Globals.BETKAMPENURL + '/api/user_stats.php';
-//
 Alloy.Globals.BETKAMPENGAMESURL = Alloy.Globals.BETKAMPENURL + '/api/get_challenge_game.php';
 Alloy.Globals.BETKAMPENANSWERURL = Alloy.Globals.BETKAMPENURL + '/api/answer_challenge.php';
 Alloy.Globals.BETKAMPENGETGAMESURL = Alloy.Globals.BETKAMPENURL + '/api/get_available_games.php';
@@ -83,12 +82,9 @@ Alloy.Globals.BETKAMPENCOINSANDROIDURL = Alloy.Globals.BETKAMPENURL + '/api/get_
 Alloy.Globals.BETKAMPENSHAREURL = Alloy.Globals.BETKAMPENURL + '/api/share.php';
 Alloy.Globals.GETLANGUAGE = Alloy.Globals.BETKAMPENURL + '/api/get_language.php';
 Alloy.Globals.BETKAMPENACHIEVEMENTSURL = Alloy.Globals.BETKAMPENURL + '/api/get_achievements.php';
-Alloy.Globals.BETKAMPENEMAILLOGIN = Alloy.Globals.BETKAMPENURL + '/api/token.php';
-// get oauth token at login
-Alloy.Globals.BETKAMPENEMAILREG = Alloy.Globals.BETKAMPENURL + '/api/email_registration.php';
-//Email registration
-Alloy.Globals.BETKAMPENGETMOTDINFO = Alloy.Globals.BETKAMPENURL + '/api/get_match_day_info.php';
-//matchens mästare
+Alloy.Globals.BETKAMPENEMAILLOGIN = Alloy.Globals.BETKAMPENURL + '/api/token.php';// get oauth token at login
+Alloy.Globals.BETKAMPENEMAILREG = Alloy.Globals.BETKAMPENURL + '/api/email_registration.php';//Email registration
+Alloy.Globals.BETKAMPENGETMOTDINFO = Alloy.Globals.BETKAMPENURL + '/api/get_match_day_info.php';//matchens mästare
 Alloy.Globals.BETKAMPENGETTICKETS = Alloy.Globals.BETKAMPENURL + '/api/get_user_tickets.php';
 Alloy.Globals.BETKAMPENSETTINGURL = Alloy.Globals.BETKAMPENURL + '/api/settings.php';
 Alloy.Globals.BETKAMPENIMAGEUPLOADURL = Alloy.Globals.BETKAMPENURL + '/api/image_upload.php';
@@ -97,24 +93,15 @@ Alloy.Globals.BETKAMPENGETGETBEACONSURL = Alloy.Globals.BETKAMPENURL + '/api/get
 Alloy.Globals.BETKAMPENGETPROMOTIONURL = Alloy.Globals.BETKAMPENURL + '/api/get_promotion.php';
 Alloy.Globals.BETKAMPENCHALLENGESHOWURL = Alloy.Globals.BETKAMPENURL + '/api/show_challenge.php';
 Alloy.Globals.BETKAMPENLOGOUTURL = Alloy.Globals.BETKAMPENURL + '/api/logout.php';
-Alloy.Globals.BETKAMPENDELTEGROUPURL = Alloy.Globals.BETKAMPENURL + '/api/remove_group.php';
-//delete your own group
-Alloy.Globals.BETKAMPENREMOVEGROUPMEMBERURL = Alloy.Globals.BETKAMPENURL + '/api/remove_group_member.php';
-//leave group or remove group member
-Alloy.Globals.BETKAMEPNCHANGEGROUPNAMEURL = Alloy.Globals.BETKAMPENURL + '/api/edit_group_name.php';
-// change groupname
-Alloy.Globals.BETKAMPENADDGROUPMEMBERSURL = Alloy.Globals.BETKAMPENURL + '/api/add_group_member.php';
-//add groupmembers
-Alloy.Globals.BETKAMPENGETGROUPMEMBERSURL = Alloy.Globals.BETKAMPENURL + '/api/get_group_members.php';
-// get all groupmembers
-Alloy.Globals.BETKAMPENDELETEFRIENDURL = Alloy.Globals.BETKAMPENURL + '/api/remove_friend.php';
-// delete friends from your friendlist
-Alloy.Globals.BETKAMPENCREATEGROUPURL = Alloy.Globals.BETKAMPENURL + '/api/add_group.php';
-// create a new group and add you as admin
-Alloy.Globals.BETKAMPENFRIENDSEARCHURL = Alloy.Globals.BETKAMPENURL + '/api/get_users_search.php';
-// search in db for friends
-Alloy.Globals.BETKAMPENADDFRIENDSURL = Alloy.Globals.BETKAMPENURL + '/api/add_friends.php';
-// add friends to your friendlist
+Alloy.Globals.BETKAMPENDELTEGROUPURL = Alloy.Globals.BETKAMPENURL + '/api/remove_group.php';//delete your own group
+Alloy.Globals.BETKAMPENREMOVEGROUPMEMBERURL = Alloy.Globals.BETKAMPENURL + '/api/remove_group_member.php';//leave group or remove group member
+Alloy.Globals.BETKAMEPNCHANGEGROUPNAMEURL = Alloy.Globals.BETKAMPENURL + '/api/edit_group_name.php';// change groupname
+Alloy.Globals.BETKAMPENADDGROUPMEMBERSURL = Alloy.Globals.BETKAMPENURL + '/api/add_group_member.php';//add groupmembers
+Alloy.Globals.BETKAMPENGETGROUPMEMBERSURL = Alloy.Globals.BETKAMPENURL + '/api/get_group_members.php';// get all groupmembers
+Alloy.Globals.BETKAMPENDELETEFRIENDURL = Alloy.Globals.BETKAMPENURL + '/api/remove_friend.php';// delete friends from your friendlist
+Alloy.Globals.BETKAMPENCREATEGROUPURL = Alloy.Globals.BETKAMPENURL + '/api/add_group.php';// create a new group and add you as admin
+Alloy.Globals.BETKAMPENFRIENDSEARCHURL = Alloy.Globals.BETKAMPENURL + '/api/get_users_search.php';// search in db for friends
+Alloy.Globals.BETKAMPENADDFRIENDSURL = Alloy.Globals.BETKAMPENURL + '/api/add_friends.php';// add friends to your friendlist
 Alloy.Globals.BETKAMPENSAVECHALLENGEURL = Alloy.Globals.BETKAMPENURL + '/api/save_challenge.php';
 Alloy.Globals.BETKAMPENUPDATECHALLENGEURL = Alloy.Globals.BETKAMPENURL + '/api/update_challenge.php';
 Alloy.Globals.BETKAMPENGETCOUPONURL = Alloy.Globals.BETKAMPENURL + '/api/get_coupon.php';
@@ -132,6 +119,9 @@ Alloy.Globals.BETKAMPENCHECKRATESTATUS = Alloy.Globals.BETKAMPENURL + '/api/chec
 Alloy.Globals.BETKAMPENSETRATESTATUS = Alloy.Globals.BETKAMPENURL + '/api/update_rate_status.php'; // update rate status. 0 remind me/1 dont remind me/2 has rated
 Alloy.Globals.BETKAMPENADDBONUSCOINS = Alloy.Globals.BETKAMPENURL + '/api/add_bonus_coins.php'; //send amount and uid to add bonus coins
 Alloy.Globals.BETKAMPENADDEXPERIENCE = Alloy.Globals.BETKAMPENURL + '/api/add_xp.php'; //send xp_amount and uid to add experience
+Alloy.Globals.BETKAMPENGETUSERTEAM = Alloy.Globals.BETKAMPENURL + '/api/get_user_team.php'; // get user team
+Alloy.Globals.BETKAMPENGETTEAMS = Alloy.Globals.BETKAMPENURL + '/api/get_teams.php'; // get all teams
+Alloy.Globals.BETKAMPENSETUSERTEAM = Alloy.Globals.BETKAMPENURL + '/api/add_user_team.php'; //set user team 
 
 
 Alloy.Globals.performTimeout = function(func) {
