@@ -29,6 +29,7 @@ var topView = Ti.UI.createScrollView({
 	layout : "vertical"
 });
 var g = 0;
+//listing all active leagues from db
 var league = Alloy.Globals.LEAGUES;
 for (var i = 0; i < league.length; i++) {
 	
@@ -61,7 +62,7 @@ for (var i = 0; i < league.length; i++) {
 		left : '1%'
 	});
 	row.add(getTeamBtn);
-
+	// league logo
 	var url = league[i].logo.replace('logos', 'logos/mobile');
 	var finalUrl = url.replace(' ', '');
 	var finalUrl = finalUrl.toLowerCase();
@@ -77,7 +78,7 @@ for (var i = 0; i < league.length; i++) {
 		borderRadius : 17
 	});
 	getTeamBtn.add(leaguePic);
-
+//league name
 	var leagueName = Ti.UI.createLabel({
 		text : league[i].name,
 		liga : league[i].name,
@@ -91,8 +92,11 @@ for (var i = 0; i < league.length; i++) {
 	getTeamBtn.add(leagueName);
 
 	getTeamBtn.addEventListener('click', function(e) {
+		//hide league chooser
 		topView.hide();
+		//changing label to be named after the league of your choise
 		picLeagueLabel.text = Alloy.Globals.PHRASES.selectedLeagueTxt +' '+ e.source.liga + '\n' + Alloy.Globals.PHRASES.picTeamTxt;
+		// getting the teams of choosen league
 		getTeams(e.source.id);
 	});
 }
@@ -126,6 +130,8 @@ function createGUI(obj) {
 		left : '15%'
 	});
 	row.add(goBtn);
+	
+	//team logo
 
 	var url = obj.team_logo.replace('logos', 'logos');
 	var finalUrl = url.replace(' ', '');
@@ -142,6 +148,8 @@ function createGUI(obj) {
 		borderRadius : 17
 	});
 	goBtn.add(teamPic);
+	
+	//team name
 
 	var name = Ti.UI.createLabel({
 		text : obj.name,
@@ -156,10 +164,12 @@ function createGUI(obj) {
 	goBtn.add(name);
 
 	goBtn.addEventListener('click', function(e) {
+		//open function with team id and team name of your choise
 		teamPicked(e.source.id, e.source.lag);
 	});
 }
 
+//getting teams from db with league id
 function getTeams(lid) {
 	var xhr = Ti.Network.createHTTPClient({
 		onload : function(e) {
@@ -187,7 +197,9 @@ function getTeams(lid) {
 	xhr.send();
 }
 
+//inserts your team in db with your uid and team id
 function teamPicked(tid, name) {
+	//show toast of your favorite team
 	Alloy.Globals.showToast(Alloy.Globals.PHRASES.youTeamTxt +' '+ name);
 	var addTeam = Ti.Network.createHTTPClient();
 			addTeam.open("POST", Alloy.Globals.BETKAMPENSETUSERTEAM + '?lang=' + Alloy.Globals.LOCALE);
@@ -196,6 +208,8 @@ function teamPicked(tid, name) {
 				tid : tid
 			};
 			addTeam.send(params);
+			
+			// send you to landingpage
 	if (OS_IOS) {
 		var loginSuccessWindow = Alloy.createController('landingPage').getView();
 		loginSuccessWindow.open({

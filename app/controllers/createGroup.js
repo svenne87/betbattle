@@ -155,8 +155,10 @@ function createMyGroup() {
 					addMe.send(params);
 
 					getFriends(groupId);
+					//unlock achievement create group
 					Alloy.Globals.unlockAchievement(10);
-					Alloy.Globals.addExperience(5);
+					//add experience to user.. send uid and amount of xp
+					Alloy.Globals.addExperience(Alloy.Globals.BETKAMPENUID, 5);
 				}
 			};
 			gName.open("POST", Alloy.Globals.BETKAMPENCREATEGROUPURL);

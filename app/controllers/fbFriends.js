@@ -299,7 +299,7 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 
 	}
 
-}
+
 function sortByName(a, b) {
 	var x = a.name.toLowerCase();
 	var y = b.name.toLowerCase();
@@ -330,6 +330,7 @@ xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
 xhr.setTimeout(Alloy.Globals.TIMEOUT);
 
 xhr.send();
+}
 
 function addFbFriend(uid, name) {
 	var addFriends = Ti.Network.createHTTPClient();

@@ -911,14 +911,16 @@ function checkRatestatus() {
 								}
 								rate_status = 2;
 								setRateStatus(rate_status);
+								//send uid and coins amount
 								Alloy.Globals.addBonusCoins(Alloy.Globals.BETKAMPENUID, 20);
+								//send uid and xp amount
 								Alloy.Globals.addExperience(Alloy.Globals.BETKAMPENUID, 50);
 								break;
 							case 1:
-								//user pick not now and the dialog wait 2 days to be shown again
+								//user pick not now and the dialog will wait a week to be shown again
 								rate_status = 0;
 								setRateStatus(rate_status);
-								Ti.App.Properties.setString('Reminder', now + (1000 * 60 * 60 * 24));
+								Ti.App.Properties.setString('Reminder', now + (7*24*60*60*1000));
 								break;
 							case 2:
 								//user pick never and is never asked again

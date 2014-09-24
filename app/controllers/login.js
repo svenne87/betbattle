@@ -85,34 +85,87 @@ function getChallengesAndStart() {
 					dialog : indicator
 				};
 
-				var loginSuccessWindow = Alloy.createController('landingPage', args).getView();
-				Alloy.Globals.CURRENTVIEW = loginSuccessWindow;
-				if (OS_IOS) {
-					loginSuccessWindow.open({
-						fullScreen : true,
-						transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
-					});
-					loginSuccessWindow = null;
+				var teamInfo = Ti.Network.createHTTPClient({
+					onload : function(e) {
+						Ti.API.info("Received text: " + this.responseText);
+						var team = JSON.parse(this.responseText);
+						if (team.data.length > 0) {
 
-				} else if (OS_ANDROID) {
-					loginSuccessWindow.open({
-						fullScreen : true,
-						orientationModes : [Titanium.UI.PORTRAIT]
-					});
-					loginSuccessWindow = null;
-				}
+							var loginSuccessWindow = Alloy.createController('landingPage', args).getView();
+							Alloy.Globals.CURRENTVIEW = loginSuccessWindow;
+							if (OS_IOS) {
+								loginSuccessWindow.open({
+									fullScreen : true,
+									transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
+								});
+								loginSuccessWindow = null;
 
-				addEvent();
-				$.login.close();
+							} else if (OS_ANDROID) {
+								loginSuccessWindow.open({
+									fullScreen : true,
+									orientationModes : [Titanium.UI.PORTRAIT]
+								});
+								loginSuccessWindow = null;
+							}
 
-				if (Alloy.Globals.INDEXWIN !== null) {
-					Alloy.Globals.INDEXWIN.close();
-				}
+							addEvent();
+							$.login.close();
 
-				if (OS_ANDROID) {
-					var activity = Titanium.Android.currentActivity;
-					activity.finish();
-				}
+							if (Alloy.Globals.INDEXWIN !== null) {
+								Alloy.Globals.INDEXWIN.close();
+							}
+
+							if (OS_ANDROID) {
+								var activity = Titanium.Android.currentActivity;
+								activity.finish();
+							}
+						} else {
+							var loginSuccessWindow = Alloy.createController('pickTeam', args).getView();
+							Alloy.Globals.CURRENTVIEW = loginSuccessWindow;
+							if (OS_IOS) {
+								loginSuccessWindow.open({
+									fullScreen : true,
+									transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
+								});
+								loginSuccessWindow = null;
+
+							} else if (OS_ANDROID) {
+								loginSuccessWindow.open({
+									fullScreen : true,
+									orientationModes : [Titanium.UI.PORTRAIT]
+								});
+								loginSuccessWindow = null;
+							}
+
+							addEvent();
+							$.login.close();
+
+							if (Alloy.Globals.INDEXWIN !== null) {
+								Alloy.Globals.INDEXWIN.close();
+							}
+
+							if (OS_ANDROID) {
+								var activity = Titanium.Android.currentActivity;
+								activity.finish();
+							}
+						}
+
+					},
+					// function called when an error occurs, including a timeout
+					onerror : function(e) {
+						Ti.API.debug(e.error);
+						//alert('error');
+					},
+					timeout : Alloy.Globals.TIMEOUT // in milliseconds
+				});
+				// Prepare the connection.
+				teamInfo.open('GET', Alloy.Globals.BETKAMPENGETUSERTEAM + '?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
+
+				teamInfo.setRequestHeader("content-type", "application/json");
+				teamInfo.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
+				teamInfo.setTimeout(Alloy.Globals.TIMEOUT);
+
+				teamInfo.send();
 
 			} else {
 				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
@@ -214,7 +267,7 @@ function loginAuthenticated(fb) {
 					addEvent();
 					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 				};
-				
+
 				try {
 					xhr.open('POST', Alloy.Globals.BETKAMPENLOGINURL);
 					xhr.setRequestHeader("content-type", "application/json");
@@ -335,7 +388,7 @@ if (Alloy.Globals.FBERROR) {
 	// need to keep track if event was already added, since it is beeing added several times otherwise.
 	fb.addEventListener('login', function(e) {
 		if (Alloy.Globals.connect == true) {
-		indicator.openIndicator();
+			indicator.openIndicator();
 		}
 		Alloy.Globals.FBERROR = false;
 		if (Alloy.Globals.connect == true) {
