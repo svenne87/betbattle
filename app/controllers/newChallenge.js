@@ -276,8 +276,8 @@ function createAndShowTableView(league, array) {
 		backgroundColor : '#FFF'
 	}));
 
-	footerView.add(Ti.UI.createLabel({
-		text : footerViewText,
+	footerViewText = Ti.UI.createLabel({
+		text : '',
 		top : 10,
 		left : 20,
 		color : '#FFF',
@@ -285,18 +285,22 @@ function createAndShowTableView(league, array) {
 			fontSize : Alloy.Globals.getFontSize(1),
 			fontFamily : Alloy.Globals.getFont(),
 		}
-	}));
+	});
 
-	footerView.add(Ti.UI.createLabel({
-		top : 10,
-		text : loadMoreTxt,
+	footerView.add(footerViewText);
+
+	loadMoreTxt = Ti.UI.createLabel({
+		top : 5,
+		text : Alloy.Globals.PHRASES.loadMoreTxt + '...',
 		left : 20,
 		color : '#FFF',
 		font : {
 			fontSize : Alloy.Globals.getFontSize(1),
 			fontFamily : Alloy.Globals.getFont(),
 		}
-	}));
+	}); 
+
+	footerView.add(loadMoreTxt);
 	
 	footerView.add(Ti.UI.createView({
 		top : 0,
@@ -311,10 +315,8 @@ function createAndShowTableView(league, array) {
 			return;
 		} else {
 			// try to fetch 20 more games each time
-			getGames(leagueId, false, numberOfGamesFetched, numberOfGamesFetched + 20);
+			getGames(leagueId, false, ((numberOfGamesFetched - 0) + 20), 20);
 		}
-		Ti.API.log('load more...');
-		// TODO test test test
 	});
 
 	table.footerView = footerView;
@@ -393,15 +395,18 @@ function appendToRow(array) {
 /* Set text with information about how many games we are displaying */
 function setDisplayText() {
 	if(totalNumberOfGames <= numberOfGamesFetched) {
-		footerViewText = Alloy.Globals.PHRASES.showningMatchesTxt + ': ' + totalNumberOfGames + '/' +  totalNumberOfGames;
-		loadMoreTxt = '';
+		footerViewText.setText(Alloy.Globals.PHRASES.showningMatchesTxt + ': ' + totalNumberOfGames + '/' +  totalNumberOfGames);
+		loadMoreTxt.setText('');
 	} else {
-		footerViewText = Alloy.Globals.PHRASES.showningMatchesTxt + ': ' + numberOfGamesFetched + '/' +  totalNumberOfGames;
+		footerViewText.setText(Alloy.Globals.PHRASES.showningMatchesTxt + ': ' + numberOfGamesFetched + '/' +  totalNumberOfGames);
+		loadMoreTxt.setText(Alloy.Globals.PHRASES.loadMoreTxt + '...');
 	}
 }
 
 // will fetch games from API
-function getGames(league, firstTime, start, end) {
+function getGames(league, firstTime, start, rows) {
+	Ti.API.log("START -> " + start + " ROWS -> " + rows);
+	
 	// check connection
 	if (Alloy.Globals.checkConnection()) {
 
@@ -423,7 +428,7 @@ function getGames(league, firstTime, start, end) {
 		};
 
 		try {
-			xhr.open('GET', Alloy.Globals.BETKAMPENGETGAMESURL + '/?uid=' + Alloy.Globals.BETKAMPENUID + '&league=' + league + '&lang=' + Alloy.Globals.LOCALE + '&start=' + start + '&end=' + end);
+			xhr.open('GET', Alloy.Globals.BETKAMPENGETGAMESURL + '/?uid=' + Alloy.Globals.BETKAMPENUID + '&league=' + league + '&lang=' + Alloy.Globals.LOCALE + '&start=' + start + '&rows=' + rows);
 			xhr.setRequestHeader("content-type", "application/json");
 			xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
 			xhr.setTimeout(Alloy.Globals.TIMEOUT);
@@ -448,21 +453,28 @@ function getGames(league, firstTime, start, end) {
 					// keep track of all games available
 					totalNumberOfGames = response.totalCount;
 					
-					if(totalNumberOfGames <= end) {
+					if(totalNumberOfGames <= numberOfGamesFetched) {
 						numberOfGamesFetched = totalNumberOfGames;
 					} else {
-						numberOfGamesFetched = end; 
+						numberOfGamesFetched = start; 
 					}
-					setDisplayText();
-// TODO load more...
+					
 					if (array.length > 0) {
 						if(firstTime){
 							// if this is the first time we are calling this method or if this is a refresh, then rebuild table
 							createAndShowTableView(league, array);
+							numberOfGamesFetched = 20;
+							setDisplayText();
 						} else {
 							// not first time, then just add rows
-							Ti.API.log(array[0]);
 							appendToRow(array);
+							
+							// we can't fetch more games
+							if(((numberOfGamesFetched - 0) + 20) >= totalNumberOfGames) {
+								// all games are visible. update values
+								numberOfGamesFetched = totalNumberOfGames;
+							}
+							setDisplayText();
 						}
 					} else {
 						createNoGamesView();
@@ -497,7 +509,7 @@ var refresher;
 var totalNumberOfGames = 20;
 var numberOfGamesFetched = 0;
 var footerViewText;
-var loadMoreTxt = Alloy.Globals.PHRASES.loadMoreTxt + '...';
+var loadMoreTxt;
 
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({

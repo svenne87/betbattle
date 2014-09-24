@@ -192,8 +192,8 @@ function Controller() {
             width: Ti.UI.FILL,
             backgroundColor: "#FFF"
         }));
-        footerView.add(Ti.UI.createLabel({
-            text: footerViewText,
+        footerViewText = Ti.UI.createLabel({
+            text: "",
             top: 10,
             left: 20,
             color: "#FFF",
@@ -201,17 +201,19 @@ function Controller() {
                 fontSize: Alloy.Globals.getFontSize(1),
                 fontFamily: Alloy.Globals.getFont()
             }
-        }));
-        footerView.add(Ti.UI.createLabel({
-            top: 10,
-            text: loadMoreTxt,
+        });
+        footerView.add(footerViewText);
+        loadMoreTxt = Ti.UI.createLabel({
+            top: 5,
+            text: Alloy.Globals.PHRASES.loadMoreTxt + "...",
             left: 20,
             color: "#FFF",
             font: {
                 fontSize: Alloy.Globals.getFontSize(1),
                 fontFamily: Alloy.Globals.getFont()
             }
-        }));
+        });
+        footerView.add(loadMoreTxt);
         footerView.add(Ti.UI.createView({
             top: 0,
             height: .5,
@@ -220,8 +222,7 @@ function Controller() {
         }));
         footerView.addEventListener("click", function() {
             if (numberOfGamesFetched >= totalNumberOfGames) return;
-            getGames(leagueId, false, numberOfGamesFetched, numberOfGamesFetched + 20);
-            Ti.API.log("load more...");
+            getGames(leagueId, false, numberOfGamesFetched - 0 + 20, 20);
         });
         table.footerView = footerView;
         var data = [];
@@ -260,11 +261,15 @@ function Controller() {
     }
     function setDisplayText() {
         if (numberOfGamesFetched >= totalNumberOfGames) {
-            footerViewText = Alloy.Globals.PHRASES.showningMatchesTxt + ": " + totalNumberOfGames + "/" + totalNumberOfGames;
-            loadMoreTxt = "";
-        } else footerViewText = Alloy.Globals.PHRASES.showningMatchesTxt + ": " + numberOfGamesFetched + "/" + totalNumberOfGames;
+            footerViewText.setText(Alloy.Globals.PHRASES.showningMatchesTxt + ": " + totalNumberOfGames + "/" + totalNumberOfGames);
+            loadMoreTxt.setText("");
+        } else {
+            footerViewText.setText(Alloy.Globals.PHRASES.showningMatchesTxt + ": " + numberOfGamesFetched + "/" + totalNumberOfGames);
+            loadMoreTxt.setText(Alloy.Globals.PHRASES.loadMoreTxt + "...");
+        }
     }
-    function getGames(league, firstTime, start, end) {
+    function getGames(league, firstTime, start, rows) {
+        Ti.API.log("START -> " + start + " ROWS -> " + rows);
         if (Alloy.Globals.checkConnection()) {
             indicator.openIndicator();
             var xhr = Titanium.Network.createHTTPClient();
@@ -275,7 +280,7 @@ function Controller() {
                 "undefined" != typeof refresher && refresher.endRefreshing();
             };
             try {
-                xhr.open("GET", Alloy.Globals.BETKAMPENGETGAMESURL + "/?uid=" + Alloy.Globals.BETKAMPENUID + "&league=" + league + "&lang=" + Alloy.Globals.LOCALE + "&start=" + start + "&end=" + end);
+                xhr.open("GET", Alloy.Globals.BETKAMPENGETGAMESURL + "/?uid=" + Alloy.Globals.BETKAMPENUID + "&league=" + league + "&lang=" + Alloy.Globals.LOCALE + "&start=" + start + "&rows=" + rows);
                 xhr.setRequestHeader("content-type", "application/json");
                 xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
                 xhr.setTimeout(Alloy.Globals.TIMEOUT);
@@ -292,11 +297,15 @@ function Controller() {
                         var response = JSON.parse(this.responseText);
                         var array = createGameListObject(response.games);
                         totalNumberOfGames = response.totalCount;
-                        numberOfGamesFetched = end >= totalNumberOfGames ? totalNumberOfGames : end;
-                        setDisplayText();
-                        if (array.length > 0) if (firstTime) createAndShowTableView(league, array); else {
-                            Ti.API.log(array[0]);
+                        numberOfGamesFetched = numberOfGamesFetched >= totalNumberOfGames ? totalNumberOfGames : start;
+                        if (array.length > 0) if (firstTime) {
+                            createAndShowTableView(league, array);
+                            numberOfGamesFetched = 20;
+                            setDisplayText();
+                        } else {
                             appendToRow(array);
+                            numberOfGamesFetched - 0 + 20 >= totalNumberOfGames && (numberOfGamesFetched = totalNumberOfGames);
+                            setDisplayText();
                         } else createNoGamesView();
                     } else Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                     indicator.closeIndicator();
@@ -344,7 +353,7 @@ function Controller() {
     var totalNumberOfGames = 20;
     var numberOfGamesFetched = 0;
     var footerViewText;
-    var loadMoreTxt = Alloy.Globals.PHRASES.loadMoreTxt + "...";
+    var loadMoreTxt;
     var uie = require("lib/IndicatorWindow");
     var indicator = uie.createIndicatorWindow({
         top: 200,
