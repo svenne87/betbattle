@@ -886,18 +886,10 @@ function checkRatestatus() {
 	var rate_status = 0;
 	var now = new Date().getTime();
 	var reminder = Ti.App.Properties.getString('Reminder');
-
 	var xhr = Ti.Network.createHTTPClient({
 		onload : function(e) {
 			Ti.API.info("Received text: " + this.responseText);
 			var status = JSON.parse(this.responseText);
-			/*numba = status.data[0].visit_count;
-			 var even;
-			 if (numba & 1) {
-			 even = false;
-			 } else {
-			 even = true;
-			 }*/
 			if (!reminder) {
 				Ti.App.Properties.setString('Reminder', now);
 			} else if (reminder < now) {
