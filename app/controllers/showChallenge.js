@@ -2,8 +2,6 @@ var args = arguments[0] || {};
 var view;
 var botView;
 var groupName = args.group;
-var scoreArray;
-var scoreView = null;
 
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({
@@ -12,9 +10,7 @@ var indicator = uie.createIndicatorWindow({
 });
 
 function createGameType(gameType, game, values) {
-	//Ti.API.info("gameTYPE : " + JSON.stringify(gameType));
 	var type = gameType.type;
-	//Ti.API.info("TYPE : " + type);
 	var viewHeight = "100dp";
 
 	var gameTypeView = Ti.UI.createView({
@@ -39,7 +35,6 @@ function createGameType(gameType, game, values) {
 	gameTypeView.add(gameTypeDescription);
 
 	if (gameType.option_type == "button") {
-		//Ti.API.info("BUTTON");
 		var optionsView = Ti.UI.createView({
 			height : Ti.UI.SIZE,
 			width : 285,
@@ -49,8 +44,6 @@ function createGameType(gameType, game, values) {
 
 		var fontSize = 18;
 		var buttonViews = [];
-		//Ti.API.info("funka då" + JSON.stringify(values));
-		Ti.API.info(values.length);
 		for (var i = 0; i < values.length; i++) {
 			if (values[i].game_type == type && values[i].gid == game.game_id) {
 				var correct = false;
@@ -59,14 +52,6 @@ function createGameType(gameType, game, values) {
 						if (values[i].value_1 == game.result_values[m].value_1) {
 							if (values[i].value_2 == game.result_values[m].value_2) {
 								correct = true;
-
-								/*
-								for (var x = 0; x < scoreArray.length; x++) {
-									if (values[i].uid === scoreArray[x].uid) {
-										// set points to correct user in scoreArray
-										scoreArray[x].count++;
-									}
-								}*/
 							}
 						}
 					}
@@ -96,8 +81,6 @@ function createGameType(gameType, game, values) {
 
 				//if the json says team1 or team2. get the actual team  names
 				if (text == "team1") {
-					//Ti.API.info("TEAM" + JSON.stringify(gameObject.attributes.team_1.team_name));
-					Ti.API.info("ANDRA");
 					text = game.team_1.team_name;
 				} else if (text == "team2") {
 					text = game.team_2.team_name;
@@ -106,7 +89,6 @@ function createGameType(gameType, game, values) {
 				if (text.length > 9) {
 					fontSize = 12;
 				}
-				Ti.API.info("TEAM : " + text);
 
 				var color = "#303030";
 				if (correct) {
@@ -140,9 +122,7 @@ function createGameType(gameType, game, values) {
 		for (var i in buttonViews) {
 			optionsView.add(buttonViews[i]);
 		}
-		Ti.API.info("OPTIONVIEW : " + JSON.stringify(optionsView));
 	} else if (gameType.option_type == "select") {
-		//Ti.API.info("SELECT");
 		var layoutType = 'vertical';
 
 		var optionsView = Ti.UI.createView({
@@ -161,14 +141,6 @@ function createGameType(gameType, game, values) {
 						if (values[i].value_1 == game.result_values[m].value_1) {
 							if (values[i].value_2 == game.result_values[m].value_2) {
 								correct = true;
-
-								/*
-								for (var x = 0; x < scoreArray.length; x++) {
-									if (values[i].uid === scoreArray[x].uid) {
-										// set points to correct user in scoreArray
-										scoreArray[x].count++;
-									}
-								}*/
 							}
 						}
 					}
@@ -234,7 +206,7 @@ function createGameType(gameType, game, values) {
 
 }
 
-function createLayout(game, values, games) {
+function createLayout(game, values, games, currentStanding, isFirst) {
 	view = Ti.UI.createScrollView({
 		height : 'auto',
 		width : 'auto',
@@ -242,7 +214,7 @@ function createLayout(game, values, games) {
 		//backgroundColor:"blue",
 		showVerticalScrollIndicator : true,
 	});
-
+	
 	botView = Ti.UI.createView({
 		height : 'auto',
 		width : Ti.UI.FILL,
@@ -250,10 +222,126 @@ function createLayout(game, values, games) {
 		backgroundColor : "#303030",
 	});
 
+	// check if this is the first slide
+	if (isFirst) {
+		var currentGroupName = groupName;
+
+		 if (currentGroupName !== null && typeof currentGroupName !== undefined) {
+			botView.add(Ti.UI.createLabel({
+				top : 5,
+				width : '100%',
+				textAlign : 'center',
+				backgroundColor : '#303030',
+				color : '#FFF',
+				text : Alloy.Globals.PHRASES.challengeWithGroupTxt + ':',
+				font : {
+					fontFamily : Alloy.Globals.getFont(),
+					fontSize : Alloy.Globals.getFontSize(2),
+					fontWeight : 'bold'
+				}
+			}));
+
+			botView.add(Ti.UI.createLabel({
+				top : 5,
+				width : '100%',
+				textAlign : 'center',
+				backgroundColor : '#303030',
+				color : Alloy.Globals.themeColor(),
+				text : currentGroupName,
+				font : {
+					fontFamily : Alloy.Globals.getFont(),
+					fontSize : Alloy.Globals.getFontSize(2)
+				}
+			}));
+		}
+
+		if (currentStanding.length > 0) {
+			// create view with current standings
+			var currentStandingsView = Ti.UI.createView({
+				height : Ti.UI.SIZE,
+				width : Ti.UI.FILL,
+				top : 20,
+				layout : 'vertical',
+				backgroundColor : '#303030'
+			});
+
+			currentStandingsView.add(Ti.UI.createLabel({
+				text : Alloy.Globals.PHRASES.scoreInfoTxt,
+				textAlign : "center",
+				color : "#FFF",
+				//height: "30%",
+				font : {
+					fontSize : 18,
+					fontFamily : "Impact"
+				}
+			}));
+
+			for (var i = 0; i < currentStanding.length; i++) {
+				var tmpObj = currentStanding[i];
+
+				var standingView = Ti.UI.createView({
+					height : Ti.UI.SIZE,
+					width : Ti.UI.FILL,
+					layout : 'absolute',
+				});
+
+				var standingNameLabel = Ti.UI.createLabel({
+					top : 5,
+					left : 20,
+					width : Ti.UI.SIZE,
+					textAlign : 'left',
+					backgroundColor : '#303030',
+					color : '#FFF',
+					text : tmpObj.playerName,
+					font : {
+						fontFamily : Alloy.Globals.getFont(),
+						fontSize : Alloy.Globals.getFontSize(1)
+					}
+				});
+				standingView.add(standingNameLabel);
+
+				var standingPointsLabel = Ti.UI.createLabel({
+					top : 5,
+					right : 20,
+					width : 'auto',
+					textAlign : 'center',
+					backgroundColor : '#303030',
+					color : '#FFF',
+					text : tmpObj.points,
+					font : {
+						fontFamily : Alloy.Globals.getFont(),
+						fontSize : Alloy.Globals.getFontSize(1)
+					}
+				});
+
+				standingView.add(standingPointsLabel);
+				currentStandingsView.add(standingView);
+
+				tmpObj = null;
+			}
+			
+			currentStandingsView.add(Ti.UI.createLabel({
+				top : 5,
+				left : 20,
+				width : Ti.UI.SIZE,
+				textAlign : 'left',
+				backgroundColor : '#303030',
+				color : '#FFF',
+				text : currentStanding[0].time,
+				font : {
+					fontFamily : Alloy.Globals.getFont(),
+					fontSize : Alloy.Globals.getFontSize(1)
+				}
+			}));
+
+			botView.add(currentStandingsView);
+		}
+
+	}
+
 	var image = Ti.UI.createView({
 		width : '100%',
 		height : 70,
-		//backgroundImage : '/images/profileBG.jpg'
 	});
 
 	var fontSize = Alloy.Globals.getFontSize(2);
@@ -277,54 +365,9 @@ function createLayout(game, values, games) {
 		text : teamNames
 	}));
 
-	view.add(image);
+	botView.add(image);
 	view.add(botView);
 
-	var currentGroupName = groupName;
-
-	Ti.API.info("grupp : " + currentGroupName);
-	if (currentGroupName == null || typeof currentGroupName == undefined) {
-
-	} else {
-		botView.add(Ti.UI.createLabel({
-			top : 5,
-			width : '100%',
-			textAlign : 'center',
-			backgroundColor : '#303030',
-			color : '#FFF',
-			text : Alloy.Globals.PHRASES.challengeWithGroupTxt + ':',
-			font : {
-				fontFamily : Alloy.Globals.getFont(),
-				fontSize : Alloy.Globals.getFontSize(2),
-				fontWeight : 'bold'
-			}
-		}));
-
-		botView.add(Ti.UI.createLabel({
-			top : 5,
-			width : '100%',
-			textAlign : 'center',
-			backgroundColor : '#303030',
-			color : Alloy.Globals.themeColor(),
-			text : currentGroupName,
-			font : {
-				fontFamily : Alloy.Globals.getFont(),
-				fontSize : Alloy.Globals.getFontSize(2)
-			}
-		}));
-	}
-/*
-	if (game.result_values.length > 0) {
-		scoreView = Ti.UI.createView({
-			top : 10,
-			height : 10,
-			width : Ti.UI.FILL,
-			layout : 'vertical',
-			backgroundColor : "#303030",
-		});
-		botView.add(scoreView);
-	}
-*/
 	function doRest(game, games, values) {
 		var gametypes = game.game_types;
 		for (var y in gametypes) {
@@ -342,9 +385,9 @@ function createLayout(game, values, games) {
 		});
 
 		if (games.indexOf(game) == (games.length - 1)) {
-			Ti.API.info("sista matchen");
+			// last game
 		} else {
-			Ti.API.info("inte sista");
+			// not last game
 			view.add(slide);
 		}
 	}
@@ -355,7 +398,6 @@ function createLayout(game, values, games) {
 }
 
 function getChallengeShow() {
-	Ti.API.info("SKickar: " + args.cid);
 	var xhr = Titanium.Network.createHTTPClient();
 	xhr.onerror = function(e) {
 		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
@@ -381,7 +423,6 @@ function getChallengeShow() {
 	xhr.onload = function() {
 		if (this.status == '200') {
 			if (this.readyState == 4) {
-				Ti.API.info("reeturn : " + JSON.stringify(this.responseText));
 				var response = JSON.parse(this.responseText);
 				// construct array with objects
 				Ti.API.info("challengeShow: " + JSON.stringify(response));
@@ -410,68 +451,16 @@ function createBorderView() {
 }
 
 function showResults(challenge) {
-	//var thisUid = -1;
+	var isFirst = false;
 
 	for (var y in challenge.games) {
-		
-		/*
-		scoreArray = [];
-
-		for (var x = 0; x < challenge.values.length; x++) {
-			// add all participants in this challenge to the array
-			if (thisUid !== challenge.values[x].uid) {
-				var player = {};
-				player.uid = challenge.values[x].uid;
-				player.name = challenge.values[x].name;
-				player.count = 0;
-				scoreArray.push(player);
-			}
-			thisUid = challenge.values[x].uid;
+		if (y === '0') {
+			isFirst = true;
 		}
-	*/
 		// create layout
-		createLayout(challenge.games[y], challenge.values, challenge.games);
-
-/*
-		if (scoreView) {
-			var scoreTextLabel = Ti.UI.createLabel({
-				text : Alloy.Globals.PHRASES.scoreInfoTxt,
-				top : 5,
-				textAlign : "center",
-				color : "#FFF",
-				font : {
-					fontSize : 18,
-					fontFamily : "Impact",
-				}
-			});
-			
-			scoreView.add(scoreTextLabel);
-			
-			// after layout has rendered set correct values to all players (in first view)
-			var scoreHeight = scoreTextLabel.toImage().height + 5;
-
-			for (var i = 0; i < scoreArray.length; i++) {
-				var scoreLabel = Ti.UI.createLabel({
-					top : 5,
-					width : '100%',
-					textAlign : 'center',
-					backgroundColor : '#303030',
-					color : "#FFF",
-					font : {
-						fontFamily : Alloy.Globals.getFont(),
-						fontSize : Alloy.Globals.getFontSize(1)
-					},
-					text : scoreArray[i].name + ': ' + scoreArray[i].count
-				});
-
-				scoreView.add(scoreLabel);
-				scoreHeight += scoreLabel.toImage().height + 5;
-			}
-			// set height for scoreView
-			scoreView.setHeight(scoreHeight + 20);
-		}*/
+		createLayout(challenge.games[y], challenge.values, challenge.games, challenge.current_standing, isFirst);
+		isFirst = false;
 	}
-
 }
 
 if (OS_ANDROID) {

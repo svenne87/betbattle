@@ -269,7 +269,6 @@ function Controller() {
         }
     }
     function getGames(league, firstTime, start, rows) {
-        Ti.API.log("START -> " + start + " ROWS -> " + rows);
         if (Alloy.Globals.checkConnection()) {
             indicator.openIndicator();
             var xhr = Titanium.Network.createHTTPClient();
@@ -293,7 +292,6 @@ function Controller() {
             xhr.onload = function() {
                 if ("200" == this.status) {
                     if (4 == this.readyState) {
-                        Ti.API.info("getGames = " + JSON.stringify(this.responseText));
                         var response = JSON.parse(this.responseText);
                         var array = createGameListObject(response.games);
                         totalNumberOfGames = response.totalCount;

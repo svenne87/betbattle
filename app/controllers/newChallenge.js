@@ -405,8 +405,6 @@ function setDisplayText() {
 
 // will fetch games from API
 function getGames(league, firstTime, start, rows) {
-	Ti.API.log("START -> " + start + " ROWS -> " + rows);
-	
 	// check connection
 	if (Alloy.Globals.checkConnection()) {
 
@@ -446,7 +444,6 @@ function getGames(league, firstTime, start, rows) {
 		xhr.onload = function() {
 			if (this.status == '200') {
 				if (this.readyState == 4) {
-					Ti.API.info("getGames = " + JSON.stringify(this.responseText));
 					var response = JSON.parse(this.responseText);
 					// create gameListObjects and use that array to create table
 					var array = createGameListObject(response.games);
