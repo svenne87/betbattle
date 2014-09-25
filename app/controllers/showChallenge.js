@@ -278,7 +278,11 @@ function createLayout(game, values, games, currentStanding, isFirst) {
 
 			for (var i = 0; i < currentStanding.length; i++) {
 				var tmpObj = currentStanding[i];
-
+				
+				if(i === 0) {
+				    // leader
+				} 
+				
 				var standingView = Ti.UI.createView({
 					height : Ti.UI.SIZE,
 					width : Ti.UI.FILL,
@@ -321,7 +325,7 @@ function createLayout(game, values, games, currentStanding, isFirst) {
 			}
 			
 			currentStandingsView.add(Ti.UI.createLabel({
-				top : 5,
+				top : 10,
 				left : 20,
 				width : Ti.UI.SIZE,
 				textAlign : 'left',
@@ -330,7 +334,7 @@ function createLayout(game, values, games, currentStanding, isFirst) {
 				text : currentStanding[0].time,
 				font : {
 					fontFamily : Alloy.Globals.getFont(),
-					fontSize : Alloy.Globals.getFontSize(1)
+					fontSize : 10
 				}
 			}));
 
