@@ -27,7 +27,7 @@ if (OS_ANDROID) {
 }
 
 $.friendSearch.addEventListener('close', function() {
-	indicator.closeIndicator
+	indicator.closeIndicator;
 });
 var mainView = Ti.UI.createScrollView({
 	class : "topView",

@@ -262,6 +262,7 @@ function createViews(array) {
 		var name = Ti.UI.createLabel({
 			classes : ['remove'],
 			text : array[i].attributes.name,
+			id : array[i].attributes.id,
 			left : '4%',
 			font : {
 				fontSize : 19,
@@ -461,19 +462,6 @@ function createViews(array) {
 				win = null;
 			}
 
-			/*var getUID = Ti.Network.createHTTPClient();
-			 getUID.onload = function() {
-			 Ti.API.info(this.responseText);
-			 var info = JSON.parse(this.responseText);
-
-			 for (var i = 0; i < info.data.length; i++) {
-			 membersGUI(info.data[i], i);
-			 }
-			 };
-			 getUID.open('GET', Alloy.Globals.BETKAMPENGETGROUPMEMBERSURL + '?gid=' + e.source.id + '&lang=' + Alloy.Globals.LOCALE);
-			 getUID.send();*/
-
-		});
 	}
 }
 
