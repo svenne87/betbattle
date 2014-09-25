@@ -19,7 +19,7 @@
     <analytics>false</analytics>
     <guid>77b8c8f9-6c31-47a6-9c6b-c2af30e9e7fe</guid>
     <property name="ti.ui.defaultunit" type="string">dp</property>
-    <property name="ti.facebook.appid">599002463521804</property>
+    <property name="ti.facebook.appid">1403709019858016</property>
     <property name="GCM_sender_id" type="string">65912094882</property>
     <ios>
         <plist>

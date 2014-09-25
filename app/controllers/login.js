@@ -376,9 +376,9 @@ var fb = require('facebook');
 fb.appid = Ti.App.Properties.getString('ti.facebook.appid');
 
 if (OS_IOS) {
-	fb.permissions = ['email', 'user_birthday', 'user_friends', 'user_location', 'user_games_activity', 'friends_games_activity'];
+	fb.permissions = ['email'];
 } else {
-	fb.permissions = ['email', 'user_birthday', 'user_friends', 'user_location', 'user_games_activity', 'friends_games_activity', 'publish_actions'];
+	fb.permissions = ['email'];
 }
 fb.forceDialogAuth = false;
 
