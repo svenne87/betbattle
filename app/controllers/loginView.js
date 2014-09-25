@@ -158,6 +158,7 @@ function getChallengesAndStart() {
 								activity.finish();
 							}
 						}
+						
 
 					},
 					// function called when an error occurs, including a timeout
@@ -168,7 +169,7 @@ function getChallengesAndStart() {
 					timeout : Alloy.Globals.TIMEOUT // in milliseconds
 				});
 				// Prepare the connection.
-				teamInfo.open('GET', Alloy.Globals.BETKAMPENGETUSERTEAM + '?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
+				teamInfo.open('GET', Alloy.Globals.BETKAMPENGETUSERTEAM + '?uid=' + Alloy.Globals.BETKAMPENUID + '&sid=1' + '&lang=' + Alloy.Globals.LOCALE);
 
 				teamInfo.setRequestHeader("content-type", "application/json");
 				teamInfo.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);

@@ -106,38 +106,8 @@ smsLabel = Titanium.UI.createLabel({
 });
 smsBtn.add(smsLabel);
 //----------------------------------------------------------------------FACEBOOK-----------------------------------------------------------------------------
-if (Alloy.Globals.FACEBOOKOBJECT == null) {
-	var fbBtn = Titanium.UI.createView({
-		top : "2%",
-		height : '11%',
-		width : '80%',
-		left : '10%',
-		backgroundColor : '#3B5998',
-		borderRadius : 5
-	});
-	mainView.add(fbBtn);
+if (Alloy.Globals.FACEBOOKOBJECT != null) {
 
-	var fbIconLabel = Titanium.UI.createLabel({
-		font : {
-			fontFamily : font,
-			fontSize : 22
-		},
-		text : fontawesome.icon('fa-facebook'),
-		left : '5%',
-		color : '#fff',
-	});
-	fbBtn.add(fbIconLabel);
-
-	fbLabel = Titanium.UI.createLabel({
-		text : Alloy.Globals.PHRASES.shareFBTxt,
-		font : {
-			fontSize : 18,
-			fontFamily : "Impact"
-		},
-		color : "#FFF"
-	});
-	fbBtn.add(fbLabel);
-} else {
 	var fbUserBtn = Titanium.UI.createView({
 		top : "2%",
 		height : '11%',
@@ -170,36 +140,39 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 	fbUserBtn.add(fbLabel);
 }
 //-------------------------------------------------------------------TWITTER--------------------------------------------------------------------------------
-var twitterBtn = Titanium.UI.createView({
-	top : "2%",
-	height : '11%',
-	width : '80%',
-	left : '10%',
-	backgroundColor : '#00ACED',
-	borderRadius : 5
-});
-mainView.add(twitterBtn);
+if (Titanium.Platform.canOpenURL('twitter://')) {
 
-var twitterIconLabel = Titanium.UI.createLabel({
-	font : {
-		fontFamily : font,
-		fontSize : 22
-	},
-	text : fontawesome.icon('fa-twitter'),
-	left : '5%',
-	color : '#fff',
-});
-twitterBtn.add(twitterIconLabel);
+	var twitterBtn = Titanium.UI.createView({
+		top : "2%",
+		height : '11%',
+		width : '80%',
+		left : '10%',
+		backgroundColor : '#00ACED',
+		borderRadius : 5
+	});
+	mainView.add(twitterBtn);
 
-twitterLabel = Titanium.UI.createLabel({
-	text : Alloy.Globals.PHRASES.shareTwitterTxt,
-	font : {
-		fontSize : 18,
-		fontFamily : "Impact"
-	},
-	color : "#FFF"
-});
-twitterBtn.add(twitterLabel);
+	var twitterIconLabel = Titanium.UI.createLabel({
+		font : {
+			fontFamily : font,
+			fontSize : 22
+		},
+		text : fontawesome.icon('fa-twitter'),
+		left : '5%',
+		color : '#fff',
+	});
+	twitterBtn.add(twitterIconLabel);
+
+	twitterLabel = Titanium.UI.createLabel({
+		text : Alloy.Globals.PHRASES.shareTwitterTxt,
+		font : {
+			fontSize : 18,
+			fontFamily : "Impact"
+		},
+		color : "#FFF"
+	});
+	twitterBtn.add(twitterLabel);
+}
 //---------------------------------------------------------------------------------------------------------------------------------------------------
 var googleBtn = Titanium.UI.createView({
 	top : "2%",
@@ -235,48 +208,9 @@ googleBtn.add(googleLabel);
 // functions for the buttons
 
 // --------------------------------------------------------------- Share to FACEBOOK  ------------------------------------------------------------------------------
-// if user login with email
-if (Alloy.Globals.FACEBOOKOBJECT == null) {
+// if user login with facebook
+if (Alloy.Globals.FACEBOOKOBJECT != null) {
 
-	if (OS_IOS) {
-		if (Titanium.Platform.canOpenURL('fb://')) {
-			fejjan = false;
-		} else {
-			fejjan = true;
-		}
-	} else if (OS_ANDROID) {
-		function shareToFejjan() {
-			try {
-				var intFejs = Ti.Android.createIntent({
-					action : Ti.Android.ACTION_SEND,
-					//packageName : 'com.facebook.katana',
-					//flags : Ti.Android.FLAG_ACTIVITY_NEW_TASK,
-					type : 'text/plain'
-				});
-				intFejs.putExtra(Ti.Android.EXTRA_TEXT, Alloy.Globals.PHRASES.twitterMsg);
-				var chooser = Ti.Android.createIntentChooser(intFejs, "Send");
-				Ti.Android.currentActivity.startActivity(chooser);
-			} catch(x) {
-				alert(Alloy.Globals.PHRASES.notInstalledTxt + ' ' + 'Facebook');
-			}
-		}
-
-	}
-
-	fbBtn.addEventListener('click', function(e) {
-		if (OS_IOS) {
-			if (fejjan == true) {
-				alert(Alloy.Globals.PHRASES.notInstalledTxt + ' ' + 'facebook');
-			} else {
-				Titanium.Platform.openURL('fb://publish');
-			}
-
-		} else if (OS_ANDROID) {
-			shareToFejjan();
-		}
-	});
-} else {
-	//if user login with fb
 	fbUserBtn.addEventListener('click', function(e) {
 		if (Alloy.Globals.checkConnection()) {
 			var facebookModuleError = true;
@@ -413,9 +347,11 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 // --------------------------------------------------------------- Share to TWITTER  -------------------------------------------------------------------------------
 if (OS_IOS) {
 	if (Titanium.Platform.canOpenURL('twitter://')) {
-		twitter = false;
-	} else {
-		twitter = true;
+		twitterBtn.addEventListener('click', function(e) {
+
+			Titanium.Platform.openURL('twitter://post?message=' + Alloy.Globals.PHRASES.twitterMsg);
+
+		});
 	}
 } else if (OS_ANDROID) {
 	function shareToTwitter() {
@@ -433,20 +369,14 @@ if (OS_IOS) {
 		}
 	}
 
-}
-twitterBtn.addEventListener('click', function(e) {
-	if (OS_IOS) {
-		if (twitter == true) {
-			alert(Alloy.Globals.PHRASES.notInstalledTxt + ' ' + 'Twitter');
-		} else {
-			Titanium.Platform.openURL('twitter://post?message=' + Alloy.Globals.PHRASES.twitterMsg);
-		}
 
-	} else if (OS_ANDROID) {
+	twitterBtn.addEventListener('click', function(e) {
+
 		shareToTwitter();
-	}
 
-});
+	});
+
+}
 
 // --------------------------------------------------------------- Share to GOOGLE+  -------------------------------------------------------------------------------
 
