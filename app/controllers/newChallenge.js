@@ -318,7 +318,9 @@ function createAndShowTableView(league, array) {
 		});
 	}
 
-
+	table.addEventListener('scrollend', function(e) {
+		Ti.API.log("zee End " + e.x + " " + e.y);
+	});
 	
 	table.addEventListener('scroll', function(_evt) {
 		if (OS_IOS) {

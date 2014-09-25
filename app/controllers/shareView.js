@@ -238,7 +238,7 @@ if (Alloy.Globals.FACEBOOKOBJECT != null) {
 						}
 					});
 				}
-			/} else {
+			//} else {
 				//facebookModuleError = false;
 				//performFacebookPost(fb);
 			//}
