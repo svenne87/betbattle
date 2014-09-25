@@ -65,7 +65,8 @@ function Controller() {
         var row = $.UI.create("TableViewRow", {
             classes: [ "challengesSectionDefault" ],
             id: obj.attributes.round,
-            hasChild: child
+            hasChild: child,
+            height: "auto"
         });
         if (true != child) {
             var fontawesome = require("lib/IconicFont").IconicFont({
@@ -112,9 +113,11 @@ function Controller() {
             layout: "vertical",
             height: 12
         }));
+        currentSize += 62;
+        Ti.API.log("Row heigth: ->   " + row.toImage().height);
         row.gameID = obj.attributes.game_id;
         row.teamNames = obj.attributes.team_1.team_name + " - " + obj.attributes.team_2.team_name;
-        row.className = date.toUTCString();
+        row.className = "matchRow";
         return row;
     }
     function createAndShowTableView(league, array) {
@@ -194,7 +197,7 @@ function Controller() {
         }));
         footerViewText = Ti.UI.createLabel({
             text: "",
-            top: 10,
+            top: 20,
             left: 20,
             color: "#FFF",
             font: {
@@ -203,31 +206,28 @@ function Controller() {
             }
         });
         footerView.add(footerViewText);
-        loadMoreTxt = Ti.UI.createLabel({
-            top: 5,
-            text: Alloy.Globals.PHRASES.loadMoreTxt + "...",
-            left: 20,
-            color: "#FFF",
-            font: {
-                fontSize: Alloy.Globals.getFontSize(1),
-                fontFamily: Alloy.Globals.getFont()
-            }
-        });
-        footerView.add(loadMoreTxt);
         footerView.add(Ti.UI.createView({
-            top: 0,
+            top: 20,
             height: .5,
             width: Ti.UI.FILL,
             backgroundColor: "#FFF"
         }));
-        footerView.addEventListener("click", function() {
-            if (numberOfGamesFetched >= totalNumberOfGames) return;
-            getGames(leagueId, false, numberOfGamesFetched - 0 + 20, 20);
-        });
         table.footerView = footerView;
         var data = [];
         for (var i = 0; array.length > i; i++) data.push(createTableRow(array[i]));
         table.setData(data);
+        table.addEventListener("postlayout", function() {
+            initialTableSize = table.rect.height;
+        });
+        table.addEventListener("scroll", function(_evt) {
+            setTimeout(function() {
+                if (_evt.contentOffset.y + initialTableSize > currentSize - overlap) {
+                    if (isLoading) return;
+                    if (numberOfGamesFetched >= totalNumberOfGames) return;
+                    getGames(leagueId, false, numberOfGamesFetched - 0 + 20, 20);
+                }
+            }, 500);
+        });
         table.addEventListener("click", function(e) {
             if (2 == Alloy.Globals.SLIDERZINDEX) return;
             if (null !== e.rowData && "undefined" != typeof e.rowData.id) {
@@ -260,19 +260,15 @@ function Controller() {
         for (var i = 0; array.length > i; i++) table.appendRow(createTableRow(array[i]));
     }
     function setDisplayText() {
-        if (numberOfGamesFetched >= totalNumberOfGames) {
-            footerViewText.setText(Alloy.Globals.PHRASES.showningMatchesTxt + ": " + totalNumberOfGames + "/" + totalNumberOfGames);
-            loadMoreTxt.setText("");
-        } else {
-            footerViewText.setText(Alloy.Globals.PHRASES.showningMatchesTxt + ": " + numberOfGamesFetched + "/" + totalNumberOfGames);
-            loadMoreTxt.setText(Alloy.Globals.PHRASES.loadMoreTxt + "...");
-        }
+        numberOfGamesFetched >= totalNumberOfGames ? footerViewText.setText(Alloy.Globals.PHRASES.showningMatchesTxt + ": " + totalNumberOfGames + "/" + totalNumberOfGames) : footerViewText.setText(Alloy.Globals.PHRASES.showningMatchesTxt + ": " + numberOfGamesFetched + "/" + totalNumberOfGames);
     }
     function getGames(league, firstTime, start, rows) {
         if (Alloy.Globals.checkConnection()) {
-            indicator.openIndicator();
+            if (isLoading) return;
+            true && firstTime ? indicator.openIndicator() : firstTime || indicator.openIndicator();
             var xhr = Titanium.Network.createHTTPClient();
             xhr.onerror = function(e) {
+                isLoading = false;
                 Ti.API.error("Bad Sever =>" + e.error);
                 indicator.closeIndicator();
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
@@ -285,6 +281,7 @@ function Controller() {
                 xhr.setTimeout(Alloy.Globals.TIMEOUT);
                 xhr.send();
             } catch (e) {
+                isLoading = false;
                 indicator.closeIndicator();
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                 "undefined" != typeof refresher && refresher.endRefreshing();
@@ -307,7 +304,9 @@ function Controller() {
                         } else createNoGamesView();
                     } else Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                     indicator.closeIndicator();
+                    isLoading = false;
                 } else {
+                    isLoading = false;
                     Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                     indicator.closeIndicator();
                     "undefined" != typeof refresher && refresher.endRefreshing();
@@ -351,7 +350,10 @@ function Controller() {
     var totalNumberOfGames = 20;
     var numberOfGamesFetched = 0;
     var footerViewText;
-    var loadMoreTxt;
+    var isLoading = false;
+    var initialTableSize = 0;
+    var currentSize = 0;
+    var overlap = 50;
     var uie = require("lib/IndicatorWindow");
     var indicator = uie.createIndicatorWindow({
         top: 200,

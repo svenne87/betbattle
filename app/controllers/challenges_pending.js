@@ -90,7 +90,7 @@ function constructChallengeRows(obj, index, type) {
 			// do nothing
 			betGroupName = "";
 		}
-		Ti.API.info("GRUPPNAMN: " + betGroupName);
+
 		if(betGroupName <= 0){
 			betGroupName = obj.attributes.name;
 		}
@@ -686,6 +686,10 @@ function constructTableView(array) {
 				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 			}
 		}
+	});
+
+	table.addEventListener('swipe', function(e) {
+		Ti.API.log("----->  " + JSON.stringify(e)); // TODO
 	});
 
 	$.challenges_pending.add(table);

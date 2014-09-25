@@ -91,7 +91,8 @@ function createTableRow(obj) {
 	var row = $.UI.create('TableViewRow', {
 		classes : ['challengesSectionDefault'],
 		id : obj.attributes.round,
-		hasChild : child
+		hasChild : child,
+		height : 'auto'
 	});
 
 	// add custom icon on Android to symbol that the row has child
@@ -153,7 +154,10 @@ function createTableRow(obj) {
 		layout : 'vertical',
 		height : 12
 	}));
-	//Ti.API.info("GAMEROW = "+ JSON.stringify(obj));
+
+	// keep track of the table total heigth, to decide when to start fetching more
+	currentSize += row.toImage().height;
+
 	row.gameID = obj.attributes.game_id;
 	row.teamNames = obj.attributes.team_1.team_name + " - " + obj.attributes.team_2.team_name;
 	row.className = 'matchRow';
@@ -244,27 +248,25 @@ function createAndShowTableView(league, array) {
 
 	var footerView = Ti.UI.createView({
 		height : 60,
-		width: '100%',
-		backgroundColor: '#242424',
-		backgroundGradient: {
-			type: "linear",
-			startPoint: {
-				x: "0%",
-				y: "0%"
+		width : '100%',
+		backgroundColor : '#242424',
+		backgroundGradient : {
+			type : "linear",
+			startPoint : {
+				x : "0%",
+				y : "0%"
 			},
-			endPoint: {
-				x: "0%",
-				y: "100%"
+			endPoint : {
+				x : "0%",
+				y : "100%"
 			},
-			colors: [
-				{
-					color: "#2E2E2E",
-					offset: 0.0
-				}, {
-					color: "#151515",
-					offset: 1.0
-				}
-			]
+			colors : [{
+				color : "#2E2E2E",
+				offset : 0.0
+			}, {
+				color : "#151515",
+				offset : 1.0
+			}]
 		},
 		layout : 'vertical'
 	});
@@ -278,7 +280,7 @@ function createAndShowTableView(league, array) {
 
 	footerViewText = Ti.UI.createLabel({
 		text : '',
-		top : 10,
+		top : 20,
 		left : 20,
 		color : '#FFF',
 		font : {
@@ -289,35 +291,12 @@ function createAndShowTableView(league, array) {
 
 	footerView.add(footerViewText);
 
-	loadMoreTxt = Ti.UI.createLabel({
-		top : 5,
-		text : Alloy.Globals.PHRASES.loadMoreTxt + '...',
-		left : 20,
-		color : '#FFF',
-		font : {
-			fontSize : Alloy.Globals.getFontSize(1),
-			fontFamily : Alloy.Globals.getFont(),
-		}
-	}); 
-
-	footerView.add(loadMoreTxt);
-	
 	footerView.add(Ti.UI.createView({
-		top : 0,
+		top : 20,
 		height : 0.5,
 		width : Ti.UI.FILL,
 		backgroundColor : '#FFF'
 	}));
-
-	footerView.addEventListener('click', function() {
-		if(totalNumberOfGames <= numberOfGamesFetched) {
-			// can't load more
-			return;
-		} else {
-			// try to fetch 20 more games each time
-			getGames(leagueId, false, ((numberOfGamesFetched - 0) + 20), 20);
-		}
-	});
 
 	table.footerView = footerView;
 
@@ -330,6 +309,43 @@ function createAndShowTableView(league, array) {
 	}
 
 	table.setData(data);
+
+	// get initial table size for iOS
+	table.addEventListener('postlayout', function() {
+		initialTableSize = table.rect.height;
+	});
+
+	table.addEventListener('scroll', function(_evt) {
+		// include a timeout for better UE
+		setTimeout(function() {
+			if (OS_IOS) {
+				if (currentSize - overlap < _evt.contentOffset.y + initialTableSize) {
+					if (isLoading)
+						return;
+					if (totalNumberOfGames <= numberOfGamesFetched) {
+						// can't load more
+						return;
+					} else {
+						// try to fetch 20 more games each time
+						getGames(leagueId, false, ((numberOfGamesFetched - 0) + 20), 20);
+					}
+				}
+			} else {
+				if (_evt.firstVisibleItem + _evt.visibleItemCount == _evt.totalItemCount) {
+					if (isLoading)
+						return;
+					if (totalNumberOfGames <= numberOfGamesFetched) {
+						// can't load more
+						return;
+					} else {
+						// try to fetch 20 more games each time
+						getGames(leagueId, false, ((numberOfGamesFetched - 0) + 20), 20);
+					}
+
+				}
+			}
+		}, 500);
+	});
 
 	// add event listener
 	table.addEventListener("click", function(e) {
@@ -387,19 +403,17 @@ function createAndShowTableView(league, array) {
 
 /* Create Rows and add to table */
 function appendToRow(array) {
-	for(var i = 0; i < array.length; i++) {
-		table.appendRow(createTableRow(array[i]));	
+	for (var i = 0; i < array.length; i++) {
+		table.appendRow(createTableRow(array[i]));
 	}
 }
 
 /* Set text with information about how many games we are displaying */
 function setDisplayText() {
-	if(totalNumberOfGames <= numberOfGamesFetched) {
-		footerViewText.setText(Alloy.Globals.PHRASES.showningMatchesTxt + ': ' + totalNumberOfGames + '/' +  totalNumberOfGames);
-		loadMoreTxt.setText('');
+	if (totalNumberOfGames <= numberOfGamesFetched) {
+		footerViewText.setText(Alloy.Globals.PHRASES.showningMatchesTxt + ': ' + totalNumberOfGames + '/' + totalNumberOfGames);
 	} else {
-		footerViewText.setText(Alloy.Globals.PHRASES.showningMatchesTxt + ': ' + numberOfGamesFetched + '/' +  totalNumberOfGames);
-		loadMoreTxt.setText(Alloy.Globals.PHRASES.loadMoreTxt + '...');
+		footerViewText.setText(Alloy.Globals.PHRASES.showningMatchesTxt + ': ' + numberOfGamesFetched + '/' + totalNumberOfGames);
 	}
 }
 
@@ -407,16 +421,19 @@ function setDisplayText() {
 function getGames(league, firstTime, start, rows) {
 	// check connection
 	if (Alloy.Globals.checkConnection()) {
+		if (isLoading)
+			return;
 
 		if (OS_IOS && firstTime) {
 			indicator.openIndicator();
-		} else if(!firstTime) {
+		} else if (!firstTime) {
 			indicator.openIndicator();
 		}
 
 		// Get games available to challenge
 		var xhr = Titanium.Network.createHTTPClient();
 		xhr.onerror = function(e) {
+			isLoading = false;
 			Ti.API.error('Bad Sever =>' + e.error);
 			indicator.closeIndicator();
 			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
@@ -435,6 +452,7 @@ function getGames(league, firstTime, start, rows) {
 
 			xhr.send();
 		} catch(e) {
+			isLoading = false;
 			indicator.closeIndicator();
 			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 			if (OS_IOS) {
@@ -451,15 +469,15 @@ function getGames(league, firstTime, start, rows) {
 					var array = createGameListObject(response.games);
 					// keep track of all games available
 					totalNumberOfGames = response.totalCount;
-					
-					if(totalNumberOfGames <= numberOfGamesFetched) {
+
+					if (totalNumberOfGames <= numberOfGamesFetched) {
 						numberOfGamesFetched = totalNumberOfGames;
 					} else {
-						numberOfGamesFetched = start; 
+						numberOfGamesFetched = start;
 					}
-					
+
 					if (array.length > 0) {
-						if(firstTime){
+						if (firstTime) {
 							// if this is the first time we are calling this method or if this is a refresh, then rebuild table
 							createAndShowTableView(league, array);
 							numberOfGamesFetched = 20;
@@ -467,9 +485,9 @@ function getGames(league, firstTime, start, rows) {
 						} else {
 							// not first time, then just add rows
 							appendToRow(array);
-							
+
 							// we can't fetch more games
-							if(((numberOfGamesFetched - 0) + 20) >= totalNumberOfGames) {
+							if (((numberOfGamesFetched - 0) + 20) >= totalNumberOfGames) {
 								// all games are visible. update values
 								numberOfGamesFetched = totalNumberOfGames;
 							}
@@ -483,7 +501,9 @@ function getGames(league, firstTime, start, rows) {
 					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 				}
 				indicator.closeIndicator();
+				isLoading = false;
 			} else {
+				isLoading = false;
 				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 				indicator.closeIndicator();
 				if (OS_IOS) {
@@ -508,7 +528,10 @@ var refresher;
 var totalNumberOfGames = 20;
 var numberOfGamesFetched = 0;
 var footerViewText;
-var loadMoreTxt;
+var isLoading = false;
+var initialTableSize = 0;
+var currentSize = 0;
+var overlap = 50;
 
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({
@@ -528,17 +551,17 @@ if (OS_ANDROID) {
 	$.newChallenge.orientationModes = [Titanium.UI.PORTRAIT];
 
 	$.newChallenge.addEventListener('open', function() {
-		 Alloy.Globals.setAndroidCouponMenu($.newChallenge.activity);
-		
+		Alloy.Globals.setAndroidCouponMenu($.newChallenge.activity);
+
 		$.newChallenge.activity.actionBar.onHomeIconItemSelected = function() {
 			$.newChallenge.close();
 			$.newChallenge = null;
 		};
 		$.newChallenge.activity.actionBar.displayHomeAsUp = true;
 		$.newChallenge.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
-		
+
 		// sometimes the view remain in memory, then we don't need to show the "loading"
-		if(totalNumberOfGames === 20) {
+		if (totalNumberOfGames === 20) {
 			indicator.openIndicator();
 		}
 	});
