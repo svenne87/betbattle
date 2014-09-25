@@ -12,7 +12,7 @@ var picLeagueLabel = Ti.UI.createLabel({
 	textAlign : "center",
 	top : 30,
 	font : {
-		fontSize : 22,
+		fontSize : 19,
 		fontFamily : "Impact"
 	},
 	color : "#FFF"

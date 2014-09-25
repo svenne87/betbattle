@@ -114,7 +114,7 @@ function Controller() {
         }));
         row.gameID = obj.attributes.game_id;
         row.teamNames = obj.attributes.team_1.team_name + " - " + obj.attributes.team_2.team_name;
-        row.className = date.toUTCString();
+        row.className = "matchRow";
         return row;
     }
     function createAndShowTableView(league, array) {
@@ -270,7 +270,7 @@ function Controller() {
     }
     function getGames(league, firstTime, start, rows) {
         if (Alloy.Globals.checkConnection()) {
-            indicator.openIndicator();
+            true && firstTime ? indicator.openIndicator() : firstTime || indicator.openIndicator();
             var xhr = Titanium.Network.createHTTPClient();
             xhr.onerror = function(e) {
                 Ti.API.error("Bad Sever =>" + e.error);
