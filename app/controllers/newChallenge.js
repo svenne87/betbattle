@@ -156,7 +156,7 @@ function createTableRow(obj) {
 	//Ti.API.info("GAMEROW = "+ JSON.stringify(obj));
 	row.gameID = obj.attributes.game_id;
 	row.teamNames = obj.attributes.team_1.team_name + " - " + obj.attributes.team_2.team_name;
-	row.className = date.toUTCString();
+	row.className = 'matchRow';
 	return row;
 }
 
@@ -408,7 +408,9 @@ function getGames(league, firstTime, start, rows) {
 	// check connection
 	if (Alloy.Globals.checkConnection()) {
 
-		if (OS_IOS) {
+		if (OS_IOS && firstTime) {
+			indicator.openIndicator();
+		} else if(!firstTime) {
 			indicator.openIndicator();
 		}
 
