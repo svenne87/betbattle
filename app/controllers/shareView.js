@@ -238,42 +238,7 @@ googleBtn.add(googleLabel);
 // if user login with email
 if (Alloy.Globals.FACEBOOKOBJECT == null) {
 
-	if (OS_IOS) {
-		if (Titanium.Platform.canOpenURL('fb://')) {
-			fejjan = false;
-		} else {
-			fejjan = true;
-		}
-	} else if (OS_ANDROID) {
-		function shareToFejjan() {
-			try {
-				var intFejs = Ti.Android.createIntent({
-					action : Ti.Android.ACTION_SEND,
-					packageName : 'com.facebook.katana',
-					flags : Ti.Android.FLAG_ACTIVITY_NEW_TASK,
-					type : 'text/plain'
-				});
-				intFejs.putExtra(Ti.Android.EXTRA_TEXT, Alloy.Globals.PHRASES.twitterMsg);
-				Ti.Android.currentActivity.startActivity(intTwitter);
-			} catch(x) {
-				alert(Alloy.Globals.PHRASES.notInstalledTxt + ' ' + 'Facebook');
-			}
-		}
-
-	}
-
-	fbBtn.addEventListener('click', function(e) {
-		if (OS_IOS) {
-			if (fejjan == true) {
-				alert(Alloy.Globals.PHRASES.notInstalledTxt + ' ' + 'facebook');
-			} else {
-				Titanium.Platform.openURL('fb://publish');
-			}
-
-		} else if (OS_ANDROID) {
-			shareToFejjan();
-		}
-	});
+	alert('want to chain your account to fb?');
 } else {
 	//if user login with fb
 	fbUserBtn.addEventListener('click', function(e) {
