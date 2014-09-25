@@ -169,7 +169,6 @@ function createTableRow(obj) {
 // show the tableView
 function createAndShowTableView(league, array) {
 	// check if table exists, and if it does simply remove it
-	Ti.API.info("Array" + JSON.stringify(array));
 	var children = $.newChallenge.children;
 	for (var i = 0; i < children.length; i++) {
 		if (children[i].id === 'newChallengeTable') {
@@ -319,9 +318,10 @@ function createAndShowTableView(league, array) {
 		});
 	}
 
+
+	
 	table.addEventListener('scroll', function(_evt) {
 		if (OS_IOS) {
-
 			// include a timeout for better UE
 			setTimeout(function() {
 				if (currentSize - overlap < _evt.contentOffset.y + initialTableSize) {

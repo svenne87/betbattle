@@ -26,6 +26,11 @@ Ti.App.addEventListener('app:rebuildAndroidMenu', function() {
 	// TODO Exception här? funkar ändå?
 });
 
+// slide menu
+Ti.App.addEventListener('app:slide', function() {
+	$.ds.toggleLeftSlider();
+});
+
 /* Used to update coins information */
 Ti.App.addEventListener('app:coinsMenuInfo', function(data) {
 	winsLabel.setText(data.totalPoints);

@@ -1,13 +1,14 @@
-/*
+
  Ti.App.addEventListener("sliderToggled", function(e) {
- if ( typeof table !== 'undefined') {
- if (e.hasSlided) {
- table.touchEnabled = false;
- } else {
- table.touchEnabled = true;
- }
- }
- });*/
+	if ( typeof table !== 'undefined') {
+ 		if (e.hasSlided) {
+			table.touchEnabled = false;
+ 		} else {
+ 			table.touchEnabled = true;
+ 		}
+ 	}
+ });
+ 
 var mod = require('bencoding.blur');
 
 // refresh this view
@@ -958,7 +959,15 @@ function constructTableView(array) {
 	}
 
 	table.setData(sections);
-
+	
+	table.addEventListener('swipe', function(e) {
+		if(e.direction === 'right' || e.direction === 'left'){
+			Ti.App.fireEvent('app:slide');
+		}
+	
+	// TODO Testing
+	});
+	
 	// when clicking a row
 	table.addEventListener('click', function(e) {
 		if (Alloy.Globals.SLIDERZINDEX == 2) {

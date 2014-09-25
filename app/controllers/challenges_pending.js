@@ -688,10 +688,6 @@ function constructTableView(array) {
 		}
 	});
 
-	table.addEventListener('swipe', function(e) {
-		Ti.API.log("----->  " + JSON.stringify(e)); // TODO
-	});
-
 	$.challenges_pending.add(table);
 }
 if (OS_ANDROID) {

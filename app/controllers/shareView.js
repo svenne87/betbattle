@@ -216,7 +216,7 @@ if (Alloy.Globals.FACEBOOKOBJECT != null) {
 			var facebookModuleError = true;
 			var fb = Alloy.Globals.FACEBOOK;
 
-			if (OS_IOS) {
+			//if (OS_IOS) {
 				var permissions = fb.getPermissions();
 
 				if (permissions.indexOf('publish_actions') > -1) {
@@ -238,10 +238,10 @@ if (Alloy.Globals.FACEBOOKOBJECT != null) {
 						}
 					});
 				}
-			} else {
-				facebookModuleError = false;
-				performFacebookPost(fb);
-			}
+			/} else {
+				//facebookModuleError = false;
+				//performFacebookPost(fb);
+			//}
 
 			if (facebookModuleError) {
 				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.unknownFacebookErrorTxt);
