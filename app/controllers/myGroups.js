@@ -462,6 +462,7 @@ function createViews(array) {
 				win = null;
 			}
 
+		});
 	}
 }
 

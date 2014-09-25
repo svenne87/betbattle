@@ -63,8 +63,7 @@ if ( typeof lang == 'undefined' || lang == '' || lang == null) {
 
 // urls. Everything live needs to be done over SSL
 Alloy.Globals.INVITEURL = 'https://apps.facebook.com/betkampen';
-Alloy.Globals.BETKAMPENURL = 'http://31.216.36.213/betbattle';
-//'http://secure.jimdavislabs.se/secure/betkampen_vm';
+Alloy.Globals.BETKAMPENURL = 'http://31.216.36.213/betbattle'; //'http://secure.jimdavislabs.se/secure/betkampen_vm';
 Alloy.Globals.BETKAMPENLOGINURL = Alloy.Globals.BETKAMPENURL + '/api/login.php';
 Alloy.Globals.BETKAMPENCHALLENGESURL = Alloy.Globals.BETKAMPENURL + '/api/challenges_v2.php';
 Alloy.Globals.BETKAMPENUSERURL = Alloy.Globals.BETKAMPENURL + '/api/user_stats.php';

@@ -18,12 +18,7 @@ if(OS_ANDROID){
    		$.gplus.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
 		indicator.openIndicator();
 	});
-/*
-	$.gplus.addEventListener('androidback', function(){
-    	$.gplus.close();   	
-    	$.gplus = null;
-	});
-*/	
+		
 } else {
 	//indicator.openIndicator();
 }
