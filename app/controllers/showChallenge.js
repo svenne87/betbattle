@@ -226,7 +226,7 @@ function createLayout(game, values, games, currentStanding, isFirst) {
 	if (isFirst) {
 		var currentGroupName = groupName;
 
-		 if (currentGroupName !== null && typeof currentGroupName !== undefined) {
+		 if (currentGroupName !== null && typeof currentGroupName !== 'undefined' && currentGroupName !== '') {
 			botView.add(Ti.UI.createLabel({
 				top : 5,
 				width : '100%',
@@ -327,7 +327,7 @@ function createLayout(game, values, games, currentStanding, isFirst) {
 			currentStandingsView.add(Ti.UI.createLabel({
 				top : 10,
 				left : 20,
-				width : Ti.UI.SIZE,
+				width : Ti.UI.FILL,
 				textAlign : 'left',
 				backgroundColor : '#303030',
 				color : '#FFF',
