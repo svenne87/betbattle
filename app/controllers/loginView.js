@@ -158,6 +158,7 @@ function getChallengesAndStart() {
 								activity.finish();
 							}
 						}
+						
 
 					},
 					// function called when an error occurs, including a timeout
