@@ -155,8 +155,10 @@ function createTableRow(obj) {
 		height : 12
 	}));
 
-	// keep track of the table total heigth, to decide when to start fetching more
-	currentSize += row.toImage().height;
+	if (OS_IOS) {
+		// keep track of the table total heigth, to decide when to start fetching more
+		currentSize += row.toImage().height;
+	}
 
 	row.gameID = obj.attributes.game_id;
 	row.teamNames = obj.attributes.team_1.team_name + " - " + obj.attributes.team_2.team_name;
@@ -310,41 +312,50 @@ function createAndShowTableView(league, array) {
 
 	table.setData(data);
 
-	// get initial table size for iOS
-	table.addEventListener('postlayout', function() {
-		initialTableSize = table.rect.height;
-	});
+	if (OS_IOS) {
+		// get initial table size for iOS
+		table.addEventListener('postlayout', function() {
+			initialTableSize = table.rect.height;
+		});
+	}
 
 	table.addEventListener('scroll', function(_evt) {
-		// include a timeout for better UE
-		setTimeout(function() {
-			if (OS_IOS) {
+		if (OS_IOS) {
+
+			// include a timeout for better UE
+			setTimeout(function() {
 				if (currentSize - overlap < _evt.contentOffset.y + initialTableSize) {
-					if (isLoading)
+					if (isLoading) {
 						return;
-					if (totalNumberOfGames <= numberOfGamesFetched) {
-						// can't load more
-						return;
-					} else {
-						// try to fetch 20 more games each time
-						getGames(leagueId, false, ((numberOfGamesFetched - 0) + 20), 20);
-					}
-				}
-			} else {
-				if (_evt.firstVisibleItem + _evt.visibleItemCount == _evt.totalItemCount) {
-					if (isLoading)
-						return;
-					if (totalNumberOfGames <= numberOfGamesFetched) {
-						// can't load more
-						return;
-					} else {
-						// try to fetch 20 more games each time
-						getGames(leagueId, false, ((numberOfGamesFetched - 0) + 20), 20);
 					}
 
+					if (totalNumberOfGames <= numberOfGamesFetched) {
+						// can't load more
+						return;
+					} else {
+						// try to fetch 20 more games each time
+						getGames(leagueId, false, ((numberOfGamesFetched - 0) + 20), 20);
+					}
+				}
+			}, 500);
+		} else {
+			if (_evt.firstVisibleItem + _evt.visibleItemCount == _evt.totalItemCount) {
+				if (isLoading) {
+					return;
+				}
+
+				if (totalNumberOfGames <= numberOfGamesFetched) {
+					// can't load more
+					return;
+				} else {
+					setTimeout(function() {
+						// try to fetch 20 more games each time
+						getGames(leagueId, false, ((numberOfGamesFetched - 0) + 20), 20);
+					}, 200);
 				}
 			}
-		}, 500);
+		}
+
 	});
 
 	// add event listener
@@ -421,8 +432,9 @@ function setDisplayText() {
 function getGames(league, firstTime, start, rows) {
 	// check connection
 	if (Alloy.Globals.checkConnection()) {
-		if (isLoading)
+		if (isLoading) {
 			return;
+		}
 
 		if (OS_IOS && firstTime) {
 			indicator.openIndicator();
@@ -531,7 +543,7 @@ var footerViewText;
 var isLoading = false;
 var initialTableSize = 0;
 var currentSize = 0;
-var overlap = 50;
+var overlap = 62;
 
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({
