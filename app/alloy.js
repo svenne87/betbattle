@@ -43,6 +43,7 @@ Alloy.Globals.AcceptedBeacon3 = false;
 Alloy.Globals.connect;
 Alloy.Globals.COUPON = null;
 Alloy.Globals.hasCoupon = false;
+Alloy.Globals.appStatus = 'foreground';
 
 //initialize beacons
 if (OS_IOS) {

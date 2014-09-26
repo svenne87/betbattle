@@ -206,7 +206,10 @@ function authWithRefreshToken() {
 		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 	}
 }
-
+Ti.App.addEventListener('pause',function(e){
+   Ti.API.info("APP In background");
+   Alloy.Globals.appStatus = 'background';
+});
 // resume listener for ios and android
 if (OS_IOS) {
 	if (Alloy.Globals.OPEN && Alloy.Globals.RESUME) {
@@ -214,6 +217,7 @@ if (OS_IOS) {
 		Ti.App.addEventListener('resume', function() {
 			if (Alloy.Globals.CURRENTVIEW !== null) {
 				// check connection
+				Alloy.Globals.appStatus = 'foreground';
 				if (Alloy.Globals.checkConnection()) {
 					if (Alloy.Globals.FACEBOOKOBJECT) {
 						var fb = Alloy.Globals.FACEBOOK;
@@ -247,12 +251,14 @@ if (OS_IOS) {
 		var activity = Ti.Android.currentActivity;
 		activity.addEventListener('resume', function(e) {
 			//indicator.openIndicator();
+			Alloy.Globals.appStatus = 'foreground';
 			Ti.App.fireEvent('app:challengesViewRefresh');
 		});
 	} else {
 		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionError);
 	}
 }
+
 
 var deviceToken;
 
@@ -401,7 +407,12 @@ function getBeacons() {
 								Ti.API.info("BEACON RETREIVED ID : " + beacons[i].identifier);
 
 								if (e.identifier == beacons[i].identifier) {
-									getPromotion(beacons[i].id);
+									if(Alloy.Globals.appStatus == 'foreground'){
+										getPromotion(beacons[i].id);
+									}else if(Alloy.Globals.appStatus){
+										
+									}
+									
 								}
 							}
 
@@ -589,7 +600,7 @@ function createPromoTypeOne(promo) {
 		layout : "vertical",
 		height : "90%",
 	}), b = Titanium.UI.createButton({
-		title : 'Close'
+		title : Alloy.Globals.PHRASES.promoCloseBtnTxt
 	});
 	w.title = promo.title;
 	w.barColor = 'black';
