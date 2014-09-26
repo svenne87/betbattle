@@ -961,8 +961,12 @@ function constructTableView(array) {
 	table.setData(sections);
 	
 	table.addEventListener('swipe', function(e) {
-		if(e.direction !== 'up' || e.direction !== 'down'){
+		if(e.direction !== 'up' && e.direction !== 'down'){
+			Ti.API.log(e.direction);
+			
+			table.touchEnabled = false;
 			Ti.App.fireEvent('app:slide');
+			table.touchEnabled = true;
 		}
 	
 	// TODO Testing
