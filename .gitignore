@@ -256,3 +256,9 @@ Resources/iphone/alloy/controllers/groupSelect.js
 Resources/iphone/alloy/controllers/groupSelect.js
 
 Resources/iphone/alloy/widgets/danielhanold.pickerWidget/controllers/widget.js
+
+Resources/iphone/alloy/widgets/danielhanold.pickerWidget/styles/overlay.js
+
+Resources/iphone/alloy/widgets/danielhanold.pickerWidget/styles/pickerView.js
+
+Resources/iphone/alloy/widgets/danielhanold.pickerWidget/styles/widget.js

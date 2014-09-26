@@ -205,7 +205,8 @@ function teamPicked(tid, name) {
 			addTeam.open("POST", Alloy.Globals.BETKAMPENSETUSERTEAM + '?lang=' + Alloy.Globals.LOCALE);
 			var params = {
 				uid : Alloy.Globals.BETKAMPENUID,
-				tid : tid
+				tid : tid,
+				sid : 1
 			};
 			addTeam.send(params);
 			
