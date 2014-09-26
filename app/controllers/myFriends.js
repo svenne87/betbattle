@@ -159,14 +159,14 @@ function createGUI(obj) {
 					fontFamily : "Impact",
 				}
 			});
-			w.add(friendStats);
+			modal.add(friendStats);
 
 			var friend = Ti.UI.createView({
 				top : 2,
 				width : "100%",
 				height : 45,
 			});
-			w.add(friend);
+			modal.add(friend);
 			var image;
 			if (e.source.fbid !== null) {
 				image = "https://graph.facebook.com/" + e.source.fbid + "/picture?type=large";
