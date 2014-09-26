@@ -421,6 +421,9 @@ function createAndShowTableView(league, array) {
 		scrollView.add(tableView);
 
 		var offset = 0;
+		var refreshStatus = false;	
+		
+		
 		scrollView.addEventListener('scroll', function(e) {
 			if (e.firstVisibleItem > 0) {
 				offset = 50;
@@ -432,14 +435,12 @@ function createAndShowTableView(league, array) {
 		// set the initial position of the scrollView's content
 		var init = setInterval(function(e) {
 			if (offset == 50) {
-				Ti.API.debug('we have just done what the scrollView\'s contentOffset should be doing');
+				//we have just done what the scrollView\'s contentOffset should be doing
 				clearInterval(init);
 			}
 			scrollView.scrollTo(0, 50);
 		}, 100);
 
-		// declare a boolean to indicate that a user held to refresh
-		var refreshStatus = false;
 		// TODO
 		var refreshLabel = Ti.UI.createLabel({
 			text : 'Release to refresh',
@@ -476,6 +477,10 @@ function createAndShowTableView(league, array) {
 			
 		scrollView.addEventListener('touchstart', function(){
 			refreshStatus = false;
+			
+			if(offset < 1) {
+								Ti.API.log("Start");
+			}
 			
 			if(offset == 0) {
 				tableHeaderView.add(refreshLabel);
