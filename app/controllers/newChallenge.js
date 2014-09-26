@@ -171,7 +171,7 @@ function createAndShowTableView(league, array) {
 	// check if table exists, and if it does simply remove it
 	var children = $.newChallenge.children;
 	for (var i = 0; i < children.length; i++) {
-		if (children[i].id === 'newChallengeTable') {
+		if (children[i].id === 'newChallengeTable' || children[i].id === 'scrollView') {
 			$.newChallenge.remove(children[i]);
 		}
 	}
@@ -318,12 +318,7 @@ function createAndShowTableView(league, array) {
 			initialTableSize = table.rect.height;
 		});
 	}
-/*
-	table.addEventListener('scrollend', function(e) {
-		Ti.API.log("zee End " + e.x + " " + e.y);
-	});
-*/	
-// TODO slow on IOS
+
 	table.addEventListener('scroll', function(_evt) {
 		if (OS_IOS) {
 			// include a timeout for better UE
@@ -342,7 +337,7 @@ function createAndShowTableView(league, array) {
 					}
 				}
 			}, 500);
-		} else {
+		} else {			
 			if (_evt.firstVisibleItem + _evt.visibleItemCount == _evt.totalItemCount) {
 				if (isLoading) {
 					return;
@@ -412,8 +407,98 @@ function createAndShowTableView(league, array) {
 		}
 	});
 
-	tableView.add(table);
-	$.newChallenge.add(tableView);
+	/* Custom pull to refresh fix for Android */
+	if (OS_ANDROID) {		
+		tableView.add(table);
+
+		var scrollView = Ti.UI.createScrollView({
+			zIndex : 2,
+			scrollType : 'horizontal',
+			showVerticalScrollIndicator : false,
+			id : 'scrollView'
+		});
+		tableView.zIndex = 1;
+		scrollView.add(tableView);
+
+		var offset = 0;
+		var refreshStatus = false;	
+		
+		
+		scrollView.addEventListener('scroll', function(e) {
+			if (e.firstVisibleItem > 0) {
+				offset = 50;
+			} else {
+				offset = 0;
+			}
+		});
+		
+		// set the initial position of the scrollView's content
+		var init = setInterval(function(e) {
+			if (offset == 50) {
+				//we have just done what the scrollView\'s contentOffset should be doing
+				clearInterval(init);
+			}
+			scrollView.scrollTo(0, 50);
+		}, 100);
+
+		// TODO
+		var refreshLabel = Ti.UI.createLabel({
+			text : 'Release to refresh',
+			backgroundColor : '#303030',
+			height : 'auto',
+			width : 'auto',
+			top : 60,
+			textAlign : 'center',
+			color : Alloy.Globals.themeColor(),
+			font : {
+				fontSize : Alloy.Globals.getFontSize(1),
+				fontFamily : Alloy.Globals.getFont(),
+			}
+		});
+
+		scrollView.addEventListener('touchend', function() {
+			if(offset == 0) {
+				tableHeaderView.remove(refreshLabel);
+				tableHeaderView.setHeight('10%');
+			}
+			
+			if (offset == 0 && refreshStatus) {
+				Ti.API.info('REFRESH !!!!');
+								
+				if (Alloy.Globals.checkConnection()) {
+						indicator.openIndicator();
+						getGames(leagueId, true, 0, 20);
+				} else {
+					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+				}
+				scrollView.scrollTo(0, 50);
+			}
+		});
+			
+		scrollView.addEventListener('touchstart', function(){
+			refreshStatus = false;
+			
+			if(offset < 1) {
+								Ti.API.log("Start");
+			}
+			
+			if(offset == 0) {
+				tableHeaderView.add(refreshLabel);
+				tableHeaderView.setHeight(tableHeaderView.toImage().height + refreshLabel.toImage().height);
+			
+				setTimeout(function() {
+					// refresh is valid after 1 seconds
+					refreshStatus = true;
+				}, 1000);
+			}
+		});
+
+		$.newChallenge.add(scrollView);
+	} else {
+		tableView.add(table);
+		$.newChallenge.add(tableView);
+	}
+	/* The fix End here */
 }
 
 /* Create Rows and add to table */
@@ -435,7 +520,7 @@ function setDisplayText() {
 // will fetch games from API
 function getGames(league, firstTime, start, rows) {
 	// check connection
-	if (Alloy.Globals.checkConnection()) {	
+	if (Alloy.Globals.checkConnection()) {
 		if (isLoading) {
 			return;
 		}
