@@ -138,6 +138,39 @@ if (Alloy.Globals.FACEBOOKOBJECT != null) {
 		color : "#FFF"
 	});
 	fbUserBtn.add(fbLabel);
+} else {
+	if (OS_ANDROID) {
+		var fbBtn = Titanium.UI.createView({
+			top : "2%",
+			height : '11%',
+			width : '80%',
+			left : '10%',
+			backgroundColor : '#3B5998',
+			borderRadius : 5
+		});
+		mainView.add(fbBtn);
+
+		var fbiLabel = Titanium.UI.createLabel({
+			font : {
+				fontFamily : font,
+				fontSize : 22
+			},
+			text : fontawesome.icon('fa-facebook'),
+			left : '5%',
+			color : '#fff',
+		});
+		fbBtn.add(fbiLabel);
+
+		fbtLabel = Titanium.UI.createLabel({
+			text : Alloy.Globals.PHRASES.shareFBTxt,
+			font : {
+				fontSize : 18,
+				fontFamily : "Impact"
+			},
+			color : "#FFF"
+		});
+		fbBtn.add(fbtLabel);
+	}
 }
 //-------------------------------------------------------------------TWITTER--------------------------------------------------------------------------------
 if (Titanium.Platform.canOpenURL('twitter://')) {
@@ -217,30 +250,30 @@ if (Alloy.Globals.FACEBOOKOBJECT != null) {
 			var fb = Alloy.Globals.FACEBOOK;
 
 			//if (OS_IOS) {
-				var permissions = fb.getPermissions();
+			var permissions = fb.getPermissions();
 
-				if (permissions.indexOf('publish_actions') > -1) {
-					// already have permission
+			if (permissions.indexOf('publish_actions') > -1) {
+				// already have permission
+				facebookModuleError = false;
+				performFacebookPost(fb);
+			} else {
+				fb.reauthorize(['publish_actions'], 'friends', function(e) {
 					facebookModuleError = false;
-					performFacebookPost(fb);
-				} else {
-					fb.reauthorize(['publish_actions'], 'friends', function(e) {
-						facebookModuleError = false;
 
-						if (e.success) {
-							performFacebookPost(fb);
+					if (e.success) {
+						performFacebookPost(fb);
+					} else {
+						if (e.error && !e.cancelled) {
+							Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.facebookConnectionErrorTxt);
 						} else {
-							if (e.error && !e.cancelled) {
-								Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.facebookConnectionErrorTxt);
-							} else {
 
-							}
 						}
-					});
-				}
+					}
+				});
+			}
 			//} else {
-				//facebookModuleError = false;
-				//performFacebookPost(fb);
+			//facebookModuleError = false;
+			//performFacebookPost(fb);
 			//}
 
 			if (facebookModuleError) {
@@ -342,6 +375,30 @@ if (Alloy.Globals.FACEBOOKOBJECT != null) {
 		});
 	}
 
+} else {
+	if (OS_ANDROID) {
+		function shareToFB() {
+			try {
+				var intFB = Ti.Android.createIntent({
+					action : Ti.Android.ACTION_SEND,
+					packageName : "com.facebook.katana",
+					className : "com.facebook.katana.ShareLinkActivity",
+					flags : 0x30000000,
+					type : "text/plain"
+				});
+				intFB.putExtra(Ti.Android.EXTRA_TEXT, "http://www.google.com");
+				intFB.addCategory(Ti.Android.CATEGORY_LAUNCHER);
+				Ti.Android.currentActivity.startActivity(intFb);
+			} catch(x) {
+				alert('no facebook man');
+			}
+		}
+
+	
+	fbBtn.addEventListener('click', function(e){
+		shareToFB();
+	});
+	}
 }
 
 // --------------------------------------------------------------- Share to TWITTER  -------------------------------------------------------------------------------
