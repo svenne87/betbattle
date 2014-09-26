@@ -104,13 +104,18 @@ function createGUI(obj) {
 		id : obj.id,
 		name : obj.name,
 		fbid : obj.fbid,
+		score : obj.score,
+		wins : obj.wins,
+		level : obj.level,
+		teamName : obj.team.data[0].name,
+		teamLogo : obj.team.data[0].team_logo,
 		borderRadius : 5
 	});
 
 	friend.add(friendInfo);
 	friendInfo.addEventListener("click", function(e) {
 
-		getFriendInfo(e.source.id);
+		//getFriendInfo(e.source.id);
 		if (OS_ANDROID) {
 			var w = Ti.UI.createView({
 				height : "100%",
@@ -265,21 +270,29 @@ function createGUI(obj) {
 
 			friend.add(profilePic);
 
-			var frWins = Ti.UI.createLabel({
-				text : Alloy.Globals.PHRASES.winsInfoTxt + ': 5',
+			var frLvl = Ti.UI.createLabel({
+				text : Alloy.Globals.PHRASES.levelTxt + ': ' + e.source.level,
 				left : "5%",
 				color : "#000",
-				top : 120,
+				top : 110,
 			});
-			friend.add(frWins);
+			friend.add(frLvl);
 
 			var frScore = Ti.UI.createLabel({
-				text : Alloy.Globals.PHRASES.scoreInfoTxt + ': 1237',
+				text : Alloy.Globals.PHRASES.scoreInfoTxt + ': ' + e.source.score,
+				left : "5%",
+				color : "#000",
+				top : 130,
+			});
+			friend.add(frScore);
+
+			var frWins = Ti.UI.createLabel({
+				text : Alloy.Globals.PHRASES.winsInfoTxt + ': ' + e.source.wins,
 				left : "5%",
 				color : "#000",
 				top : 150,
 			});
-			friend.add(frScore);
+			friend.add(frWins);
 
 			var favTeam = Ti.UI.createLabel({
 				text : Alloy.Globals.PHRASES.favTeamTxt,
@@ -288,21 +301,21 @@ function createGUI(obj) {
 				top : 190,
 			});
 			friend.add(favTeam);
-			
+
 			Ti.API.info('VARFÖR TOMT??' + teamName);
-			
+
 			var frTeam = Ti.UI.createLabel({
-				text : teamName,
+				text : e.source.teamName,
 				left : "5%",
 				color : "#000",
 				top : 210,
 			});
 			friend.add(frTeam);
 
-			var url = teamLogo.replace('logos', 'logos');
-	var finalUrl = url.replace(' ', '');
-	var finalUrl = finalUrl.toLowerCase();
-	var images = Alloy.Globals.BETKAMPENURL + finalUrl;
+			var url = e.source.teamLogo.replace('logos', 'logos');
+			var finalUrl = url.replace(' ', '');
+			var finalUrl = finalUrl.toLowerCase();
+			var images = Alloy.Globals.BETKAMPENURL + finalUrl;
 
 			var profilePics = Titanium.UI.createImageView({
 				image : images,
@@ -312,7 +325,7 @@ function createGUI(obj) {
 				top : 170,
 				borderRadius : 35
 			});
-		
+
 			friend.add(profilePics);
 
 			w.addEventListener('click', function() {
@@ -350,6 +363,11 @@ function createGUI(obj) {
 		id : obj.id,
 		name : obj.name,
 		fbid : obj.fbid,
+		score : obj.score,
+		wins : obj.wins,
+		level : obj.level,
+		teamName : obj.team.data[0].name,
+		teamLogo : obj.team.data[0].team_logo,
 		left : '3%',
 		borderRadius : 17
 	});
@@ -370,6 +388,11 @@ function createGUI(obj) {
 		id : obj.id,
 		name : obj.name,
 		fbid : obj.fbid,
+		score : obj.score,
+		wins : obj.wins,
+		level : obj.level,
+		teamName : obj.team.data[0].name,
+		teamLogo : obj.team.data[0].team_logo,
 		font : {
 			fontSize : 18,
 			fontFamily : "Impact"
@@ -506,7 +529,7 @@ var xhr = Ti.Network.createHTTPClient({
 				return ((x < y) ? -1 : ((x > y) ? 1 : 0));
 			});
 			for (var i = 0; i < friends.length; i++) {
-				//alert(friends[i].name);
+				//alert(friends[i].team.data);
 				createGUI(friends[i]);
 			}
 		}
@@ -554,7 +577,6 @@ $.myFriends.addEventListener('close', function() {
 	indicator.closeIndicator();
 });
 
-
 function getFriendInfo(uid) {
 
 	var teamInfo = Ti.Network.createHTTPClient({
@@ -566,7 +588,6 @@ function getFriendInfo(uid) {
 			Ti.API.info('LAGET!!!!' + teamLogo);
 			return teamName;
 			return teamLogo;
-			
 
 		},
 		// function called when an error occurs, including a timeout
