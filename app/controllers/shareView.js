@@ -173,8 +173,41 @@ if (Alloy.Globals.FACEBOOKOBJECT != null) {
 	}
 }
 //-------------------------------------------------------------------TWITTER--------------------------------------------------------------------------------
-if (Titanium.Platform.canOpenURL('twitter://')) {
+if(OS_IOS){
+	if (Titanium.Platform.canOpenURL('twitter://')) {
 
+	var twitterBtn = Titanium.UI.createView({
+		top : "2%",
+		height : '11%',
+		width : '80%',
+		left : '10%',
+		backgroundColor : '#00ACED',
+		borderRadius : 5
+	});
+	mainView.add(twitterBtn);
+
+	var twitterIconLabel = Titanium.UI.createLabel({
+		font : {
+			fontFamily : font,
+			fontSize : 22
+		},
+		text : fontawesome.icon('fa-twitter'),
+		left : '5%',
+		color : '#fff',
+	});
+	twitterBtn.add(twitterIconLabel);
+
+	twitterLabel = Titanium.UI.createLabel({
+		text : Alloy.Globals.PHRASES.shareTwitterTxt,
+		font : {
+			fontSize : 18,
+			fontFamily : "Impact"
+		},
+		color : "#FFF"
+	});
+	twitterBtn.add(twitterLabel);
+}
+} else {
 	var twitterBtn = Titanium.UI.createView({
 		top : "2%",
 		height : '11%',
