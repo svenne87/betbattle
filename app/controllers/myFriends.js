@@ -247,7 +247,7 @@ function createGUI(obj) {
 
 			friend.add(profilePics);
 
-			textWrapper.addEventListener("click", function(e) {
+			friend.addEventListener("click", function(e) {
 				modal.hide();
 				w.hide();
 				modal = null;
