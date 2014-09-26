@@ -200,6 +200,7 @@ function createAndShowTableView(league, array) {
 		// will refresh on pull
 		refresher.addEventListener('refreshstart', function(e) {
 			if (Alloy.Globals.checkConnection()) {
+				// TODO reset all fetch more data!!
 				getGames(leagueId, true, 0, 20);
 			} else {
 				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
@@ -317,11 +318,12 @@ function createAndShowTableView(league, array) {
 			initialTableSize = table.rect.height;
 		});
 	}
-
+/*
 	table.addEventListener('scrollend', function(e) {
 		Ti.API.log("zee End " + e.x + " " + e.y);
 	});
-	
+*/	
+// TODO slow on IOS
 	table.addEventListener('scroll', function(_evt) {
 		if (OS_IOS) {
 			// include a timeout for better UE
@@ -433,7 +435,7 @@ function setDisplayText() {
 // will fetch games from API
 function getGames(league, firstTime, start, rows) {
 	// check connection
-	if (Alloy.Globals.checkConnection()) {
+	if (Alloy.Globals.checkConnection()) {	
 		if (isLoading) {
 			return;
 		}
@@ -463,7 +465,7 @@ function getGames(league, firstTime, start, rows) {
 			xhr.setRequestHeader("content-type", "application/json");
 			xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
 			xhr.setTimeout(Alloy.Globals.TIMEOUT);
-
+			isLoading = true;
 			xhr.send();
 		} catch(e) {
 			isLoading = false;

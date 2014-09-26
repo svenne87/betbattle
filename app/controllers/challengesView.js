@@ -961,7 +961,7 @@ function constructTableView(array) {
 	table.setData(sections);
 	
 	table.addEventListener('swipe', function(e) {
-		if(e.direction === 'right' || e.direction === 'left'){
+		if(e.direction !== 'up' || e.direction !== 'down'){
 			Ti.App.fireEvent('app:slide');
 		}
 	
