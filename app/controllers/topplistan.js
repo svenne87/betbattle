@@ -167,25 +167,25 @@ function createGUI(obj, i) {
 				left : 0,
 				zIndex : "1000",
 			});
-
-			var blur = mod.createBasicBlurView({
-				width : 150,
-				height : 150,
-				//image : e.source.image,
-				borderRadius : 10,
-				blurRadius : 35,
-				//opacity: '0.5',
-			});
-			w.add(blur);
+			
+			var url = e.source.teamLogo.replace('logos', 'logos');
+			var finalUrl = url.replace(' ', '');
+			var finalUrl = finalUrl.toLowerCase();
+			var images = Alloy.Globals.BETKAMPENURL + finalUrl;	
 
 			var modal = Ti.UI.createView({
 				height : 250,
-				width : 250,
-				backgroundColor : '#c5c5c5',
+				width : "85%",
+				backgroundColor : '#fff',
 				borderRadius : 10,
-				opacity : 0.5,
 			});
 			w.add(modal);
+
+			var textWrapper = Ti.UI.createView({
+				height : 250,
+				width : "85%"
+			});
+			w.add(textWrapper);
 
 			friendName = obj.name.toString();
 			if (friendName.length > 18) {
@@ -204,18 +204,12 @@ function createGUI(obj, i) {
 			});
 			modal.add(friendStats);
 
-			var friend = Ti.UI.createView({
-				top : 2,
-				width : "100%",
-				height : 45,
-			});
-			modal.add(friend);
 			var image;
-			if (e.source.fbid !== null) {
-				image = "https://graph.facebook.com/" + e.source.fbid + "/picture?type=large";
+			if (obj.fbid !== null) {
+				image = "https://graph.facebook.com/" + obj.fbid + "/picture?type=large";
 			} else {
 				// get betkampen image
-				image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + e.source.id + '.png';
+				image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + obj.id + '.png';
 			}
 
 			var profilePic = Titanium.UI.createImageView({
@@ -228,50 +222,115 @@ function createGUI(obj, i) {
 			});
 			profilePic.addEventListener('error', function(e) {
 				// fallback for image
-				profilePic.image = '/images/no_pic.png';
+				profilePic.image = Alloy.Globals.BETKAMPENURL + '/profile_images/0.png';
 			});
 
-			friend.add(profilePic);
+			modal.add(profilePic);
 
-			var frLvl = Ti.UI.createLabel({
+			if (e.source.friend == true) {
+				var frLvl = Ti.UI.createLabel({
 				text : Alloy.Globals.PHRASES.levelTxt + ': ' + e.source.level,
-				left : "5%",
+				left : '5%',
 				color : "#000",
 				top : 110,
+				font : {
+					fontSize : 18,
+					fontFamily : "Impact",
+				}
 			});
-			friend.add(frLvl);
+			modal.add(frLvl);
 
 			var frScore = Ti.UI.createLabel({
-				text : Alloy.Globals.PHRASES.scoreInfoTxt + ': ' + e.source.score,
-				left : "5%",
+				text: Alloy.Globals.PHRASES.scoreInfoTxt + ': ' + e.source.score,
+				left : '5%',
 				color : "#000",
 				top : 130,
+				font : {
+					fontSize : 18,
+					fontFamily : "Impact",
+				}
 			});
-			friend.add(frScore);
+			modal.add(frScore);
 
 			var frWins = Ti.UI.createLabel({
 				text : Alloy.Globals.PHRASES.winsInfoTxt + ': ' + e.source.wins,
-				left : "5%",
+				left : '5%',
 				color : "#000",
 				top : 150,
+				font : {
+					fontSize : 18,
+					fontFamily : "Impact",
+				}
 			});
-			friend.add(frWins);
+			modal.add(frWins);
+			} else {
+				var addFriendBtn = Ti.UI.createButton({
+					height : 40,
+					width : '60%',
+					left : '20%',
+					top : 115,
+					id : e.source.id,
+					fName : e.source.name,
+					title : Alloy.Globals.PHRASES.addFriendsTxt,
+					backgroundColor : '#85d711',
+					color : '#000',
+					font : {
+						fontSize : 19,
+						fontFamily : "Impact"
+					},
+					borderRadius : 5
+				});
+				w.add(addFriendBtn);
+
+				addFriendBtn.addEventListener('click', function(e) {
+					var addFriends = Ti.Network.createHTTPClient();
+					addFriends.open("POST", Alloy.Globals.BETKAMPENADDFRIENDSURL);
+					var params = {
+						uid : Alloy.Globals.BETKAMPENUID,
+						fid : e.source.id
+					};
+					addFriends.send(params);
+					//alert(Alloy.Globals.PHRASES.friendSuccess + ' ' + e.source.fName);
+					Alloy.Globals.showToast(Alloy.Globals.PHRASES.friendSuccess + ' ' + e.source.fName);
+					var win = Alloy.createController('Topplistan').getView();
+					if (OS_IOS) {
+						Alloy.Globals.NAV.openWindow(win, {
+							animated : false
+						});
+					} else {
+						win.open({
+							fullScreen : true
+						});
+						win = null;
+					}
+					$.scoreView.close();
+
+				});
+			}
 
 			var favTeam = Ti.UI.createLabel({
 				text : Alloy.Globals.PHRASES.favTeamTxt,
 				left : "5%",
 				color : "#000",
 				top : 190,
+				font : {
+					fontSize : 18,
+					fontFamily : "Impact",
+				}
 			});
-			friend.add(favTeam);
+			modal.add(favTeam);
 
 			var frTeam = Ti.UI.createLabel({
 				text : e.source.teamName,
 				left : "5%",
 				color : "#000",
 				top : 210,
+				font : {
+					fontSize : 18,
+					fontFamily : "Impact",
+				}
 			});
-			friend.add(frTeam);
+			modal.add(frTeam);
 
 			var url = e.source.teamLogo.replace('logos', 'logos');
 			var finalUrl = url.replace(' ', '');
@@ -287,12 +346,17 @@ function createGUI(obj, i) {
 				borderRadius : 35
 			});
 
-			friend.add(profilePics);
+			modal.add(profilePics);
 
-			friend.addEventListener("click", function(e) {
+			/* When clicking on the modal */
+			textWrapper.addEventListener("click", function(e) {
 				modal.hide();
-				w.hide();
 				modal = null;
+			});
+
+			/* When clicking outside of the modal */
+			w.addEventListener('click', function() {
+				w.hide();
 				w = null;
 			});
 
