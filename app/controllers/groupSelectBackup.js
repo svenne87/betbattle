@@ -10,11 +10,13 @@ Ti.App.addEventListener("sliderToggled", function(e) {
 	}
 });
 
+/*
 // refresh this view
 Ti.App.addEventListener("groupSelectRefresh", function(e) {
 	indicator.openIndicator();
 	getGroups();
 });
+*/
 
 function getGroups() {
 

@@ -8,12 +8,6 @@ Ti.App.addEventListener("sliderToggled", function(e) {
 	}
 });
 
-// refresh this view
-Ti.App.addEventListener("newChallengeRefresh", function(e) {
-	indicator.openIndicator();
-	getGames(leagueId, true, 0, 20);
-});
-
 // create gameListObject
 function createGameListObject(response) {
 	var array = [];
@@ -201,6 +195,9 @@ function createAndShowTableView(league, array) {
 		// will refresh on pull
 		refresher.addEventListener('refreshstart', function(e) {
 			if (Alloy.Globals.checkConnection()) {
+				initialTableSize = 0;
+				currentSize = 0;
+				overlap = 62;
 				getGames(leagueId, true, 0, 20);
 			} else {
 				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);

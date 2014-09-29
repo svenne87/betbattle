@@ -19,11 +19,6 @@ var tableWrapper = Ti.UI.createView({
 	width : Ti.UI.FILL,
 
 });
-// refresh this view
-Ti.App.addEventListener("groupSelectRefresh", function(e) {
-	indicator.openIndicator();
-	getGroups();
-});
 
 function createMemberRow(member, subRow) {
 	//profilepicture

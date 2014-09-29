@@ -669,10 +669,6 @@ function Controller() {
         height: "75%",
         width: Ti.UI.FILL
     });
-    Ti.App.addEventListener("groupSelectRefresh", function() {
-        indicator.openIndicator();
-        getGroups();
-    });
     var args = arguments[0] || {};
     var groupObjects = [];
     var friendObjects = [];

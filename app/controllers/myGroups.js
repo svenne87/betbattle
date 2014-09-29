@@ -79,6 +79,7 @@ var scoreInfo = Ti.UI.createLabel({
 });
 infoTxt.add(scoreInfo);
 
+
 // refresh this view
 Ti.App.addEventListener("groupSelectRefresh", function(e) {
 	getGroups();
