@@ -23,7 +23,7 @@
 "#row": {
   	height : '50dp',
   	width : '250',
- 	selectedBackgroundColor : '#303030',
+ 	backgroundSelectedColor : '#303030',
  	selectedColor : 'white',
   	backgroundColor : '#40000000',
 },

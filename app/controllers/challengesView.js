@@ -46,7 +46,6 @@ function getUserInfo() {
 		xhr.setRequestHeader("content-type", "application/json");
 		xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
 		xhr.setTimeout(Alloy.Globals.TIMEOUT);
-
 		xhr.send();
 	} catch(e) {
 		var error = { totalCoins : '', totalPoints : ''};
@@ -194,7 +193,7 @@ function createEmptyTableRow(text) {
 	return row;
 }
 
-// build and return rows that are of the type 'Accept' , 'Pending' and 'Finished'
+// build and return rows that are of the type 'Accept', 'Pending' and 'Finished'
 function constructChallengeRows(obj, index, type) {
 	var child = true;
 	if (OS_ANDROID) {
@@ -489,7 +488,6 @@ function constructChallengeRows(obj, index, type) {
 
 // create the hole table view with sections and checks if there are no challenges
 function constructTableView(array) {
-
 	if (OS_IOS) {
 		refresher = Ti.UI.createRefreshControl({
 			tintColor : Alloy.Globals.themeColor()
@@ -785,7 +783,6 @@ function constructTableView(array) {
 
 		if (e.rowData !== null) {
 			if (Alloy.Globals.checkConnection()) {
-				Ti.API.info("CLICKADE ROW : " + JSON.stringify(e.rowData));
 				if ( typeof e.rowData.id !== 'undefined') {
 					if (e.rowData.className === 'accept') {
 						var obj = Alloy.Globals.CHALLENGEOBJECTARRAY[0][e.rowData.id];
@@ -834,7 +831,8 @@ function constructTableView(array) {
 
 					} else if (e.rowData.id === 'pending') {
 						var win = Alloy.createController('challenges_pending').getView();
-
+						Alloy.Globals.WINDOWS.push(win);
+						
 						if (OS_IOS) {
 							Alloy.Globals.NAV.openWindow(win, {
 								animated : true,
@@ -846,7 +844,8 @@ function constructTableView(array) {
 						}
 					} else if (e.rowData.id === 'finished') {
 						var win = Alloy.createController('challenges_finished').getView();
-
+						Alloy.Globals.WINDOWS.push(win);
+						
 						if (OS_IOS) {
 							Alloy.Globals.NAV.openWindow(win, {
 								animated : true,
@@ -884,6 +883,7 @@ function constructTableView(array) {
 								};
 
 								var win = Alloy.createController('challenge', arg).getView();
+								Alloy.Globals.WINDOWS.push(win);
 
 								if (OS_IOS) {
 									Alloy.Globals.NAV.openWindow(win, {
@@ -904,7 +904,6 @@ function constructTableView(array) {
 						var obj = Alloy.Globals.CHALLENGEOBJECTARRAY[1][e.rowData.id];
 						if (obj.attributes.show !== 0) {
 							// view challenge
-							Ti.API.info("GRUPPEN : " + JSON.stringify(obj.attributes.group));
 							var group = null;
 							try {
 								group = obj.attributes.group[0].name;
@@ -922,6 +921,7 @@ function constructTableView(array) {
 							
 							Alloy.Globals.CHALLENGEINDEX = e.rowData.id;
 							var win = Alloy.createController('showChallenge', args).getView();
+							Alloy.Globals.WINDOWS.push(win);
 
 							if (OS_IOS) {
 								Alloy.Globals.NAV.openWindow(win, {
@@ -995,7 +995,9 @@ function constructTableView(array) {
 		swipeRefresh.addEventListener('refreshing', function() {
 			if (Alloy.Globals.checkConnection()) {
 				indicator.openIndicator();
-				getChallenges();
+				setTimeout(function(){
+					getChallenges();
+				}, 800);
 			} else {
 				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 				swipeRefresh.setRefreshing(false);
