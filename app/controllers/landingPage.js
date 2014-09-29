@@ -349,6 +349,18 @@ if (OS_IOS) {
 
 }
 
+
+// Check if the device is running iOS 8 or later, before registering for local notifications
+if (Ti.Platform.name == "iPhone OS" && parseInt(Ti.Platform.version.split(".")[0]) >= 8) {
+    Ti.App.iOS.registerUserNotificationSettings({
+        types: [
+            Ti.App.iOS.USER_NOTIFICATION_TYPE_ALERT,
+            Ti.App.iOS.USER_NOTIFICATION_TYPE_SOUND,
+            Ti.App.iOS.UESR_NOTIFICATION_TYPE_BADGE
+        ]
+    });
+}
+
 var beacons = [];
 
 function getBeacons() {
@@ -411,7 +423,7 @@ function getBeacons() {
 									if(Alloy.Globals.appStatus == 'foreground'){
 										getPromotion(beacons[i].id);
 									}else if(Alloy.Globals.appStatus == 'background'){
-										
+										Alloy.Globals.sendLocalNotification("Kampanj", "Du har hittat en ny kampanj!", beacons[i].id);
 									}
 									
 								}
@@ -488,7 +500,11 @@ function getBeacons() {
 								for (var i = 0; i < beacons.length; i++) {
 									if (e.uuidDashed == beacons[i].uuid) {
 										if (e.major == beacons[i].major && e.minor == beacons[i].minor) {
-											getPromotion(beacons[i].id);
+											if(Alloy.Globals.appStatus == 'foreground'){
+												getPromotion(beacons[i].id);
+											}else if(Alloy.Globals.appStatus == 'background'){
+												Alloy.Globals.sendLocalNotification("Kampanj", "Du har hittat en ny kampanj!", beacons[i].id);
+											}
 										}
 									}
 								}
