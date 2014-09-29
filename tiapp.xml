@@ -146,6 +146,7 @@
         <module platform="iphone">bencoding.sms</module>
         <module platform="android">miga.tibeacon</module>
         <module platform="android">com.yydigital.realswitch</module>
+        <module platform="android">com.rkam.swiperefreshlayout</module>
     </modules>
     <deployment-targets>
         <target device="android">true</target>
