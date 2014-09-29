@@ -541,7 +541,9 @@ function getGames(league, firstTime, start, rows) {
 				}
 		
 				if(OS_ANDROID) {
-					swipeRefresh.setRefreshing(false);
+					if(typeof swipeRefresh !== 'undefined') {
+						swipeRefresh.setRefreshing(false);
+					}	
 				}
 				
 				indicator.closeIndicator();
