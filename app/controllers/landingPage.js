@@ -1,6 +1,7 @@
 var args = arguments[0] || {};
 Alloy.Globals.LANDINGWIN = $.landingPage;
 
+var beaconIsOpen = false;
 var appResume = args.resume;
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({
@@ -409,7 +410,7 @@ function getBeacons() {
 								if (e.identifier == beacons[i].identifier) {
 									if(Alloy.Globals.appStatus == 'foreground'){
 										getPromotion(beacons[i].id);
-									}else if(Alloy.Globals.appStatus){
+									}else if(Alloy.Globals.appStatus == 'background'){
 										
 									}
 									
@@ -593,7 +594,7 @@ function getPromotion(beaconID) {
 }
 
 function createPromoTypeOne(promo) {
-
+	w = null;
 	w = Ti.UI.createWindow({
 		title : promo.title,
 		backgroundColor : "#000",
@@ -609,6 +610,7 @@ function createPromoTypeOne(promo) {
 
 	b.addEventListener('click', function() {
 		w.close();
+		beaconIsOpen = false;
 	});
 
 	var titleView = Ti.UI.createLabel({
@@ -643,14 +645,17 @@ function createPromoTypeOne(promo) {
 		}
 	});
 	w.add(text);
-	w.open({
-		modal : true
-	});
-
+	if(beaconIsOpen == false){
+		w.open({
+			modal : true
+		});
+		beaconIsOpen = true;
+	}
+	
 }
 
 function createPromoTypeTwo(promo) {
-
+	w = null;
 	w = Ti.UI.createWindow({
 		title : promo.title,
 		backgroundColor : "#000",
@@ -666,6 +671,7 @@ function createPromoTypeTwo(promo) {
 	w.add(b);
 	b.addEventListener('click', function() {
 		w.close();
+		beaconIsOpen = false;
 	});
 
 	var image = Ti.UI.createImageView({
@@ -674,13 +680,17 @@ function createPromoTypeTwo(promo) {
 		height : "100%",
 	});
 	w.add(image);
-	w.open({
-		modal : true
-	});
-
+	if(beaconIsOpen == false){
+		w.open({
+			modal : true
+		});
+		beaconIsOpen = true;
+	}
+	
 }
 
 function createPromoTypeThree(promo) {
+	w = null;
 	w = Ti.UI.createWindow({
 		title : promo.title,
 		backgroundColor : "#000",
@@ -696,6 +706,7 @@ function createPromoTypeThree(promo) {
 	w.add(b);
 	b.addEventListener('click', function() {
 		w.close();
+		beaconIsOpen = false;
 	});
 
 	var titleView = Ti.UI.createLabel({
@@ -765,11 +776,13 @@ function createPromoTypeThree(promo) {
 			});
 		}
 	});
-
-	w.open({
-		modal : true
-	});
-
+	if(beaconIsOpen == false){
+		w.open({
+			modal : true
+		});
+		beaconIsOpen = true;
+	}
+	
 }
 
 var top_view = Ti.UI.createView({
