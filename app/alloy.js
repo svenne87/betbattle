@@ -250,6 +250,56 @@ Alloy.Globals.getFontSize = function(target) {
 	}
 };
 
+
+Alloy.Globals.sendLocalNotification = function(msgTitle, msgContent, beaconID){
+	if(OS_IOS){
+		// The following code snippet schedules an alert to be sent
+		var notification = Ti.App.iOS.scheduleLocalNotification({
+		    // Alert will display 'slide to update' instead of 'slide to view'
+		    // or 'Update' instead of 'Open' in the alert dialog
+		   // alertAction: "update",
+		    // Alert will display the following message
+		    alertBody: "msgContent",
+		    // The badge value in the icon will be changed to 1
+		    //badge: 1,
+		    // Alert will be sent in three seconds
+		    //date: new Date(new Date().getTime() + 3000),
+		    // The following sound file will be played
+		    //sound: "/alert.wav",
+		    // The following URL is passed to the application 
+		    userInfo: { "beaconID":beaconID}
+		}); 
+	}else if(OS_ANDROID){
+		
+		var AppIntent = Ti.Android.createIntent({
+            flags : Titanium.Android.FLAG_ACTIVITY_CLEAR_TOP | Titanium.Android.FLAG_ACTIVITY_SINGLE_TOP,
+            className : 'ti.modules.titanium.ui.TiTabActivity',
+        	packageName : Ti.App.id
+        });
+        AppIntent.addCategory(Ti.Android.CATEGORY_LAUNCHER);
+       	
+       	var NotificationClickAction = Ti.Android.createPendingIntent({
+            activity : Ti.Android.currentActivity,
+            intent : AppIntent,
+            flags : Ti.Android.FLAG_UPDATE_CURRENT,
+        	type : Ti.Android.PENDING_INTENT_FOR_ACTIVITY
+        });
+        
+      	var NotificationMembers = {
+            contentTitle : msgTitle,
+            contentText : msgContent,
+            tickerText : msgContent,
+            icon : Ti.App.Android.R.drawable.appicon,
+            number : beaconID,
+            //when : new Date().getTime(),
+            flags : (Ti.Android.FLAG_ONGOING_EVENT | Ti.Android.FLAG_NO_CLEAR),
+        	contentIntent : NotificationClickAction
+        };
+ 
+    	Ti.Android.NotificationManager.notify(1, Ti.Android.createNotification(NotificationMembers));
+	}
+};
+
 // show feedback dialog
 Alloy.Globals.showFeedbackDialog = function(msg) {
 	var alertWindow = Titanium.UI.createAlertDialog({
