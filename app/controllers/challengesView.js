@@ -21,7 +21,7 @@ Ti.App.addEventListener("challengesViewRefresh", function(e) {
 			$.challengesView.removeAllChildren();
 
 			for (var i = 0; i < children.length; i++) {
-				if (children[i].id === 'challengeTable') {
+				if (children[i].id === 'challengeTable' || children[i].id === 'scrollView') {
 					$.challengesView.remove(children[i]);
 					children[i] = null;
 				}
@@ -30,8 +30,6 @@ Ti.App.addEventListener("challengesViewRefresh", function(e) {
 		getChallenges();
 	} else {
 		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
-		//userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
-		//userInfoWinsLabel.setText('');
 	}
 });
 
@@ -40,8 +38,6 @@ function getUserInfo() {
 
 	var xhr = Titanium.Network.createHTTPClient();
 	xhr.onerror = function(e) {
-		//userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
-		//userInfoWinsLabel.setText('');
 		Ti.API.error('Bad Sever =>' + e.error);
 	};
 
@@ -53,8 +49,6 @@ function getUserInfo() {
 
 		xhr.send();
 	} catch(e) {
-		//userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
-		//userInfoWinsLabel.setText('');
 		var error = { totalCoins : '', totalPoints : ''};
 		Ti.App.fireEvent('app:coinsMenuInfo', error);
 	}
@@ -71,16 +65,11 @@ function getUserInfo() {
 				}
 
 				if (userInfo !== null) {
-					//userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.coinsInfoTxt + ": " + userInfo.totalCoins);
-					//userInfoWinsLabel.setText(Alloy.Globals.PHRASES.scoreInfoTxt + ": " + userInfo.totalPoints);
-					
 					// Update menu
 					Ti.App.fireEvent('app:coinsMenuInfo', userInfo);
 				}
 			}
 		} else {
-			//userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
-			//userInfoWinsLabel.setText('');
 			Ti.API.error("Error =>" + this.response);
 		}
 	};
@@ -111,34 +100,6 @@ function checkActiveUsers(array) {
 	}
 	return activeUserCount;
 }
-/*
-function getDynamicLeftPos(oppCount) {
-	if (OS_IOS) {
-		var dynamicLeftPos = 80;
-
-		// will move the text deppending on the amount of participants in the tournament
-		if (oppCount > 9 && oppCount <= 99) {
-			dynamicLeftPos = 85;
-		} else if (oppCount > 99 && oppCount <= 999) {
-			dynamicLeftPos = 90;
-		}
-
-
-	} else if (OS_ANDROID) {
-		var dynamicLeftPos = 80;
-
-		// will move the text deppending on the amount of participants in the tournament
-		if (oppCount > 9 && oppCount <= 99) {
-			dynamicLeftPos = 85;
-		} else if (oppCount > 99 && oppCount <= 999) {
-			dynamicLeftPos = 95;
-		}
-
-	}
-
-	return dynamicLeftPos;
-}
-*/
 
 // show pending and finished challenges and tournaments in a webview
 function showChallengeInWebView(challengeId, roundId, groupName) {
@@ -541,8 +502,6 @@ function constructTableView(array) {
 			} else {
 				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 				refresher.endRefreshing();
-				//userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
-				//userInfoWinsLabel.setText('');
 			}
 
 		});
@@ -551,166 +510,13 @@ function constructTableView(array) {
 	// check if table exists, and if it does simply remove it
 	var children = $.challengesView.children;
 	for (var i = 0; i < children.length; i++) {
-		if (children[i].id === 'challengeTable') {
+		if (children[i].id === 'challengeTable' || children[i].id === 'scrollView') {
 			$.challengesView.remove(children[i]);
 			children[i] = null;
 		}
 	}
 
 	var sections = [];
-
-/*
-	var tableHeaderView = Ti.UI.createView({
-		height : 70,
-		backgroundColor : 'transparent',
-		//opacity: 0.6,
-		layout : "absolute",
-	});
-
-	var tableHeaderBG = Ti.UI.createView({
-		height : 70,
-		top : 0,
-		backgroundColor : '#000',
-		opacity : '0.4',
-	});
-
-	tableHeaderView.add(tableHeaderBG);
-
-	var userInfoView = Ti.UI.createView({
-		top : 0,
-		height : 70,
-		zIndex : "1000",
-		opacity : 1,
-		layout : 'horizontal',
-		backgroundColor : "transparent",
-	});
-
-	var userInfoViewLeft = Ti.UI.createView({
-		top : 0,
-		left : 0,
-		height : 70,
-		width : "33%",
-		layout : 'vertical',
-		backgroundColor : 'transparent',
-		//opacity: "0.7"
-	});
-
-	var userInfoViewRight = Ti.UI.createView({
-		top : 0,
-		right : 0,
-		height : 70,
-		width : "33%",
-		layout : 'vertical',
-		backgroundColor : 'transparent'
-	});
-
-	userInfoViewLeft.add(Ti.UI.createImageView({
-		//left : 60,
-		//top : 15,
-		height : 15,
-		width : 20,
-		top : "30%",
-		image : '/images/totalt_saldo.png'
-	}));
-
-	userInfoViewRight.add(Ti.UI.createImageView({
-		//left : 60,
-		height : 15,
-		width : 15,
-		top : "30%",
-		image : '/images/vinster_top.png'
-	}));
-
-	userInfoCoinsLabel = Ti.UI.createLabel({
-		//left : 5,
-		//top : 12,
-		text : Alloy.Globals.PHRASES.loadingTxt,
-		font : {
-			fontSize : Alloy.Globals.getFontSize(1),
-			//fontWeight : 'bold',
-			fontFamily : 'Impact',
-		},
-		color : Alloy.Globals.themeColor()
-	});
-
-	userInfoWinsLabel = Ti.UI.createLabel({
-		//left : 10,
-		text : '',
-		font : {
-			fontSize : Alloy.Globals.getFontSize(1),
-			//fontWeight : 'bold',
-			fontFamily : 'Impact',
-		},
-		color : Alloy.Globals.themeColor()
-	});
-
-	var fontawesome = require('lib/IconicFont').IconicFont({
-		font : 'lib/FontAwesome'
-	});
-
-	var font = 'FontAwesome';
-
-	if (OS_ANDROID) {
-		font = 'fontawesome-webfont';
-	}
-	var userInfoViewCenter = Ti.UI.createView({
-		width : "33%",
-		height : 70,
-		backgroundColor : "transparent",
-	});
-
-	var image;
-	if (Alloy.Globals.FACEBOOKOBJECT) {
-		image = 'https://graph.facebook.com/' + Alloy.Globals.FACEBOOKOBJECT.id + '/picture';
-	} else {
-		image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + Alloy.Globals.BETKAMPENUID + '.png';
-	}
-
-	var centerImageView = Ti.UI.createImageView({
-		//left : 0,
-		height : 40,
-		width : 40,
-		borderRadius : 20,
-		image : image
-	});
-	
-	centerImageView.addEventListener('error',function(e){
-		// fallback for image
-		centerImageView.image = '/images/no_pic.png';
-	});
-
-	userInfoViewCenter.add(centerImageView);
-
-	var rightPos = '2%';
-
-	userInfoView.addEventListener('click', function() {
-		var win = Alloy.createController('profile').getView();
-		Alloy.Globals.CURRENTVIEW =  win;
-		if (OS_IOS) {
-			Alloy.Globals.NAV.openWindow(win, {
-				animated : true
-			});
-		} else {
-			win.open({
-				fullScreen : true
-			});
-		}
-	});
-
-	userInfoViewLeft.add(userInfoCoinsLabel);
-	userInfoViewRight.add(userInfoWinsLabel);
-	userInfoView.add(userInfoViewLeft);
-	userInfoView.add(userInfoViewCenter);
-	userInfoView.add(userInfoViewRight);
-
-	/*userInfoView.add(Ti.UI.createView({
-	 top : 68,
-	 height : 0.5,
-	 width : '100%',
-	 backgroundColor : '#6d6d6d'
-	 }));*/
-
-//	tableHeaderView.add(userInfoView);
 
 	var tableHeaderView = Ti.UI.createView({
 		height : 0,
@@ -894,16 +700,11 @@ function constructTableView(array) {
 		width : 'auto',
 	}));
 
-	//dataSet = [{title: "Nya Utmaningar", title: "Pågående Utmaningar", title: "Avslutade Utmaningar"}];
 	sections[0].add(acceptRow);
 	sections[0].add(pendingRow);
 	sections[0].add(finishedRow);
 
-	//sections[0] =Alloy.Globals.PHRASES.newChallengesTxt createSectionsForTable(Alloy.Globals.PHRASES.tournamentsTxt);
 	sections[1] = createSectionsForTable(Alloy.Globals.PHRASES.challengesViewHot);
-	
-	//sections[2] = createSectionsForTable(Alloy.Globals.PHRASES.pendingChallengesTxt);
-	//sections[3] = createSectionsForTable(Alloy.Globals.PHRASES.finishedChallengesTxt);
 
 	// there will be 3 types: 'tournaments'/'accept', 'pending' and finished (in that order)
 	var challengesTournamentsCount = 0;
@@ -968,8 +769,6 @@ function constructTableView(array) {
 			Ti.App.fireEvent('app:slide');
 			table.touchEnabled = true;
 		}
-	
-	// TODO Testing
 	});
 	
 	// when clicking a row
@@ -1182,8 +981,43 @@ function constructTableView(array) {
 			}
 		}
 	});
+	
+	if (OS_ANDROID) {		
+		var swipeRefreshModule = require('com.rkam.swiperefreshlayout');
+		
+		swipeRefresh = swipeRefreshModule.createSwipeRefresh({
+   		 	view: table,
+   		 	height: Ti.UI.FILL,
+    		width: Ti.UI.FILL,
+    		id : 'scrollView'
+		});
+		
+		swipeRefresh.addEventListener('refreshing', function() {
+			if (Alloy.Globals.checkConnection()) {
+				indicator.openIndicator();
+				getChallenges();
+			} else {
+				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+				swipeRefresh.setRefreshing(false);
+			}
+		});
 
-	$.challengesView.add(table);
+		$.challengesView.add(swipeRefresh);
+	} else {
+		$.challengesView.add(table);	
+	}
+}
+
+function endRefresher() {
+	if (OS_IOS) {
+		if ( typeof refresher !== 'undefined') {
+			refresher.endRefreshing();
+		}
+	} else {
+		if ( typeof swipeRefresh !== 'undefined') {
+			swipeRefresh.setRefreshing(false);
+		}
+	}
 }
 
 function getChallenges() {
@@ -1191,11 +1025,7 @@ function getChallenges() {
 	var xhr = Titanium.Network.createHTTPClient();
 	xhr.onerror = function(e) {
 		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-		if (OS_IOS) {
-			if ( typeof refresher !== 'undefined') {
-				refresher.endRefreshing();
-			}
-		}
+		endRefresher();
 		Ti.API.error('Bad Sever =>' + e.error);
 		indicator.closeIndicator();
 	};
@@ -1208,11 +1038,7 @@ function getChallenges() {
 		xhr.send();
 	} catch(e) {
 		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-		if (OS_IOS) {
-			if ( typeof refresher !== 'undefined') {
-				refresher.endRefreshing();
-			}
-		}
+		endRefresher();
 		indicator.closeIndicator();
 	}
 	xhr.onload = function() {
@@ -1237,15 +1063,17 @@ function getChallenges() {
 			} else {
 				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 			}
+			
+			if(OS_ANDROID) {
+				if(typeof swipeRefresh !== 'undefined') {
+					swipeRefresh.setRefreshing(false);
+				}	
+			}
 			indicator.closeIndicator();
 		} else {
 			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 			indicator.closeIndicator();
-			if (OS_IOS) {
-				if ( typeof refresher !== 'undefined') {
-					refresher.endRefreshing();
-				}
-			}
+			endRefresher();
 			Ti.API.error("Error =>" + this.response);
 		}
 	};
@@ -1259,8 +1087,7 @@ var indicator = uie.createIndicatorWindow({
 });
 var refresher;
 var table;
-//var userInfoCoinsLabel;
-//var userInfoWinsLabel;
+var swipeRefresh;
 
 var args = arguments[0] || {};
 if (args.refresh == 1) {
@@ -1274,8 +1101,6 @@ if (args.refresh == 1) {
 		}
 	} else {
 		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
-		//userInfoCoinsLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
-		//userInfoWinsLabel.setText('');
 	}
 
 }

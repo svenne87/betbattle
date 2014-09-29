@@ -8,12 +8,6 @@ Ti.App.addEventListener("sliderToggled", function(e) {
 	}
 });
 
-// refresh this view
-Ti.App.addEventListener("newChallengeRefresh", function(e) {
-	indicator.openIndicator();
-	getGames(leagueId, true, 0, 20);
-});
-
 // create gameListObject
 function createGameListObject(response) {
 	var array = [];
@@ -173,6 +167,7 @@ function createAndShowTableView(league, array) {
 	for (var i = 0; i < children.length; i++) {
 		if (children[i].id === 'newChallengeTable' || children[i].id === 'scrollView') {
 			$.newChallenge.remove(children[i]);
+			children[i] = null;
 		}
 	}
 
@@ -200,13 +195,14 @@ function createAndShowTableView(league, array) {
 		// will refresh on pull
 		refresher.addEventListener('refreshstart', function(e) {
 			if (Alloy.Globals.checkConnection()) {
-				// TODO reset all fetch more data!!
+				initialTableSize = 0;
+				currentSize = 0;
+				overlap = 62;
 				getGames(leagueId, true, 0, 20);
 			} else {
 				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 				refresher.endRefreshing();
 			}
-
 		});
 	}
 
@@ -337,7 +333,7 @@ function createAndShowTableView(league, array) {
 					}
 				}
 			}, 500);
-		} else {			
+		} else {	
 			if (_evt.firstVisibleItem + _evt.visibleItemCount == _evt.totalItemCount) {
 				if (isLoading) {
 					return;
@@ -409,96 +405,30 @@ function createAndShowTableView(league, array) {
 
 	/* Custom pull to refresh fix for Android */
 	if (OS_ANDROID) {		
-		tableView.add(table);
-
-		var scrollView = Ti.UI.createScrollView({
-			zIndex : 2,
-			scrollType : 'horizontal',
-			showVerticalScrollIndicator : false,
-			id : 'scrollView'
+		var swipeRefreshModule = require('com.rkam.swiperefreshlayout');
+		
+		swipeRefresh = swipeRefreshModule.createSwipeRefresh({
+   		 	view: table,
+   		 	height: Ti.UI.FILL,
+    		width: Ti.UI.FILL,
+    		id : 'scrollView'
 		});
-		tableView.zIndex = 1;
-		scrollView.add(tableView);
-
-		var offset = 0;
-		var refreshStatus = false;	
 		
-		
-		scrollView.addEventListener('scroll', function(e) {
-			if (e.firstVisibleItem > 0) {
-				offset = 50;
+		swipeRefresh.addEventListener('refreshing', function() {
+			if (Alloy.Globals.checkConnection()) {
+				indicator.openIndicator();
+				getGames(leagueId, true, 0, 20);
 			} else {
-				offset = 0;
-			}
-		});
-		
-		// set the initial position of the scrollView's content
-		var init = setInterval(function(e) {
-			if (offset == 50) {
-				//we have just done what the scrollView\'s contentOffset should be doing
-				clearInterval(init);
-			}
-			scrollView.scrollTo(0, 50);
-		}, 100);
-
-		// TODO
-		var refreshLabel = Ti.UI.createLabel({
-			text : 'Release to refresh',
-			backgroundColor : '#303030',
-			height : 'auto',
-			width : 'auto',
-			top : 60,
-			textAlign : 'center',
-			color : Alloy.Globals.themeColor(),
-			font : {
-				fontSize : Alloy.Globals.getFontSize(1),
-				fontFamily : Alloy.Globals.getFont(),
+				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+				swipeRefresh.setRefreshing(false);
 			}
 		});
 
-		scrollView.addEventListener('touchend', function() {
-			if(offset == 0) {
-				tableHeaderView.remove(refreshLabel);
-				tableHeaderView.setHeight('10%');
-			}
-			
-			if (offset == 0 && refreshStatus) {
-				Ti.API.info('REFRESH !!!!');
-								
-				if (Alloy.Globals.checkConnection()) {
-						indicator.openIndicator();
-						getGames(leagueId, true, 0, 20);
-				} else {
-					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
-				}
-				scrollView.scrollTo(0, 50);
-			}
-		});
-			
-		scrollView.addEventListener('touchstart', function(){
-			refreshStatus = false;
-			
-			if(offset < 1) {
-								Ti.API.log("Start");
-			}
-			
-			if(offset == 0) {
-				tableHeaderView.add(refreshLabel);
-				tableHeaderView.setHeight(tableHeaderView.toImage().height + refreshLabel.toImage().height);
-			
-				setTimeout(function() {
-					// refresh is valid after 1 seconds
-					refreshStatus = true;
-				}, 1000);
-			}
-		});
-
-		$.newChallenge.add(scrollView);
+		$.newChallenge.add(swipeRefresh);
 	} else {
 		tableView.add(table);
 		$.newChallenge.add(tableView);
 	}
-	/* The fix End here */
 }
 
 /* Create Rows and add to table */
@@ -514,6 +444,18 @@ function setDisplayText() {
 		footerViewText.setText(Alloy.Globals.PHRASES.showningMatchesTxt + ': ' + totalNumberOfGames + '/' + totalNumberOfGames);
 	} else {
 		footerViewText.setText(Alloy.Globals.PHRASES.showningMatchesTxt + ': ' + numberOfGamesFetched + '/' + totalNumberOfGames);
+	}
+}
+
+function endRefresher() {
+	if (OS_IOS) {
+		if ( typeof refresher !== 'undefined') {
+			refresher.endRefreshing();
+		}
+	} else {
+		if ( typeof swipeRefresh !== 'undefined') {
+			swipeRefresh.setRefreshing(false);
+		}
 	}
 }
 
@@ -538,11 +480,8 @@ function getGames(league, firstTime, start, rows) {
 			Ti.API.error('Bad Sever =>' + e.error);
 			indicator.closeIndicator();
 			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-			if (OS_IOS) {
-				if ( typeof refresher !== 'undefined') {
-					refresher.endRefreshing();
-				}
-			}
+			
+			endRefresher();
 		};
 
 		try {
@@ -556,11 +495,7 @@ function getGames(league, firstTime, start, rows) {
 			isLoading = false;
 			indicator.closeIndicator();
 			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-			if (OS_IOS) {
-				if ( typeof refresher !== 'undefined') {
-					refresher.endRefreshing();
-				}
-			}
+			endRefresher();
 		}
 		xhr.onload = function() {
 			if (this.status == '200') {
@@ -601,17 +536,20 @@ function getGames(league, firstTime, start, rows) {
 				} else {
 					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 				}
+		
+				if(OS_ANDROID) {
+					if(typeof swipeRefresh !== 'undefined') {
+						swipeRefresh.setRefreshing(false);
+					}	
+				}
+				
 				indicator.closeIndicator();
 				isLoading = false;
 			} else {
 				isLoading = false;
 				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 				indicator.closeIndicator();
-				if (OS_IOS) {
-					if ( typeof refresher !== 'undefined') {
-						refresher.endRefreshing();
-					}
-				}
+				endRefresher();
 				Ti.API.error("Error =>" + this.response);
 			}
 		};
@@ -633,6 +571,7 @@ var isLoading = false;
 var initialTableSize = 0;
 var currentSize = 0;
 var overlap = 62;
+var swipeRefresh;
 
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({

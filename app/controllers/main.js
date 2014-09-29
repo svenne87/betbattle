@@ -808,24 +808,13 @@ if (OS_IOS){
         				itemId : 1
         			});
 
-        			refreshItem = e.menu.add({
+        			homeItem = e.menu.add({
             			showAsAction : Ti.Android.SHOW_AS_ACTION_ALWAYS,
             			icon : 'images/ic_action_refresh.png'
         			});
   
-       			 	refreshItem.addEventListener("click", function(e){
-       			 		// update the correct view
-       			 		switch(Alloy.Globals.CURRENTVIEW.id){
-       			 			case 'challengesView':
-       			 				Ti.App.fireEvent('challengesViewRefresh');
-       			 				break;
-       			 			case 'groupSelect':
-       			 				Ti.App.fireEvent('groupSelectRefresh');
-       			 				break;
-       			 			case 'newChallenge':
-       			 				Ti.App.fireEvent('newChallengeRefresh');
-       			 				break;
-       			 		}       			 		
+       			 	homeItem.addEventListener("click", function(e){
+						// TODO      			 		
     			 		
        				});
        				
