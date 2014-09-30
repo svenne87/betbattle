@@ -695,7 +695,8 @@ if (OS_IOS){
 		});
 	} else {
 		$.nav.add($.UI.create('ImageView', {
-			classes : ['navLogo']
+			classes : ['navLogo'],
+			left : 80 //
 		}));
 	}
 	var btn = Ti.UI.createView({
@@ -705,6 +706,48 @@ if (OS_IOS){
 		top:5,
 		id: "ticketView"
 	});
+	
+	// TODO
+	// start 
+	
+	var btnHome = Ti.UI.createView({
+		width: 50,
+		height: 50,
+		right: 55,
+		top: 5,
+		id: 'homeBtn'
+	});
+	
+	var homeBtnLabel = Ti.UI.createLabel({
+		font:{
+			fontFamily: font,
+			fontSize: 30,
+		},
+		text: fontawesome.icon("fa-home"),
+		color: "#FFF",
+		width: 'auto',
+		height: 'auto',
+		id:"label",
+		right: 15,
+		top: 15,
+	});
+	
+	btnHome.add(homeBtnLabel);
+	
+	btnHome.addEventListener('click', function() {
+		for(var win in Alloy.Globals.WINDOWS) {
+			Alloy.Globals.WINDOWS[win].close();
+		}     			 		
+        Alloy.Globals.NAV.close();
+        var args = {resume : false};
+        var start = Alloy.createController('landingPage', args).getView();
+        Alloy.Globals.CURRENTVIEW  = start;
+        start.open({modal : false});
+        start = null;
+	});
+	
+	$.nav.add(btnHome);
+	// end
 	
 	var ticketBtn = Ti.UI.createLabel({	
 		font:{
@@ -813,9 +856,8 @@ if (OS_IOS){
             			icon : 'images/ic_action_refresh.png'
         			});
   
-       			 	homeItem.addEventListener("click", function(e){
-						// TODO      			 		
-    			 		
+       			 	homeItem.addEventListener("click", function(e){    			 		
+    			 		$.mainWin.close();
        				});
        				
        				var couponOpen = false;

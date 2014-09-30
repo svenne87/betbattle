@@ -605,6 +605,7 @@ function constructTableView(array) {
 							
 							Alloy.Globals.CHALLENGEINDEX = e.rowData.id;
 							var win = Alloy.createController('showChallenge', args).getView();
+							Alloy.Globals.WINDOWS.push(win);
 
 							if (OS_IOS) {
 								Alloy.Globals.NAV.openWindow(win, {
@@ -642,6 +643,7 @@ function constructTableView(array) {
 								};
 
 								var win = Alloy.createController('showChallenge', arg).getView();
+								Alloy.Globals.WINDOWS.push(win);
 
 								if (OS_IOS) {
 									Alloy.Globals.NAV.openWindow(win, {
@@ -664,6 +666,7 @@ function constructTableView(array) {
 								};
 
 								var win = Alloy.createController('challenge', arg).getView();
+								Alloy.Globals.WINDOWS.push(win);
 
 								if (OS_IOS) {
 									Alloy.Globals.NAV.openWindow(win, {

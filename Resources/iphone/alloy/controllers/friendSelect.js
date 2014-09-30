@@ -47,7 +47,7 @@ function Controller() {
                 xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
                 xhr.setTimeout(Alloy.Globals.TIMEOUT);
                 param += ', "new_group":"' + groupName + '", "friends":[{';
-                for (var i = 0; facebookFriendsChallenge.length > i; i++) {
+                for (var i = 0; i < facebookFriendsChallenge.length; i++) {
                     param += '"' + facebookFriendsChallenge[i].id + '":"' + facebookFriendsChallenge[i].name;
                     param += i == facebookFriendsChallenge.length - 1 ? '"' : '", ';
                 }
@@ -130,7 +130,7 @@ function Controller() {
     }
     function getFacebookFriends() {
         var children = $.friendSelect.children;
-        for (var i = 0; children.length > i; i++) {
+        for (var i = 0; i < children.length; i++) {
             "groupsTable" === children[i].id && $.friendSelect.remove(children[i]);
             "submitButtonsView" === children[i].id && $.friendSelect.remove(children[i]);
         }
@@ -191,7 +191,7 @@ function Controller() {
                     if (0 == e.index) {
                         var text;
                         text = e.text;
-                        text.length > 2 && 16 > text.length ? challengeFriends(text) : Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.groupNameErrorTxt);
+                        text.length > 2 && text.length < 16 ? challengeFriends(text) : Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.groupNameErrorTxt);
                     } else dialog.hide();
                 });
                 dialog.show();
@@ -361,9 +361,15 @@ function Controller() {
     require("alloy/controllers/BaseController").apply(this, Array.prototype.slice.call(arguments));
     this.__controllerPath = "friendSelect";
     if (arguments[0]) {
-        __processArg(arguments[0], "__parentSymbol");
-        __processArg(arguments[0], "$model");
-        __processArg(arguments[0], "__itemTemplate");
+        {
+            __processArg(arguments[0], "__parentSymbol");
+        }
+        {
+            __processArg(arguments[0], "$model");
+        }
+        {
+            __processArg(arguments[0], "__itemTemplate");
+        }
     }
     var $ = this;
     var exports = {};

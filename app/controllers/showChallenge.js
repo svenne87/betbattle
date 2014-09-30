@@ -212,6 +212,7 @@ function createLayout(game, values, games, currentStanding, isFirst) {
 		width : 'auto',
 		layout : 'vertical',
 		//backgroundColor:"blue",
+		scrollType : 'vertical',
 		showVerticalScrollIndicator : true,
 	});
 	
@@ -293,6 +294,7 @@ function createLayout(game, values, games, currentStanding, isFirst) {
 					top : 5,
 					left : 20,
 					width : Ti.UI.SIZE,
+					height : Ti.UI.SIZE,
 					textAlign : 'left',
 					backgroundColor : '#303030',
 					color : '#FFF',
@@ -308,7 +310,7 @@ function createLayout(game, values, games, currentStanding, isFirst) {
 					top : 5,
 					right : 20,
 					width : 'auto',
-					textAlign : 'center',
+					textAlign : 'left',
 					backgroundColor : '#303030',
 					color : '#FFF',
 					text : tmpObj.points,

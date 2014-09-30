@@ -169,6 +169,18 @@ Alloy.Globals.setAndroidCouponMenu = function(activity) {
 				win = null;
 			}
 		});
+		
+		homeItem = e.menu.add({
+            showAsAction : Ti.Android.SHOW_AS_ACTION_ALWAYS,
+            icon : 'images/ic_action_refresh.png'
+        });
+  
+        homeItem.addEventListener("click", function(e){
+			for(var win in Alloy.Globals.WINDOWS) {
+				Alloy.Globals.WINDOWS[win].close();
+			}     			 		
+			Alloy.Globals.MAINWIN.close();
+       	});
 	};
 
 	activity.onPrepareOptionsMenu = function(e) {

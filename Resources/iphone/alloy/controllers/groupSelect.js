@@ -66,7 +66,7 @@ function Controller() {
                     var response = JSON.parse(this.responseText);
                     if (response.length > 0) {
                         friendObjects = [];
-                        for (var i = 0; response.length > i; i++) {
+                        for (var i = 0; i < response.length; i++) {
                             var friendObject = Alloy.createModel("friend", {
                                 fbid: response[i].fbid,
                                 id: response[i].id,
@@ -114,9 +114,9 @@ function Controller() {
                     var response = JSON.parse(this.responseText);
                     if (response.length > 0) {
                         groupObjects = [];
-                        for (var i = 0; response.length > i; i++) {
+                        for (var i = 0; i < response.length; i++) {
                             var membersArray = [];
-                            for (var x = 0; response[i].members.length > x; x++) {
+                            for (var x = 0; x < response[i].members.length; x++) {
                                 var member = {
                                     id: response[i].members[x].id,
                                     name: response[i].members[x].name
@@ -187,7 +187,7 @@ function Controller() {
                 xhr.setTimeout(Alloy.Globals.TIMEOUT);
                 var param = "";
                 param += '{"cid": ' + Alloy.Globals.COUPON.id + ', "coins": ' + coins + ', "groups": [{';
-                for (var i = 0; array.length > i; i++) for (var x = 0; groupObjects.length > x; x++) if (groupObjects[x].attributes.id === array[i]) {
+                for (var i = 0; i < array.length; i++) for (var x = 0; x < groupObjects.length; x++) if (groupObjects[x].attributes.id === array[i]) {
                     param += '"' + array[i] + '":"' + groupObjects[x].attributes.name;
                     param += i != array.length - 1 ? '", ' : '"';
                 }
@@ -273,7 +273,7 @@ function Controller() {
                 xhr.setTimeout(Alloy.Globals.TIMEOUT);
                 var param = "";
                 param += '{"coins": ' + coins + ', "cid":"' + Alloy.Globals.COUPON.id + '", "friends":[{';
-                for (var i = 0; friendsChallenge.length > i; i++) {
+                for (var i = 0; i < friendsChallenge.length; i++) {
                     param += '"' + friendsChallenge[i].id + '":"' + friendsChallenge[i].name;
                     param += i == friendsChallenge.length - 1 ? '"' : '", ';
                 }
@@ -330,7 +330,7 @@ function Controller() {
             backgroundColor: "#303030",
             id: "submitButtonsView"
         });
-        submitButton = 7 > iOSVersion ? Titanium.UI.createButton({
+        submitButton = Titanium.UI.createButton(7 > iOSVersion ? {
             title: Alloy.Globals.PHRASES.challengeBtnTxt,
             height: 30,
             width: "70%",
@@ -343,7 +343,7 @@ function Controller() {
             },
             color: "#FFF",
             backgroundImage: "none"
-        }) : Titanium.UI.createButton({
+        } : {
             title: Alloy.Globals.PHRASES.challengeBtnTxt,
             height: buttonHeight,
             width: "70%",
@@ -371,7 +371,7 @@ function Controller() {
     }
     function createViews(array, type) {
         var children = tableWrapper.children;
-        for (var i = 0; children.length > i; i++) {
+        for (var i = 0; i < children.length; i++) {
             "groupsTable" === children[i].id && tableWrapper.remove(children[i]);
             "submitButtonsView" === children[i].id && $.groupSelect.remove(children[i]);
             children[i] = null;
@@ -402,7 +402,7 @@ function Controller() {
         var data = [];
         var hasChild;
         hasChild = true;
-        for (var i = 0; array.length > i; i++) {
+        for (var i = 0; i < array.length; i++) {
             if (1 == type) {
                 var subRow = Ti.UI.createTableViewRow({
                     layout: "vertical",
@@ -417,7 +417,7 @@ function Controller() {
                 subRow.add(Ti.UI.createView({
                     height: 10
                 }));
-                for (var x = 0; array[i].attributes.members.length > x; x++) createMemberRow(array[i].attributes.members[x], subRow);
+                for (var x = 0; x < array[i].attributes.members.length; x++) createMemberRow(array[i].attributes.members[x], subRow);
                 subRow.add(Ti.UI.createView({
                     height: 20
                 }));
@@ -522,7 +522,7 @@ function Controller() {
                         e.row.opened = false;
                     } else {
                         var currentIndex = e.index;
-                        for (var i = 0; e.row.sub.length > i; i++) {
+                        for (var i = 0; i < e.row.sub.length; i++) {
                             table.insertRowAfter(currentIndex, e.row.sub[i]);
                             currentIndex++;
                         }
@@ -537,7 +537,7 @@ function Controller() {
                         e.row.opened = false;
                     } else {
                         var currentIndex = e.index;
-                        for (var i = 0; e.row.sub.length > i; i++) {
+                        for (var i = 0; i < e.row.sub.length; i++) {
                             table.insertRowAfter(currentIndex, e.row.sub[i]);
                             currentIndex++;
                         }
@@ -562,7 +562,7 @@ function Controller() {
                     -1 != index ? friendsChallenge.splice(index, 1) : friendsChallenge.push(friend);
                 }
                 buttonsPushed.push(e.row);
-                for (var i = 0; buttonsPushed.length > i; i++) if (1 == type) {
+                for (var i = 0; i < buttonsPushed.length; i++) if (1 == type) {
                     buttonsPushed[i].setBackgroundColor("#242424");
                     buttonsPushed[i].backgroundGradient = {
                         type: "linear",
@@ -632,9 +632,15 @@ function Controller() {
     require("alloy/controllers/BaseController").apply(this, Array.prototype.slice.call(arguments));
     this.__controllerPath = "groupSelect";
     if (arguments[0]) {
-        __processArg(arguments[0], "__parentSymbol");
-        __processArg(arguments[0], "$model");
-        __processArg(arguments[0], "__itemTemplate");
+        {
+            __processArg(arguments[0], "__parentSymbol");
+        }
+        {
+            __processArg(arguments[0], "$model");
+        }
+        {
+            __processArg(arguments[0], "__itemTemplate");
+        }
     }
     var $ = this;
     var exports = {};

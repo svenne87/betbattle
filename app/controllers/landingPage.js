@@ -1112,6 +1112,7 @@ bot_img.addEventListener("click", function(e) {
 	args.dialog = indicator;
 
 	var loginSuccessWindow = Alloy.createController('main', args).getView();
+
 	if (OS_IOS) {
 		loginSuccessWindow.open({
 			fullScreen : true,
