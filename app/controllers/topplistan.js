@@ -280,7 +280,7 @@ function createGUI(obj, i) {
 					},
 					borderRadius : 5
 				});
-				w.add(addFriendBtn);
+				modal.add(addFriendBtn);
 
 				addFriendBtn.addEventListener('click', function(e) {
 					var addFriends = Ti.Network.createHTTPClient();
@@ -699,34 +699,6 @@ function createGUI(obj, i) {
 	mainView.add(totalLeader);
 }
 
-var name = null;
-var client = Ti.Network.createHTTPClient({
-	// function called when the response data is available
-	onload : function(e) {
-		Ti.API.info("Received text: " + this.responseText);
-		name = JSON.parse(this.responseText);
-		//teamName = name.data[0].name;
-		//teamLogo = name.data[0].team_logo;
-		for (var i = 0; i < name.length; i++) {
-			createGUI(name[i], i);
-		}
-		indicator.closeIndicator();
-	},
-	// function called when an error occurs, including a timeout
-	onerror : function(e) {
-		Ti.API.debug(e.error);
-		//alert('error');
-		indicator.closeIndicator();
-	},
-	timeout : Alloy.Globals.TIMEOUT // in milliseconds
-});
-// Prepare the connection.
-client.open("GET", Alloy.Globals.BETKAMPENURL + '/api/get_scoreboard.php?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
-
-client.setRequestHeader("content-type", "application/json");
-client.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
-client.setTimeout(Alloy.Globals.TIMEOUT);
-
 var friendResp = null;
 // get all users friends to see if you already are friends with the searchresult
 var xhr = Ti.Network.createHTTPClient({
@@ -755,8 +727,38 @@ if (OS_IOS) {
 	indicator.openIndicator();
 }
 
-// Send the request.
+
+
+var name = null;
+var client = Ti.Network.createHTTPClient({
+	// function called when the response data is available
+	onload : function(e) {
+		Ti.API.info("Received text: " + this.responseText);
+		name = JSON.parse(this.responseText);
+		//teamName = name.data[0].name;
+		//teamLogo = name.data[0].team_logo;
+		for (var i = 0; i < name.length; i++) {
+			createGUI(name[i], i);
+		}
+		indicator.closeIndicator();
+	},
+	// function called when an error occurs, including a timeout
+	onerror : function(e) {
+		Ti.API.debug(e.error);
+		//alert('error');
+		indicator.closeIndicator();
+	},
+	timeout : Alloy.Globals.TIMEOUT // in milliseconds
+});
+// Prepare the connection.
+client.open("GET", Alloy.Globals.BETKAMPENURL + '/api/get_scoreboard.php?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
+
+client.setRequestHeader("content-type", "application/json");
+client.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
+client.setTimeout(Alloy.Globals.TIMEOUT);// Send the request.
 client.send();
+
+
 
 if (OS_ANDROID) {
 	$.scoreView.addEventListener('open', function() {
