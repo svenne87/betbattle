@@ -171,7 +171,7 @@ function Controller() {
             $.leftButton.touchEnabled = false;
             $.movableview.animate(animateRight);
             hasSlided = true;
-        } else if (-150 >= $.movableview.left && touchLeftStarted) {
+        } else if ($.movableview.left <= -150 && touchLeftStarted) {
             direction = "left";
             $.rightButton.touchEnabled = false;
             $.movableview.animate(animateLeft);

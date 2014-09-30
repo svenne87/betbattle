@@ -982,7 +982,9 @@ function constructTableView(array) {
 		}
 	});
 	
-	if (OS_ANDROID) {		
+	if (OS_ANDROID) {	
+		// https://github.com/raymondkam/Ti.SwipeRefreshLayout
+			
 		var swipeRefreshModule = require('com.rkam.swiperefreshlayout');
 		
 		swipeRefresh = swipeRefreshModule.createSwipeRefresh({
