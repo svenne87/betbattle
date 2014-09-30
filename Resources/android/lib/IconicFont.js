@@ -16,7 +16,7 @@ exports.IconicFont = function() {
         var self = this;
         if (options instanceof Array) {
             options.forEach(function(value) {
-                self.ligature ? icons.push(self.font.getCharcode(value)) : icons.push(String.fromCharCode(self.font.getCharcode(value)));
+                icons.push(self.ligature ? self.font.getCharcode(value) : String.fromCharCode(self.font.getCharcode(value)));
             });
             return icons;
         }
