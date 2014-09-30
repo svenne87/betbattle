@@ -266,10 +266,10 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 		});
 	}
 
-	//getInvitableFbFriends();
+	getInvitableFbFriends();
 
 	function getFbFriendsWithApp() {
-		fb.requestWithGraphPath('v2.1/me/friends', {
+		fb.requestWithGraphPath('me/friends', {
 			fields : 'name'
 		}, 'GET', function(e) {
 			var data = JSON.parse(e.result);
@@ -285,16 +285,17 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 	}
 
 	function getInvitableFbFriends() {
-		Titanium.Facebook.requestWithGraphPath('v2.1/me/invitable_friends', {
+		Titanium.Facebook.requestWithGraphPath('me/invitable_friends', {
 			fields : 'name'
 		}, 'GET', function(e) {
-			var data = JSON.parse(e.result);
+			Ti.API.info(e.result);
+			/*var data = JSON.parse(e.result);
 			myFbFriends = data.data;
 			//Ti.API.info(data);
 			myFbFriends = myFbFriends.sort(sortByName);
 			for (var i = 0; i < myFbFriends.length; i++) {
 				Ti.API.info(myFbFriends[i].name + ' id ' + myFbFriends[i].id);
-			}
+			}*/
 		});
 
 	}
