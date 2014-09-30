@@ -1737,6 +1737,7 @@ function checkResponded(match){
 	
 					if (resp == 2) {
 						Ti.API.info("RESPONSE TOP : " + JSON.stringify(resp));
+						Ti.API.info("MATCH ID TILL MATCHENS MÄSTARE : " + match.game_id);
 						var arg = {
 							round : match.roundID,
 							leagueName : match.leagueName,

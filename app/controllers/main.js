@@ -707,6 +707,7 @@ if (OS_IOS){
 		id: "ticketView"
 	});
 	
+	// TODO
 	// start 
 	
 	var btnHome = Ti.UI.createView({
@@ -737,7 +738,12 @@ if (OS_IOS){
 		for(var win in Alloy.Globals.WINDOWS) {
 			Alloy.Globals.WINDOWS[win].close();
 		}     			 		
-		$.nav.close();
+        Alloy.Globals.NAV.close();
+        var args = {resume : false};
+        var start = Alloy.createController('landingPage', args).getView();
+        Alloy.Globals.CURRENTVIEW  = start;
+        start.open({modal : false});
+        start = null;
 	});
 	
 	$.nav.add(btnHome);
