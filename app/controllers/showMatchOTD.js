@@ -46,8 +46,8 @@ function createGameType(type, values, game){
 	
 	for(var i in values){
 		if(values[i].game_type == type.type){
-			Ti.API.info("value : " + JSON.stringify(values[i]));
-			Ti.API.info("Type : " + type.type);
+			//Ti.API.info("value : " + JSON.stringify(values[i]));
+			//Ti.API.info("Type : " + type.type);
 			var correct = false;
 			for(var m in game.result_values){
 				if(values[i].game_type == game.result_values[m].game_type){
@@ -65,7 +65,7 @@ function createGameType(type, values, game){
 			
 				if (text == "team1") {
 					//Ti.API.info("TEAM" + JSON.stringify(gameObject.attributes.team_1.team_name));
-					Ti.API.info("ANDRA");
+					//Ti.API.info("ANDRA");
 					text = game.team_1.team_name;
 				} else if (text == "team2") {
 					text = game.team_2.team_name;
@@ -111,6 +111,7 @@ function createLayout(resp){
 		height : 'auto',
 		width : 'auto',
 		layout : 'vertical',
+		scrollType : 'vertical',
 		//backgroundColor:"blue",
 		showVerticalScrollIndicator: true,
 	});
@@ -169,7 +170,7 @@ function getChallengeShow(){
 		indicator.openIndicator();
 	}
 	
-	Ti.API.info("SKickar: "+ gameID);
+	//Ti.API.info("SKickar: "+ gameID);
 	var xhr = Titanium.Network.createHTTPClient();
 	xhr.onerror = function(e) {
 		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
@@ -192,13 +193,12 @@ function getChallengeShow(){
 	}
 	xhr.onload = function() {
 		if (this.status == '200') {
-			indicator.closeIndicator();
 			if (this.readyState == 4) {
-				Ti.API.info("reeturn : " + JSON.stringify(this.responseText));
+				//Ti.API.info("reeturn : " + JSON.stringify(this.responseText));
 				var response = JSON.parse(this.responseText);
 				// construct array with objects
 				
-				Ti.API.info("MatchOTDShow: " + JSON.stringify(response));	
+				//Ti.API.info("MatchOTDShow: " + JSON.stringify(response));	
 				//showResults(response);
 				createLayout(response);	
 			} else {
@@ -206,12 +206,12 @@ function getChallengeShow(){
 				//$.facebookBtn.enabled = true;
 			}
 		} else {
-			indicator.closeIndicator();
 			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 		
 			//$.facebookBtn.enabled = true;
 			Ti.API.error("Error =>" + this.response);
 		}
+	    indicator.closeIndicator();
 	};
 	
 }
@@ -225,7 +225,7 @@ if(OS_ANDROID){
 		$.showMatchOTD.activity.actionBar.onHomeIconItemSelected = function() { $.showMatchOTD.close(); $.showMatchOTD = null; };
    		$.showMatchOTD.activity.actionBar.displayHomeAsUp = true;
    		$.showMatchOTD.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
-		indicator.openIndicator();
+		//indicator.openIndicator();
 	});
 } 
 

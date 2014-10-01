@@ -1,4 +1,4 @@
-(function(service) {
+!function(service) {
     var serviceIntent = service.getIntent(), title = serviceIntent.hasExtra("title") ? serviceIntent.getStringExtra("title") : "", statusBarMessage = serviceIntent.hasExtra("message") ? serviceIntent.getStringExtra("message") : "", message = serviceIntent.hasExtra("message") ? serviceIntent.getStringExtra("message") : "", notificationId = function() {
         var str = "", now = new Date();
         var hours = now.getHours(), minutes = now.getMinutes(), seconds = now.getSeconds();
@@ -7,7 +7,7 @@
         str += seconds + "";
         var start = new Date(now.getFullYear(), 0, 0), diff = now - start, oneDay = 864e5, day = Math.floor(diff / oneDay);
         str += day * (hours > 11 ? 2 : 1);
-        var ml = 0 | now.getMilliseconds() / 100;
+        var ml = now.getMilliseconds() / 100 | 0;
         str += ml;
         return 0 | str;
     }();
@@ -34,4 +34,4 @@
     });
     Ti.Android.NotificationManager.notify(notificationId, notification);
     service.stop();
-})(Ti.Android.currentService);
+}(Ti.Android.currentService);

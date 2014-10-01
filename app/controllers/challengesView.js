@@ -1123,4 +1123,4 @@ $.challengesView.addEventListener('close', function() {
 
 constructTableView(Alloy.Globals.CHALLENGEOBJECTARRAY);
 getUserInfo();
-Alloy.Globals.getCoupon();
+// Alloy.Globals.getCoupon();
