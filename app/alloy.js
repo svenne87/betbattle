@@ -46,15 +46,13 @@ Alloy.Globals.hasCoupon = false;
 Alloy.Globals.appStatus = 'foreground';
 Alloy.Globals.FONT = getFont();
 
-
 function getFont() {
     if (OS_ANDROID) {
         return {
             fontSize : 20,
-            fontFamily : 'OpenSans',
+            fontFamily : 'OpenSans-Regular',
             fontWeight : 'Regular'
         };
-
     } else {
         return {
             fontSize : 18,
