@@ -86,7 +86,8 @@ function createTableRow(obj) {
 		classes : ['challengesSectionDefault'],
 		id : obj.attributes.round,
 		hasChild : child,
-		height : 'auto'
+		height : 'auto',
+		width: Ti.UI.FILL
 	});
 
 	// add custom icon on Android to symbol that the row has child
@@ -230,8 +231,7 @@ function createAndShowTableView(league, array) {
 			refreshControl : refresher,
 			backgroundColor : '#303030',
 			separatorInsets : {
-				left : 0,
-				right : 0
+				left : 0
 			}
 		});
 	} else {
@@ -246,7 +246,7 @@ function createAndShowTableView(league, array) {
 
 	var footerView = Ti.UI.createView({
 		height : 60,
-		width : '100%',
+		width : Ti.UI.FILL,
 		backgroundColor : '#242424',
 		backgroundGradient : {
 			type : "linear",

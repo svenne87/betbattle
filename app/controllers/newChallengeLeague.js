@@ -66,8 +66,8 @@ table = Titanium.UI.createTableView({
 	left : 0,
 	headerView : tableHeaderView,
 	height : '100%',
-	backgroundImage: 'images/profileBG.jpg',
-	backgroundColor : 'transparent',
+	//backgroundImage: 'images/profileBG.jpg',
+	backgroundColor : '#000',
 	separatorColor : '#6d6d6d'
 });
 
