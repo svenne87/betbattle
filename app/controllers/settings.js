@@ -116,8 +116,6 @@ function sendSettingsServer(param, type, valueToStore) {
 }
 
 function createGUI() {
-    
-
     if (OS_ANDROID) {
         var headerView = Ti.UI.createView({
             height : 1,
@@ -155,8 +153,8 @@ function createGUI() {
     $.table.setHeaderView(headerView);
     $.table.setFooterView(footerView);
     
-    // TODO chevron for android...?
-    // TODO Bluetooth funkar inte, Font 
+
+    // TODO Bluetooth funkar inte ios
     
     /* First row */
     $.language_row.add(createPickers());
