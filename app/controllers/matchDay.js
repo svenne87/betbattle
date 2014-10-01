@@ -117,8 +117,8 @@ function checkResponded(match){
 		font:Alloy.Globals.FONT,
 	});
 
-	matchOTDinfo.font.fontSize = 14;
-	
+		
+
 	var nextMatch = Alloy.Globals.createButtonView("#FFF", "#000", Alloy.Globals.PHRASES.matchOTDNextBtn);
 	var previousMatch = Alloy.Globals.createButtonView("#FFF", "#000", Alloy.Globals.PHRASES.matchOTDPreviousBtn);
 	
