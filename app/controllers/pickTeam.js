@@ -1,3 +1,12 @@
+var args = arguments[0] || {};
+
+var uie = require('lib/IndicatorWindow');
+
+var indicator = uie.createIndicatorWindow({
+	top : 200,
+	text : Alloy.Globals.PHRASES.loadingTxt
+});
+
 var mainView = Ti.UI.createScrollView({
 	class : "topView",
 	height : "100%",
@@ -32,23 +41,23 @@ var g = 0;
 //listing all active leagues from db
 var league = Alloy.Globals.LEAGUES;
 for (var i = 0; i < league.length; i++) {
-	
-	if (g == 0){
-	var row = Ti.UI.createView({
-		width : '100%',
-		height : 45,
-		top : 20
-	});
-	topView.add(row);
-	
-	g++;
-	}else{
-	var row = Ti.UI.createView({
-		width : '100%',
-		height : 45,
-		top : 2
-	});
-	topView.add(row);	
+
+	if (g == 0) {
+		var row = Ti.UI.createView({
+			width : '100%',
+			height : 45,
+			top : 20
+		});
+		topView.add(row);
+
+		g++;
+	} else {
+		var row = Ti.UI.createView({
+			width : '100%',
+			height : 45,
+			top : 2
+		});
+		topView.add(row);
 	}
 
 	var getTeamBtn = Ti.UI.createView({
@@ -78,7 +87,7 @@ for (var i = 0; i < league.length; i++) {
 		borderRadius : 17
 	});
 	getTeamBtn.add(leaguePic);
-//league name
+	//league name
 	var leagueName = Ti.UI.createLabel({
 		text : league[i].name,
 		liga : league[i].name,
@@ -95,28 +104,33 @@ for (var i = 0; i < league.length; i++) {
 		//hide league chooser
 		topView.hide();
 		//changing label to be named after the league of your choise
-		picLeagueLabel.text = Alloy.Globals.PHRASES.selectedLeagueTxt +' '+ e.source.liga + '\n' + Alloy.Globals.PHRASES.picTeamTxt;
+		picLeagueLabel.text = Alloy.Globals.PHRASES.selectedLeagueTxt + ' ' + e.source.liga + '\n' + Alloy.Globals.PHRASES.picTeamTxt;
 		// getting the teams of choosen league
-		getTeams(e.source.id);
+		if (OS_IOS) {
+			getTeams(e.source.id);
+			indicator.openIndicator();
+		} else {
+			getTeams(e.source.id);
+		}
 	});
 }
 var h = 0;
 function createGUI(obj) {
-	if (h == 0){
-	var row = Ti.UI.createView({
-		width : '100%',
-		height : 35,
-		top : 20
-	});
-	mainView.add(row);
-	h++;
-	}else{
-	var row = Ti.UI.createView({
-		width : '100%',
-		height : 35,
-		top : 2
-	});
-	mainView.add(row);	
+	if (h == 0) {
+		var row = Ti.UI.createView({
+			width : '100%',
+			height : 35,
+			top : 20
+		});
+		mainView.add(row);
+		h++;
+	} else {
+		var row = Ti.UI.createView({
+			width : '100%',
+			height : 35,
+			top : 2
+		});
+		mainView.add(row);
 	}
 
 	var goBtn = Ti.UI.createView({
@@ -124,13 +138,13 @@ function createGUI(obj) {
 		backgroundColor : '#fff',
 		color : '#000',
 		id : obj.tid,
-		lag: obj.name,
+		lag : obj.name,
 		opacity : 0.7,
 		borderRadius : 5,
 		left : '15%'
 	});
 	row.add(goBtn);
-	
+
 	//team logo
 
 	var url = obj.team_logo.replace('logos', 'logos');
@@ -143,17 +157,17 @@ function createGUI(obj) {
 		height : 35,
 		width : 35,
 		id : obj.tid,
-		lag: obj.name,
+		lag : obj.name,
 		left : '3%',
 		borderRadius : 17
 	});
 	goBtn.add(teamPic);
-	
+
 	//team name
 
 	var name = Ti.UI.createLabel({
 		text : obj.name,
-		lag: obj.name,
+		lag : obj.name,
 		id : obj.tid,
 		left : '30%',
 		font : {
@@ -177,12 +191,14 @@ function getTeams(lid) {
 			var team = JSON.parse(this.responseText);
 			for (var i = 0; i < team.data.length; i++) {
 				createGUI(team.data[i]);
+				indicator.closeIndicator();
 			}
 
 		},
 		// function called when an error occurs, including a timeout
 		onerror : function(e) {
 			Ti.API.debug(e.error);
+			indicator.closeIndicator();
 			//alert('error');
 		},
 		timeout : Alloy.Globals.TIMEOUT // in milliseconds
@@ -200,17 +216,17 @@ function getTeams(lid) {
 //inserts your team in db with your uid and team id
 function teamPicked(tid, name) {
 	//show toast of your favorite team
-	Alloy.Globals.showToast(Alloy.Globals.PHRASES.youTeamTxt +' '+ name);
+	Alloy.Globals.showToast(Alloy.Globals.PHRASES.youTeamTxt + ' ' + name);
 	var addTeam = Ti.Network.createHTTPClient();
-			addTeam.open("POST", Alloy.Globals.BETKAMPENSETUSERTEAM + '?lang=' + Alloy.Globals.LOCALE);
-			var params = {
-				uid : Alloy.Globals.BETKAMPENUID,
-				tid : tid,
-				sid : 1
-			};
-			addTeam.send(params);
-			
-			// send you to landingpage
+	addTeam.open("POST", Alloy.Globals.BETKAMPENSETUSERTEAM + '?lang=' + Alloy.Globals.LOCALE);
+	var params = {
+		uid : Alloy.Globals.BETKAMPENUID,
+		tid : tid,
+		sid : 1
+	};
+	addTeam.send(params);
+
+	// send you to landingpage
 	if (OS_IOS) {
 		var loginSuccessWindow = Alloy.createController('landingPage').getView();
 		loginSuccessWindow.open({

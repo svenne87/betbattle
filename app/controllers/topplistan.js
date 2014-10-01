@@ -90,7 +90,7 @@ infoTxt.add(scoreInfo);
 function createGUI(obj, i) {
 
 	var fr = [];
-	if (friendResp.length == null) {
+	if (friendResp == "bo") {
 
 	} else {
 		for (var s = 0; s < friendResp.length; s++) {
@@ -271,7 +271,7 @@ function createGUI(obj, i) {
 					top : 115,
 					id : e.source.id,
 					fName : e.source.name,
-					title : Alloy.Globals.PHRASES.addFriendsTxt,
+					title : Alloy.Globals.PHRASES.addFriendTxt,
 					backgroundColor : '#85d711',
 					color : '#000',
 					font : {
@@ -280,7 +280,7 @@ function createGUI(obj, i) {
 					},
 					borderRadius : 5
 				});
-				w.add(addFriendBtn);
+				modal.add(addFriendBtn);
 
 				addFriendBtn.addEventListener('click', function(e) {
 					var addFriends = Ti.Network.createHTTPClient();
@@ -481,7 +481,7 @@ function createGUI(obj, i) {
 					top : 115,
 					id : e.source.id,
 					fName : e.source.name,
-					title : Alloy.Globals.PHRASES.addFriendsTxt,
+					title : Alloy.Globals.PHRASES.addFriendTxt,
 					backgroundColor : '#85d711',
 					color : '#000',
 					font : {
@@ -699,6 +699,38 @@ function createGUI(obj, i) {
 	mainView.add(totalLeader);
 }
 
+var friendResp;
+Ti.API.info(friendResp);
+// get all users friends to see if you already are friends with the searchresult
+var xhr = Ti.Network.createHTTPClient({
+	onload : function(e) {
+		Ti.API.info("Received text: " + this.responseText);
+		friendResp = JSON.parse(this.responseText);
+		getScore();
+
+	},
+	// function called when an error occurs, including a timeout
+	onerror : function(e) {
+		Ti.API.debug(e.error);
+		//alert('error');
+	},
+	timeout : Alloy.Globals.TIMEOUT // in milliseconds
+});
+// Prepare the connection.
+xhr.open('GET', Alloy.Globals.BETKAMPENGETFRIENDSURL + '?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
+
+xhr.setRequestHeader("content-type", "application/json");
+xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
+xhr.setTimeout(Alloy.Globals.TIMEOUT);
+
+xhr.send();
+
+if (OS_IOS) {
+	indicator.openIndicator();
+}
+
+
+function getScore(){
 var name = null;
 var client = Ti.Network.createHTTPClient({
 	// function called when the response data is available
@@ -725,38 +757,11 @@ client.open("GET", Alloy.Globals.BETKAMPENURL + '/api/get_scoreboard.php?uid=' +
 
 client.setRequestHeader("content-type", "application/json");
 client.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
-client.setTimeout(Alloy.Globals.TIMEOUT);
-
-var friendResp = null;
-// get all users friends to see if you already are friends with the searchresult
-var xhr = Ti.Network.createHTTPClient({
-	onload : function(e) {
-		Ti.API.info("Received text: " + this.responseText);
-		friendResp = JSON.parse(this.responseText);
-
-	},
-	// function called when an error occurs, including a timeout
-	onerror : function(e) {
-		Ti.API.debug(e.error);
-		//alert('error');
-	},
-	timeout : Alloy.Globals.TIMEOUT // in milliseconds
-});
-// Prepare the connection.
-xhr.open('GET', Alloy.Globals.BETKAMPENGETFRIENDSURL + '?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
-
-xhr.setRequestHeader("content-type", "application/json");
-xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
-xhr.setTimeout(Alloy.Globals.TIMEOUT);
-
-xhr.send();
-
-if (OS_IOS) {
-	indicator.openIndicator();
+client.setTimeout(Alloy.Globals.TIMEOUT);// Send the request.
+client.send();
 }
 
-// Send the request.
-client.send();
+
 
 if (OS_ANDROID) {
 	$.scoreView.addEventListener('open', function() {

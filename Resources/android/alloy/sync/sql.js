@@ -1,5 +1,5 @@
 function S4() {
-    return (0 | 65536 * (1 + Math.random())).toString(16).substring(1);
+    return (65536 * (1 + Math.random()) | 0).toString(16).substring(1);
 }
 
 function guid() {
@@ -230,15 +230,15 @@ function Migrate(Model) {
     db = Ti.Database.open(config.adapter.db_name);
     migrator.db = db;
     db.execute("BEGIN;");
-    if (migrations.length) for (var i = 0; migrations.length > i; i++) {
+    if (migrations.length) for (var i = 0; i < migrations.length; i++) {
         var migration = migrations[i];
         var context = {};
         migration(context);
         if (direction) {
             if (context.id > targetNumber) break;
-            if (currentNumber >= context.id) continue;
+            if (context.id <= currentNumber) continue;
         } else {
-            if (targetNumber >= context.id) break;
+            if (context.id <= targetNumber) break;
             if (context.id > currentNumber) continue;
         }
         var funcName = direction ? "up" : "down";
@@ -277,7 +277,9 @@ function installDatabase(config) {
         }
         rs.close();
     } else {
-        config.adapter.idAttribute ? config.adapter.idAttribute : ALLOY_ID_DEFAULT;
+        {
+            config.adapter.idAttribute ? config.adapter.idAttribute : ALLOY_ID_DEFAULT;
+        }
         for (var k in config.columns) {
             cName = k;
             cType = config.columns[k];
@@ -287,7 +289,7 @@ function installDatabase(config) {
     }
     config.columns = columns;
     if (config.adapter.idAttribute) {
-        if (!_.contains(_.keys(config.columns), config.adapter.idAttribute)) throw 'config.adapter.idAttribute "' + config.adapter.idAttribute + '" not found in list of columns for table "' + table + '"\n' + "columns: [" + _.keys(config.columns).join(",") + "]";
+        if (!_.contains(_.keys(config.columns), config.adapter.idAttribute)) throw 'config.adapter.idAttribute "' + config.adapter.idAttribute + '" not found in list of columns for table "' + table + '"\ncolumns: [' + _.keys(config.columns).join(",") + "]";
     } else {
         Ti.API.info('No config.adapter.idAttribute specified for table "' + table + '"');
         Ti.API.info('Adding "' + ALLOY_ID_DEFAULT + '" to uniquely identify rows');

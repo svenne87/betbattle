@@ -1,4 +1,4 @@
-(function(activity, gcm) {
+!function(activity, gcm) {
     var intent = activity.intent;
     intent.hasExtra("ntfId") && (gcm.data = {
         ntfId: intent.getIntExtra("ntfId", 0)
@@ -12,4 +12,4 @@
         mainActivityIntent.addCategory(Ti.Android.CATEGORY_LAUNCHER);
         activity.startActivity(mainActivityIntent);
     } else activity.finish();
-})(Ti.Android.currentActivity, require("net.iamyellow.gcmjs"));
+}(Ti.Android.currentActivity, require("net.iamyellow.gcmjs"));
