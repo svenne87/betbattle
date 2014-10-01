@@ -44,6 +44,26 @@ Alloy.Globals.connect;
 Alloy.Globals.COUPON = null;
 Alloy.Globals.hasCoupon = false;
 Alloy.Globals.appStatus = 'foreground';
+Alloy.Globals.FONT = getFont();
+
+
+function getFont() {
+    if (OS_ANDROID) {
+        return {
+            fontSize : 20,
+            fontFamily : 'OpenSans',
+            fontWeight : 'Regular'
+        };
+
+    } else {
+        return {
+            fontSize : 18,
+            fontFamily : 'OpenSans',
+            fontWeight : 'Regular'
+        };
+    }
+}
+
 
 //initialize beacons
 if (OS_IOS) {

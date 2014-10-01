@@ -46,6 +46,10 @@
                 <key>UIAppFonts</key>
                 <array>
                     <string>/fonts/fontawesome-webfont.ttf</string>
+                    <string>/fonts/OpenSans-Bold.ttf</string>
+                    <string>/fonts/OpenSans-ExtraBold.ttf</string>
+                    <string>/fonts/OpenSans-Regular.ttf</string>
+                    <string>/fonts/OpenSans-Light.ttf</string>
                 </array>
                 <key>UIBackgroundModes</key>
                 <array>

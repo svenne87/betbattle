@@ -18,7 +18,7 @@ function createGameType(gameType, game, values) {
 		height : Ti.UI.SIZE,
 		layout : "vertical",
 		backgroundColor : "#303030",
-		top : 10,
+		top : 10
 	});
 
 	var gameTypeDescription = Ti.UI.createLabel({
@@ -47,6 +47,7 @@ function createGameType(gameType, game, values) {
 		for (var i = 0; i < values.length; i++) {
 			if (values[i].game_type == type && values[i].gid == game.game_id) {
 				var correct = false;
+				
 				for (var m in game.result_values) {
 					if (values[i].game_type == game.result_values[m].game_type) {
 						if (values[i].value_1 == game.result_values[m].value_1) {
@@ -136,6 +137,7 @@ function createGameType(gameType, game, values) {
 		for (var i = 0; i < values.length; i++) {
 			if (values[i].game_type == type && values[i].gid == game.game_id) {
 				var correct = false;
+				
 				for (var m in game.result_values) {
 					if (values[i].game_type == game.result_values[m].game_type) {
 						if (values[i].value_1 == game.result_values[m].value_1) {
@@ -145,6 +147,7 @@ function createGameType(gameType, game, values) {
 						}
 					}
 				}
+				
 				var valueRow = Ti.UI.createView({
 					width : "100%",
 					height : 50,
@@ -201,9 +204,9 @@ function createGameType(gameType, game, values) {
 			optionsView.add(valueRows[i]);
 		}
 	}
+	
 	gameTypeView.add(optionsView);
-	botView.add(gameTypeView);
-
+    botView.add(gameTypeView);
 }
 
 function createLayout(game, values, games, currentStanding, isFirst) {
@@ -214,13 +217,14 @@ function createLayout(game, values, games, currentStanding, isFirst) {
 		//backgroundColor:"blue",
 		scrollType : 'vertical',
 		showVerticalScrollIndicator : true,
+		opacity : 0
 	});
 	
 	botView = Ti.UI.createView({
 		height : 'auto',
 		width : Ti.UI.FILL,
 		layout : 'vertical',
-		backgroundColor : "#303030",
+		backgroundColor : "#303030"
 	});
 
 	// check if this is the first slide
@@ -342,7 +346,6 @@ function createLayout(game, values, games, currentStanding, isFirst) {
 
 			botView.add(currentStandingsView);
 		}
-
 	}
 
 	var image = Ti.UI.createView({
@@ -373,13 +376,18 @@ function createLayout(game, values, games, currentStanding, isFirst) {
 
 	botView.add(image);
 	view.add(botView);
+    
 
+/*
 	function doRest(game, games, values) {
 		var gametypes = game.game_types;
+	
 		for (var y in gametypes) {
 			createGameType(gametypes[y], game, values);
 		}
 
+	   // TODO skapa dem mer efter varandra, allt eftersom man scrollar?
+		
 		var slide = Ti.UI.createLabel({
 			text : Alloy.Globals.PHRASES.scrollNextGame,
 			textAlign : "center",
@@ -397,21 +405,47 @@ function createLayout(game, values, games, currentStanding, isFirst) {
 			view.add(slide);
 		}
 	}
+*/
 
+//doRest(game, games, values); // TODO
 
-	Alloy.Globals.performTimeout(doRest(game, games, values));
-	$.showChallenge.addView(view);
+    $.showChallenge.addView(view);
+	//Alloy.Globals.performTimeout(doRest(game, games, values));
 }
+
+function doRest(game, games, values) {
+    var gametypes = game.game_types;
+    
+    for (var y in gametypes) {
+        createGameType(gametypes[y], game, values);
+    }
+        
+    var slide = Ti.UI.createLabel({
+        text : Alloy.Globals.PHRASES.scrollNextGame,
+        textAlign : "center",
+        font : {
+            fontFamily : "Impact",
+            fontSize : 18,
+        },
+        color : "#FFF",
+    });
+
+    if (games.indexOf(game) == (games.length - 1)) {
+        // last game
+    } else {
+        // not last game
+        view.add(slide);
+    }
+}
+
 
 function getChallengeShow() {
 	var xhr = Titanium.Network.createHTTPClient();
 	xhr.onerror = function(e) {
 		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-		//alert(JSON.parse(this.responseText));
 		Ti.API.info('FEL : ' + JSON.stringify(this.responseText));
 		Ti.API.error('Bad Sever =>' + e.error);
 		indicator.closeIndicator();
-		//$.facebookBtn.enabled = true;
 	};
 
 	try {
@@ -423,27 +457,21 @@ function getChallengeShow() {
 	} catch(e) {
 		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 		indicator.closeIndicator();
-		//alert(JSON.parse(this.responseText));
 
 	}
 	xhr.onload = function() {
 		if (this.status == '200') {
 			if (this.readyState == 4) {
 				var response = JSON.parse(this.responseText);
-				// construct array with objects
-				Ti.API.info("challengeShow: " + JSON.stringify(response));
 				showResults(response);
 			} else {
 				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-				//$.facebookBtn.enabled = true;
 			}
 		} else {
+		    indicator.closeIndicator();
 			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-
-			//$.facebookBtn.enabled = true;
 			Ti.API.error("Error =>" + this.response);
 		}
-		indicator.closeIndicator();
 	};
 
 }
@@ -455,18 +483,30 @@ function createBorderView() {
 		backgroundColor : '#6d6d6d'
 	}));
 }
-
+ 
 function showResults(challenge) {
 	var isFirst = false;
+	$.showChallenge.hide();
 
 	for (var y in challenge.games) {
 		if (y === '0') {
 			isFirst = true;
 		}
+
 		// create layout
 		createLayout(challenge.games[y], challenge.values, challenge.games, challenge.current_standing, isFirst);
+		doRest(challenge.games[y], challenge.games, challenge.values); 
+	    view.setOpacity(1); 
+        
 		isFirst = false;
 	}
+	  
+    setTimeout(function() {
+        indicator.closeIndicator(); 
+        // show layout
+        $.showChallenge.show();
+    }, 400); 
+    
 }
 
 if (OS_ANDROID) {
@@ -486,6 +526,10 @@ if (OS_ANDROID) {
 	});
 }
 if (Alloy.Globals.checkConnection()) {
+    if(OS_IOS) {
+        indicator.openIndicator(); 
+    }
+
 	getChallengeShow();
 } else {
 	Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);

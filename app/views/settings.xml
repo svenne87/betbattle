@@ -1,6 +1,25 @@
 <Alloy>
 	<Window class="container" id="settingsWindow">	
 		<View id="settingsView">
+			<TableView id="table">
+				<TableViewRow class="settings_row" id="language_row">
+					<Label class="info_label" id="language_label"></Label>
+				</TableViewRow>
+				<TableViewRow class="settings_row" id="push_notification_row">
+					<Label class="info_label" id="push_label"></Label>
+				</TableViewRow>
+				<TableViewRow class="settings_row" id="profile_picture_row">
+					<Label class="info_label" id="profile_picture_label"></Label>
+				</TableViewRow>
+				<TableViewRow class="settings_row" id="profile_name_row">
+					<Label class="info_label" id="profile_name_label"></Label>
+					<Label id="profile_name_value_label"></Label>
+				</TableViewRow>
+				<TableViewRow class="settings_row" id="bluetooth_settings_row">
+					<Label class="info_label" id="bluetooth_settings_label"></Label>
+				</TableViewRow>
+			</TableView>
+			<ProgressBar id="upload_indicator"></ProgressBar>
 		</View>
 	</Window>
 </Alloy>

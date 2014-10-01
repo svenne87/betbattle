@@ -1761,7 +1761,8 @@ if (OS_ANDROID) {
 	});
 }
 
-
+// fetch coupon here to keep it up to date in all views
+Alloy.Globals.getCoupon();
 
 
 /*var test = {

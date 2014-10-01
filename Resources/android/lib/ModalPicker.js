@@ -10,6 +10,7 @@ function ModalPicker(prefs, data, selectTxt, closeTxt, id) {
     });
     var select = Ti.UI.createButton({
         title: selectTxt,
+        font: Alloy.Globals.FONT,
         style: Ti.UI.iPhone.SystemButtonStyle.PLAIN,
         color: "#FFF",
         backgroundImage: "none",
@@ -17,6 +18,7 @@ function ModalPicker(prefs, data, selectTxt, closeTxt, id) {
     });
     var close = Ti.UI.createButton({
         title: closeTxt,
+        font: Alloy.Globals.FONT,
         style: Ti.UI.iPhone.SystemButtonStyle.PLAIN,
         color: "#FFF",
         backgroundImage: "none",
@@ -30,7 +32,7 @@ function ModalPicker(prefs, data, selectTxt, closeTxt, id) {
         top: 0,
         borderTop: true,
         borderBottom: false,
-        barColor: "#303030"
+        barColor: "#000"
     });
     select.addEventListener("click", function() {
         self.text = picker.getSelectedRow(0).title;
@@ -41,6 +43,7 @@ function ModalPicker(prefs, data, selectTxt, closeTxt, id) {
         });
     });
     close.addEventListener("click", function() {
+        self.open = false;
         subWin.animate({
             top: Ti.Platform.displayCaps.platformHeight
         });
@@ -53,6 +56,7 @@ function ModalPicker(prefs, data, selectTxt, closeTxt, id) {
     picker.selectionIndicator = true;
     subWin.add(picker);
     self.addEventListener("click", function() {
+        self.open = true;
         subWin.open();
         subWin.animate({
             top: Ti.Platform.displayCaps.platformHeight - 274

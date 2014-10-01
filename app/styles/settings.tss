@@ -9,4 +9,104 @@
     width: Ti.UI.FILL,
     height: Ti.UI.FILL,
    	backgroundColor : "transparent"
+},
+"#table[platform=ios]": {
+	top : 20,
+	height : '85%',
+	width : Ti.UI.FILL,
+	backgroundColor : '#000',
+	separatorInsets : {
+    	left : 0,
+        right : 0
+    },
+    headerView : null,
+    footerView : null,
+    separatorColor : '#303030'
+},
+"#table[platform=android]": {
+	top : 20,
+	height : '85%',
+	width : Ti.UI.FILL,
+	backgroundColor : '#000',
+    headerView : null,
+    footerView : null,
+    separatorColor : '#303030'
+},
+".settings_row": {
+	height : 75,
+	width : Ti.UI.FILL,
+	className : 'settingsRow'
+},
+".info_label":{
+	textAlign : "left",
+	left : 20,
+	height : Ti.UI.SIZE,
+	font : Alloy.Globals.FONT,
+	color : '#CCC',
+	width : Ti.UI.SIZE
+},
+"#language_row[platform=ios]":{
+	hasChild : true
+},
+"#language_label":{
+	text : Alloy.Globals.PHRASES.changeLanguageTxt
+},
+"#push_notification_row[platform=ios]":{
+	hasChild : false
+},
+"#push_label": {
+	text : Alloy.Globals.PHRASES.settingsPushTxt
+},
+"#profile_picture_row[platform=ios]": {
+	hasChild : true
+},
+"#profile_picture_label": {
+	text : Alloy.Globals.PHRASES.settingsPicTxt
+},
+"#profile_name_row[platform=ios]": {
+	hasChild : true
+},
+"#profile_name_label": {
+	text : Alloy.Globals.PHRASES.settingsProfileTxt
+},
+"#profile_name_value_label": {
+	textAlign : "left",
+	text : Alloy.Globals.PROFILENAME,
+	right : 20,
+	height : Ti.UI.SIZE,
+	font : Alloy.Globals.FONT,
+	color : "#FFF",
+	width : Ti.UI.SIZE
+},
+"#bluetooth_settings_row[platform=ios]": {
+	hasChild : true
+},
+"#bluetooth_settings_label":{
+	text : Alloy.Globals.PHRASES.settingsBluetoothTxt
+},
+"#upload_indicator[platform=ios]": {
+	width : Ti.UI.FILL,
+	height : 30,
+	min : 0,
+	max : 1,
+	value : 0,
+	visible  : false,
+	style : Titanium.UI.iPhone.ProgressBarStyle.PLAIN,
+	bottom : 5,
+	message : Alloy.Globals.PHRASES.imageUploadTxt,
+	font : Alloy.Globals.FONT,
+	color : '#FFF'
+},
+"#upload_indicator[platform=android]": {
+	width : Ti.UI.FILL,
+	height : 30,
+	min : 0,
+	max : 1,
+	value : 0,
+	visible  : false,
+	style : Titanium.UI.Android.PROGRESS_INDICATOR_STATUS_BAR,
+ 	bottom : 5,
+	message : Alloy.Globals.PHRASES.imageUploadTxt,
+	font : Alloy.Globals.FONT,
+	color : '#FFF'
 }

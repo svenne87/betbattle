@@ -91,6 +91,14 @@ function sendSettingsServer(param, type, valueToStore) {
 					} else if(type === 1) {
 						// name change
 						Alloy.Globals.PROFILENAME = valueToStore;
+						
+						// set name in view
+						$.profile_name_value_label.text = valueToStore;   
+                        if(Alloy.Globals.PROFILENAME.length > 10) {
+                            $.profile_name_value_label.text = Alloy.Globals.PROFILENAME.substring(0, 7) + '...';
+                        }
+						
+						// update event
 						Ti.App.fireEvent('app:updateMenu');
 					}
 					Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
@@ -108,388 +116,250 @@ function sendSettingsServer(param, type, valueToStore) {
 }
 
 function createGUI() {
-	$.settingsView.add(Ti.UI.createLabel({
-		height : 'auto',
-		top : 20,
-		width : '100%',
-		textAlign : 'center',
-		backgroundColor : 'transparent',
-		color : '#FFF',
-		text : "Settings",
-		font : {
-			fontFamily : "Impact",
-			fontSize : Alloy.Globals.getFontSize(2)
-		}
-	}));
+    
 
-	var row = Ti.UI.createView({
-		top : 20,
-		backgroundColor : '#FFF',
-		width : "97%",
-		height : 60,
-		opacity : 0.7,
-		borderRadius : 10
-	});
+    if (OS_ANDROID) {
+        var headerView = Ti.UI.createView({
+            height : 1,
+            top : 5,
+            width : Ti.UI.FILL,
+            layout : 'vertical',
+            backgroundColor : "#303030",
+        });
+        
+        var footerView = Ti.UI.createView({
+            height : 1,
+            top : 5,
+            width : Ti.UI.FILL,
+            layout : 'vertical',
+            backgroundColor : "#303030",
+        });
+    } else {
+        var headerView = Ti.UI.createView({
+            height : 0.3,
+            top : 0,
+            width : Ti.UI.FILL,
+            layout : 'vertical',
+            backgroundColor : '#303030',
+        });
 
-	row.add(Ti.UI.createLabel({
-		text : Alloy.Globals.PHRASES.changeLanguageTxt,
-		textAlign : "center",
-		height : 'auto',
-		left : 5,
-		font : {
-			fontSize : Alloy.Globals.getFontSize(1),
-			fontFamily : "Impact"
-		},
-		color : "#000"
-	}));
+        var footerView = Ti.UI.createView({
+            height : 0,
+            top : 0,
+            width : Ti.UI.FILL,
+            layout : 'vertical',
+            backgroundColor : "transparent",
+        });
+    }
+    
+    $.table.setHeaderView(headerView);
+    $.table.setFooterView(footerView);
+    
+    // TODO chevron for android...?
+    // TODO Bluetooth funkar inte, Font 
+    
+    /* First row */
+    $.language_row.add(createPickers());
+    $.language_row.addEventListener('click', function() {
+        if(picker.open) {
+            // the picker is visible, don't do anything
+            return;
+        }
+        picker.fireEvent('click'); 
+    });
+    
+    /* Second row */
+   var pushEnabled;
 
-	row.add(createPickers());
-	$.settingsView.add(row);
+    // true will be set if no stored value is found
+    if (!Ti.App.Properties.hasProperty("pushSetting")) {
+        Ti.App.Properties.setBool("pushSetting", true);
+    }
 
-	var secondRow = Ti.UI.createView({
-		top : 20,
-		backgroundColor : '#FFF',
-		width : "97%",
-		height : 60,
-		opacity : 0.7,
-		borderRadius : 10
-	});
+    pushEnabled = Ti.App.Properties.getBool('pushSetting');
+    var basicSwitch;
 
-	secondRow.add(Ti.UI.createLabel({
-		text : Alloy.Globals.PHRASES.settingsPushTxt,
-		textAlign : "center",
-		height : 'auto',
-		left : 5,
-		font : {
-			fontSize : Alloy.Globals.getFontSize(1),
-			fontFamily : "Impact"
-		},
-		color : "#000"
-	}));
+    if (OS_IOS) {
+        basicSwitch = Ti.UI.createSwitch({
+            right : 10,
+            width : 40,
+            titleOn : Alloy.Globals.PHRASES.onTxt,
+            titleOff : Alloy.Globals.PHRASES.offTxt,
+            value : pushEnabled
+        });
+    } else if (OS_ANDROID) {
+        var RealSwitch = require('com.yydigital.realswitch');
+        
+        basicSwitch = RealSwitch.createRealSwitch({
+            right : 20,
+            width : 90,
+            value : pushEnabled
+        });
+    }
+    
+    basicSwitch.addEventListener('change', function(e) {
+        var value = 0;
+        if(basicSwitch.value) {
+            value = 1;
+        }
+        
+        // build the json string
+        var deviceType = Titanium.Platform.osname;
+        var param = '{"device_token":"' + Alloy.Globals.DEVICETOKEN + '", "device_type":"' + deviceType + '", "push_status":' + value + ', "app_identifier":"' + Alloy.Globals.APPID + '", "lang":"' + Alloy.Globals.LOCALE + '"}';
+        // send to backend
+        if(Alloy.Globals.DEVICETOKEN){
+            // only send if not emulator
+            sendSettingsServer(param, 0, basicSwitch.value);
+        } 
+    });
+    $.push_notification_row.selectionStyle = 'none';
+    $.push_notification_row.add(basicSwitch)
+    
+    /* Third row */
+    $.upload_indicator.message = $.upload_indicator.message + '...';
+   
+    $.profile_picture_row.addEventListener('click', function() {
+        if(Alloy.Globals.FACEBOOKOBJECT) {
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.fbImageChangeError);
+            return;
+        }
+        
+        Ti.Media.openPhotoGallery({
+            success : function(event) {
+                // check connection
+                if (Alloy.Globals.checkConnection()) {
+                    var image = event.media;
+                    $.upload_indicator.show();
 
-	var pushEnabled;
+                    var xhr = Titanium.Network.createHTTPClient();
+                    xhr.onerror = function(e) {
+                        Ti.API.error('Bad Sever =>' + JSON.stringify(e));
+                        $.upload_indicator.hide();
+                        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.imageUploadError);
+                    };
 
-	// true will be set if no stored value is found
-	if (!Ti.App.Properties.hasProperty("pushSetting")) {
-		Ti.App.Properties.setBool("pushSetting", true);
-	}
+                    xhr.onsendstream = function(e) {
+                        // upload progress
+                        $.upload_indicator.value = e.progress;
+                    };
 
-	pushEnabled = Ti.App.Properties.getBool('pushSetting');
-	var basicSwitch;
+                    try {
+                        xhr.open('POST', Alloy.Globals.BETKAMPENIMAGEUPLOADURL + '?lang=' + Alloy.Globals.LOCALE);
+                        xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
+                        xhr.setTimeout(Alloy.Globals.TIMEOUT);
 
-	if (OS_IOS) {
-		basicSwitch = Ti.UI.createSwitch({
-			right : 60,
-			top : 15,
-			width : 40,
-			titleOn : Alloy.Globals.PHRASES.onTxt,
-			titleOff : Alloy.Globals.PHRASES.offTxt,
-			value : pushEnabled
-		});
-	} else if (OS_ANDROID) {
-		var RealSwitch = require('com.yydigital.realswitch');
-		
-		basicSwitch = RealSwitch.createRealSwitch({
-			right : 40,
-			top : 15,
-			width : 90,
-			value : pushEnabled
-		});
-	}
-	
-	basicSwitch.addEventListener('change', function(e) {
-		var value = 0;
-		if(basicSwitch.value) {
-			value = 1;
-		}
-		
-		// build the json string
-		var deviceType = Titanium.Platform.osname;
-		var param = '{"device_token":"' + Alloy.Globals.DEVICETOKEN + '", "device_type":"' + deviceType + '", "push_status":' + value + ', "app_identifier":"' + Alloy.Globals.APPID + '", "lang":"' + Alloy.Globals.LOCALE + '"}';
-		// send to backend
-		if(Alloy.Globals.DEVICETOKEN){
-			// only send if not emulator
-			sendSettingsServer(param, 0, basicSwitch.value);
-		}
-		
-	});
+                        xhr.send({
+                            media : image
+                        });
+                    } catch(e) {
+                        $.upload_indicator.hide();
+                        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+                    }
 
-	secondRow.add(basicSwitch);
-	$.settingsView.add(secondRow);
+                    xhr.onload = function() {
+                        if (this.status == '200') {
+                            var response = JSON.parse(this.responseText);
+                            Alloy.Globals.showFeedbackDialog(response);
+                            $.upload_indicator.hide();
+                        } else {
+                            $.upload_indicator.hide();
+                            Ti.API.error("Error =>" + this.response);
+                            Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
+                        }
+                    };
+                } else {
+                    Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+                }
+            },
+            cancel : function() {
+                // Do nothing
+                // TODO
+            },
+            error : function() {
+                // some error trying to access photos
+                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+            },
+            allowEditing : true,
+            mediaTypes : [Ti.Media.MEDIA_TYPE_PHOTO]
+        });
 
-	var thirdRow = Ti.UI.createView({
-		top : 20,
-		backgroundColor : '#FFF',
-		width : "97%",
-		height : 60,
-		opacity : 0.7,
-		borderRadius : 10
-	});
+    });
 
-	thirdRow.add(Ti.UI.createLabel({
-		text : Alloy.Globals.PHRASES.settingsPicTxt,
-		textAlign : "center",
-		height : 'auto',
-		left : 5,
-		font : {
-			fontSize : Alloy.Globals.getFontSize(1),
-			fontFamily : "Impact"
-		},
-		color : "#000"
-	}));
+   /* Fourth row */
+   
+   if(Alloy.Globals.PROFILENAME.length > 10) {
+       $.profile_name_value_label.text = Alloy.Globals.PROFILENAME.substring(0, 7) + '...';
+   }
+   
+   $.profile_name_row.addEventListener('click', function() {
+        var dialog;
+        var profileName = Alloy.Globals.PROFILENAME;
+        var confirm = Alloy.Globals.PHRASES.okConfirmTxt;
+        var cancel = Alloy.Globals.PHRASES.abortBtnTxt;
+        var titleTxt = Alloy.Globals.PHRASES.profileNameTitleTxt;
+        var messageTxt = Alloy.Globals.PHRASES.profileNameMessageTxt + ": " + profileName;
 
-	var rightPos = 60;
-	var font = 'FontAwesome';
-	
-	if(OS_ANDROID) {
-		rightPos = 40;
-		font = 'fontawesome-webfont';
-	}
+        if (OS_IOS) {
+            dialog = Ti.UI.createAlertDialog({
+                title : titleTxt,
+                message : messageTxt,
+                style : Ti.UI.iPhone.AlertDialogStyle.PLAIN_TEXT_INPUT,
+                buttonNames : [confirm, cancel]
+            });
 
-	thirdRow.add(Ti.UI.createLabel({
-		font : {
-			fontFamily : font
-		},
-		text : fontawesome.icon('icon-chevron-right'),
-		right : rightPos,
-		color : '#000',
-		fontSize : 80,
-		height : 'auto',
-		width : 'auto'
-	}));
+        } else if (OS_ANDROID) {
+            var textfield = Ti.UI.createTextField();
+            textfield.value = profileName;
 
-	thirdRow.addEventListener('click', function() {
-		if(Alloy.Globals.FACEBOOKOBJECT) {
-			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.fbImageChangeError);
-			return;
-		}
-		
-		Ti.Media.openPhotoGallery({
-			success : function(event) {
+            dialog = Ti.UI.createAlertDialog({
+                title : titleTxt,
+                message : messageTxt,
+                androidView : textfield,
+                buttonNames : [confirm, cancel]
+            });
+        }
 
-				// check connection
-				if (Alloy.Globals.checkConnection()) {
-					var image = event.media;
-					uploadIndicator.show();
+        dialog.addEventListener('click', function(e) {
+            if (e.index == 0) {
+                var text;
 
-					var xhr = Titanium.Network.createHTTPClient();
-					xhr.onerror = function(e) {
-						Ti.API.error('Bad Sever =>' + JSON.stringify(e));
-						uploadIndicator.hide();
-						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.imageUploadError);
-					};
+                if (OS_IOS) {
+                    text = e.text;
+                } else if (OS_ANDROID) {
+                    text = textfield.value;
+                }
 
-					xhr.onsendstream = function(e) {
-						// upload progress
-						uploadIndicator.value = e.progress;
-					};
+                if (text.length > 2 && text.length < 16) {
+                    // set new profileName
+                    profileName = text;
+                    // build the json string
+                    var param = '{"profile_name":"' + profileName + '", "app_identifier":"' + Alloy.Globals.APPID + '", "lang":"' + Alloy.Globals.LOCALE + '"}';
+                    // send to backend
+                    sendSettingsServer(param, 1, profileName);
 
-					try {
-						xhr.open('POST', Alloy.Globals.BETKAMPENIMAGEUPLOADURL + '?lang=' + Alloy.Globals.LOCALE);
-						xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
-						xhr.setTimeout(Alloy.Globals.TIMEOUT);
+                } else {
+                    Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.groupNameErrorTxt);
+                }
+            } else {
+                dialog.hide();
+            }
+        });
+        dialog.show();
+    });
 
-						xhr.send({
-							media : image
-						});
-					} catch(e) {
-						uploadIndicator.hide();
-						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-					}
-
-					xhr.onload = function() {
-						if (this.status == '200') {
-							var response = JSON.parse(this.responseText);
-							Alloy.Globals.showFeedbackDialog(response);
-							uploadIndicator.hide();
-						} else {
-							uploadIndicator.hide();
-							Ti.API.error("Error =>" + this.response);
-							Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
-						}
-					};
-				} else {
-					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
-				}
-			},
-			cancel : function() {
-				// Do nothing
-			},
-			error : function() {
-				// some error trying to access photos
-				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-			},
-			allowEditing : true,
-			mediaTypes : [Ti.Media.MEDIA_TYPE_PHOTO]
-		});
-
-	});
-
-	$.settingsView.add(thirdRow);
-
-	var fourthRow = Ti.UI.createView({
-		top : 20,
-		backgroundColor : '#FFF',
-		width : "97%",
-		height : 60,
-		opacity : 0.7,
-		borderRadius : 10
-	});
-
-	fourthRow.add(Ti.UI.createLabel({
-		text : Alloy.Globals.PHRASES.settingsProfileTxt,
-		textAlign : "center",
-		height : 'auto',
-		left : 5,
-		font : {
-			fontSize : Alloy.Globals.getFontSize(1),
-			fontFamily : "Impact"
-		},
-		color : "#000"
-	}));
-
-	fourthRow.add(Ti.UI.createLabel({
-		font : {
-			fontFamily : font
-		},
-		text : fontawesome.icon('icon-chevron-right'),
-		right : rightPos,
-		color : '#000',
-		fontSize : 80,
-		height : 'auto',
-		width : 'auto'
-	}));
-
-	fourthRow.addEventListener('click', function() {
-		var dialog;
-		var profileName = Alloy.Globals.PROFILENAME;
-		var confirm = Alloy.Globals.PHRASES.okConfirmTxt;
-		var cancel = Alloy.Globals.PHRASES.abortBtnTxt;
-		var titleTxt = Alloy.Globals.PHRASES.profileNameTitleTxt;
-		var messageTxt = Alloy.Globals.PHRASES.profileNameMessageTxt + ": " + profileName;
-
-		if (OS_IOS) {
-			dialog = Ti.UI.createAlertDialog({
-				title : titleTxt,
-				message : messageTxt,
-				style : Ti.UI.iPhone.AlertDialogStyle.PLAIN_TEXT_INPUT,
-				buttonNames : [confirm, cancel]
-			});
-
-		} else if (OS_ANDROID) {
-			var textfield = Ti.UI.createTextField();
-			textfield.value = profileName;
-
-			dialog = Ti.UI.createAlertDialog({
-				title : titleTxt,
-				message : messageTxt,
-				androidView : textfield,
-				buttonNames : [confirm, cancel]
-			});
-		}
-
-		dialog.addEventListener('click', function(e) {
-			if (e.index == 0) {
-				var text;
-
-				if (OS_IOS) {
-					text = e.text;
-				} else if (OS_ANDROID) {
-					text = textfield.value;
-				}
-
-				if (text.length > 2 && text.length < 16) {
-					// set new profileName
-					profileName = text;
-					// build the json string
-					var param = '{"profile_name":"' + profileName + '", "app_identifier":"' + Alloy.Globals.APPID + '", "lang":"' + Alloy.Globals.LOCALE + '"}';
-					// send to backend
-					sendSettingsServer(param, 1, profileName);
-
-				} else {
-					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.groupNameErrorTxt);
-				}
-			} else {
-				dialog.hide();
-			}
-		});
-		dialog.show();
-	});
-
-	$.settingsView.add(fourthRow);
-
-	var fifthRow = Ti.UI.createView({
-		top : 20,
-		backgroundColor : '#FFF',
-		width : "97%",
-		height : 60,
-		opacity : 0.7,
-		borderRadius : 10
-	});
-
-	fifthRow.add(Ti.UI.createLabel({
-		text : Alloy.Globals.PHRASES.settingsBluetoothTxt,
-		textAlign : "center",
-		height : 'auto',
-		left : 5,
-		font : {
-			fontSize : Alloy.Globals.getFontSize(1),
-			fontFamily : "Impact"
-		},
-		color : "#000"
-	}));
-
-	fifthRow.add(Ti.UI.createLabel({
-		font : {
-			fontFamily : font
-		},
-		text : fontawesome.icon('icon-chevron-right'),
-		right : rightPos,
-		color : '#000',
-		fontSize : 80,
-		height : 'auto',
-		width : 'auto'
-	}));
-
-	fifthRow.addEventListener('click', function() {
-		if (OS_IOS) {
-			Ti.Platform.openURL('prefs:root=Brightness prefs:root=General&path=Bluetooth');
-		} else if (OS_ANDROID) {
-			var intent = Ti.Android.createIntent({
-				className : 'com.android.settings.bluetooth.BluetoothSettings',
-				packageName : 'com.android.settings',
-				action : Ti.Android.ACTION_MAIN,
-			});
-			Ti.Android.currentActivity.startActivity(intent);
-		}
-	});
-
-	$.settingsView.add(fifthRow);
-
-	// Indicator for file upload.
-	var style = Titanium.UI.iPhone.ProgressBarStyle.PLAIN;
-	if (OS_ANDROID) {
-		style = Titanium.UI.Android.PROGRESS_INDICATOR_STATUS_BAR;
-	}
-
-	var uploadIndicator = Titanium.UI.createProgressBar({
-		width : 200,
-		height : 50,
-		min : 0,
-		max : 1,
-		value : 0,
-		visible  : false,
-		style : style,
-		top : 10,
-		message : Alloy.Globals.PHRASES.imageUploadTxt + "...",
-		font : {
-			fontSize : Alloy.Globals.getFontSize(1),
-			fontWeight : 'bold'
-		},
-		color : '#FFF'
-	});
-
-	$.settingsView.add(uploadIndicator);
+    /* Fifth row */
+    $.bluetooth_settings_row.addEventListener('click', function() {
+        if (OS_IOS) {
+            Ti.Platform.openURL('prefs:root=Brightness prefs:root=General&path=Bluetooth');
+        } else if (OS_ANDROID) {
+            var intent = Ti.Android.createIntent({
+                className : 'com.android.settings.bluetooth.BluetoothSettings',
+                packageName : 'com.android.settings',
+                action : Ti.Android.ACTION_MAIN,
+            });
+            Ti.Android.currentActivity.startActivity(intent);
+        }
+    });
 }
 
 function createPickers() {
@@ -520,17 +390,18 @@ function createPickers() {
 
 	if (OS_ANDROID) {
 		picker = Ti.UI.createLabel({
-			top : 10,
-			right : 40,
-			backgroundColor : '#FFF',
-			borderRadius : 2,
-			width : 120,
-			height : 40,
+		    right : 20,
+            backgroundColor : 'transparent',
+            width : Ti.UI.SIZE,
+            height : Ti.UI.SIZE,
+            textAlign : 'left',
+            color : '#FFF',
 			text : currentLanguage,
-			textAlign : 'center'
+			font : Alloy.Globals.FONT
 		});
 		
 		picker.addEventListener('click', function() {
+		    picker.open = true;
 			Alloy.createWidget('danielhanold.pickerWidget', {
 				id : 'sColumnLanguage',
 				outerView : $.settingsWindow,
@@ -544,19 +415,20 @@ function createPickers() {
 						// key can't be 0, that's why we need to "-1"
 						changeLanguageConfirm(e.data[0].key - 1);
 					}
+					picker.open = false;
 				},
 			});
 		});
 	} else if (OS_IOS) {
 		var ModalPicker = require("lib/ModalPicker");
 		var visualPrefs = {
-			top : 10,
-			right : 10,
-			borderRadius : 3,
-			backgroundColor : '#FFF',
-			width : 140,
-			height : 40,
-			textAlign : 'center'
+			right : 20,
+			backgroundColor : '#000',
+			width : Ti.UI.SIZE,
+			height : Ti.UI.SIZE,
+			textAlign : 'left',
+			color : '#FFF',
+			font : Alloy.Globals.FONT
 		};
 
 		picker = new ModalPicker(visualPrefs, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt, Alloy.Globals.PHRASES.closeBtnTxt);
