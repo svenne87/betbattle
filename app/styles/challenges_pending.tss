@@ -9,5 +9,5 @@
 	height:Ti.UI.FILL,
 	width:Ti.UI.FILL,
 	layout:'vertical',
-	backgroundImage: '/images/profileBG.jpg'
+	backgroundColor : "#000",
 },
