@@ -268,7 +268,7 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 	}
 
 	//getInvitableFbFriends();
-
+// gets friends how got the app installed
 	function getFbFriendsWithApp() {
 		fb.requestWithGraphPath('me/friends', {
 			fields : 'name'
@@ -280,19 +280,23 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 			for (var i = 0; i < myFbFriends.length; i++) {
 				createGUI(myFbFriends[i]);
 			}
+			
+			// this gets a list of all your friends but it only sends requsts to people how got the app 
+			// you need a facebook canvas app to invite people who dont have the app in new fb sdk 2.0-2.1
+			/*
 			var sendToFb = Ti.UI.createButton({
-				height : 40,
+				height : 45,
 				width : '80%',
 				left : '10%',
 				top : 40,
 				title : Alloy.Globals.PHRASES.inviteBtnTxt,
-				backgroundColor : '#FFF',
-				color : '#000',
+				backgroundColor : '#3B5998',
+				color : '#fff',
 				font : {
 					fontSize : 19,
 					fontFamily : "Impact"
 				},
-				borderRadius : 5
+				borderRadius : 3
 			});
 			mainView.add(sendToFb);
 
@@ -314,7 +318,7 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 						}
 					}
 				});
-			});
+			});*/
 
 			indicator.closeIndicator();
 		});
