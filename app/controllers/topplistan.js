@@ -90,7 +90,7 @@ infoTxt.add(scoreInfo);
 function createGUI(obj, i) {
 
 	var fr = [];
-	if (friendResp.length == null) {
+	if (friendResp == "bo") {
 
 	} else {
 		for (var s = 0; s < friendResp.length; s++) {
@@ -271,7 +271,7 @@ function createGUI(obj, i) {
 					top : 115,
 					id : e.source.id,
 					fName : e.source.name,
-					title : Alloy.Globals.PHRASES.addFriendsTxt,
+					title : Alloy.Globals.PHRASES.addFriendTxt,
 					backgroundColor : '#85d711',
 					color : '#000',
 					font : {
@@ -481,7 +481,7 @@ function createGUI(obj, i) {
 					top : 115,
 					id : e.source.id,
 					fName : e.source.name,
-					title : Alloy.Globals.PHRASES.addFriendsTxt,
+					title : Alloy.Globals.PHRASES.addFriendTxt,
 					backgroundColor : '#85d711',
 					color : '#000',
 					font : {
@@ -699,12 +699,14 @@ function createGUI(obj, i) {
 	mainView.add(totalLeader);
 }
 
-var friendResp = null;
+var friendResp;
+Ti.API.info(friendResp);
 // get all users friends to see if you already are friends with the searchresult
 var xhr = Ti.Network.createHTTPClient({
 	onload : function(e) {
 		Ti.API.info("Received text: " + this.responseText);
 		friendResp = JSON.parse(this.responseText);
+		getScore();
 
 	},
 	// function called when an error occurs, including a timeout
@@ -728,7 +730,7 @@ if (OS_IOS) {
 }
 
 
-
+function getScore(){
 var name = null;
 var client = Ti.Network.createHTTPClient({
 	// function called when the response data is available
@@ -757,6 +759,7 @@ client.setRequestHeader("content-type", "application/json");
 client.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
 client.setTimeout(Alloy.Globals.TIMEOUT);// Send the request.
 client.send();
+}
 
 
 
