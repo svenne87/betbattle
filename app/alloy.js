@@ -162,6 +162,28 @@ Alloy.Globals.readToken = function() {
 	}
 };
 
+Alloy.Globals.createButtonView = function(buttonColor, fontColor, text) {
+	var buttonView = Ti.UI.createView({
+		width: "90%",
+		height: 65,
+		borderRadius : 5,
+		backgroundColor: buttonColor,
+		top: 10,
+	});
+	
+	
+	var buttonLabel = Ti.UI.createLabel({
+		text: text,
+		font: Alloy.Globals.FONT,
+		color: fontColor,
+		textAlign: "center"
+	});
+	
+	buttonView.add(buttonLabel);
+	
+	return buttonView;
+};
+
 Alloy.Globals.setAndroidCouponMenu = function(activity) {
 	activity.onCreateOptionsMenu = function(e) {
 		ticket = e.menu.add( ticketIcon = {
