@@ -45,6 +45,8 @@ Alloy.Globals.COUPON = null;
 Alloy.Globals.hasCoupon = false;
 Alloy.Globals.appStatus = 'foreground';
 Alloy.Globals.FONT = getFont();
+Alloy.Globals.deviceHeight = Ti.Platform.displayCaps.platformHeight;
+Alloy.Globals.deviceWidth = Ti.Platform.displayCaps.platformWidth;
 
 function getFont() {
     if (OS_ANDROID) {

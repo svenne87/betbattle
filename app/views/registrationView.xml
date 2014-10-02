@@ -1,13 +1,21 @@
 <Alloy>
 	<Window class="container">
-		<View id="main">
-			<View id="cover">
-				<TextField id="regEmail"></TextField>
-				<TextField id="regPass"></TextField>
-				<TextField id="regPassAgain"></TextField>
-				<Button id="signUpBtn"></Button>
-				<Button id="abortRegBtn"></Button>
-			</View>
+		<View id="info">
+			<Label id="info_label"></Label>
 		</View>
+		<TableView id="table">
+			<TableViewRow class="register_input_row">
+				<TextField id="regEmail"></TextField>
+			</TableViewRow>
+			<TableViewRow class="register_input_row">
+				<TextField id="regPass"></TextField>
+			</TableViewRow>
+			<TableViewRow class="register_input_row">
+				<TextField id="regPassAgain"></TextField>
+			</TableViewRow>
+		</TableView>
+		<View id="space_row"></View>
+		<View class="register_btn_row" id="signup_row"></View>
+		<View class="register_btn_row" id="abort_row"></View>
 	</Window>
 </Alloy>

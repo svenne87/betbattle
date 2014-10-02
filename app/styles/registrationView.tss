@@ -1,77 +1,100 @@
-
 ".container" : {
 	layout: 'vertical',
 	width: Ti.UI.FILL,
 	height: Ti.UI.FILL,
-	backgroundColor: 'transparent'
+	backgroundColor: '#000'
 },
-"#main": {
-	height: '100%',
-	width: '100%',
-	backgroundImage: '/images/Default-Portrait.png',
-	layout: 'vertical'
+"#info": {
+	height : '2%',
+	width : Ti.UI.FILL,
+	layout : 'vertical'
 },
-"#cover":{
-	top: '15%',
-	width: 300,
-	height: 350,
-	backgroundColor: '#fff',
-	opacity: 0.9,
-	borderRadius: 20,
-	layout: 'vertical'
+"#info_label": {
+	top : 20,
+	text : Alloy.Globals.PHRASES.regTxt,
+	font : Alloy.Globals.FONT,
+	height : Ti.UI.SIZE,
+	textAlign : 'center',
+	width : Ti.UI.SIZE,
+	color : '#FFF'
+},
+"#table[platform=ios]": {
+	top : '15%',
+	height : '50%',
+	width : Ti.UI.FILL,
+	backgroundColor : '#000',
+	separatorInsets : {
+    	left : 0,
+        right : 0
+    },
+    headerView : null,
+    footerView : null,
+    separatorColor : '#303030',
+    scrollable : false
+},
+"#table[platform=android]": {
+	top : '15%',
+	height : '50%',
+	width : Ti.UI.FILL,
+	backgroundColor : '#000',
+    separatorColor : '#303030',
+    scrollable : false
+},
+".register_btn_row": {
+	height : 85,
+	width : Ti.UI.FILL,
+	layout : 'vertical'
+},
+".register_input_row":{
+	height : 75,
+	width : Ti.UI.FILL,
+	className : 'registerRow',
+	selectionStyle : 'none',
+},
+"#space_row":{
+	width : Ti.UI.FILL,
+	height : '3%',
+	layout : 'vertical'
 },
 "#regPass":{
-	color:'#336699',
-    top:10,
-    left:'8%',
-    width:250,
-    height:40,
-    hintText: Alloy.Globals.PHRASES.passwordTxt,
-    passwordMask:true,
+	color:'#FFF',
+    width: "90%",
+    height: 60,
+    backgroundColor : '#000',
+    backgroundImage : 'none',
+    left : 20,
+    value: Alloy.Globals.PHRASES.passwordTxt,
     keyboardType:Titanium.UI.KEYBOARD_DEFAULT,
     returnKeyType:Titanium.UI.RETURNKEY_DEFAULT,
-    borderStyle:Titanium.UI.INPUT_BORDERSTYLE_ROUNDED
+    borderRadius : 5,
+    font : Alloy.Globals.FONT,
+    enabled:false
 },
 "#regPassAgain":{
-	color:'#336699',
-    top:10,
-    left:'8%',
-    width:250,
-    height:40,
-    hintText: Alloy.Globals.PHRASES.passwordAgainTxt,
-    passwordMask:true,
+	color:'#FFF',
+    width: "90%",
+    height: 60,
+    backgroundColor : '#000',
+    backgroundImage : 'none',
+    left : 20,
+    value: Alloy.Globals.PHRASES.passwordAgainTxt,
     keyboardType:Titanium.UI.KEYBOARD_DEFAULT,
     returnKeyType:Titanium.UI.RETURNKEY_DEFAULT,
-    borderStyle:Titanium.UI.INPUT_BORDERSTYLE_ROUNDED
+    borderRadius : 5,
+    font : Alloy.Globals.FONT,
+    enabled:false
 },
 "#regEmail":{
-	color:'#336699',
-    top:20,
-    left:'8%',
-    width:250,
-    height:40,
-    hintText: Alloy.Globals.PHRASES.emailTxt,
+	color:'#FFF',
+    width: "90%",
+    height: 60,
+    backgroundColor : '#000',
+    backgroundImage : 'none',
+    left : 20,
+    value: Alloy.Globals.PHRASES.emailTxt,
     keyboardType:Titanium.UI.KEYBOARD_DEFAULT,
     returnKeyType:Titanium.UI.RETURNKEY_DEFAULT,
-    borderStyle:Titanium.UI.INPUT_BORDERSTYLE_ROUNDED
-},
-"#signUpBtn":{
-	top: 20,
-	height: 40,
-	width: 200,
-	left: '15.5%',
-	backgroundColor: '#000',
-	color: '#fff',
-	borderRadius: 3,
-	title: Alloy.Globals.PHRASES.regTxt
-},
-"#abortRegBtn":{
-	top: 10,
-	height: 40,
-	width: 200,
-	left: '15.5%',
-	backgroundColor: '#000',
-	color: '#fff',
-	borderRadius: 3,
-	title: Alloy.Globals.PHRASES.abortBtnTxt
+    borderRadius : 5,
+    font : Alloy.Globals.FONT,
+    enabled:false
 }
