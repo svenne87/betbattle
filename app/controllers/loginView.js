@@ -288,10 +288,11 @@ function getChallengesAndStart() {
                             Alloy.Globals.WINDOWS[win].close();
                         }
                         
+                         var loginSuccessWindow = Alloy.createController('landingPage', args).getView();
+                         Alloy.Globals.CURRENTVIEW = loginSuccessWindow;
+                                
                         if (team.data.length > 0) {
                             if (OS_IOS) {
-                                //Ti.API.info(Alloy.Globals.BETKAMPENUID);
-                                var loginSuccessWindow = Alloy.createController('landingPage', args).getView();
                                 loginSuccessWindow.open({
                                     fullScreen : true,
                                     transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
@@ -299,32 +300,30 @@ function getChallengesAndStart() {
                                 loginSuccessWindow = null;
 
                             } else if (OS_ANDROID) {
-                                var loginSuccessWindow = Alloy.createController('landingPage', args).getView();
- 
                                 loginSuccessWindow.open({
                                     fullScreen : true,
                                     orientationModes : [Titanium.UI.PORTRAIT]
                                 });
                                 loginSuccessWindow = null;
                             }
-                            
+                                // Uncaught TypeError: Cannot call method 'addEventListener' of undefined
                                // hänger sig här android, why??? // TODO kommer in i landing page men ifrån denna filen = hänger sig. Ej ifrån vanliga login.
 
-                            $.loginView.close();
+                            //$.loginView.close();
 
                             if (Alloy.Globals.INDEXWIN !== null) {
                                 Alloy.Globals.INDEXWIN.close();
                             }
 
                             if (OS_ANDROID) {
-                                var activity = Titanium.Android.currentActivity;
-                                activity.finish();
+                               // var activity = Titanium.Android.currentActivity;
+                                //activity.finish();
                             }
 
                         } else {
+                            var loginSuccessWindow = Alloy.createController('pickTeam', args).getView();
+                            
                             if (OS_IOS) {
-                                //Ti.API.info(Alloy.Globals.BETKAMPENUID);
-                                var loginSuccessWindow = Alloy.createController('pickTeam', args).getView();
                                 loginSuccessWindow.open({
                                     fullScreen : true,
                                     transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
@@ -332,7 +331,6 @@ function getChallengesAndStart() {
                                 loginSuccessWindow = null;
 
                             } else if (OS_ANDROID) {
-                                var loginSuccessWindow = Alloy.createController('pickTeam', args).getView();
                                 loginSuccessWindow.open({
                                     fullScreen : true,
                                     orientationModes : [Titanium.UI.PORTRAIT]

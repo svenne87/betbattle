@@ -22,7 +22,7 @@
 	top : 30,
 	left : 30,
 	text : Alloy.Globals.PHRASES.signInInfoTxt,
-	font : Alloy.Globals.FONTBOLD,
+	font : Alloy.Globals.FONT,
 	height : Ti.UI.SIZE,
 	width : Ti.UI.SIZE,
 	color : '#FFF'

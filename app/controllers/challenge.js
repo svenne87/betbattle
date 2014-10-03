@@ -473,6 +473,7 @@ function postMatchOfTheDay(){
 					}
 					
 					if(answer) {
+					    $.challengeWindow.close();
 					    for(var win in Alloy.Globals.WINDOWS) {
                             Alloy.Globals.WINDOWS[win].close();
                         }
@@ -853,6 +854,7 @@ function postAnswer(gameArray) {
 					};
 					Ti.App.fireEvent('app:updateView', obj);
 					
+					$.challengeWindow.close();
 					for(var win in Alloy.Globals.WINDOWS) {
 					    Alloy.Globals.WINDOWS[win].close();
 					}
