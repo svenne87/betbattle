@@ -172,7 +172,7 @@ function createEmptyTableRow(text) {
 		text : Alloy.Globals.PHRASES.noneTxt + ' ' + text + ' ' + Alloy.Globals.PHRASES.foundTxt,
 		left : 60,
 		font : Alloy.Globals.getFontCustom(18, 'Regular'),
-		color : '#FFF'
+		color : '#CCC'
 	}));
 
 	if (iOSVersion < 7) {
@@ -200,7 +200,7 @@ function constructChallengeRows(obj, index, type) {
 		width : Ti.UI.FILL,
 		left : 0,
 		className : type,
-		height : 100
+		height : 95
 	});
 	
 	var fontawesome = require('lib/IconicFont').IconicFont({
@@ -257,7 +257,7 @@ function constructChallengeRows(obj, index, type) {
 	}));
 
 	var firstRowView = Ti.UI.createView({
-		top : -44,
+		top : -40,
 		layout : 'absolute', 
 		width : 'auto'
 	});
@@ -302,12 +302,12 @@ function constructChallengeRows(obj, index, type) {
 			}
 		}
 	}
-// TODO
+
 	firstRowView.add(Ti.UI.createLabel({
 		left : 60,
 		text : betGroupName,
 		font : Alloy.Globals.getFontCustom(18, 'Regular'),
-		color : Alloy.Globals.themeColor()
+		color : '#FFF'
 	}));
 
 	var secondRowView = Ti.UI.createView({
@@ -345,7 +345,7 @@ function constructChallengeRows(obj, index, type) {
             fontFamily : font
         },
         text : fontawesome.icon('fa-clock-o'),
-        color : '#FFF'
+        color : '#CCC'
     });
 
     secondRowView.add(startTextLabel);
@@ -354,27 +354,21 @@ function constructChallengeRows(obj, index, type) {
         left : 75,
         text : '' + date + ' ' + time,
         font : Alloy.Globals.getFontCustom(14, 'Regular'),
-        color : '#FFF'
+        color : '#CCC'
     });
 
     secondRowView.add(startTextValueLabel);
 
-	var thirdRowView = Ti.UI.createView({
-		top : 48,
-		layout : 'absolute', 
-		width : 'auto'
-	});
-	
     var participantsTextLabel = Ti.UI.createLabel({
-        left : 60,
+        left : 160,
         font : {
             fontFamily : font
         },
         text : fontawesome.icon('icon-user'),
-        color : '#FFF'
+        color : '#CCC'
     });
 
-    thirdRowView.add(participantsTextLabel);
+    secondRowView.add(participantsTextLabel);
    
     var oppCount = 0;
 
@@ -389,24 +383,24 @@ function constructChallengeRows(obj, index, type) {
     }
 
     var participantsValueLabel = Ti.UI.createLabel({
-        left : 75,
+        left : 175,
         text : oppCount.toString() + ' ',
         font : Alloy.Globals.getFontCustom(14, 'Regular'),
-        color : '#FFF'
+        color : '#CCC'
     });
     
-    thirdRowView.add(participantsValueLabel);
+    secondRowView.add(participantsValueLabel);
 
     var potTextLabel =Ti.UI.createLabel({
-        left : (60 + participantsValueLabel.toImage().width + 5 + participantsTextLabel.toImage().width + 2),
+        left : (160 + participantsValueLabel.toImage().width + 5 + participantsTextLabel.toImage().width + 2),
         font : {
             fontFamily : font
         },
         text : fontawesome.icon('icon-money'),
-        color : '#FFF'
+        color : '#CCC'
     });
 
-    thirdRowView.add(potTextLabel);
+    secondRowView.add(potTextLabel);
 
     var currentPot = Alloy.Globals.PHRASES.unknownSmallTxt;
 
@@ -432,13 +426,35 @@ function constructChallengeRows(obj, index, type) {
     }
 
     var potValueLabel = Ti.UI.createLabel({
-        left :  (60 + participantsValueLabel.toImage().width + 2 + participantsTextLabel.toImage().width + 6 + potTextLabel.toImage().width + 2),
+        left :  (160 + participantsValueLabel.toImage().width + 2 + participantsTextLabel.toImage().width + 6 + potTextLabel.toImage().width + 2),
         text : '' + currentPot,
         font : Alloy.Globals.getFontCustom(14, 'Regular'),
-        color : '#FFF'
+        color : '#CCC'
     });
     
-    thirdRowView.add(potValueLabel);
+    secondRowView.add(potValueLabel);
+    
+    var thirdRowView = Ti.UI.createView({
+        top : 40,
+        layout : 'absolute', 
+        width : 'auto'
+    });
+        
+    var text = '';
+
+    if(type === 'accept') {
+        text = Alloy.Globals.PHRASES.newTxt;
+    } else if (type === 'pending') {
+        Ti.API.log("match");
+        text = Alloy.Globals.PHRASES.pendingTxt;
+    }
+    
+    thirdRowView.add(Ti.UI.createLabel({
+        left : 60,
+        text : text,
+        font : Alloy.Globals.getFontCustom(14, 'Regular'),
+        color : '#CCC'
+    }));
 
 	// Add info to the created row
 	row.add(firstRowView);
@@ -492,24 +508,16 @@ function constructTableView(array) {
 	}
 
 	var sections = [];
-    
-    var tableHeaderView = Ti.UI.createView({
-               height : 0.1,
-        width : Ti.UI.FILL,
-        backgroundColor : 'transparent',
-        layout : "absolute", 
-    });
 
-    /*
 	var tableHeaderView = Ti.UI.createView({
 		height : Ti.UI.SIZE,
 		width : Ti.UI.FILL,
 		layout : "vertical",
 	});
 
-	tableHeaderView.add(Ti.UI.createImageView({
-	    image : 'betkampenlogo.png',
-	    heigth : 40,
+	tableHeaderView.add(Ti.UI.createView({
+	    backgroundImage : '/images/header.png',
+	    height : 80,
 	    width : Ti.UI.FILL
 	}));
 	
@@ -519,7 +527,6 @@ function constructTableView(array) {
         backgroundColor : 'transparent',
         layout : "absolute",
     }));
-*/
 
 	if (OS_IOS) {
 		var separatorS;
@@ -569,6 +576,26 @@ function constructTableView(array) {
 		sections[0] = Ti.UI.createTableViewSection({});
 	}
 
+    var fontawesome = require('lib/IconicFont').IconicFont({
+        font : 'lib/FontAwesome'
+    });
+
+    var font = 'FontAwesome';
+    var rightPercentage = '5%';
+    var isAndroid = false;
+    var child = true;
+    
+    if (OS_ANDROID) {
+        child = false;
+        isAndroid = true;
+        
+        font = 'fontawesome-webfont';
+
+        if (Titanium.Platform.displayCaps.platformWidth < 350) {
+            rightPercentage = '3%';
+        }
+    }
+
 	var acceptRow = Ti.UI.createTableViewRow({
 		top: 0,
 		height : 75,
@@ -576,7 +603,8 @@ function constructTableView(array) {
 		width : Ti.UI.FILL,
 		color : "#FFF",
 		backgroundColor : 'transparent',
-		font : Alloy.Globals.getFont()
+		font : Alloy.Globals.getFont(),
+		hasChild : child
 	});
 
 	var pendingRow = Ti.UI.createTableViewRow({
@@ -585,7 +613,8 @@ function constructTableView(array) {
 		width : Ti.UI.FILL,
 		color : "#FFF",
 		backgroundColor : 'transparent',
-		font : Alloy.Globals.getFont()
+		font : Alloy.Globals.getFont(),
+		hasChild : child
 	});
 
 	var finishedRow = Ti.UI.createTableViewRow({
@@ -594,24 +623,9 @@ function constructTableView(array) {
 		width : Ti.UI.FILL,
 		color : "#FFF",
 		backgroundColor : 'transparent',
-		font : Alloy.Globals.getFont()
+		font : Alloy.Globals.getFont(),
+		hasChild : child
 	});
-
-
-	var fontawesome = require('lib/IconicFont').IconicFont({
-		font : 'lib/FontAwesome'
-	});
-
-	var font = 'FontAwesome';
-	var rightPercentage = '5%';
-
-	if (OS_ANDROID) {
-		font = 'fontawesome-webfont';
-
-		if (Titanium.Platform.displayCaps.platformWidth < 350) {
-			rightPercentage = '3%';
-		}
-	}
 
     var visualImagePrefs = {
         left : 10,
@@ -631,18 +645,22 @@ function constructTableView(array) {
 		width : Ti.UI.SIZE
 	}));
 	
-	acceptRow.add(Ti.UI.createLabel({
-		font : {
 
-			fontFamily : font
-		},
-		text : fontawesome.icon('icon-chevron-right'),
-		right : rightPercentage,
-		color : '#c5c5c5',
-		fontSize : 60,
-		height : 'auto',
-		width : 'auto'
-	}));
+    if (isAndroid) {
+        acceptRow.add(Ti.UI.createLabel({
+            font : {
+
+                fontFamily : font
+            },
+            text : fontawesome.icon('icon-chevron-right'),
+            right : rightPercentage,
+            color : '#c5c5c5',
+            fontSize : 60,
+            height : 'auto',
+            width : 'auto'
+        }));
+    }
+
 	
 	pendingRow.add(Ti.UI.createImageView(visualImagePrefs));
 	
@@ -655,17 +673,20 @@ function constructTableView(array) {
 		width : 'auto'
 	}));
 
-	pendingRow.add(Ti.UI.createLabel({
-		font : {
-			fontFamily : font
-		},
-		text : fontawesome.icon('icon-chevron-right'),
-		right : rightPercentage,
-		color : '#c5c5c5',
-		fontSize : 80,
-		height : 'auto',
-		width : 'auto',
-	}));	
+    if (isAndroid) {
+        pendingRow.add(Ti.UI.createLabel({
+            font : {
+                fontFamily : font
+            },
+            text : fontawesome.icon('icon-chevron-right'),
+            right : rightPercentage,
+            color : '#c5c5c5',
+            fontSize : 80,
+            height : 'auto',
+            width : 'auto',
+        }));
+    }
+
 	
 	finishedRow.add(Ti.UI.createImageView(visualImagePrefs));
 	
@@ -678,17 +699,20 @@ function constructTableView(array) {
 		width : 'auto'
 	}));
 
-	finishedRow.add(Ti.UI.createLabel({
-		font : {
-			fontFamily : font
-		},
-		text : fontawesome.icon('icon-chevron-right'),
-		right : rightPercentage,
-		color : '#c5c5c5',
-		fontSize : 80,
-		height : 'auto',
-		width : 'auto',
-	}));
+    if (isAndroid) {
+        finishedRow.add(Ti.UI.createLabel({
+            font : {
+                fontFamily : font
+            },
+            text : fontawesome.icon('icon-chevron-right'),
+            right : rightPercentage,
+            color : '#c5c5c5',
+            fontSize : 80,
+            height : 'auto',
+            width : 'auto',
+        }));
+    }
+
 
 	sections[0].add(acceptRow);
 	sections[0].add(pendingRow);
@@ -757,7 +781,7 @@ function constructTableView(array) {
 			
 			table.touchEnabled = false;
 			Ti.App.fireEvent('app:slide');
-			table.touchEnabled = true;
+			table.touchEnabled = true; 
 		}
 	});
 	

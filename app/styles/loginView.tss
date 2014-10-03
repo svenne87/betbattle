@@ -13,7 +13,7 @@
 	top : 30,
 	left : 20,
 	text : Alloy.Globals.PHRASES.signInInfoTxt,
-	font : Alloy.Globals.FONTBOLD,
+	font : Alloy.Globals.FONT,
 	height : Ti.UI.SIZE,
 	width : Ti.UI.SIZE,
 	color : '#FFF'
@@ -28,7 +28,7 @@
 	color : '#FFF'
 },
 "#table[platform=ios]": {
-	top : 40,
+	top : 2,
 	height : '50%',
 	width : Ti.UI.FILL,
 	backgroundColor : '#000',
@@ -42,7 +42,7 @@
     scrollable : false
 },
 "#table[platform=android]": {
-	top : 40,
+	top : 2,
 	height : '50%',
 	width : Ti.UI.FILL,
 	backgroundColor : '#000',
@@ -62,10 +62,10 @@
 },
 "#space_row":{
 	width : Ti.UI.FILL,
-	height : 0,
+	height : 35,
 },
 "#loginEmail":{
-	color:'#FFF',
+	color:'#CCC',
     width: "90%",
     height: 60,
     backgroundColor : '#000',
@@ -79,7 +79,7 @@
     enabled:false
 },
 "#loginPass":{
-	color:'#FFF',
+	color:'#CCC',
     width: "90%",
     height: 60,
     backgroundColor : '#000',

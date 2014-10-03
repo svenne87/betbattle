@@ -1,6 +1,6 @@
 var args = arguments[0] || {};
 Alloy.Globals.LANDINGWIN = $.landingPage;
-
+                                             
 var beaconIsOpen = false;
 var appResume = args.resume;
 var uie = require('lib/IndicatorWindow');

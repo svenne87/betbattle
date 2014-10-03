@@ -78,6 +78,8 @@ if (OS_ANDROID) {
 
 $.table.setHeaderView(headerView);
 $.table.setFooterView(footerView);
+$.info_label.text = $.info_label.text + ':';
+
 
 var abortBtn = Alloy.Globals.createButtonView('#d50f25', '#FFF', Alloy.Globals.PHRASES.abortBtnTxt);
 var signInBtn = Alloy.Globals.createButtonView('#FFF', '#000', Alloy.Globals.PHRASES.signInTxt);
@@ -281,11 +283,9 @@ function getChallengesAndStart() {
                     onload : function(e) {
                         Ti.API.info("Received text: " + this.responseText);
                         var team = JSON.parse(this.responseText);
-                        
-                        if(OS_IOS) {
-                            for (var win in Alloy.Globals.WINDOWS) {
-                                Alloy.Globals.WINDOWS[win].close();
-                            }
+           
+                        for (var win in Alloy.Globals.WINDOWS) {
+                            Alloy.Globals.WINDOWS[win].close();
                         }
                         
                         if (team.data.length > 0) {
@@ -300,12 +300,15 @@ function getChallengesAndStart() {
 
                             } else if (OS_ANDROID) {
                                 var loginSuccessWindow = Alloy.createController('landingPage', args).getView();
+ 
                                 loginSuccessWindow.open({
                                     fullScreen : true,
                                     orientationModes : [Titanium.UI.PORTRAIT]
                                 });
                                 loginSuccessWindow = null;
                             }
+                            
+                               // hänger sig här android, why??? // TODO kommer in i landing page men ifrån denna filen = hänger sig. Ej ifrån vanliga login.
 
                             $.loginView.close();
 
@@ -348,7 +351,6 @@ function getChallengesAndStart() {
                                 activity.finish();
                             }
                         }
-
                     },
                     // function called when an error occurs, including a timeout
                     onerror : function(e) {

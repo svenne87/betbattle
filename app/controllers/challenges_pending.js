@@ -10,296 +10,273 @@ var indicator = uie.createIndicatorWindow({
 	text : Alloy.Globals.PHRASES.loadingTxt
 });
 
+// build and return rows that are of the type 'Accept', 'Pending' and 'Finished'
 function constructChallengeRows(obj, index, type) {
-	var child = true;
-	if (OS_ANDROID) {
-		child = false;
-	}
+    var child = true;
+    if (OS_ANDROID) {
+        child = false;
+    }
 
-	var row = Ti.UI.createTableViewRow({
-		id : index,
-		hasChild : child,
-		width : Ti.UI.FILL,
-		left : 0,
-		className : type,
-		height : 100
-	});
+    var row = Ti.UI.createTableViewRow({
+        id : index,
+        hasChild : child,
+        width : Ti.UI.FILL,
+        left : 0,
+        className : type,
+        height : 75
+    });
+    
+    var fontawesome = require('lib/IconicFont').IconicFont({
+        font : 'lib/FontAwesome'
+    });
 
-	// add custom icon on Android to symbol that the row has child
-	if (child != true) {
-		var fontawesome = require('lib/IconicFont').IconicFont({
-			font : 'lib/FontAwesome'
-		});
+    var font = 'FontAwesome';
 
-		var font = 'FontAwesome';
-		var rightPercentage = '5%';
+    // add custom icon on Android to symbol that the row has child
+    if (child != true) {
+        var rightPercentage = '5%';
 
-		if (OS_ANDROID) {
-			font = 'fontawesome-webfont';
+        if (OS_ANDROID) {
+            font = 'fontawesome-webfont';
 
-			if (Titanium.Platform.displayCaps.platformWidth < 350) {
-				rightPercentage = '3%';
-			}
+            if (Titanium.Platform.displayCaps.platformWidth < 350) {
+                rightPercentage = '3%';
+            }
 
-		}
+        }
 
-		row.add(Ti.UI.createLabel({
-			font : {
-				fontFamily : font
-			},
-			text : fontawesome.icon('icon-chevron-right'),
-			right : rightPercentage,
-			color : '#FFF',
-			fontSize : 80,
-			height : 'auto',
-			width : 'auto'
-		}));
-	}
+        row.add(Ti.UI.createLabel({
+            font : {
+                fontFamily : font
+            },
+            text : fontawesome.icon('icon-chevron-right'),
+            right : rightPercentage,
+            color : '#FFF',
+            fontSize : 80,
+            height : 'auto',
+            width : 'auto'
+        }));
+    }
 
-	var imageLocation;
-	if (type === 'tournament' || type === 'tournament_finished') {
-		imageLocation = '/images/Topplista.png';
-	} else if(type == 'accept'){
-		imageLocation = '/images/status_go.png';
-	}else if(type == 'pending'){
-		imageLocation = '/images/status_waiting.png';
-	}else{
-		imageLocation = '/images/ikon_spelanasta.png';
-	}
+    var imageLocation;
+    if (type === 'tournament' || type === 'tournament_finished') {
+        imageLocation = '/images/Topplista.png';
+    } else if(type == 'accept'){
+        imageLocation = '/images/status_go.png';
+    }else if(type == 'pending'){
+        imageLocation = '/images/status_waiting.png';
+    }else{
+        imageLocation = '/images/ikon_spelanasta.png';
+    }
+    
+    // TMP TODO
+    imageLocation = '/images/Skapa_Utmaning_Default.png';
 
-	row.add(Ti.UI.createImageView({
-		image : imageLocation,
-		left : 15,
-		width : 30,
-		height : 30
-	}));
+    row.add(Ti.UI.createImageView({
+        image : imageLocation,
+        left : 10,
+        width : 30,
+        height : 30
+    }));
 
-	var firstRowView = Ti.UI.createView({
-		top : -44,
-		layout : 'absolute', 
-		width : 'auto'
-	});
+    var firstRowView = Ti.UI.createView({
+        top : -20,
+        layout : 'absolute', 
+        width : 'auto'
+    });
 
-	var betGroupName = Alloy.Globals.PHRASES.unknownGroupTxt;
+    var betGroupName = Alloy.Globals.PHRASES.unknownGroupTxt;
 
-	if (type !== 'tournament' && type !== 'tournament_finished') {
-		// for normal challenge
-		try {
-			betGroupName = obj.attributes.group[0].name;
-		} catch(e) {
-			// do nothing
-			betGroupName = "";
-		}
+    if (type !== 'tournament' && type !== 'tournament_finished') {
+        // for normal challenge
+        try {
+            betGroupName = obj.attributes.group[0].name;
+        } catch(e) {
+            // do nothing
+            betGroupName = "";
+        }
+        Ti.API.info("GRUPPNAMN: " + betGroupName);
+        if(betGroupName <= 0){
+            betGroupName = obj.attributes.name;
+        }
+        if (betGroupName.length > 15) {
+            betGroupName = betGroupName.substring(0, 12) + '...';
+        }
+        
+    } else {
+        // for tournament's
+        if ((type === 'tournament' && obj.attributes.opponents.length === 1) || (type === 'tournament_finished' && obj.attributes.opponents.length === 1)) {
+            betGroupName = Alloy.Globals.PHRASES.betbattleTxt;
+        } else {
+            betGroupName = Alloy.Globals.PHRASES.tournamentTxt;
 
-		if(betGroupName <= 0){
-			betGroupName = obj.attributes.name;
-		}
-		if (betGroupName.length > 15) {
-			betGroupName = betGroupName.substring(0, 12) + '...';
-		}
-		
-	} else {
-		// for tournament's
-		if ((type === 'tournament' && obj.attributes.opponents.length === 1) || (type === 'tournament_finished' && obj.attributes.opponents.length === 1)) {
-			betGroupName = Alloy.Globals.PHRASES.betbattleTxt;
-		} else {
-			betGroupName = Alloy.Globals.PHRASES.tournamentTxt;
+            if (obj.attributes.group.name != null) {
+                betGroupName = obj.attributes.group.name;
+            }
 
-			if (obj.attributes.group.name != null) {
-				betGroupName = obj.attributes.group.name;
-			}
+            if (betGroupName.length === 0 || betGroupName === '') {
+                betGroupName = 'Turnering';
+            } else if (betGroupName === 'BetKampen Community') {
+                betGroupName = Alloy.Globals.PHRASES.betbattleTxt;
+            }
 
-			if (betGroupName.length === 0 || betGroupName === '') {
-				betGroupName = 'Turnering';
-			} else if (betGroupName === 'BetKampen Community') {
-				betGroupName = Alloy.Globals.PHRASES.betbattleTxt;
-			}
+            if (betGroupName.length > 15) {
+                betGroupName = betGroupName.substring(0, 12) + '...';
+            }
+        }
+    }
 
-			if (betGroupName.length > 15) {
-				betGroupName = betGroupName.substring(0, 12) + '...';
-			}
-		}
-	}
+    firstRowView.add(Ti.UI.createLabel({
+        left : 60,
+        text : betGroupName,
+        font : Alloy.Globals.getFontCustom(18, 'Regular'),
+        color : '#FFF'
+    }));
 
-	firstRowView.add(Ti.UI.createLabel({
-		left : 60,
-		text : betGroupName,
-		font : {
-			fontSize : Alloy.Globals.getFontSize(1),
-			fontWeight : 'bold',
-			fontFamily : Alloy.Globals.getFont()
-		},
-		color : Alloy.Globals.themeColor()
-	}));
+    var secondRowView = Ti.UI.createView({
+        top : 25,
+        layout : 'absolute', 
+        width : 'auto'
+    });
+    
+    var date = obj.attributes.time;
+    date = date.substring(0, 10);
+    date = date.substring(5);
 
-	var secondRowView = Ti.UI.createView({
-		top : 4,
-		layout : 'absolute', 
-		width : 'auto'
-	});
+    // check first char
+    if (date.charAt(0) == '0') {
+        date = date.substring(1);
+    }
 
-	var oppCount = 0;
+    // change position
+    var datePartOne = date.substring(date.lastIndexOf('-'));
+    datePartOne = datePartOne.replace('-', '');
+    if (datePartOne.charAt(0) == '0') {
+        datePartOne = datePartOne.substring(1);
+    }
 
-	if (type === 'tournament' && checkTournament(obj) === true && obj.attributes.opponents.length === 1) {
-		oppCount = parseInt(obj.attributes.opponentCount);
-	} else {
-		var oppCount = parseInt(obj.attributes.opponents.length);
+    var datePartTwo = date.substring(0, date.indexOf('-'));
+    date = datePartOne + '/' + datePartTwo;
 
-		if (oppCount === 1 && obj.attributes.group.name === 'BetKampen Community') {
-			oppCount = parseInt(obj.attributes.opponentCount);
-		}
-	}
+    var time = obj.attributes.time;
+    time = time.substring(time.length - 8);
+    time = time.substring(0, 5);
+    
+    var startTextLabel = Ti.UI.createLabel({
+        left : 60,
+        font : {
+            fontFamily : font
+        },
+        text : fontawesome.icon('fa-clock-o'),
+        color : '#CCC'
+    });
 
-	var participantsValueLabel = Ti.UI.createLabel({
-		left : 60,
-		text : oppCount.toString() + ' ',
-		font : {
-			fontSize : Alloy.Globals.getFontSize(1),
-			fontWeight : 'bold',
-			fontFamily : Alloy.Globals.getFont()
-		},
-		color : Alloy.Globals.themeColor()
-	});
-	
-	secondRowView.add(participantsValueLabel);
+    secondRowView.add(startTextLabel);
 
-	var participantsTextLabel = Ti.UI.createLabel({
-		left : (60 + participantsValueLabel.toImage().width + 2),
-		text : Alloy.Globals.PHRASES.participantTxt,
-		font : {
-			fontSize : Alloy.Globals.getFontSize(1),
-			fontWeight : 'normal',
-			fontFamily : Alloy.Globals.themeColor()
-		},
-		color : '#FFF'
-	});
+    var startTextValueLabel = Ti.UI.createLabel({
+        left : 75,
+        text : '' + date + ' ' + time,
+        font : Alloy.Globals.getFontCustom(14, 'Regular'),
+        color : '#CCC'
+    });
 
-	secondRowView.add(participantsTextLabel);
+    secondRowView.add(startTextValueLabel);
 
-	var potTextLabel =Ti.UI.createLabel({
-		left : (60 + participantsValueLabel.toImage().width + 2 + participantsTextLabel.toImage().width + 6),
-		text : Alloy.Globals.PHRASES.potTxt + ':',
-		font : {
-			fontSize : Alloy.Globals.getFontSize(1),
-			fontWeight : 'bold',
-			fontFamily : Alloy.Globals.getFont()
-		},
-		color : '#FFF'
-	});
+    var participantsTextLabel = Ti.UI.createLabel({
+        left : 160,
+        font : {
+            fontFamily : font
+        },
+        text : fontawesome.icon('icon-user'),
+        color : '#CCC'
+    });
 
-	secondRowView.add(potTextLabel);
+    secondRowView.add(participantsTextLabel);
+   
+    var oppCount = 0;
 
-	var currentPot = Alloy.Globals.PHRASES.unknownSmallTxt;
+    if (type === 'tournament' && checkTournament(obj) === true && obj.attributes.opponents.length === 1) {
+        oppCount = parseInt(obj.attributes.opponentCount);
+    } else {
+        var oppCount = parseInt(obj.attributes.opponents.length);
 
-	if ((type === 'tournament' && obj.attributes.opponents.length === 1) || (type === 'tournament_finished' && obj.attributes.opponents.length === 1)) {
-		try {
-			currentPot = obj.attributes.tournamentPot;
-		} catch (e) {
-			currentPot = Alloy.Globals.PHRASES.unknownSmallTxt;
-		}
-	} else if ((type === 'tournament' && obj.attributes.opponents.length > 1) || (type === 'tournament_finished' && obj.attributes.opponents.length > 1)) {
-		try {
-			var activeUsers = checkActiveUsers(obj.attributes.opponents);
-			currentPot = activeUsers * obj.attributes.tournamentPot;
-		} catch (e) {
-			currentPot = Alloy.Globals.PHRASES.unknownSmallTxt;
-		}
-	} else {
-		try {
-			currentPot = obj.attributes.pot;
-		} catch (e) {
-			currentPot = Alloy.Globals.PHRASES.unknownSmallTxt;
-		}
-	}
+        if (oppCount === 1 && obj.attributes.group.name === 'BetKampen Community') {
+            oppCount = parseInt(obj.attributes.opponentCount);
+        }
+    }
 
-	var potValueLabel = Ti.UI.createLabel({
-		left :  (60 + participantsValueLabel.toImage().width + 2 + participantsTextLabel.toImage().width + 6 + potTextLabel.toImage().width + 2),
-		text : '' + currentPot,
-		font : {
-			fontSize : Alloy.Globals.getFontSize(1),
-			fontFamily : Alloy.Globals.getFont()
-		},
-		color : '#FFF'
-	});
-	
-	secondRowView.add(potValueLabel);
-	
-	var thirdRowView = Ti.UI.createView({
-		top : 48,
-		layout : 'absolute', 
-		width : 'auto'
-	});
-	
-	var date = obj.attributes.time;
-	date = date.substring(0, 10);
-	date = date.substring(5);
+    var participantsValueLabel = Ti.UI.createLabel({
+        left : 175,
+        text : oppCount.toString() + ' ',
+        font : Alloy.Globals.getFontCustom(14, 'Regular'),
+        color : '#CCC'
+    });
+    
+    secondRowView.add(participantsValueLabel);
 
-	// check first char
-	if (date.charAt(0) == '0') {
-		date = date.substring(1);
-	}
+    var potTextLabel =Ti.UI.createLabel({
+        left : (160 + participantsValueLabel.toImage().width + 5 + participantsTextLabel.toImage().width + 2),
+        font : {
+            fontFamily : font
+        },
+        text : fontawesome.icon('icon-money'),
+        color : '#CCC'
+    });
 
-	// change position
-	var datePartOne = date.substring(date.lastIndexOf('-'));
-	datePartOne = datePartOne.replace('-', '');
-	if (datePartOne.charAt(0) == '0') {
-		datePartOne = datePartOne.substring(1);
-	}
+    secondRowView.add(potTextLabel);
 
-	var datePartTwo = date.substring(0, date.indexOf('-'));
-	date = datePartOne + '/' + datePartTwo;
+    var currentPot = Alloy.Globals.PHRASES.unknownSmallTxt;
 
-	var time = obj.attributes.time;
-	time = time.substring(time.length - 8);
-	time = time.substring(0, 5);
-	
-	var startTextLabel = Ti.UI.createLabel({
-		left : 60,
-		font : {
-			fontSize : Alloy.Globals.getFontSize(1),
-			fontWeight : 'bold',
-			fontFamily : Alloy.Globals.getFont()
-		},
-		text : Alloy.Globals.PHRASES.startTxt + ': ',
-		color : '#FFF'
-	});
+    if ((type === 'tournament' && obj.attributes.opponents.length === 1) || (type === 'tournament_finished' && obj.attributes.opponents.length === 1)) {
+        try {
+            currentPot = obj.attributes.tournamentPot;
+        } catch (e) {
+            currentPot = Alloy.Globals.PHRASES.unknownSmallTxt;
+        }
+    } else if ((type === 'tournament' && obj.attributes.opponents.length > 1) || (type === 'tournament_finished' && obj.attributes.opponents.length > 1)) {
+        try {
+            var activeUsers = checkActiveUsers(obj.attributes.opponents);
+            currentPot = activeUsers * obj.attributes.tournamentPot;
+        } catch (e) {
+            currentPot = Alloy.Globals.PHRASES.unknownSmallTxt;
+        }
+    } else {
+        try {
+            currentPot = obj.attributes.pot;
+        } catch (e) {
+            currentPot = Alloy.Globals.PHRASES.unknownSmallTxt;
+        }
+    }
 
-	thirdRowView.add(startTextLabel);
+    var potValueLabel = Ti.UI.createLabel({
+        left :  (160 + participantsValueLabel.toImage().width + 2 + participantsTextLabel.toImage().width + 6 + potTextLabel.toImage().width + 2),
+        text : '' + currentPot,
+        font : Alloy.Globals.getFontCustom(14, 'Regular'),
+        color : '#CCC'
+    });
+    
+    secondRowView.add(potValueLabel);
 
-	var startTextValueLabel = Ti.UI.createLabel({
-		left : (60 + startTextLabel.toImage().width + 2),
-		text : '' + date + ' ' + time,
-		font : {
-			fontSize : Alloy.Globals.getFontSize(1),
-			fontWeight : 'normal',
-			fontFamily : Alloy.Globals.getFont()
-		},
-		color : '#FFF'
-	});
+    // Add info to the created row
+    row.add(firstRowView);
+    row.add(secondRowView);
 
-	thirdRowView.add(startTextValueLabel);
+    row.add(Ti.UI.createView({
+        top : 60,
+        heigth : 14,
+        layout : 'horizontal'
+    }));
 
-	// Add info to the created row
-	row.add(firstRowView);
-	row.add(secondRowView);
-	row.add(thirdRowView);
+    if (iOSVersion < 7) {
+        row.add(Ti.UI.createView({
+            height : 0.5,
+            top : 65,
+            backgroundColor : '#303030',
+            width : '120%'
+        }));
+    }
 
-	row.add(Ti.UI.createView({
-		top : 60,
-		heigth : 14,
-		layout : 'horizontal'
-	}));
-
-	if (iOSVersion < 7) {
-		row.add(Ti.UI.createView({
-			height : 0.5,
-			top : 65,
-			backgroundColor : '#6d6d6d',
-			width : '120%'
-		}));
-	}
-
-	return row;
+    return row;
 }
 
 
@@ -377,18 +354,14 @@ function createEmptyTableRow(text) {
 		width : Ti.UI.FILL,
 		left : 0,
 		name : 'empty',
-		height : 60
+		height : 75
 	});
 
 	row.add(Ti.UI.createLabel({
 		text : Alloy.Globals.PHRASES.noneTxt + ' ' + text + ' ' + Alloy.Globals.PHRASES.foundTxt,
-		left : 60,
-		font : {
-			fontSize : Alloy.Globals.getFontSize(1),
-			fontWeight : 'normal',
-			fontFamily : Alloy.Globals.getFont()
-		},
-		color : '#FFF'
+		left : 40,
+		font : Alloy.Globals.getFontCustom(18, 'Regular'),
+		color : '#CCC'
 	}));
 
 	if (iOSVersion < 7) {
@@ -435,21 +408,38 @@ function constructTableView(array) {
 
 	var sections = [];
 
-	var tableHeaderView = Ti.UI.createView({
-		height : 70,
-		backgroundColor : 'transparent',
-		//opacity: 0.6,
-		layout : "absolute",
-	});
+
+    var tableHeaderView = Ti.UI.createView({
+        height : 70,
+        backgroundColor : '#303030',
+        backgroundGradient : {
+            type : "linear",
+            startPoint : {
+                x : "0%",
+                y : "0%"
+            },
+            endPoint : {
+                x : "0%",
+                y : "100%"
+            },
+            colors : [{
+                color : "#151515",
+
+            }, {
+                color : "#2E2E2E",
+
+            }]
+        },
+        //opacity: 0.6,
+        layout : "absolute",
+    }); 
+
 
 	var tableHeaderLabel = Ti.UI.createLabel({
 		text: Alloy.Globals.PHRASES.pendingChallengesTxt,
 		textAlign: "center",
 		color: "#FFF",
-		font:{
-			fontSize:18,
-			fontFamily: "Impact",
-		},
+		font : Alloy.Globals.getFontCustom(24, 'Regular'),
 		height : 70,
 		top : 0, 
 	});

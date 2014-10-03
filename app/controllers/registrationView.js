@@ -63,6 +63,7 @@ if (OS_ANDROID) {
 
 $.table.setHeaderView(headerView);
 $.table.setFooterView(footerView);
+$.info_label.text = $.info_label.text + ':';
 
 function checkemail(emailAddress) {
     var testresults;
