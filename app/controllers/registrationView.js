@@ -4,7 +4,11 @@ var indicator = uie.createIndicatorWindow({
     text : Alloy.Globals.PHRASES.loadingTxt
 });
 
+var isAndroid = false;
+
 if (OS_ANDROID) {
+    isAndroid = true;
+    
     $.registrationView.windowSoftInputMode = Ti.UI.Android.SOFT_INPUT_ADJUST_PAN;
 
     $.registrationView.orientationModes = [Titanium.UI.PORTRAIT];
@@ -124,10 +128,23 @@ var passChange = false;
 var passAgainChange = false;
 var emailChange = false;
 
+if (isAndroid) {
+    $.regPass.enabled = true;
+    $.regPass.addEventListener('focus', function() {
+        $.regPass.passwordMask = true;
+        if (!passChange) {
+            $.regPass.setValue('');
+        }
+    });
+}
+
 $.regPass.addEventListener('click', function() {
     $.regPass.passwordMask = true;
-    $.regPass.enabled = true;
-    $.regPass.focus();
+
+    if(!isAndroid) {
+        $.regPass.enabled = true;
+        $.regPass.focus();
+    }   
 
     if (!passChange) {
         $.regPass.setValue('');
@@ -135,8 +152,10 @@ $.regPass.addEventListener('click', function() {
 });
 
 $.regPass.addEventListener('blur', function() {
-    $.regPass.enabled = false;
-
+    if(!isAndroid) {
+       $.regPass.enabled = false; 
+    }
+    
     if ($.regPass.value !== '' && $.regPass.value !== null && $.regPass.value !== ' ' && $.regPass.value !== Alloy.Globals.PHRASES.passwordTxt) {
         passChange = true;
     } else {
@@ -150,7 +169,9 @@ $.regPass.addEventListener('blur', function() {
 });
 
 $.regPass.addEventListener('return', function() {
-    $.regPass.enabled = false;
+    if(!isAndroid) {
+        $.regPass.enabled = false;
+    }
 
     if ($.regPass.value !== '' && $.regPass.value !== null && $.regPass.value !== ' ' && $.regPass.value !== Alloy.Globals.PHRASES.passwordTxt) {
         passChange = true;
@@ -164,10 +185,24 @@ $.regPass.addEventListener('return', function() {
     }
 });
 
+if (isAndroid) {
+    $.regPassAgain.enabled = true;
+    $.regPassAgain.addEventListener('focus', function() {
+        $.regPassAgain.passwordMask = true;
+        
+        if (!passAgainChange) {
+            $.regPassAgain.setValue('');
+        }
+    });
+}
+
 $.regPassAgain.addEventListener('click', function() {
     $.regPassAgain.passwordMask = true;
-    $.regPassAgain.enabled = true;
-    $.regPassAgain.focus();
+    
+    if(!isAndroid) {
+        $.regPassAgain.enabled = true;
+        $.regPassAgain.focus();  
+    }
 
     if (!passAgainChange) {
         $.regPassAgain.setValue('');
@@ -175,7 +210,9 @@ $.regPassAgain.addEventListener('click', function() {
 });
 
 $.regPassAgain.addEventListener('blur', function() {
-    $.regPassAgain.enabled = false;
+    if(!isAndroid) {
+        $.regPassAgain.enabled = false;
+    }   
 
     if ($.regPassAgain.value !== '' && $.regPassAgain.value !== null && $.regPassAgain.value !== ' ' && $.regPassAgain.value !== Alloy.Globals.PHRASES.passwordAgainTxt) {
         passAgainChange = true;
@@ -190,7 +227,9 @@ $.regPassAgain.addEventListener('blur', function() {
 });
 
 $.regPassAgain.addEventListener('return', function() {
-    $.regPassAgain.enabled = false;
+    if(!isAndroid) {
+        $.regPassAgain.enabled = false;    
+    }
 
     if ($.regPassAgain.value !== '' && $.regPassAgain.value !== null && $.regPassAgain.value !== ' ' && $.regPassAgain.value !== Alloy.Globals.PHRASES.passwordAgainTxt) {
         passAgainChange = true;
@@ -204,9 +243,20 @@ $.regPassAgain.addEventListener('return', function() {
     }
 });
 
-$.regEmail.addEventListener('click', function() {
+if (isAndroid) {
     $.regEmail.enabled = true;
-    $.regEmail.focus();
+    $.regEmail.addEventListener('focus', function() {
+        if (!emailChange) {
+            $.regEmail.setValue('');
+        }
+    });
+}
+
+$.regEmail.addEventListener('click', function() {
+    if(!isAndroid) {
+        $.regEmail.enabled = true;
+        $.regEmail.focus();      
+    }
 
     if (!emailChange) {
         $.regEmail.setValue('');
@@ -214,7 +264,9 @@ $.regEmail.addEventListener('click', function() {
 });
 
 $.regEmail.addEventListener('blur', function() {
-    $.regEmail.enabled = false;
+    if(!isAndroid) {
+        $.regEmail.enabled = false;    
+    }
 
     if ($.regEmail.value !== '' && $.regEmail.value !== null && $.regEmail.value !== ' ' && $.regEmail.value !== Alloy.Globals.PHRASES.emailTxt) {
         emailChange = true;
@@ -228,7 +280,9 @@ $.regEmail.addEventListener('blur', function() {
 });
 
 $.regEmail.addEventListener('return', function() {
-    $.regEmail.enabled = false;
+    if(!isAndroid) {
+        $.regEmail.enabled = false;  
+    }
 
     if ($.regEmail.value !== '' && $.regEmail.value !== null && $.regEmail.value !== ' ' && $.regEmail.value !== Alloy.Globals.PHRASES.emailTxt) {
         emailChange = true;
