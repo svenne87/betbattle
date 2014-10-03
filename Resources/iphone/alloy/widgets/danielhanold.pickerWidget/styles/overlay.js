@@ -21,7 +21,6 @@ module.exports = [ {
     style: {
         height: 60,
         backgroundColor: "#000000",
-        opacity: .6,
         layout: "vertical"
     }
 }, {

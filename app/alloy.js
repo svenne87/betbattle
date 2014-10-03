@@ -65,23 +65,32 @@ function getFont() {
     }
 }
 
-<<<<<<< HEAD
-Alloy.Globals.getFontCustom = function (size, weight){
-	if(OS_ANDROID){
-		return {
-			fontSize: size,
-			fontFamily : 'OpenSans-Regular',
-			fontWeight: weight
-		};
-	}else if(OS_IOS){
-		return {
-			fontSize: size,
-			fontFamily : 'OpenSans',
-			fontWeight : weight
-		};
-	}
+
+Alloy.Globals.getFontCustom = function(size, weight) {
+    if (OS_ANDROID) {
+        return {
+            fontSize : (size - 0) + 2,
+            fontFamily : 'OpenSans-' + weight,
+            fontWeight : weight
+        };
+    } else if (OS_IOS) {
+        if (weight !== 'Regular') {
+            return {
+                fontSize : size,
+                fontFamily : 'OpenSans-' + weight,
+                fontWeight : weight
+            };
+        } else {
+            return {
+                fontSize : size,
+                fontFamily : 'OpenSans',
+                fontWeight : weight
+            };
+        }
+
+    }
 };
-=======
+
 function getBoldFont() {
     if (OS_ANDROID) {
         return {
@@ -97,7 +106,6 @@ function getBoldFont() {
         };
     }
 }
->>>>>>> 0b7ed8fd286624e19c466030108a9266279cedd5
 
 
 //initialize beacons

@@ -281,11 +281,13 @@ function getChallengesAndStart() {
                     onload : function(e) {
                         Ti.API.info("Received text: " + this.responseText);
                         var team = JSON.parse(this.responseText);
-
-                        for (var win in Alloy.Globals.WINDOWS) {
-                            Alloy.Globals.WINDOWS[win].close();
+                        
+                        if(OS_IOS) {
+                            for (var win in Alloy.Globals.WINDOWS) {
+                                Alloy.Globals.WINDOWS[win].close();
+                            }
                         }
-
+                        
                         if (team.data.length > 0) {
                             if (OS_IOS) {
                                 //Ti.API.info(Alloy.Globals.BETKAMPENUID);

@@ -235,7 +235,7 @@ function createMenuHeader() {
 		backgroundColor : '#303030'
 	}));
 	
-	rightViewPart.addEventListener('click', function() {
+	rightViewPart.addEventListener('click', function() {	        
 		var win = Alloy.createController('settings').getView();
 		Alloy.Globals.CURRENTVIEW =  win;
 		if (OS_IOS) {
@@ -247,6 +247,8 @@ function createMenuHeader() {
 				fullScreen : true
 			});
 		}
+		
+		$.ds.toggleLeftSlider();
 	});
 	
 	userInfoView.add(leftViewPart);
@@ -442,7 +444,6 @@ function createSection() {
 }
 
 function rowSelect(e) {
-	
 	if(OS_IOS && e.row.customView !== 'challengesView' && e.row.customView !== 'logout'  && e.row.customView !== 'landingPage'){	
 		
 		if (Alloy.Globals.checkConnection()) {

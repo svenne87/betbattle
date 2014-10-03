@@ -132,13 +132,13 @@ function createSectionsForTable(sectionText) {
 	var sectionView = $.UI.create('View', {
 		classes : ['challengesSection']
 	});
-
+	
 	sectionView.add(Ti.UI.createLabel({
-		top : '25%',
-		width : '100%',
+		top : '20%',
+		width : Ti.UI.FILL,
 		textAlign : 'center',
 		text : sectionText,
-		font : Alloy.Globals.getFontCustom(20, 'Bold'),
+		font : Alloy.Globals.getFontCustom(24, 'Regular'),
 		color : '#FFF'
 	}));
 
@@ -171,11 +171,7 @@ function createEmptyTableRow(text) {
 	row.add(Ti.UI.createLabel({
 		text : Alloy.Globals.PHRASES.noneTxt + ' ' + text + ' ' + Alloy.Globals.PHRASES.foundTxt,
 		left : 60,
-		font : {
-			fontSize : Alloy.Globals.getFontSize(1),
-			fontWeight : 'normal',
-			fontFamily : Alloy.Globals.getFont()
-		},
+		font : Alloy.Globals.getFontCustom(18, 'Regular'),
 		color : '#FFF'
 	}));
 
@@ -183,7 +179,7 @@ function createEmptyTableRow(text) {
 		row.add(Ti.UI.createView({
 			height : 0.5,
 			top : 57,
-			backgroundColor : '#6d6d6d',
+			backgroundColor : '#303030',
 			width : '120%'
 		}));
 	}
@@ -206,14 +202,15 @@ function constructChallengeRows(obj, index, type) {
 		className : type,
 		height : 100
 	});
+	
+	var fontawesome = require('lib/IconicFont').IconicFont({
+        font : 'lib/FontAwesome'
+    });
+
+    var font = 'FontAwesome';
 
 	// add custom icon on Android to symbol that the row has child
 	if (child != true) {
-		var fontawesome = require('lib/IconicFont').IconicFont({
-			font : 'lib/FontAwesome'
-		});
-
-		var font = 'FontAwesome';
 		var rightPercentage = '5%';
 
 		if (OS_ANDROID) {
@@ -248,10 +245,13 @@ function constructChallengeRows(obj, index, type) {
 	}else{
 		imageLocation = '/images/ikon_spelanasta.png';
 	}
+	
+	// TMP TODO
+	imageLocation = '/images/Skapa_Utmaning_Default.png';
 
 	row.add(Ti.UI.createImageView({
 		image : imageLocation,
-		left : 15,
+		left : 10,
 		width : 30,
 		height : 30
 	}));
@@ -302,15 +302,11 @@ function constructChallengeRows(obj, index, type) {
 			}
 		}
 	}
-
+// TODO
 	firstRowView.add(Ti.UI.createLabel({
 		left : 60,
 		text : betGroupName,
-		font : {
-			fontSize : Alloy.Globals.getFontSize(1),
-			fontWeight : 'bold',
-			fontFamily : Alloy.Globals.getFont()
-		},
+		font : Alloy.Globals.getFontCustom(18, 'Regular'),
 		color : Alloy.Globals.themeColor()
 	}));
 
@@ -319,147 +315,130 @@ function constructChallengeRows(obj, index, type) {
 		layout : 'absolute', 
 		width : 'auto'
 	});
-
-	var oppCount = 0;
-
-	if (type === 'tournament' && checkTournament(obj) === true && obj.attributes.opponents.length === 1) {
-		oppCount = parseInt(obj.attributes.opponentCount);
-	} else {
-		var oppCount = parseInt(obj.attributes.opponents.length);
-
-		if (oppCount === 1 && obj.attributes.group.name === 'BetKampen Community') {
-			oppCount = parseInt(obj.attributes.opponentCount);
-		}
-	}
-
-	var participantsValueLabel = Ti.UI.createLabel({
-		left : 60,
-		text : oppCount.toString() + ' ',
-		font : {
-			fontSize : Alloy.Globals.getFontSize(1),
-			fontWeight : 'bold',
-			fontFamily : Alloy.Globals.getFont()
-		},
-		color : Alloy.Globals.themeColor()
-	});
 	
-	secondRowView.add(participantsValueLabel);
+    var date = obj.attributes.time;
+    date = date.substring(0, 10);
+    date = date.substring(5);
 
-	var participantsTextLabel = Ti.UI.createLabel({
-		left : (60 + participantsValueLabel.toImage().width + 2),
-		text : Alloy.Globals.PHRASES.participantTxt,
-		font : {
-			fontSize : Alloy.Globals.getFontSize(1),
-			fontWeight : 'normal',
-			fontFamily : Alloy.Globals.themeColor()
-		},
-		color : '#FFF'
-	});
+    // check first char
+    if (date.charAt(0) == '0') {
+        date = date.substring(1);
+    }
 
-	secondRowView.add(participantsTextLabel);
+    // change position
+    var datePartOne = date.substring(date.lastIndexOf('-'));
+    datePartOne = datePartOne.replace('-', '');
+    if (datePartOne.charAt(0) == '0') {
+        datePartOne = datePartOne.substring(1);
+    }
 
-	var potTextLabel =Ti.UI.createLabel({
-		left : (60 + participantsValueLabel.toImage().width + 2 + participantsTextLabel.toImage().width + 6),
-		text : Alloy.Globals.PHRASES.potTxt + ':',
-		font : {
-			fontSize : Alloy.Globals.getFontSize(1),
-			fontWeight : 'bold',
-			fontFamily : Alloy.Globals.getFont()
-		},
-		color : '#FFF'
-	});
+    var datePartTwo = date.substring(0, date.indexOf('-'));
+    date = datePartOne + '/' + datePartTwo;
 
-	secondRowView.add(potTextLabel);
+    var time = obj.attributes.time;
+    time = time.substring(time.length - 8);
+    time = time.substring(0, 5);
+    
+    var startTextLabel = Ti.UI.createLabel({
+        left : 60,
+        font : {
+            fontFamily : font
+        },
+        text : fontawesome.icon('fa-clock-o'),
+        color : '#FFF'
+    });
 
-	var currentPot = Alloy.Globals.PHRASES.unknownSmallTxt;
+    secondRowView.add(startTextLabel);
 
-	if ((type === 'tournament' && obj.attributes.opponents.length === 1) || (type === 'tournament_finished' && obj.attributes.opponents.length === 1)) {
-		try {
-			currentPot = obj.attributes.tournamentPot;
-		} catch (e) {
-			currentPot = Alloy.Globals.PHRASES.unknownSmallTxt;
-		}
-	} else if ((type === 'tournament' && obj.attributes.opponents.length > 1) || (type === 'tournament_finished' && obj.attributes.opponents.length > 1)) {
-		try {
-			var activeUsers = checkActiveUsers(obj.attributes.opponents);
-			currentPot = activeUsers * obj.attributes.tournamentPot;
-		} catch (e) {
-			currentPot = Alloy.Globals.PHRASES.unknownSmallTxt;
-		}
-	} else {
-		try {
-			currentPot = obj.attributes.pot;
-		} catch (e) {
-			currentPot = Alloy.Globals.PHRASES.unknownSmallTxt;
-		}
-	}
+    var startTextValueLabel = Ti.UI.createLabel({
+        left : 75,
+        text : '' + date + ' ' + time,
+        font : Alloy.Globals.getFontCustom(14, 'Regular'),
+        color : '#FFF'
+    });
 
-	var potValueLabel = Ti.UI.createLabel({
-		left :  (60 + participantsValueLabel.toImage().width + 2 + participantsTextLabel.toImage().width + 6 + potTextLabel.toImage().width + 2),
-		text : '' + currentPot,
-		font : {
-			fontSize : Alloy.Globals.getFontSize(1),
-			fontFamily : Alloy.Globals.getFont()
-		},
-		color : '#FFF'
-	});
-	
-	secondRowView.add(potValueLabel);
-	
+    secondRowView.add(startTextValueLabel);
+
 	var thirdRowView = Ti.UI.createView({
 		top : 48,
 		layout : 'absolute', 
 		width : 'auto'
 	});
 	
-	var date = obj.attributes.time;
-	date = date.substring(0, 10);
-	date = date.substring(5);
+    var participantsTextLabel = Ti.UI.createLabel({
+        left : 60,
+        font : {
+            fontFamily : font
+        },
+        text : fontawesome.icon('icon-user'),
+        color : '#FFF'
+    });
 
-	// check first char
-	if (date.charAt(0) == '0') {
-		date = date.substring(1);
-	}
+    thirdRowView.add(participantsTextLabel);
+   
+    var oppCount = 0;
 
-	// change position
-	var datePartOne = date.substring(date.lastIndexOf('-'));
-	datePartOne = datePartOne.replace('-', '');
-	if (datePartOne.charAt(0) == '0') {
-		datePartOne = datePartOne.substring(1);
-	}
+    if (type === 'tournament' && checkTournament(obj) === true && obj.attributes.opponents.length === 1) {
+        oppCount = parseInt(obj.attributes.opponentCount);
+    } else {
+        var oppCount = parseInt(obj.attributes.opponents.length);
 
-	var datePartTwo = date.substring(0, date.indexOf('-'));
-	date = datePartOne + '/' + datePartTwo;
+        if (oppCount === 1 && obj.attributes.group.name === 'BetKampen Community') {
+            oppCount = parseInt(obj.attributes.opponentCount);
+        }
+    }
 
-	var time = obj.attributes.time;
-	time = time.substring(time.length - 8);
-	time = time.substring(0, 5);
-	
-	var startTextLabel = Ti.UI.createLabel({
-		left : 60,
-		font : {
-			fontSize : Alloy.Globals.getFontSize(1),
-			fontWeight : 'bold',
-			fontFamily : Alloy.Globals.getFont()
-		},
-		text : Alloy.Globals.PHRASES.startTxt + ': ',
-		color : '#FFF'
-	});
+    var participantsValueLabel = Ti.UI.createLabel({
+        left : 75,
+        text : oppCount.toString() + ' ',
+        font : Alloy.Globals.getFontCustom(14, 'Regular'),
+        color : '#FFF'
+    });
+    
+    thirdRowView.add(participantsValueLabel);
 
-	thirdRowView.add(startTextLabel);
+    var potTextLabel =Ti.UI.createLabel({
+        left : (60 + participantsValueLabel.toImage().width + 5 + participantsTextLabel.toImage().width + 2),
+        font : {
+            fontFamily : font
+        },
+        text : fontawesome.icon('icon-money'),
+        color : '#FFF'
+    });
 
-	var startTextValueLabel = Ti.UI.createLabel({
-		left : (60 + startTextLabel.toImage().width + 2),
-		text : '' + date + ' ' + time,
-		font : {
-			fontSize : Alloy.Globals.getFontSize(1),
-			fontWeight : 'normal',
-			fontFamily : Alloy.Globals.getFont()
-		},
-		color : '#FFF'
-	});
+    thirdRowView.add(potTextLabel);
 
-	thirdRowView.add(startTextValueLabel);
+    var currentPot = Alloy.Globals.PHRASES.unknownSmallTxt;
+
+    if ((type === 'tournament' && obj.attributes.opponents.length === 1) || (type === 'tournament_finished' && obj.attributes.opponents.length === 1)) {
+        try {
+            currentPot = obj.attributes.tournamentPot;
+        } catch (e) {
+            currentPot = Alloy.Globals.PHRASES.unknownSmallTxt;
+        }
+    } else if ((type === 'tournament' && obj.attributes.opponents.length > 1) || (type === 'tournament_finished' && obj.attributes.opponents.length > 1)) {
+        try {
+            var activeUsers = checkActiveUsers(obj.attributes.opponents);
+            currentPot = activeUsers * obj.attributes.tournamentPot;
+        } catch (e) {
+            currentPot = Alloy.Globals.PHRASES.unknownSmallTxt;
+        }
+    } else {
+        try {
+            currentPot = obj.attributes.pot;
+        } catch (e) {
+            currentPot = Alloy.Globals.PHRASES.unknownSmallTxt;
+        }
+    }
+
+    var potValueLabel = Ti.UI.createLabel({
+        left :  (60 + participantsValueLabel.toImage().width + 2 + participantsTextLabel.toImage().width + 6 + potTextLabel.toImage().width + 2),
+        text : '' + currentPot,
+        font : Alloy.Globals.getFontCustom(14, 'Regular'),
+        color : '#FFF'
+    });
+    
+    thirdRowView.add(potValueLabel);
 
 	// Add info to the created row
 	row.add(firstRowView);
@@ -476,7 +455,7 @@ function constructChallengeRows(obj, index, type) {
 		row.add(Ti.UI.createView({
 			height : 0.5,
 			top : 65,
-			backgroundColor : '#6d6d6d',
+			backgroundColor : '#303030',
 			width : '120%'
 		}));
 	}
@@ -513,13 +492,34 @@ function constructTableView(array) {
 	}
 
 	var sections = [];
+    
+    var tableHeaderView = Ti.UI.createView({
+               height : 0.1,
+        width : Ti.UI.FILL,
+        backgroundColor : 'transparent',
+        layout : "absolute", 
+    });
 
+    /*
 	var tableHeaderView = Ti.UI.createView({
-		height : 0.1,
+		height : Ti.UI.SIZE,
 		width : Ti.UI.FILL,
-		backgroundColor : 'transparent',
-		layout : "absolute",
+		layout : "vertical",
 	});
+
+	tableHeaderView.add(Ti.UI.createImageView({
+	    image : 'betkampenlogo.png',
+	    heigth : 40,
+	    width : Ti.UI.FILL
+	}));
+	
+	tableHeaderView.add(Ti.UI.createView({
+        height : 0.1,
+        width : Ti.UI.FILL,
+        backgroundColor : 'transparent',
+        layout : "absolute",
+    }));
+*/
 
 	if (OS_IOS) {
 		var separatorS;
@@ -530,7 +530,7 @@ function constructTableView(array) {
 			separatorColor = 'transparent';
 		} else {
 			separatorS = Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE;
-			separatorColor = '#6d6d6d';
+			separatorColor = '#303030';
 		}
 
 		table = Titanium.UI.createTableView({
@@ -552,7 +552,10 @@ function constructTableView(array) {
 			separatorStyle : separatorS,
 			separatorColor : separatorColor
 		});
-		sections[0] = Ti.UI.createTableViewSection({});
+		
+		sections[0] = Ti.UI.createTableViewSection({
+		    footerView : Ti.UI.createView({height : 0.1})
+		});
 	} else if (OS_ANDROID) {
 		table = Titanium.UI.createTableView({
 			width : Ti.UI.FILL,
@@ -560,7 +563,7 @@ function constructTableView(array) {
 			headerView : tableHeaderView,
 			height : '100%',
 			backgroundColor : 'transparent',
-			separatorColor : '#6d6d6d',
+			separatorColor : '#303030',
 			id : 'challengeTable'
 		});
 		sections[0] = Ti.UI.createTableViewSection({});
@@ -568,37 +571,30 @@ function constructTableView(array) {
 
 	var acceptRow = Ti.UI.createTableViewRow({
 		top: 0,
-		height : 60,
+		height : 75,
 		id : "new",
 		width : Ti.UI.FILL,
 		color : "#FFF",
 		backgroundColor : 'transparent',
-		font : {
-			fontSize : 14,
-			fontFamily : Alloy.Globals.getFont()
-		}
+		font : Alloy.Globals.getFont()
 	});
 
 	var pendingRow = Ti.UI.createTableViewRow({
-		height : 60,
+		height : 75,
 		id : "pending",
 		width : Ti.UI.FILL,
 		color : "#FFF",
 		backgroundColor : 'transparent',
-		font : {
-			fontSize : 14,
-		}
+		font : Alloy.Globals.getFont()
 	});
 
 	var finishedRow = Ti.UI.createTableViewRow({
-		height : 60,
+		height : 75,
 		id : "finished",
 		width : Ti.UI.FILL,
 		color : "#FFF",
 		backgroundColor : 'transparent',
-		font : {
-			fontSize : 14,
-		}
+		font : Alloy.Globals.getFont()
 	});
 
 
@@ -617,13 +613,22 @@ function constructTableView(array) {
 		}
 	}
 
+    var visualImagePrefs = {
+        left : 10,
+        width : 30,
+        height : 30,
+        image : '/images/Skapa_Utmaning_Default.png',
+    }; 
+
+	acceptRow.add(Ti.UI.createImageView(visualImagePrefs));
+
 	acceptRow.add(Ti.UI.createLabel({
 		font : Alloy.Globals.getFontCustom(18, 'Regular'),
 		text : Alloy.Globals.PHRASES.newChallengesTxt,
 		color : '#FFF',
-		left : 20,
-		height : 'auto',
-		width : 'auto'
+		left : 60,
+		height : Ti.UI.SIZE,
+		width : Ti.UI.SIZE
 	}));
 	
 	acceptRow.add(Ti.UI.createLabel({
@@ -634,16 +639,18 @@ function constructTableView(array) {
 		text : fontawesome.icon('icon-chevron-right'),
 		right : rightPercentage,
 		color : '#c5c5c5',
-		fontSize : 80,
+		fontSize : 60,
 		height : 'auto',
 		width : 'auto'
 	}));
+	
+	pendingRow.add(Ti.UI.createImageView(visualImagePrefs));
 	
 	pendingRow.add(Ti.UI.createLabel({
 		font : Alloy.Globals.getFontCustom(18, 'Regular'),
 		text : Alloy.Globals.PHRASES.pendingChallengesTxt,
 		color : '#FFF',
-		left : 20,
+		left : 60,
 		height : 'auto',
 		width : 'auto'
 	}));
@@ -660,11 +667,13 @@ function constructTableView(array) {
 		width : 'auto',
 	}));	
 	
+	finishedRow.add(Ti.UI.createImageView(visualImagePrefs));
+	
 	finishedRow.add(Ti.UI.createLabel({
 		font : Alloy.Globals.getFontCustom(18, 'Regular'),
 		text : Alloy.Globals.PHRASES.finishedChallengesTxt,
 		color : '#FFF',
-		left : 20,
+		left : 60,
 		height : 'auto',
 		width : 'auto'
 	}));
