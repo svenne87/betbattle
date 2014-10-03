@@ -5,21 +5,30 @@
 	backgroundColor: '#000'
 },
 "#info": {
-	height : '2%',
+	height : Ti.UI.SIZE,
 	width : Ti.UI.FILL,
 	layout : 'vertical'
 },
-"#info_label": {
-	top : 20,
-	text : Alloy.Globals.PHRASES.regTxt,
-	font : Alloy.Globals.FONT,
+"#info_label[platform=ios]": {
+	top : 30,
+	left : 20,
+	text : Alloy.Globals.PHRASES.registerInfoTxt,
+	font : Alloy.Globals.FONTBOLD,
 	height : Ti.UI.SIZE,
-	textAlign : 'center',
+	width : Ti.UI.SIZE,
+	color : '#FFF'
+},
+"#info_label[platform=android]": {
+	top : 30,
+	left : 30,
+	text : Alloy.Globals.PHRASES.registerInfoTxt,
+	font : Alloy.Globals.FONTBOLD,
+	height : Ti.UI.SIZE,
 	width : Ti.UI.SIZE,
 	color : '#FFF'
 },
 "#table[platform=ios]": {
-	top : '15%',
+	top : 40,
 	height : '50%',
 	width : Ti.UI.FILL,
 	backgroundColor : '#000',
@@ -33,7 +42,7 @@
     scrollable : false
 },
 "#table[platform=android]": {
-	top : '15%',
+	top : 40,
 	height : '50%',
 	width : Ti.UI.FILL,
 	backgroundColor : '#000',
@@ -41,7 +50,7 @@
     scrollable : false
 },
 ".register_btn_row": {
-	height : 85,
+	height : 80,
 	width : Ti.UI.FILL,
 	layout : 'vertical'
 },
@@ -53,7 +62,7 @@
 },
 "#space_row":{
 	width : Ti.UI.FILL,
-	height : '3%',
+	height : 0,
 	layout : 'vertical'
 },
 "#regPass":{

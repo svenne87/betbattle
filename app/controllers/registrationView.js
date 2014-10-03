@@ -117,7 +117,7 @@ createReq.onerror = function(e) {
 var abortBtn = Alloy.Globals.createButtonView('#d50f25', '#FFF', Alloy.Globals.PHRASES.abortBtnTxt);
 var signUpBtn = Alloy.Globals.createButtonView('#FFF', '#000', Alloy.Globals.PHRASES.regTxt);
 
-abortBtn.top = 0;
+abortBtn.top = -2;
 signUpBtn.top = 0;
 
 $.abort_row.add(abortBtn);

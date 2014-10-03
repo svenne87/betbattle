@@ -82,7 +82,7 @@ $.table.setFooterView(footerView);
 var abortBtn = Alloy.Globals.createButtonView('#d50f25', '#FFF', Alloy.Globals.PHRASES.abortBtnTxt);
 var signInBtn = Alloy.Globals.createButtonView('#FFF', '#000', Alloy.Globals.PHRASES.signInTxt);
 
-abortBtn.top = 0;
+abortBtn.top = -2;
 signInBtn.top = 0;
 
 $.abort_row.add(abortBtn);

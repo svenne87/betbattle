@@ -21,6 +21,7 @@
     },
     headerView : null,
     footerView : null,
+    scrollable : false,
     separatorColor : '#303030'
 },
 "#table[platform=android]": {
@@ -30,6 +31,7 @@
 	backgroundColor : '#000',
     headerView : null,
     footerView : null,
+    scrollable : false,
     separatorColor : '#303030'
 },
 ".settings_row": {

@@ -45,6 +45,7 @@ Alloy.Globals.COUPON = null;
 Alloy.Globals.hasCoupon = false;
 Alloy.Globals.appStatus = 'foreground';
 Alloy.Globals.FONT = getFont();
+Alloy.Globals.FONTBOLD = getBoldFont();
 Alloy.Globals.deviceHeight = Ti.Platform.displayCaps.platformHeight;
 Alloy.Globals.deviceWidth = Ti.Platform.displayCaps.platformWidth;
 
@@ -60,6 +61,22 @@ function getFont() {
             fontSize : 18,
             fontFamily : 'OpenSans',
             fontWeight : 'Regular'
+        };
+    }
+}
+
+function getBoldFont() {
+    if (OS_ANDROID) {
+        return {
+            fontSize : 20,
+            fontFamily : 'OpenSans-Bold',
+            fontWeight : 'Bold'
+        };
+    } else {
+        return {
+            fontSize : 18,
+            fontFamily : 'OpenSans-Bold',
+            fontWeight : 'Bold'
         };
     }
 }
