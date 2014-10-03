@@ -353,12 +353,12 @@ function createEmptyTableRow(text) {
 		width : Ti.UI.FILL,
 		left : 0,
 		name : 'empty',
-		height : 60
+		height : 75
 	});
 
 	row.add(Ti.UI.createLabel({
 		text : Alloy.Globals.PHRASES.noneTxt + ' ' + text + ' ' + Alloy.Globals.PHRASES.foundTxt,
-		left : 60,
+		left : 40,
 		font : Alloy.Globals.getFontCustom(18, 'Regular'),
 		color : '#CCC'
 	}));

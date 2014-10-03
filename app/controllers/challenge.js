@@ -459,18 +459,41 @@ function postMatchOfTheDay(){
 					indicator.closeIndicator();
 					Ti.API.info("RESPONSE : " + JSON.stringify(this.responseText));
 					var response = JSON.parse(this.responseText);
+					var answer = false;
+					
 					if (response == 1) {
 						//Svarat på match of the day
 						Alloy.Globals.showToast(Alloy.Globals.PHRASES.matchOfTheDayMsg);
-						$.challengeWindow.close();
-
+						answer = true;						
 					} else if(response == 2){
 						Alloy.Globals.showToast(Alloy.Globals.PHRASES.alreadyPostedMatchOTD);
-						$.challengeWindow.close();
+						answer = true;
 					} else {
 						Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-						$.challengeWindow.close();
 					}
+					
+					if(answer) {
+					    for(var win in Alloy.Globals.WINDOWS) {
+                            Alloy.Globals.WINDOWS[win].close();
+                        }
+                        
+                        var args = {
+                            gameID : gameID,
+                        };
+                        
+                        var win = Alloy.createController('showMatchOTD', args).getView();
+
+                        if (OS_IOS) {
+                            Alloy.Globals.NAV.openWindow(win, {
+                                animated : true
+                            });
+                        } else if (OS_ANDROID) {
+                            win.open({
+                                fullScreen : true
+                            });
+                        }
+					}
+					
 					Ti.API.info("response: " + JSON.stringify(response));
 
 				} else {
@@ -829,7 +852,11 @@ function postAnswer(gameArray) {
 						arg : arg
 					};
 					Ti.App.fireEvent('app:updateView', obj);
-					$.challengeWindow.close();
+					
+					for(var win in Alloy.Globals.WINDOWS) {
+					    Alloy.Globals.WINDOWS[win].close();
+					}
+					
 				} else {
 					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 					submitButton.touchEnabled = true;

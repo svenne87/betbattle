@@ -353,12 +353,12 @@ function createEmptyTableRow(text) {
 		width : Ti.UI.FILL,
 		left : 0,
 		name : 'empty',
-		height : 60
+		height : 75
 	});
 
 	row.add(Ti.UI.createLabel({
 		text : Alloy.Globals.PHRASES.noneTxt + ' ' + text + ' ' + Alloy.Globals.PHRASES.foundTxt,
-		left : 60,
+		left : 40,
 		font : Alloy.Globals.getFontCustom(18, 'Regular'),
 		color : '#CCC'
 	}));
@@ -601,7 +601,8 @@ function constructTableView(array) {
 							};
 							Alloy.Globals.CHALLENGEINDEX = e.rowData.id;
 							var win = Alloy.createController('challenge', arg).getView();
-
+                            Alloy.Globals.WINDOWS.push(win);
+                            
 							if (OS_IOS) {
 								Alloy.Globals.NAV.openWindow(win, {
 									animated : true
@@ -638,7 +639,7 @@ function constructTableView(array) {
 								};
 
 								var win = Alloy.createController('showChallenge', arg).getView();
-
+                                
 								if (OS_IOS) {
 									Alloy.Globals.NAV.openWindow(win, {
 										animated : true
@@ -660,7 +661,8 @@ function constructTableView(array) {
 								};
 
 								var win = Alloy.createController('challenge', arg).getView();
-
+                                Alloy.Globals.WINDOWS.push(win);
+                                
 								if (OS_IOS) {
 									Alloy.Globals.NAV.openWindow(win, {
 										animated : true
