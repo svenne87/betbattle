@@ -62,6 +62,22 @@ function getFont() {
     }
 }
 
+Alloy.Globals.getFontCustom = function (size, weight){
+	if(OS_ANDROID){
+		return {
+			fontSize: size,
+			fontFamily : 'OpenSans-Regular',
+			fontWeight: weight
+		};
+	}else if(OS_IOS){
+		return {
+			fontSize: size,
+			fontFamily : 'OpenSans',
+			fontWeight : weight
+		};
+	}
+};
+
 
 //initialize beacons
 if (OS_IOS) {

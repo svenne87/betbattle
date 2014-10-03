@@ -136,11 +136,7 @@ function createSectionsForTable(sectionText) {
 		width : '100%',
 		textAlign : 'center',
 		text : sectionText,
-		font : {
-			fontSize : Alloy.Globals.getFontSize(2),
-			fontWeight : 'normal',
-			fontFamily : 'Impact',
-		},
+		font : Alloy.Globals.getFontCustom(20, 'Bold'),
 		color : '#FFF'
 	}));
 
@@ -517,7 +513,7 @@ function constructTableView(array) {
 	var sections = [];
 
 	var tableHeaderView = Ti.UI.createView({
-		height : 0,
+		height : 0.1,
 		width : Ti.UI.FILL,
 		backgroundColor : 'transparent',
 		layout : "absolute",
@@ -538,8 +534,9 @@ function constructTableView(array) {
 		table = Titanium.UI.createTableView({
 			//width : Ti.UI.FILL,
 			left : 0,
+			top: 0,
 			headerView : tableHeaderView,
-			height : '100%',
+			height : Ti.UI.FILL,
 			width : '100%',
 			//backgroundImage: '/images/profileBG.jpg',
 			backgroundColor : 'transparent',
@@ -553,14 +550,7 @@ function constructTableView(array) {
 			separatorStyle : separatorS,
 			separatorColor : separatorColor
 		});
-		sections[0] = Ti.UI.createTableViewSection({
-			headerView : Ti.UI.createView({
-				height : 0.1,
-			}),
-			footerView : Ti.UI.createView({
-				height : 0.1,
-			})
-		});
+		sections[0] = Ti.UI.createTableViewSection({});
 	} else if (OS_ANDROID) {
 		table = Titanium.UI.createTableView({
 			width : Ti.UI.FILL,
@@ -575,6 +565,7 @@ function constructTableView(array) {
 	}
 
 	var acceptRow = Ti.UI.createTableViewRow({
+		top: 0,
 		height : 60,
 		id : "new",
 		width : Ti.UI.FILL,
@@ -625,11 +616,7 @@ function constructTableView(array) {
 	}
 
 	acceptRow.add(Ti.UI.createLabel({
-		font : {
-
-			fontFamily : Alloy.Globals.getFont(),
-			fontSize : Alloy.Globals.getFontSize(2),
-		},
+		font : Alloy.Globals.getFontCustom(18, 'Regular'),
 		text : Alloy.Globals.PHRASES.newChallengesTxt,
 		color : '#FFF',
 		left : 20,
@@ -651,10 +638,7 @@ function constructTableView(array) {
 	}));
 	
 	pendingRow.add(Ti.UI.createLabel({
-		font : {
-			fontFamily : Alloy.Globals.getFont(),
-			fontSize : Alloy.Globals.getFontSize(2),
-		},
+		font : Alloy.Globals.getFontCustom(18, 'Regular'),
 		text : Alloy.Globals.PHRASES.pendingChallengesTxt,
 		color : '#FFF',
 		left : 20,
@@ -675,10 +659,7 @@ function constructTableView(array) {
 	}));	
 	
 	finishedRow.add(Ti.UI.createLabel({
-		font : {
-			fontFamily : Alloy.Globals.getFont(),
-			fontSize : Alloy.Globals.getFontSize(2),
-		},
+		font : Alloy.Globals.getFontCustom(18, 'Regular'),
 		text : Alloy.Globals.PHRASES.finishedChallengesTxt,
 		color : '#FFF',
 		left : 20,
