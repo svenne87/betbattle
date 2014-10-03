@@ -309,7 +309,7 @@ function getChallengesAndStart() {
                                 // Uncaught TypeError: Cannot call method 'addEventListener' of undefined
                                // hänger sig här android, why??? // TODO kommer in i landing page men ifrån denna filen = hänger sig. Ej ifrån vanliga login.
 
-                            //$.loginView.close();
+                            $.loginView.close();
 
                             if (Alloy.Globals.INDEXWIN !== null) {
                                 Alloy.Globals.INDEXWIN.close();
