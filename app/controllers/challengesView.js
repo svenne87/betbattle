@@ -1,3 +1,5 @@
+// ikoner, annan font, vänster, dela av med gradient, user pengar klocka, öka namn. de andra mindre
+
 
  Ti.App.addEventListener("sliderToggled", function(e) {
 	if ( typeof table !== 'undefined') {

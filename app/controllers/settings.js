@@ -153,9 +153,6 @@ function createGUI() {
     $.table.setHeaderView(headerView);
     $.table.setFooterView(footerView);
     
-
-    // TODO Bluetooth funkar inte ios
-    
     /* First row */
     $.language_row.add(createPickers());
     $.language_row.addEventListener('click', function() {
@@ -552,5 +549,7 @@ function getLanguage() {
 // run it
 createGUI();
 
+// Lås table? if table > Alloy.Globals.deviceHeight = lås upp
 // TODO fix so we can notify clients about a language change in phrases.
-
+// TODO Bluetooth funkar inte ios
+// TODO use toast and not dialog.

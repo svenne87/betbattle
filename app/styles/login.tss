@@ -10,6 +10,12 @@
 	backgroundImage: '/images/Default-Portrait.png',
 	layout: 'vertical'
 },
+"#nav[platform=ios]":{
+	backgroundImage : 'none',
+	backgroundColor : '#000',
+	tintColor : '#FFF',
+	barColor : '#FFF'
+},
 "#facebookBtn":{
 	top: '70%',
 	height: '7%',

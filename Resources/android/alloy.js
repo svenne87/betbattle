@@ -40,13 +40,13 @@ function deepExtend() {
                 src = target[name];
                 copy = options[name];
                 if (target === copy) continue;
-                if (deep && copy && (_.isObject(copy) && !_.has(copy, "apiName") || (copy_is_array = _.isArray(copy)))) {
+                if (deep && copy && (_.isObject(copy) && !_.has(copy, "apiName") || (copy_is_array = _.isArray(copy))) && !copy.colors) {
                     if (copy_is_array) {
                         copy_is_array = false;
                         clone = src && _.isArray(src) ? src : [];
                     } else clone = _.isDate(copy) ? new Date(copy.valueOf()) : src && _.isObject(src) ? src : {};
                     target[name] = deepExtend(deep, clone, copy);
-                } else "undefined" != typeof copy && (target[name] = copy);
+                } else "undefined" != typeof copy ? target[name] = copy : copy.colors && (target[name] = copy);
             }
         }
     }
@@ -55,7 +55,7 @@ function deepExtend() {
 
 var _ = require("alloy/underscore")._, Backbone = require("alloy/backbone"), CONST = require("alloy/constants");
 
-exports.version = "1.5.0";
+exports.version = "1.5.1";
 
 exports._ = _;
 

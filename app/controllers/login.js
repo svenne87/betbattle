@@ -376,6 +376,8 @@ var fb = require('facebook');
 fb.appid = Ti.App.Properties.getString('ti.facebook.appid');
 
 if (OS_IOS) {
+    $.login.hideNavBar();
+    
 	fb.permissions = ['email'];
 } else {
 	fb.permissions = ['email'];
@@ -633,13 +635,12 @@ if (OS_ANDROID) {
 $.loginBtn.addEventListener('click', function(e) {
 	var loginWindow = Alloy.createController('loginView').getView();
 	if (OS_IOS) {
-		loginWindow.open({
-			transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
-		});
+		$.nav.openWindow(loginWindow);
 	} else {
 		loginWindow.open();
 	}
-	$.login.close();
+	//$.login.close();
+	Alloy.Globals.WINDOWS.push($.login);
 });
 
 //open rigistration view
@@ -647,14 +648,12 @@ $.registerBtn.addEventListener('click', function(e) {
 
 	var regWindow = Alloy.createController('registrationView').getView();
 	if (OS_IOS) {
-		regWindow.open({
-			transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
-		});
+		$.nav.openWindow(regWindow);
 	} else {
 		regWindow.open();
 	}
-	$.login.close();
-
+	//$.login.close();
+    Alloy.Globals.WINDOWS.push($.login);
 });
 
 $.registerBtnText.text = Alloy.Globals.PHRASES.registerTxt;

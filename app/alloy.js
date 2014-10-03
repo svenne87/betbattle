@@ -45,6 +45,9 @@ Alloy.Globals.COUPON = null;
 Alloy.Globals.hasCoupon = false;
 Alloy.Globals.appStatus = 'foreground';
 Alloy.Globals.FONT = getFont();
+Alloy.Globals.FONTBOLD = getBoldFont();
+Alloy.Globals.deviceHeight = Ti.Platform.displayCaps.platformHeight;
+Alloy.Globals.deviceWidth = Ti.Platform.displayCaps.platformWidth;
 
 function getFont() {
     if (OS_ANDROID) {
@@ -62,6 +65,7 @@ function getFont() {
     }
 }
 
+<<<<<<< HEAD
 Alloy.Globals.getFontCustom = function (size, weight){
 	if(OS_ANDROID){
 		return {
@@ -77,6 +81,23 @@ Alloy.Globals.getFontCustom = function (size, weight){
 		};
 	}
 };
+=======
+function getBoldFont() {
+    if (OS_ANDROID) {
+        return {
+            fontSize : 20,
+            fontFamily : 'OpenSans-Bold',
+            fontWeight : 'Bold'
+        };
+    } else {
+        return {
+            fontSize : 18,
+            fontFamily : 'OpenSans-Bold',
+            fontWeight : 'Bold'
+        };
+    }
+}
+>>>>>>> 0b7ed8fd286624e19c466030108a9266279cedd5
 
 
 //initialize beacons

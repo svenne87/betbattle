@@ -1,9 +1,52 @@
 <Alloy>
-	<Window class="container" id="login">
+	<NavigationWindow id="nav" platform="ios">
+		<Window class="container" id="login">
+			<ScrollableView id="scrollableView" showPagingControl="true">
+				<View id="content">
+					<ImageView id="betbattleLogo" />
+					<View id="facebookBtn">
+						<Label id="facebookBtnText">sign in with Facebook</Label>
+					</View>
+					<View id="registerBtn">
+						<Label id="registerBtnText">Register with Email</Label>
+					</View>
+					<View id="loginBtn">
+						<Label id="loginBtnText">Sign in</Label>
+					</View>
+				</View>
+				<View id="view1" class="scrollView">
+					<Label id="viewOneLabel" class="tutorialInfoLabel">Choose create challenge in the menu to get started!</Label>
+					<View class="shadowContainer" />
+					<ImageView class="tutorialImage" image="/images/tutoneios.png" />
+				</View>
+				<View id="view2" class="scrollView">
+					<Label id="viewTwoLabel" class="tutorialInfoLabel">Then choose which league and round you want to play!</Label>
+					<View class="shadowContainer" />
+					<ImageView class="tutorialImage" image="/images/tutthreeios.png" />
+				</View>
+				<View id="view3" class="scrollView">
+					<Label id="viewThreeLabel" class="tutorialInfoLabel">Make your selections, bet Coins and hit challenge. After that choose friends to challenge and click to send the challenge!</Label>
+					<View class="shadowContainer" />
+					<ImageView class="tutorialImage" image="/images/tutfourios.png" />
+				</View>
+				<View id="view4" class="scrollView">
+					<Label id="viewFourLabel" class="tutorialInfoLabel">To buy Coins you need to choose 'Store' in the menu, you then select the amount you wish to purchase and follow the instructions.</Label>
+					<View class="shadowContainer" />
+					<ImageView class="tutorialImage" image="/images/tutfiveios.png" />
+				</View>
+				<View id="view5" class="scrollView">
+					<Label id="viewFiveLabel" class="tutorialInfoLabel">Under the option 'My Profile' you'll see an overall view for your experience points, total wins and achievements!</Label>
+					<View class="shadowContainer" />
+					<ImageView class="tutorialImage" image="/images/tutsixios.png" />
+				</View>
+			</ScrollableView>
+		</Window>
+	</NavigationWindow>
+	<Window class="container" id="login" platform="android">
 		<ScrollableView id="scrollableView" showPagingControl="true">
 			<View id="content">
-				<ImageView id="betbattleLogo" /> <!-- TEMP -->
-		
+				<ImageView id="betbattleLogo" />
+				<!-- TEMP -->
 				<View id="facebookBtn">
 					<Label id="facebookBtnText">sign in with Facebook</Label>
 				</View>

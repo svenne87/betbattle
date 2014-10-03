@@ -1,12 +1,18 @@
 <Alloy>
 	<Window class="container">
-		<View id="main">
-			<View id="cover">
-				<TextField id="loginEmail"></TextField>
-				<TextField id="loginPass"></TextField>
-				<Button id="signInBtn">Log in</Button>
-				<Button id="abortLoginBtn"></Button>
-			</View>
+		<View id="info">
+			<Label id="info_label"></Label>
 		</View>
+		<TableView id="table">
+			<TableViewRow class="login_input_row">
+				<TextField id="loginEmail"></TextField>
+			</TableViewRow>
+			<TableViewRow class="login_input_row">
+				<TextField id="loginPass"></TextField>
+			</TableViewRow>
+		</TableView>
+		<View id="space_row"></View>
+		<View class="login_btn_row" id="sign_in_row"></View>
+		<View class="login_btn_row" id="abort_row"></View>
 	</Window>
 </Alloy>
