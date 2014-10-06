@@ -294,7 +294,7 @@ Alloy.Globals.themeColor = function() {
 	case 1:
 		return '#58B101';
 	case 2:
-		return '#ea7337';
+		return '#FF7D40';
 	}
 };
 

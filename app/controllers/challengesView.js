@@ -136,9 +136,9 @@ function createSectionsForTable(sectionText) {
 	sectionView.add(Ti.UI.createLabel({
 		top : '20%',
 		width : Ti.UI.FILL,
-		textAlign : 'center',
+		left : 60,
 		text : sectionText,
-		font : Alloy.Globals.getFontCustom(24, 'Regular'),
+		font : Alloy.Globals.getFontCustom(22, 'Regular'),
 		color : '#FFF'
 	}));
 
@@ -171,7 +171,7 @@ function createEmptyTableRow(text) {
 	row.add(Ti.UI.createLabel({
 		text : Alloy.Globals.PHRASES.noneTxt + ' ' + text + ' ' + Alloy.Globals.PHRASES.foundTxt,
 		left : 40,
-		font : Alloy.Globals.getFontCustom(18, 'Regular'),
+		font : Alloy.Globals.getFontCustom(16, 'Regular'),
 		color : '#CCC'
 	}));
 
@@ -306,7 +306,7 @@ function constructChallengeRows(obj, index, type) {
 	firstRowView.add(Ti.UI.createLabel({
 		left : 60,
 		text : betGroupName,
-		font : Alloy.Globals.getFontCustom(18, 'Regular'),
+		font : Alloy.Globals.getFontCustom(16, 'Regular'),
 		color : '#FFF'
 	}));
 
@@ -345,7 +345,7 @@ function constructChallengeRows(obj, index, type) {
             fontFamily : font
         },
         text : fontawesome.icon('fa-clock-o'),
-        color : '#CCC'
+        color : Alloy.Globals.themeColor()
     });
 
     secondRowView.add(startTextLabel);
@@ -353,8 +353,8 @@ function constructChallengeRows(obj, index, type) {
     var startTextValueLabel = Ti.UI.createLabel({
         left : 75,
         text : '' + date + ' ' + time,
-        font : Alloy.Globals.getFontCustom(14, 'Regular'),
-        color : '#CCC'
+        font : Alloy.Globals.getFontCustom(12, 'Regular'),
+        color : Alloy.Globals.themeColor()
     });
 
     secondRowView.add(startTextValueLabel);
@@ -365,7 +365,7 @@ function constructChallengeRows(obj, index, type) {
             fontFamily : font
         },
         text : fontawesome.icon('icon-user'),
-        color : '#CCC'
+        color : Alloy.Globals.themeColor()
     });
 
     secondRowView.add(participantsTextLabel);
@@ -385,8 +385,8 @@ function constructChallengeRows(obj, index, type) {
     var participantsValueLabel = Ti.UI.createLabel({
         left : 175,
         text : oppCount.toString() + ' ',
-        font : Alloy.Globals.getFontCustom(14, 'Regular'),
-        color : '#CCC'
+        font : Alloy.Globals.getFontCustom(12, 'Regular'),
+        color : Alloy.Globals.themeColor()
     });
     
     secondRowView.add(participantsValueLabel);
@@ -397,7 +397,7 @@ function constructChallengeRows(obj, index, type) {
             fontFamily : font
         },
         text : fontawesome.icon('icon-money'),
-        color : '#CCC'
+        color : Alloy.Globals.themeColor()
     });
 
     secondRowView.add(potTextLabel);
@@ -428,8 +428,8 @@ function constructChallengeRows(obj, index, type) {
     var potValueLabel = Ti.UI.createLabel({
         left :  (160 + participantsValueLabel.toImage().width + 2 + participantsTextLabel.toImage().width + 6 + potTextLabel.toImage().width + 2),
         text : '' + currentPot,
-        font : Alloy.Globals.getFontCustom(14, 'Regular'),
-        color : '#CCC'
+        font : Alloy.Globals.getFontCustom(12, 'Regular'),
+        color : Alloy.Globals.themeColor()
     });
     
     secondRowView.add(potValueLabel);
@@ -452,8 +452,8 @@ function constructChallengeRows(obj, index, type) {
     thirdRowView.add(Ti.UI.createLabel({
         left : 60,
         text : text,
-        font : Alloy.Globals.getFontCustom(14, 'Regular'),
-        color : '#CCC'
+        font : Alloy.Globals.getFontCustom(12, 'Regular'),
+        color : Alloy.Globals.themeColor()
     }));
 
 	// Add info to the created row
@@ -637,7 +637,7 @@ function constructTableView(array) {
 	acceptRow.add(Ti.UI.createImageView(visualImagePrefs));
 
 	acceptRow.add(Ti.UI.createLabel({
-		font : Alloy.Globals.getFontCustom(18, 'Regular'),
+		font : Alloy.Globals.getFontCustom(16, 'Regular'),
 		text : Alloy.Globals.PHRASES.newChallengesTxt,
 		color : '#FFF',
 		left : 60,
@@ -665,7 +665,7 @@ function constructTableView(array) {
 	pendingRow.add(Ti.UI.createImageView(visualImagePrefs));
 	
 	pendingRow.add(Ti.UI.createLabel({
-		font : Alloy.Globals.getFontCustom(18, 'Regular'),
+		font : Alloy.Globals.getFontCustom(16, 'Regular'),
 		text : Alloy.Globals.PHRASES.pendingChallengesTxt,
 		color : '#FFF',
 		left : 60,
@@ -691,7 +691,7 @@ function constructTableView(array) {
 	finishedRow.add(Ti.UI.createImageView(visualImagePrefs));
 	
 	finishedRow.add(Ti.UI.createLabel({
-		font : Alloy.Globals.getFontCustom(18, 'Regular'),
+		font : Alloy.Globals.getFontCustom(16, 'Regular'),
 		text : Alloy.Globals.PHRASES.finishedChallengesTxt,
 		color : '#FFF',
 		left : 60,
