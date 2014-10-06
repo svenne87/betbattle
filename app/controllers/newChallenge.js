@@ -36,6 +36,7 @@ function createGameListObject(response) {
 			game_id : response[i].game_id,
 			game_type : response[i].game_type,
 			game_date : response[i].game_date,
+			date_string : response[i].date_string,
 			status : response[i].status,
 			league_id : response[i].league_id,
 			round : response[i].round_id,
@@ -56,11 +57,7 @@ function createNoGamesView() {
 		text : Alloy.Globals.PHRASES.noGamesTxt,
 		left : 60,
 		top : 40,
-		font : {
-			fontSize : Alloy.Globals.getFontSize(2),
-			fontWeight : '400',
-			fontFamily : Alloy.Globals.getFont()
-		},
+		font : Alloy.Globals.getFontCustom(18, 'Regular'),
 		color : '#FFF'
 	}));
 }
@@ -69,10 +66,32 @@ function createNoGamesView() {
 function createTableRow(obj) {
 	// error in json sent, date in milliseconds is missing 000 at the end?
 	var dateFix = parseInt(obj.attributes.game_date + '000');
-	var date = new Date(dateFix);
+	
+	var date = obj.attributes.date_string;
+ 
+    date = date.substring(0, 10);
+    date = date.substring(5);
 
-	var dateString = date.toUTCString();
-	dateString = dateString.substring(5, (dateString.length - 7));
+    // check first char
+    if (date.charAt(0) == '0') {
+        date = date.substring(1);
+    }
+
+    // change position
+    var datePartOne = date.substring(date.lastIndexOf('-'));
+    datePartOne = datePartOne.replace('-', '');
+    if (datePartOne.charAt(0) == '0') {
+        datePartOne = datePartOne.substring(1);
+    }
+
+    var datePartTwo = date.substring(0, date.indexOf('-'));
+    date = datePartOne + '/' + datePartTwo;
+
+    var time = obj.attributes.date_string;
+    time = time.substring(time.length - 8);
+    time = time.substring(0, 5);
+    
+    var dateString = date + ' ' + time;
 
 	var child;
 
@@ -83,10 +102,10 @@ function createTableRow(obj) {
 	}
 
 	var row = $.UI.create('TableViewRow', {
-		classes : ['challengesSectionDefault'],
+		backgroundColor : '#000',
 		id : obj.attributes.round,
 		hasChild : child,
-		height : 'auto',
+		height : 75,
 		width: Ti.UI.FILL
 	});
 
@@ -99,12 +118,10 @@ function createTableRow(obj) {
 		var font = 'FontAwesome';
 		var rightPercentage = '5%';
 
-		if (OS_ANDROID) {
-			font = 'fontawesome-webfont';
+		font = 'fontawesome-webfont';
 
-			if (Titanium.Platform.displayCaps.platformWidth < 350) {
-				rightPercentage = '3%';
-			}
+		if (Titanium.Platform.displayCaps.platformWidth < 350) {
+			rightPercentage = '3%';
 		}
 
 		row.add(Ti.UI.createLabel({
@@ -119,29 +136,21 @@ function createTableRow(obj) {
 			width : 'auto'
 		}));
 	}
+	
+	row.add(Ti.UI.createLabel({
+        text : obj.attributes.team_1.team_name + " - " + obj.attributes.team_2.team_name,
+        top : 15,
+        left : 20,
+        font : Alloy.Globals.getFontCustom(18, 'Regular'),
+        color : '#FFF'
+    }));
 
 	row.add(Ti.UI.createLabel({
 		text : dateString,
-		top : 10,
+		top : 35,
 		left : 20,
-		font : {
-			fontSize : Alloy.Globals.getFontSize(1),
-			fontWeight : 'normal',
-			fontFamily : Alloy.Globals.getFont()
-		},
-		color : '#FFF'
-	}));
-
-	row.add(Ti.UI.createLabel({
-		text : obj.attributes.team_1.team_name + " - " + obj.attributes.team_2.team_name,
-		top : 30,
-		left : 20,
-		font : {
-			fontSize : Alloy.Globals.getFontSize(1),
-			fontWeight : 'normal',
-			fontFamily : Alloy.Globals.getFont()
-		},
-		color : '#FFF'
+		font : Alloy.Globals.getFontCustom(14, 'Regular'),
+		color : '#CCC'
 	}));
 
 	row.add(Ti.UI.createView({
@@ -182,8 +191,8 @@ function createAndShowTableView(league, array) {
 
 	// View
 	var tableView = Ti.UI.createView({
-		heigth : '100%',
-		width : '100%',
+		heigth : Ti.UI.FILL,
+		width : Ti.UI.FILL,
 		layout : 'vertical',
 		id : 'newChallengeTable'
 	});
@@ -208,19 +217,45 @@ function createAndShowTableView(league, array) {
 	}
 
 	var tableHeaderView = Ti.UI.createView({
-		height : "10%",
+		height : 75,
 		width : Ti.UI.FILL,
-		backgroundColor : "transparent",
+		layout : 'vertical',
+		backgroundColor: '#242424',
+        backgroundGradient: {
+        type: "linear",
+        startPoint: {
+            x: "0%",
+            y: "0%"
+        },
+        endPoint: {
+            x: "0%",
+            y: "100%"
+        },
+        colors: [
+            {
+                color: "#2E2E2E",
+                offset: 0.0
+            }, {
+                color: "#151515",
+                offset: 1.0
+            }
+        ]
+    }
 	});
 
 	tableHeaderView.add(Ti.UI.createLabel({
+	    top : 20,
 		text : Alloy.Globals.PHRASES.pickMatchTxt,
 		textAlign : "center",
 		color : "#FFF",
-		font : {
-			fontSize : Alloy.Globals.getFontSize(2),
-			fontFamily : "Impact",
-		}
+		font : Alloy.Globals.getFontCustom(24, 'Regular'),
+	}));
+	
+	tableHeaderView.add(Ti.UI.createView({
+	   top : 20, 
+        height : 0.5,
+        width : Ti.UI.FILL,
+        backgroundColor : '#303030'
 	}));
 
 	if (OS_IOS) {
@@ -230,6 +265,7 @@ function createAndShowTableView(league, array) {
 			height : 'auto',
 			refreshControl : refresher,
 			backgroundColor : '#303030',
+			separatorColor : '#303030',
 			separatorInsets : {
 				left : 0
 			}
@@ -239,13 +275,14 @@ function createAndShowTableView(league, array) {
 		table = Ti.UI.createTableView({
 			headerView : tableHeaderView,
 			height : 'auto',
-			backgroundColor : '#303030'
+			backgroundColor : '#303030',
+			separatorColor : '#303030'
 		});
 
 	}
 
 	var footerView = Ti.UI.createView({
-		height : 60,
+		height : 75,
 		width : Ti.UI.FILL,
 		backgroundColor : '#242424',
 		backgroundGradient : {
@@ -273,27 +310,24 @@ function createAndShowTableView(league, array) {
 		top : 0,
 		height : 0.5,
 		width : Ti.UI.FILL,
-		backgroundColor : '#FFF'
+		backgroundColor : '#303030'
 	}));
 
 	footerViewText = Ti.UI.createLabel({
 		text : '',
-		top : 20,
+		top : 25,
 		left : 20,
-		color : '#FFF',
-		font : {
-			fontSize : Alloy.Globals.getFontSize(1),
-			fontFamily : Alloy.Globals.getFont(),
-		}
+		color : '#CCC',
+		font : Alloy.Globals.getFontCustom(14, 'Regular')
 	});
 
 	footerView.add(footerViewText);
 
 	footerView.add(Ti.UI.createView({
-		top : 20,
+		top : 30,
 		height : 0.5,
 		width : Ti.UI.FILL,
-		backgroundColor : '#FFF'
+		backgroundColor : '#303030'
 	}));
 
 	table.footerView = footerView;

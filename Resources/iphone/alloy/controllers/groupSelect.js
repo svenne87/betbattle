@@ -186,7 +186,7 @@ function Controller() {
                 xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
                 xhr.setTimeout(Alloy.Globals.TIMEOUT);
                 var param = "";
-                param += '{"cid": ' + Alloy.Globals.COUPON.id + ', "coins": ' + coins + ', "groups": [{';
+                param += '{"cid": ' + Alloy.Globals.COUPON.id + ', "lang" : "' + Alloy.Globals.LOCALE + '", "coins": ' + coins + ', "groups": [{';
                 for (var i = 0; i < array.length; i++) for (var x = 0; x < groupObjects.length; x++) if (groupObjects[x].attributes.id === array[i]) {
                     param += '"' + array[i] + '":"' + groupObjects[x].attributes.name;
                     param += i != array.length - 1 ? '", ' : '"';
@@ -272,7 +272,7 @@ function Controller() {
                 xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
                 xhr.setTimeout(Alloy.Globals.TIMEOUT);
                 var param = "";
-                param += '{"coins": ' + coins + ', "cid":"' + Alloy.Globals.COUPON.id + '", "friends":[{';
+                param += '{"coins": ' + coins + ', "lang" :"' + Alloy.Globals.LOCALE + '", "cid":"' + Alloy.Globals.COUPON.id + '", "friends":[{';
                 for (var i = 0; i < friendsChallenge.length; i++) {
                     param += '"' + friendsChallenge[i].id + '":"' + friendsChallenge[i].name;
                     param += i == friendsChallenge.length - 1 ? '"' : '", ';

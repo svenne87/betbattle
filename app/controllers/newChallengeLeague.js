@@ -14,7 +14,6 @@ function openChallengesForLeague(league) {
 	var arg = {
 		leagueId : league
 	};
-	Ti.API.info("leageID: " + league);
 	/*
 	// change view
 	var obj = {
@@ -44,31 +43,63 @@ function openChallengesForLeague(league) {
 var table;
 var leagues = Alloy.Globals.LEAGUES;
 
+/*
 var tableHeaderView = Ti.UI.createView({
 	height : '142dp',
 	backgroundImage : '/images/header.png'
 	//backgroundColor: 'transparent',
 });
+*/
+
+var tableHeaderView = Ti.UI.createView({
+    height : 75,
+    width : Ti.UI.FILL,
+    layout : 'vertical',
+    backgroundColor: '#242424',
+    backgroundGradient: {
+        type: "linear",
+        startPoint: {
+            x: "0%",
+            y: "0%"
+        },
+        endPoint: {
+            x: "0%",
+            y: "100%"
+        },
+        colors: [
+            {
+                color: "#2E2E2E",
+                offset: 0.0
+            }, {
+                color: "#151515",
+                offset: 1.0
+            }
+        ]
+    }
+});
 
 tableHeaderView.add(Ti.UI.createLabel({
-	top : 50,
+    top : 20,
+    left : 60,
 	text : Alloy.Globals.PHRASES.leagueChooseTxt,
-	font : {
-		fontSize : Alloy.Globals.getFontSize(3),
-		fontWeight : 'normal',
-		fontFamily : 'Impact',
-	},
+	font : Alloy.Globals.getFontCustom(24, 'Regular'),
 	color : '#FFF'
+}));
+
+tableHeaderView.add(Ti.UI.createView({
+    top : 20,
+    height : 0.5,
+    width : Ti.UI.FILL,
+    backgroundColor : '#303030'
 }));
 
 table = Titanium.UI.createTableView({
 	width : Ti.UI.FILL,
 	left : 0,
 	headerView : tableHeaderView,
-	height : '100%',
-	//backgroundImage: 'images/profileBG.jpg',
+	height : Ti.UI.FILL,
 	backgroundColor : '#000',
-	separatorColor : '#6d6d6d'
+	separatorColor : '#303030'
 });
 
 if (OS_IOS) {
@@ -77,12 +108,13 @@ if (OS_IOS) {
 		right : 0
 	};
 	table.footerView = Ti.UI.createView({
-		height : 0.5
+		height : 0.5,
+		backgroundColor : '#303030'
 	});
 } else if (OS_ANDROID) {
 	table.footerView = Ti.UI.createView({
 		height : 0.5,
-		backgroundColor : '#6d6d6d'
+		backgroundColor : '#303030'
 	});
 }
 
@@ -98,9 +130,10 @@ for (var i in leagues) {
 	}
 
 	var tableRow = $.UI.create('TableViewRow', {
-		classes : ['challengesSectionDefault'], 
+		backgroundColor : '#000', 
 		id :leagues[i].id, 
-		hasChild : child
+		hasChild : child,
+		height : 75
 	});
 
 	// add custom icon on Android to symbol that the row has child
@@ -131,11 +164,11 @@ for (var i in leagues) {
 	var imageLocation = Alloy.Globals.BETKAMPENURL + finalUrl;
 
 	var leagueImageView = Ti.UI.createImageView({
-		top : 10,
 		left : 5,
 		height : 40,
 		width : 40,
-		image : imageLocation
+		image : imageLocation,
+		defaultImage : '/images/Skapa_Utmaning_Default.png'
 	});
 	
 	leagueImageView.addEventListener('error',function(e){
@@ -152,16 +185,11 @@ for (var i in leagues) {
 	}
 
 	tableRow.add(Ti.UI.createLabel({
-		width : '80%',
-		height : 'auto',
+		width : Ti.UI.SIZE,
+		height : Ti.UI.SIZE,
 		left : 60,
-		top : 15,
 		text : leagueName,
-		font : {
-			fontSize : Alloy.Globals.getFontSize(2),
-			fontWeight : 'normal',
-			fontFamily : Alloy.Globals.getFont()
-		},
+		font : Alloy.Globals.getFontCustom(16, 'Regular'),
 		color : '#FFF'
 	}));
 
