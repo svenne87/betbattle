@@ -15,11 +15,21 @@ if (OS_IOS) {
 	iOSVersion = parseInt(Ti.Platform.version);
 }
 
+var fontawesome = require('lib/IconicFont').IconicFont({
+	font : 'lib/FontAwesome'
+});
+
+var fontAwe = 'FontAwesome';
+
+if (OS_ANDROID) {
+	fontAwe = 'fontawesome-webfont';
+}
 
 function createGameType(gameType, gameObject, i, gameArray, index) {
 	var type = gameType.type;
 	var viewHeight = 75;
-
+	var fontSize = 16;
+	
 	var gameTypeView = Ti.UI.createTableViewRow({
 		width : Ti.UI.FILL,
 		height : viewHeight,
@@ -64,6 +74,44 @@ function createGameType(gameType, gameObject, i, gameArray, index) {
 			gameTypeView.add(optionLabel);
 			
 			
+			var val = gameArray[index].gameValue[0];
+			if(gameTypeView.value == val){
+				gameTypeView.setBackgroundColor(Alloy.Globals.themeColor());
+				gameTypeView.add(Ti.UI.createLabel({
+					id : 'selected_' + gameTypeView.id,
+						text : fontawesome.icon('fa-check'),
+						textAlign : "center",
+						right : 10,
+						color : "#FFF",
+						parent : gameTypeView,
+						font : {
+							fontSize : 30,
+							fontFamily : fontAwe,
+						},
+						height : "auto",
+						width : "auto",
+				}));
+			}
+			/*for (var x in children.rows){
+				children.rows[x].setBackgroundColor("#000");
+				if(children.rows[x].value == val){
+					children.rows[x].setBackgroundColor(Alloy.Globals.themeColor());
+					children.rows[x].add(Ti.UI.createLabel({
+						id : 'selected_' + children.rows[x].id,
+						text : fontawesome.icon('fa-check'),
+						textAlign : "center",
+						right : 10,
+						color : "#FFF",
+						parent : gameTypeView,
+						font : {
+							fontSize : 30,
+							fontFamily : fontAwe,
+						},
+						height : "auto",
+						width : "auto",
+					}));
+				}
+			}*/
 			
 			gameTypeView.addEventListener("click", function(e){
 				Ti.API.info("CLICKADE PÅ EN ROW : " + JSON.stringify(e));
@@ -105,20 +153,7 @@ function createGameType(gameType, gameObject, i, gameArray, index) {
 				
 				
 				Ti.API.info("gameArray : " + JSON.stringify(gameArray));
-				if (validate()) {
-					if (answer == 1) {
-						Ti.API.info("svara");
-						//postAnswer(gameArray);
-					} else if (matchOTD == 1) {
-						Ti.API.info("Matchens mästare");
-					} else if (Alloy.Globals.COUPON != null) {
-						Ti.API.info("update");
-						updateChallenge();
-					} else {
-						Ti.API.info("save");
-						saveChallenge();
-					}
-				}
+				
 			});
 			return gameTypeView;
 }
@@ -204,7 +239,7 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index){
 			var pickerLabels = [];
 
 			for (var i = 0; i < gameType.options; i++) {
-				
+				var pre_val = gameArray[index].gameValue[i];
 				var pickerLabel = Ti.UI.createLabel({
 					top : 20,
 					left : 15,
@@ -212,7 +247,7 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index){
 					borderRadius : 2,
 					width : 100,
 					height : 40,
-					text : '-',
+					text : pre_val,
 					textAlign : 'center',
 					index : i
 				});
@@ -253,20 +288,7 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index){
 								if (gameType.number_of_values == 1) {
 									gameArray[index].gameValues[1] = 0;
 								}
-								if (validate()) {
-									if (answer == 1) {
-										Ti.API.info("svara");
-										//postAnswer(gameArray);
-									} else if (matchOTD == 1) {
-										Ti.API.info("MATCHENS MÄSTARE");
-									} else if (Alloy.Globals.COUPON != null) {
-										Ti.API.info("update");
-										updateChallenge();
-									} else {
-										Ti.API.info("save");
-										saveChallenge();
-									}
-								}
+								
 							}
 						},
 					});
@@ -286,6 +308,8 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index){
 			};
 			for (var i = 0; i < gameType.options; i++) {
 				///SKAPA EN SELECT
+				
+				var pre_val = gameArray[index].gameValue[i];
 				var visualPrefs;
 				var ModalPicker = require("lib/ModalPicker");
 				if (layoutType == 'horizontal') {
@@ -321,7 +345,7 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index){
 				picker = new ModalPicker(visualPrefs, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt, Alloy.Globals.PHRASES.closeBtnTxt, id);
 				modalPickersToHide[gameType.type + count + gameID] = picker;
 
-				picker.text = '-';
+				picker.text = pre_val;
 				//picker.text = '-';
 
 				Ti.API.info("Y VÄRDE : " + i);
@@ -342,22 +366,7 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index){
 						gameArray[index].gameValue[1] = 0;
 					}
 					Ti.API.info("gameArray : " + JSON.stringify(gameArray));
-					if (validate()) {
-						if (answer == 1) {
-							Ti.API.info("svara");
-							//postAnswer(gameArray);
-						} else if (matchOTD == 1) {
-							Ti.API.info("matchens mästare");
-						} else if (Alloy.Globals.COUPON != null) {
-
-							Ti.API.info("update");
-							updateChallenge();
-						} else {
-							Ti.API.info("save");
-							saveChallenge();
-						}
-
-					};
+					
 				});
 
 				optionsView.add(picker);
@@ -518,7 +527,7 @@ function createLayout(gameObject) {
 			Ti.API.info("OBJECT ???? " + JSON.stringify(gameObject));
 			for (var i in gameObject.attributes.values) {
 				var value = gameObject.attributes.values[i];
-				if (value.game_type == type) {
+				if (value.game_type == gametypes[y].type) {
 					var valueArray = new Array(value.value_1, value.value_2);
 				}
 				Ti.API.info("EN VALUE : " + JSON.stringify(value));
