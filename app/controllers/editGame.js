@@ -9,59 +9,23 @@ var indicator = uie.createIndicatorWindow({
 	text : Alloy.Globals.PHRASES.loadingTxt
 });
 
-function createGameType(gameType, gameObject) {
+function createGameType(gameType, gameObject, i, gameArray, index) {
 	var type = gameType.type;
-	var viewHeight = "100dp";
+	var viewHeight = 75;
 
-	var gameTypeView = Ti.UI.createView({
+	var gameTypeView = Ti.UI.createTableViewRow({
 		width : Ti.UI.FILL,
 		height : viewHeight,
-		layout : "vertical",
-		backgroundColor : "#303030",
+		id : index,
+		hasChild : false,
+		width : Ti.UI.FILL,
+		left : 0,
+		className : 'gameTypeRow',
+		height : 75,
+		value : i + 1
 	});
 
-	var gameTypeDescription = Ti.UI.createLabel({
-		text : Alloy.Globals.PHRASES.gameTypes[type].description,
-		textAlign : "center",
-		color : "#FFF",
-		//height: "30%",
-		font : {
-			fontSize : 18,
-			fontFamily : "Impact",
-		}
-	});
-
-	gameTypeView.add(gameTypeDescription);
-
-	// object to store game id and value
-	var gameObj = new Object();
-	gameObj.game_id = gameObject.attributes.game_id;
-	gameObj.gameType = gameType.type;
-	Ti.API.info("OBJECT ???? " + JSON.stringify(gameObject));
-	for (var i in gameObject.attributes.values) {
-		var value = gameObject.attributes.values[i];
-		if (value.game_type == type) {
-			var valueArray = new Array(value.value_1, value.value_2);
-		}
-		Ti.API.info("EN VALUE : " + JSON.stringify(value));
-	}
-
-	gameObj.gameValue = valueArray;
-	gameArray.push(gameObj);
-	var index = gameArray.indexOf(gameObj);
-
-	if (gameType.option_type == "button") {
-		var optionsView = Ti.UI.createView({
-			//height: "70%",
-			width : 285,
-			layout : "horizontal",
-		});
-
-		var fontSize = 18;
-		var buttonViews = [];
-		for (var i = 0; i < gameType.options; i++) {
-
-			//get the corresponding text inside each button from the JSON file
+//get the corresponding text inside each button from the JSON file
 			var text = Alloy.Globals.PHRASES.gameTypes[type].buttonValues[i + 1];
 
 			//if the json says team1 or team2. get the actual team  names
@@ -72,54 +36,83 @@ function createGameType(gameType, gameObject) {
 				text = gameObject.attributes.team_2.team_name;
 			}
 			//if text is too long make text smaller so it fits more.
-			if (text.length > 9) {
-				fontSize = 12;
-			}
-			var buttonView = Ti.UI.createButton({
-				title : text,
-				top : 5,
-				borderColor : "#c5c5c5",
-				borderWidth : 1,
-				left : 5,
-				value : i + 1,
+			
+			var optionLabel = Ti.UI.createLabel({
+				text : text,
+				//top : 5,
+				//borderColor : "#c5c5c5",
+				//borderWidth : 1,
+				//left : 5,
+				//value : i + 1,
+				//width: Ti.UI.FILL,
+				left: 20,
+				
 				font : {
 					fontSize : fontSize,
 				},
-				borderRadius : 5,
-				width : 90,
-				height : 40
+				color:"#FFF",
 			});
-
-			buttonViews.push(buttonView);
-
-		}
-		//add click event to all buttonviews. this is done here so that we can change color correctly when clicking one
-		for (var i in buttonViews) {
-			Ti.API.info("BUTTON : " + JSON.stringify(buttonViews[i]));
-			for (var k in gameObject.attributes.values) {
-				if (buttonViews[i].value == gameArray[index].gameValue[0] && gameObject.attributes.values[k].game_type == type) {
-					buttonViews[i].backgroundColor = "#6d6d6d";
-				}
-			}
-			buttonViews[i].addEventListener("click", function(e) {
-
-				Ti.API.info("Clickade " + JSON.stringify(e));
-				gameArray[index].gameValue[0] = e.source.value;
+			
+			gameTypeView.add(optionLabel);
+			
+			
+			
+			gameTypeView.addEventListener("click", function(e){
+				Ti.API.info("CLICKADE PÅ EN ROW : " + JSON.stringify(e));
+				gameArray[index].gameValue[0] = e.row.value;
 				gameArray[index].gameValue[1] = 0;
-				changeColors(e);
+				var children = table.data[e.row.id];
+				var labels = [];
+				
+				//Ti.API.info("TABLE CHILDREN : " + JSON.stringify(children.rows));
+				//changeColors(e);
+				e.row.add(Ti.UI.createLabel({
+						id : 'selected_' + e.row.id,
+						text : fontawesome.icon('fa-check'),
+						textAlign : "center",
+						right : 10,
+						color : "#FFF",
+						parent : gameTypeView,
+						font : {
+							fontSize : 30,
+							fontFamily : fontAwe,
+						},
+						height : "auto",
+						width : "auto",
+				}));
+				
+				for (var x in children.rows){
+					children.rows[x].setBackgroundColor("#000");
+					labels = children.rows[x].getChildren();
+					if(children.rows[x].value != e.row.value){
+						for (var k in labels){
+							var selected = "selected_"+e.row.id;
+							if(labels[k].id == selected){
+								children.rows[x].remove(labels[k]);
+							}
+						}
+					}
+				}
+				e.row.setBackgroundColor(Alloy.Globals.themeColor());
+				
+				
 				Ti.API.info("gameArray : " + JSON.stringify(gameArray));
-
+				if (validate()) {
+					if (answer == 1) {
+						Ti.API.info("svara");
+						//postAnswer(gameArray);
+					} else if (matchOTD == 1) {
+						Ti.API.info("Matchens mästare");
+					} else if (Alloy.Globals.COUPON != null) {
+						Ti.API.info("update");
+						updateChallenge();
+					} else {
+						Ti.API.info("save");
+						saveChallenge();
+					}
+				}
 			});
-			optionsView.add(buttonViews[i]);
-		}
-
-		//function that loops through and resets the color on all views. then changes the one clicked to the new colorw
-		function changeColors(e) {
-			for (var i in buttonViews) {
-				buttonViews[i].backgroundColor = "#303030";
-				e.source.backgroundColor = "#6d6d6d";
-			}
-		}
+			return gameTypeView;
 
 	} else if (gameType.option_type == "select") {
 		var layoutType = 'horizontal';

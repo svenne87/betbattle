@@ -1,5 +1,30 @@
 // ikoner, annan font, vänster, dela av med gradient, user pengar klocka, öka namn. de andra mindre
 
+if(Alloy.Globals.hasCoupon){
+	if (OS_IOS) {
+							Ti.API.info("challenge succces");
+							var children = Alloy.Globals.NAV.getChildren();
+							for (var i in children) {
+								if (children[i].id == "ticketView") {
+									var labels = children[i].getChildren();
+									for (var y in labels) {
+										if (labels[y].id == "badge") {
+											labels[y].setBackgroundColor("red");
+											labels[y].setBorderColor("#c5c5c5");
+											labels[y].setText("" + Alloy.Globals.COUPON.games.length);
+										}
+										if (labels[y].id == "label") {
+											labels[y].setColor("#FFF");
+										}
+									}
+
+								}
+							}
+						} else if (OS_ANDROID) {
+							// will rebuild action bar menu
+							Ti.App.fireEvent('app:rebuildAndroidMenu');
+						}
+}
 
  Ti.App.addEventListener("sliderToggled", function(e) {
 	if ( typeof table !== 'undefined') {

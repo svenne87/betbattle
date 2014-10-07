@@ -10,7 +10,7 @@
     //height: Ti.UI.FILL,
     //contentHeight: Ti.UI.SIZE,
    // contentWidth: Ti.UI.SIZE,
-    backgroundColor : '#303030',
+    backgroundColor : '#000',
 	//showVerticalScrollIndicator: true,
 	//showHorizontalScrollIndicator: false
 }
