@@ -1232,7 +1232,7 @@ function createLayout(gameObject) {
 			if (answer == 1) {
 				if(bet_amount > 0){
 					Ti.API.info("HUR MÅNGA SECTIONS : " + sections.length);
-					sectionIndex = sections.length;
+					var sectionIndex = sections.length;
 					
 					var gameTypeHeaderView = Ti.UI.createView({
 						height: 75,
