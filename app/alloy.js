@@ -735,8 +735,27 @@ Alloy.Globals.constructChallenge = function(responseAPI) {
 				};
 				cWinners.push(winner);
 			}
-
-			if (c == 3 || c == 4) {
+			
+			if(c === 1 ) {
+			    // handle pending challenge's
+                var challenge = Alloy.createModel('challenge', {
+                    id : response[i].c_id,
+                    name : response[i].c_name,
+                    uid : response[i].c_uid,
+                    time : response[i].c_time,
+                    status : response[i].status,
+                    opponents : cOpponents,
+                    pot : response[i].pot,
+                    potential_pot : response[i].potential_pot,
+                    winners : cWinners,
+                    group : response[i].group,
+                    league : response[i].league,
+                    round : response[i].round,
+                    show : response[i].show,
+                    matches : response[i].matches
+                });
+			    
+			} else if (c === 3 || c === 4) {
 				// handle tournaments
 				var challenge = Alloy.createModel('challenge', {
 					id : response[i].id,
@@ -751,7 +770,6 @@ Alloy.Globals.constructChallenge = function(responseAPI) {
 					tournamentPot : response[i].pot,
 					show : response[i].show
 				});
-
 			} else {
 				// handle normal challenge's
 				var challenge = Alloy.createModel('challenge', {
