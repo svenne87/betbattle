@@ -80,14 +80,14 @@ var tableHeaderView = Ti.UI.createView({
 
 tableHeaderView.add(Ti.UI.createLabel({
     top : 20,
-    left : 60,
+    left : 10,
 	text : Alloy.Globals.PHRASES.leagueChooseTxt,
-	font : Alloy.Globals.getFontCustom(24, 'Regular'),
+	font : Alloy.Globals.getFontCustom(22, 'Regular'),
 	color : '#FFF'
 }));
 
 tableHeaderView.add(Ti.UI.createView({
-    top : 20,
+    top : 25,
     height : 0.5,
     width : Ti.UI.FILL,
     backgroundColor : '#303030'
@@ -164,7 +164,7 @@ for (var i in leagues) {
 	var imageLocation = Alloy.Globals.BETKAMPENURL + finalUrl;
 
 	var leagueImageView = Ti.UI.createImageView({
-		left : 5,
+		left : 10,
 		height : 40,
 		width : 40,
 		image : imageLocation,
@@ -187,7 +187,7 @@ for (var i in leagues) {
 	tableRow.add(Ti.UI.createLabel({
 		width : Ti.UI.SIZE,
 		height : Ti.UI.SIZE,
-		left : 60,
+		left : 65,
 		text : leagueName,
 		font : Alloy.Globals.getFontCustom(16, 'Regular'),
 		color : '#FFF'
