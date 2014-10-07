@@ -199,7 +199,8 @@ var editEvent = function(e) {
     }
 };
 
-// When clicking the edit icon of a match
+/*
+// When clicking the delete icon of a match
 var removeEvent = function(e) {
     var msg = Alloy.Globals.PHRASES.couponGameRemoveConfirm;
     if (games.length === '1') {
@@ -222,10 +223,10 @@ var removeEvent = function(e) {
     });
     alertWindow.show();
 };
-
-// TODO click handlers, Android, clean code
+*/
 
 var table;
+var child = true;
 
 if (OS_IOS) {
     var separatorS;
@@ -258,6 +259,7 @@ if (OS_IOS) {
         backgroundColor : '#000',
         separatorColor : '#6d6d6d',
     });
+    child = true;
 }
 
 table.headerView = Ti.UI.createView({
@@ -293,7 +295,7 @@ var matchesView = Ti.UI.createView({
 });
 
 matchesView.add(Ti.UI.createLabel({
-    text : 'Matcher', // TODO
+    text : Alloy.Globals.PHRASES.matchesTxt,
     left : 10,
     top : 25,
     height : Ti.UI.SIZE,
@@ -311,7 +313,7 @@ sections[0] = Ti.UI.createTableViewSection({
 
 for (var i in games) {
     var row = Ti.UI.createTableViewRow({
-        hasChild : false,
+        hasChild : child,
         className : 'couponMatch',
         selectionStyle : 'none',
         id : games[i].game_id,
@@ -369,126 +371,32 @@ for (var i in games) {
         left : 25,
         top : 40
     });
+    
+    if (child != true) {
+        var rightPercentage = '5%';
+        font = 'fontawesome-webfont';
+
+        if (Titanium.Platform.displayCaps.platformWidth < 350) {
+            rightPercentage = '3%';
+        }
+
+        row.add(Ti.UI.createLabel({
+            font : {
+                fontFamily : font
+            },
+            text : fontawesome.icon('icon-chevron-right'),
+            right : rightPercentage,
+            color : '#FFF',
+            fontSize : 80,
+            height : Ti.UI.SIZE,
+            width : Ti.UI.SIZE
+        }));
+    }
 
     row.add(teamsLabel);
     row.add(dateIcon);
     row.add(dateLabel);
-
-    var editButton = Ti.UI.createView({
-        layout : 'vertical',
-        height : 30,
-        width : 30,
-        right : 10,
-        top : 43
-    });
-
-    var editLabel = Ti.UI.createLabel({
-        font : {
-            fontFamily : font,
-            fontSize : 30
-        },
-        text : fontawesome.icon('icon-edit'),
-        color : Alloy.Globals.themeColor(),
-        height : Ti.UI.SIZE,
-        width : Ti.UI.SIZE,
-    });
-
-    editButton.addEventListener('click', editEvent);
-
-    editButton.add(editLabel);
-    row.add(editButton);
-
-    var removeButton = Ti.UI.createView({
-        layout : 'vertical',
-        height : 35,
-        width : 30,
-        right : 70,
-        top : 40
-    });
-
-    var removeLabel = Ti.UI.createLabel({
-        font : {
-            fontFamily : font,
-            fontSize : 30
-        },
-        text : fontawesome.icon('icon-trash'),
-        color : Alloy.Globals.themeColor(),
-        height : Ti.UI.SIZE,
-        width : Ti.UI.SIZE
-    });
-
-    removeButton.addEventListener('click', removeEvent);
-    removeButton.add(removeLabel);
-    row.add(removeButton);
-
-    /*
-     var buttonsView = Ti.UI.createView({
-     width : "40%",
-     height : "100%",
-     backgroundColor : "transparent",
-     });
-
-     var deleteBtn = Ti.UI.createView({
-     width : "48%",
-     height : "50%",
-     left : 0,
-     type : "deleteBtn",
-     id : games[i].game_id,
-     borderRadius : 10,
-     borderWidth : 1,
-     borderColor : "#c5c5c5",
-     });
-     deleteBtn.add(Ti.UI.createLabel({
-     text : Alloy.Globals.PHRASES.couponDeleteBtnText,
-     font : {
-     fontSize : 14,
-     fontFamily : "Impact",
-     },
-     //backgroundColor: "red",
-     textAlign : "center",
-     type : "deleteBtn",
-     id : games[i].game_id,
-     color : "#FFF",
-     }));
-
-     var editBtn = Ti.UI.createView({
-     width : "48%",
-     height : "50%",
-     right : 0,
-     borderRadius : 10,
-     borderWidth : 1,
-     borderColor : "#c5c5c5",
-     id : games[i].game_id,
-     type : "editBtn",
-     });
-     editBtn.add(Ti.UI.createLabel({
-     text : Alloy.Globals.PHRASES.couponEditBtnText,
-     //backgroundColor: "green",
-     textAlign : "center",
-     font : {
-     fontSize : 14,
-     fontFamily : "Impact",
-     },
-     color : "#FFF",
-     id : games[i].game_id,
-     type : "editBtn",
-     }));
-
-     buttonsView.add(deleteBtn);
-     buttonsView.add(editBtn);
-
-     row.add(teamsView);
-     row.add(buttonsView);
-
-     row.add(Titanium.UI.createView({
-     height : '1dp',
-     width : '100%',
-     backgroundColor : '#6d6d6d'
-     }));
-
-     rows[games[i].game_id] = row;
-     */
-
+    row.addEventListener('click', editEvent);
     sections[0].add(row);
 }
 
