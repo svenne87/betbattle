@@ -34,7 +34,7 @@ function createGameType(gameType, game, values, index, sections) {
     var type = gameType.type;
     
     var gameTypeView = Ti.UI.createView({
-        height : 40,
+        height : 75,
         width : Ti.UI.FILL,
         layout : 'absolute',
         backgroundColor : '#303030',
@@ -66,7 +66,7 @@ function createGameType(gameType, game, values, index, sections) {
     gameTypeView.add(Ti.UI.createLabel({
         text : gameTypeText,
         left : 10,
-        top : 5,
+        top : 24,
         height : Ti.UI.SIZE,
         width : Ti.UI.SIZE,
         font : Alloy.Globals.getFontCustom(18, 'Regular'),
@@ -105,7 +105,7 @@ function createGameType(gameType, game, values, index, sections) {
     gameTypeView.add(Ti.UI.createLabel({
         text : resultText,
         right : 10,
-        top : 5,
+        top : 24,
         height : Ti.UI.SIZE,
         width : Ti.UI.SIZE,
         font : Alloy.Globals.getFontCustom(18, 'Regular'),
@@ -289,17 +289,27 @@ function createLayout(game, values, games, currentStanding, isFirst) {
     }
     
     header.add(Ti.UI.createLabel({
-        top : 3,
         left : 10,
+        top : 3,
+        font : {
+            fontFamily : font
+        },
+        text : fontawesome.icon('fa-clock-o'),
+        color : Alloy.Globals.themeColor()
+    }));
+    
+    header.add(Ti.UI.createLabel({
+        top : -17,
+        left : 25,
         height : Ti.UI.SIZE,
         width : Ti.UI.SIZE,
         font : Alloy.Globals.getFontCustom(12, 'Regular'),
         color : Alloy.Globals.themeColor(),
         text : game.game_date_string
     }));
-    // TODO
+    
     header.add(Ti.UI.createView({
-        top : 11,
+        top : 12,
         height : 0.5,
         backgroundColor : '#6d6d6d',
         width : Ti.UI.FILL
@@ -352,7 +362,7 @@ function createLayout(game, values, games, currentStanding, isFirst) {
     if (currentStanding.length > 0 && isFirst) {
         // standings
         var standingsView = Ti.UI.createView({
-            height : 40,
+            height : 75,
             width : Ti.UI.FILL,
             layout : 'vertical',
             backgroundColor : '#303030',
@@ -379,7 +389,7 @@ function createLayout(game, values, games, currentStanding, isFirst) {
         standingsView.add(Ti.UI.createLabel({
             text : Alloy.Globals.PHRASES.scoreInfoTxt,
             left : 10,
-            top : 5,
+            top : 24,
             height : Ti.UI.SIZE,
             width : Ti.UI.SIZE,
             font : Alloy.Globals.getFontCustom(18, 'Regular'),
@@ -466,7 +476,7 @@ function createLayout(game, values, games, currentStanding, isFirst) {
     if (games.indexOf(game) !== (games.length - 1)) {
         // not last game
         var footerView = Ti.UI.createView({
-            height : 60,
+            height : 75,
             width : Ti.UI.FILL,
             layout : 'vertical',
             backgroundColor : '#303030',
@@ -492,7 +502,7 @@ function createLayout(game, values, games, currentStanding, isFirst) {
 
         footerView.add(Ti.UI.createLabel({
             text : Alloy.Globals.PHRASES.scrollNextGame,
-            top : 20,
+            top : 25,
             left : 10,
             font : Alloy.Globals.getFontCustom(16, 'Regular'),
             color : "#FFF"

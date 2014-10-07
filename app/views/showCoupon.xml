@@ -1,5 +1,4 @@
 <Alloy>
 	<Window class="container" id="showCoupon">
-		<ScrollView id="scrollView"></ScrollView>
 	</Window>
 </Alloy>
