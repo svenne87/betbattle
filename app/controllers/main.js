@@ -711,7 +711,7 @@ if (OS_IOS){
 	// TODO
 	// start 
 	
-	var btnHome = Ti.UI.createView({
+	/*var btnHome = Ti.UI.createView({
 		width: 50,
 		height: 50,
 		right: 55,
@@ -748,7 +748,7 @@ if (OS_IOS){
 	});
 	
 	$.nav.add(btnHome);
-	// end
+	*/// end
 	
 	var ticketBtn = Ti.UI.createLabel({	
 		font:{
@@ -852,7 +852,7 @@ if (OS_IOS){
         				itemId : 1
         			});
 
-        			homeItem = e.menu.add({
+        			/*homeItem = e.menu.add({
             			showAsAction : Ti.Android.SHOW_AS_ACTION_ALWAYS,
             			icon : 'images/ic_action_refresh.png'
         			});
@@ -860,7 +860,7 @@ if (OS_IOS){
        			 	homeItem.addEventListener("click", function(e){    			 		
     			 		$.mainWin.close();
        				});
-       				
+       				*/
        				var couponOpen = false;
        				//Add event listener to ticket button
 					ticket.addEventListener("click", function(){
