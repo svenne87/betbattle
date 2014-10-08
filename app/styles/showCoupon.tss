@@ -1,14 +1,6 @@
-
 ".container" : {
   	width: "100%",
   	height: "100%",
   	layout: "vertical",
   	backgroundColor : "#000",
-},
-"#scrollView": {
-	width: "100%",
-  	height: "100%",
-  	layout: "vertical",
-  	backgroundColor : "transparent",
-  	showVerticalScrollIndicator: true
 }

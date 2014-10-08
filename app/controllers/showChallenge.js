@@ -30,11 +30,24 @@ var imageErrorHandler = function (e) {
 };
 
 
+function checkDate(date) {
+    // check if match has started
+    var gameDateMilli = date + "000";
+    var gameDate = new Date((gameDateMilli - 0));
+    var now = new Date();
+
+    if (now.getTime() >= gameDate.getTime()) {
+        return true;
+    }
+    return false;
+}
+
+
 function createGameType(gameType, game, values, index, sections) {
     var type = gameType.type;
     
     var gameTypeView = Ti.UI.createView({
-        height : 40,
+        height : 75,
         width : Ti.UI.FILL,
         layout : 'absolute',
         backgroundColor : '#303030',
@@ -66,7 +79,7 @@ function createGameType(gameType, game, values, index, sections) {
     gameTypeView.add(Ti.UI.createLabel({
         text : gameTypeText,
         left : 10,
-        top : 5,
+        top : 24,
         height : Ti.UI.SIZE,
         width : Ti.UI.SIZE,
         font : Alloy.Globals.getFontCustom(18, 'Regular'),
@@ -84,7 +97,7 @@ function createGameType(gameType, game, values, index, sections) {
                 //if the json says team1 or team2. get the actual team  names
                 if (resultText === "(team1)") {
                     resultText = game.team_1.team_name;
-                } else if (valueText === "(team2)") {
+                } else if (resultText === "(team2)") {
                     resultText = game.team_2.team_name;
                 }
                 
@@ -105,7 +118,7 @@ function createGameType(gameType, game, values, index, sections) {
     gameTypeView.add(Ti.UI.createLabel({
         text : resultText,
         right : 10,
-        top : 5,
+        top : 24,
         height : Ti.UI.SIZE,
         width : Ti.UI.SIZE,
         font : Alloy.Globals.getFontCustom(18, 'Regular'),
@@ -125,18 +138,21 @@ function createGameType(gameType, game, values, index, sections) {
         if (values[i].game_type === type && values[i].gid === game.game_id) {
             
             var correct = false;
-
-            for (var m in game.result_values) {
-                if (values[i].game_type === game.result_values[m].game_type) {
-                    if (values[i].value_1 === game.result_values[m].value_1) {
-                        if (values[i].value_2 === game.result_values[m].value_2) {
-                            correct = true;
-                            break;
+            
+            // only check games that has started
+            if (checkDate(game.game_date)) {
+                for (var m in game.result_values) {
+                    if (values[i].game_type === game.result_values[m].game_type) {
+                        if (values[i].value_1 === game.result_values[m].value_1) {
+                            if (values[i].value_2 === game.result_values[m].value_2) {
+                                correct = true;
+                                break;
+                            }
                         }
                     }
                 }
             }
-            
+
             var row = Ti.UI.createTableViewRow({
                 hasChild : false,
                 width : Ti.UI.FILL,
@@ -289,17 +305,27 @@ function createLayout(game, values, games, currentStanding, isFirst) {
     }
     
     header.add(Ti.UI.createLabel({
-        top : 3,
         left : 10,
+        top : 3,
+        font : {
+            fontFamily : font
+        },
+        text : fontawesome.icon('fa-clock-o'),
+        color : Alloy.Globals.themeColor()
+    }));
+    
+    header.add(Ti.UI.createLabel({
+        top : -17,
+        left : 25,
         height : Ti.UI.SIZE,
         width : Ti.UI.SIZE,
         font : Alloy.Globals.getFontCustom(12, 'Regular'),
         color : Alloy.Globals.themeColor(),
         text : game.game_date_string
     }));
-    // TODO
+    
     header.add(Ti.UI.createView({
-        top : 11,
+        top : 12,
         height : 0.5,
         backgroundColor : '#6d6d6d',
         width : Ti.UI.FILL
@@ -352,7 +378,7 @@ function createLayout(game, values, games, currentStanding, isFirst) {
     if (currentStanding.length > 0 && isFirst) {
         // standings
         var standingsView = Ti.UI.createView({
-            height : 40,
+            height : 75,
             width : Ti.UI.FILL,
             layout : 'vertical',
             backgroundColor : '#303030',
@@ -379,7 +405,7 @@ function createLayout(game, values, games, currentStanding, isFirst) {
         standingsView.add(Ti.UI.createLabel({
             text : Alloy.Globals.PHRASES.scoreInfoTxt,
             left : 10,
-            top : 5,
+            top : 24,
             height : Ti.UI.SIZE,
             width : Ti.UI.SIZE,
             font : Alloy.Globals.getFontCustom(18, 'Regular'),
@@ -466,7 +492,7 @@ function createLayout(game, values, games, currentStanding, isFirst) {
     if (games.indexOf(game) !== (games.length - 1)) {
         // not last game
         var footerView = Ti.UI.createView({
-            height : 60,
+            height : 75,
             width : Ti.UI.FILL,
             layout : 'vertical',
             backgroundColor : '#303030',
@@ -492,7 +518,7 @@ function createLayout(game, values, games, currentStanding, isFirst) {
 
         footerView.add(Ti.UI.createLabel({
             text : Alloy.Globals.PHRASES.scrollNextGame,
-            top : 20,
+            top : 25,
             left : 10,
             font : Alloy.Globals.getFontCustom(16, 'Regular'),
             color : "#FFF"
@@ -600,4 +626,4 @@ if (Alloy.Globals.checkConnection()) {
 }
 
 
-// TODO fix current result in matches (visa rätt score under match och visa bokc bara vid börjad match), fix standings, att game types visas i fel ordning (kan vara på ej rättade?)
+// TODO fix standings
