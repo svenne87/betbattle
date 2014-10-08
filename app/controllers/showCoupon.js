@@ -156,7 +156,7 @@ if (OS_IOS) {
         separatorColor = 'transparent';
     } else {
         separatorS = Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE;
-        separatorColor = '#6d6d6d';
+        separatorColor = '#303030';
     }
 
     table = Titanium.UI.createTableView({
@@ -176,7 +176,7 @@ if (OS_IOS) {
         width : Ti.UI.FILL,
         height : '85%',
         backgroundColor : '#000',
-        separatorColor : '#6d6d6d',
+        separatorColor : '#303030',
     });
     child = true;
 }
