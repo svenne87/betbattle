@@ -488,6 +488,7 @@ function postMatchOfTheDay(){
 		indicator.openIndicator();
 		var xhr = Titanium.Network.createHTTPClient();
 		xhr.onerror = function(e) {
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 			Ti.API.error("FEL : " + JSON.stringify(e));
 			Ti.API.error('Bad Sever =>' + e.error);
 			indicator.closeIndicator();
@@ -641,6 +642,7 @@ function updateChallenge() {
 		indicator.openIndicator();
 		var xhr = Titanium.Network.createHTTPClient();
 		xhr.onerror = function(e) {
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 			Ti.API.error("FEL : " + JSON.stringify(e));
 			Ti.API.error('Bad Sever =>' + e.error);
 			indicator.closeIndicator();
@@ -723,6 +725,7 @@ function saveChallenge() {
 		var xhr = Titanium.Network.createHTTPClient();
 		indicator.openIndicator();
 		xhr.onerror = function(e) {
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 			Ti.API.error("FEL : " + JSON.stringify(e));
 			Ti.API.error('Bad Sever =>' + e.error);
 		};
@@ -847,7 +850,8 @@ function postAnswer(gameArray) {
 
 			} else {
 				// any other "bad request error"
-				Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
+				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+				
 			}
 
 			Ti.API.error('Bad Sever =>' + e.error);
@@ -991,6 +995,8 @@ function createLayout(gameObject) {
 
 	var image = Ti.UI.createView({
 		height : "15%",
+		width : Ti.UI.FILL,
+        layout : 'vertical',
         backgroundColor : '#303030',
         backgroundGradient : {
             type : "linear",
@@ -1026,25 +1032,48 @@ function createLayout(gameObject) {
 	if (teamNames == null) {
 		var teamNames = gameObject.attributes.team_1.team_name + " - " + gameObject.attributes.team_2.team_name;
 	}
-	if (teamNames.length > 20) {
-		fontSize = 20;
-	}
+	if (teamNames.length > 26) {
+     	fontSize = 18;
+    } else if (teamNames.length > 36) {
+        fontSize = 16;
+    }
 
 	image.add(Ti.UI.createLabel({
-		top : 30,
-		font : {
-			fontFamily : Alloy.Globals.getFont(),
-			fontSize : fontSize
-		},
+		top : 10,
+        left : 20,
+		font : Alloy.Globals.getFontCustom(fontSize, "Bold"),
 		color : '#FFF',
 		//width : '100%',
-		opacity : 0.85,
-		borderRadius : 3,
 		left: 20,
 		//textAlign : 'center',
 		text : teamNames
 	}));
 
+	image.add(Ti.UI.createLabel({
+		left : 20,
+        top : 3,
+        font : {
+            fontFamily : fontAwe
+        },
+        text : fontawesome.icon('fa-clock-o'),
+        color : Alloy.Globals.themeColor()
+	}));
+	
+	image.add(Ti.UI.createLabel({
+		top : -17,
+        left : 35,
+        font : Alloy.Globals.getFontCustom(12, 'Regular'),
+        color : Alloy.Globals.themeColor(),
+        text : gameObject.attributes.game_date_string,
+	}));
+
+	image.add(Ti.UI.createView({
+		 top : 12,
+        height : 0.5,
+        backgroundColor : '#6d6d6d',
+        width : Ti.UI.FILL
+	}));
+	
 	view.add(image);
 
 	function doRest(gameObject) {
@@ -1200,10 +1229,7 @@ function createLayout(gameObject) {
 				//textAlign: "left",
 				//width: Ti.UI.FILL,
 				left: 20,
-				font:{
-					fontFamily: Alloy.Globals.getFont(),
-					fontSize: 16,
-				},
+				font: Alloy.Globals.getFontCustom(18, "Bold"),
 				color: "#FFF"
 			});
 			gameTypeHeaderView.add(gameTypeLabel);
@@ -1262,13 +1288,18 @@ function createLayout(gameObject) {
 						//textAlign: "left",
 						//width: Ti.UI.FILL,
 						left: 20,
-						font:{
-							fontFamily: Alloy.Globals.getFont(),
-							fontSize: 16,
-						},
+						font:Alloy.Globals.getFontCustom(18, "Bold"),
+						color: "#FFF"
+					});
+					
+					var coinsAmountLabel = Ti.UI.createLabel({
+						text : bet_amount,
+						right: 20,
+						font:Alloy.Globals.getFontCustom(18, "Bold"),
 						color: "#FFF"
 					});
 					gameTypeHeaderView.add(gameTypeLabel);
+					gameTypeHeaderView.add(coinsAmountLabel);
 					
 					sections[sectionIndex]  = Ti.UI.createTableViewSection({
 									headerView: gameTypeHeaderView,
@@ -1276,7 +1307,8 @@ function createLayout(gameObject) {
 										height: 0.1,
 									}),
 								});
-					sections[sectionIndex].add(createBetAmountView());	
+					//sections[sectionIndex].add(createBetAmountView());
+					
 				}
 				sections[sectionIndex+1] = Ti.UI.createTableViewSection({
 					headerView: Ti.UI.createView({
@@ -1483,8 +1515,10 @@ if (Alloy.Globals.checkConnection()) {
 	try {
 		if (roundId === -1) {
 			if (tournamentIndex === -1) {
+				Ti.API.info("GAMESURL");
 				xhr.open('GET', Alloy.Globals.BETKAMPENGAMESURL + '/?uid=' + Alloy.Globals.BETKAMPENUID + '&cid=' + challengeObject.attributes.id + '&lang=' + Alloy.Globals.LOCALE);
 			} else {
+				Ti.API.info("TOURNAMENTURL");
 				xhr.open('GET', Alloy.Globals.BETKAMPENGETGAMESFORTOURNAMENT + '/?uid=' + Alloy.Globals.BETKAMPENUID + '&tid=' + challengeObject.attributes.id + '&round=' + challengeObject.attributes.round + '&lang=' + Alloy.Globals.LOCALE);
 			}
 
@@ -1543,6 +1577,7 @@ if (Alloy.Globals.checkConnection()) {
 
 					var gameObject = Alloy.createModel('game', {
 						game_date : res.game_date,
+						game_date_string : res.game_date_string,
 						game_id : res.game_id,
 						game_type : res.game_type,
 						game_types : res.game_types,

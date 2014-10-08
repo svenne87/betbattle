@@ -10,7 +10,13 @@ if (OS_ANDROID) {
 	font = 'fontawesome-webfont';
 }
 
-var mainView = Ti.UI.createScrollView({
+var iOSVersion;
+
+if (OS_IOS) {
+	iOSVersion = parseInt(Ti.Platform.version);
+}
+
+var mainView = Ti.UI.createView({
 	height:"100%",
 	width: "100%",
 	top:0,
@@ -18,30 +24,158 @@ var mainView = Ti.UI.createScrollView({
 	layout: "vertical"
 });
 
+var header = Ti.UI.createView({
+	 height : '15%',
+        width : Ti.UI.FILL,
+       
+        backgroundColor : '#303030',
+        backgroundGradient : {
+            type : "linear",
+            startPoint : {
+                x : "0%",
+                y : "0%"
+            },
+            endPoint : {
+                x : "0%",
+                y : "100%"
+            },
+            colors : [{
+                color : "#151515",
+
+            }, {
+                color : "#2E2E2E",
+
+            }]
+        }
+});
 
 var friendZoneLabel = Ti.UI.createLabel({
 	text: Alloy.Globals.PHRASES.friendZoneTxt,
-	textAlign: "center",
-	top:10,
-	font: {
-		fontSize: 28,
-		fontFamily: "Impact"
-	},
+	left: 20,
+	font: Alloy.Globals.getFontCustom(20, "Bold"),
 	color: "#FFF"
 });
-mainView.add(friendZoneLabel);
+header.add(friendZoneLabel);
+mainView.add(header);
+
+///*******Create Table View*******///
+		var sections = [];
 
 
-var fbFriendBtn = Titanium.UI.createView({
+	    var tableHeaderView = Ti.UI.createView({
+	       height: 0.1
+	    }); 
+	
+	
+	
+		var fontawesome = require('lib/IconicFont').IconicFont({
+			font : 'lib/FontAwesome'
+		});
+	
+		var font = 'FontAwesome';
+	
+		if (OS_ANDROID) {
+			font = 'fontawesome-webfont';
+		}
+		
+			var tableFooterView = Ti.UI.createView({
+				height: 0.1
+			});
+		
+		if (OS_IOS) {
+			var separatorS;
+			var separatorCol;
+	
+			if (iOSVersion < 7) {
+				separatorS = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
+				separatorColor = 'transparent';
+			} else {
+				separatorS = Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE;
+				separatorColor = '#6d6d6d';
+			}
+			
+	
+			table = Titanium.UI.createTableView({
+				//width : Ti.UI.FILL,
+				left : 0,
+				headerView : tableHeaderView,
+				footerView : tableFooterView,
+				height : '85%',
+				width: '100%',
+				//backgroundImage: '/images/profileBG.jpg',
+				backgroundColor : 'transparent',
+				style : Ti.UI.iPhone.TableViewStyle.GROUPED,
+				separatorInsets : {
+					left : 0,
+					right : 0
+				},
+				id : 'challengeTable',
+				separatorStyle : separatorS,
+				separatorColor : separatorColor
+			});
+		} else if (OS_ANDROID) {
+			table = Titanium.UI.createTableView({
+				width : Ti.UI.FILL,
+				left : 0,
+				headerView : tableHeaderView,
+				height : '85%',
+				//backgroundColor : '#303030',
+				separatorColor : '#6d6d6d',
+				id : 'challengeTable'
+			});
+		}
+
+	sections[0] = Ti.UI.createTableViewSection({
+					headerView: Ti.UI.createView({
+						height: 0.1,
+					}),
+					footerView: Ti.UI.createView({
+						height: 10,
+					})
+				});
+var child = false;
+if(OS_IOS){
+	child = true;
+}else if(OS_ANDROID){
+	child = false;
+}
+
+var fbFriendBtn = Titanium.UI.createTableViewRow({
 	//title: Alloy.Globals.PHRASES.fbFriendsTxt,
-	top:"5%",
-	height: '10%',
-	width: '80%',
-	left: '10%',
-	backgroundColor: '#3B5998',
-	borderRadius: 5
+	id : 'fbFriendBtn',
+	hasChild : child,
+	width : Ti.UI.FILL,
+	left : 0,
+	className : 'gameTypeRow',
+	height : 75,
+	
 });
-mainView.add(fbFriendBtn);
+
+
+
+	if (child != true) {
+		var rightPercentage = '5%';
+
+		font = 'fontawesome-webfont';
+
+		if (Titanium.Platform.displayCaps.platformWidth < 350) {
+			rightPercentage = '3%';
+		}
+
+		row.add(Ti.UI.createLabel({
+			font : {
+				fontFamily : font
+			},
+			text : fontawesome.icon('icon-chevron-right'),
+			right : rightPercentage,
+			color : '#FFF',
+			fontSize : 80,
+			height : 'auto',
+			width : 'auto'
+		}));
+	}
+
+
 
 var fbIconLabel = Titanium.UI.createLabel({
 	font : {
@@ -49,30 +183,60 @@ var fbIconLabel = Titanium.UI.createLabel({
 		fontSize: 22
 	},
 	text: fontawesome.icon('fa-facebook'),
-	left: '5%',
+	left: 20,
 	color: '#fff',
 });
 fbFriendBtn.add(fbIconLabel);
 
 var fbLabel = Titanium.UI.createLabel({
 	text:  Alloy.Globals.PHRASES.fbFriendsTxt,
-	font: {
-		fontSize: 22,
-		fontFamily: "Impact"
-	},
-	color: "#fff"
+	font: Alloy.Globals.getFontCustom(18, "Regular"),
+	color: "#fff",
+	left: 50,
 });
 fbFriendBtn.add(fbLabel);
 
-var myFriendBtn = Titanium.UI.createView({
-	top:"1%",
-	height: '10%',
-	width: '80%',
-	left: '10%',
-	backgroundColor: '#fff',
-	borderRadius: 5
+sections[0].add(fbFriendBtn);
+
+var child = false;
+if(OS_IOS){
+	child = true;
+}else if(OS_ANDROID){
+	child = false;
+}
+
+var myFriendBtn = Titanium.UI.createTableViewRow({
+	id : 'myFriendBtn',
+	hasChild : child,
+	width : Ti.UI.FILL,
+	left : 0,
+	className : 'gameTypeRow',
+	height : 75,
 });
-mainView.add(myFriendBtn);
+
+
+	if (child != true) {
+		var rightPercentage = '5%';
+
+		font = 'fontawesome-webfont';
+
+		if (Titanium.Platform.displayCaps.platformWidth < 350) {
+			rightPercentage = '3%';
+		}
+
+		row.add(Ti.UI.createLabel({
+			font : {
+				fontFamily : font
+			},
+			text : fontawesome.icon('icon-chevron-right'),
+			right : rightPercentage,
+			color : '#FFF',
+			fontSize : 80,
+			height : 'auto',
+			width : 'auto'
+		}));
+	}
+
 
 var mFIconLabel = Titanium.UI.createLabel({
 	font : {
@@ -80,31 +244,60 @@ var mFIconLabel = Titanium.UI.createLabel({
 		fontSize: 22
 	},
 	text: fontawesome.icon('fa-user'),
-	left: '5%',
-	color: '#000',
+	left: 20,
+	color: '#FFF',
 });
 myFriendBtn.add(mFIconLabel);
 
 var mFriendLabel = Titanium.UI.createLabel({
 	text: Alloy.Globals.PHRASES.myFriendsTxt,
-	font: {
-		fontSize: 22,
-		fontFamily: "Impact"
-	},
-	color: "#000000"
+	font: Alloy.Globals.getFontCustom(18, "Regular"),
+	color: "#FFF",
+	left: 50,
 });
 myFriendBtn.add(mFriendLabel);
+sections[0].add(myFriendBtn);
 
 
-var myGroupsBtn = Titanium.UI.createView({
-	top:"1%",
-	height: '10%',
-	width: '80%',
-	left: '10%',
-	backgroundColor: '#fff',
-	borderRadius: 5
+var child = false;
+if(OS_IOS){
+	child = true;
+}else if(OS_ANDROID){
+	child = false;
+}
+
+var myGroupsBtn = Titanium.UI.createTableViewRow({
+	id : 'myGroupsBtn',
+	hasChild : child,
+	width : Ti.UI.FILL,
+	left : 0,
+	className : 'gameTypeRow',
+	height : 75,
 });
-mainView.add(myGroupsBtn);
+
+
+	if (child != true) {
+		var rightPercentage = '5%';
+
+		font = 'fontawesome-webfont';
+
+		if (Titanium.Platform.displayCaps.platformWidth < 350) {
+			rightPercentage = '3%';
+		}
+
+		row.add(Ti.UI.createLabel({
+			font : {
+				fontFamily : font
+			},
+			text : fontawesome.icon('icon-chevron-right'),
+			right : rightPercentage,
+			color : '#FFF',
+			fontSize : 80,
+			height : 'auto',
+			width : 'auto'
+		}));
+	}
+
 
 var mgIconLabel = Titanium.UI.createLabel({
 	font : {
@@ -112,30 +305,60 @@ var mgIconLabel = Titanium.UI.createLabel({
 		fontSize: 22
 	},
 	text: fontawesome.icon('fa-users'),
-	left: '5%',
-	color: '#000',
+	left: 20,
+	color: '#FFF',
 });
 myGroupsBtn.add(mgIconLabel);
 
 var mGroupLabel = Titanium.UI.createLabel({
 	text: Alloy.Globals.PHRASES.myGroupsTxt,
-	font: {
-		fontSize: 22,
-		fontFamily: "Impact"
-	},
-	color: "#000000"
+	font: Alloy.Globals.getFontCustom(18, "Regular"),
+	color: "#FFF",
+	left: 50
 });
 myGroupsBtn.add(mGroupLabel);
 
-var addFriendsBtn = Titanium.UI.createView({
-	top:"10%",
-	height: '10%',
-	width: '80%',
-	left: '10%',
-	backgroundColor: '#fff',
-	borderRadius: 5
+sections[0].add(myGroupsBtn);
+
+var child = false;
+if(OS_IOS){
+	child = true;
+}else if(OS_ANDROID){
+	child = false;
+}
+
+var addFriendsBtn = Titanium.UI.createTableViewRow({
+	id : 'addFriendsBtn',
+	hasChild : child,
+	width : Ti.UI.FILL,
+	left : 0,
+	className : 'gameTypeRow',
+	height : 75,
 });
-mainView.add(addFriendsBtn);
+
+
+	if (child != true) {
+		var rightPercentage = '5%';
+
+		font = 'fontawesome-webfont';
+
+		if (Titanium.Platform.displayCaps.platformWidth < 350) {
+			rightPercentage = '3%';
+		}
+
+		row.add(Ti.UI.createLabel({
+			font : {
+				fontFamily : font
+			},
+			text : fontawesome.icon('icon-chevron-right'),
+			right : rightPercentage,
+			color : '#FFF',
+			fontSize : 80,
+			height : 'auto',
+			width : 'auto'
+		}));
+	}
+
 
 var afIconLabel = Titanium.UI.createLabel({
 	font : {
@@ -143,30 +366,61 @@ var afIconLabel = Titanium.UI.createLabel({
 		fontSize: 22
 	},
 	text: fontawesome.icon('fa-plus'),
-	left: '5%',
-	color: '#000',
+	left: 20,
+	color: '#FFF',
 });
 addFriendsBtn.add(afIconLabel);
 
 var aFriendLabel = Titanium.UI.createLabel({
 	text: Alloy.Globals.PHRASES.addFriendsTxt,
-	font: {
-		fontSize: 22,
-		fontFamily: "Impact"
-	},
-	color: "#000000"
+	font: Alloy.Globals.getFontCustom(18, "Regular"),
+	color: "#FFF",
+	left: 50,
 });
 addFriendsBtn.add(aFriendLabel);
 
-var createGroupBtn = Titanium.UI.createView({
-	top:"1%",
-	height: '10%',
-	width: '80%',
-	left: '10%',
-	backgroundColor: '#fff',
-	borderRadius: 5
+sections[0].add(addFriendsBtn);
+
+
+var child = false;
+if(OS_IOS){
+	child = true;
+}else if(OS_ANDROID){
+	child = false;
+}
+
+var createGroupBtn = Titanium.UI.createTableViewRow({
+	id : 'createGroupBtn',
+	hasChild : child,
+	width : Ti.UI.FILL,
+	left : 0,
+	className : 'gameTypeRow',
+	height : 75,
 });
-mainView.add(createGroupBtn);
+
+
+	if (child != true) {
+		var rightPercentage = '5%';
+
+		font = 'fontawesome-webfont';
+
+		if (Titanium.Platform.displayCaps.platformWidth < 350) {
+			rightPercentage = '3%';
+		}
+
+		row.add(Ti.UI.createLabel({
+			font : {
+				fontFamily : font
+			},
+			text : fontawesome.icon('icon-chevron-right'),
+			right : rightPercentage,
+			color : '#FFF',
+			fontSize : 80,
+			height : 'auto',
+			width : 'auto'
+		}));
+	}
+
 
 var cgIconLabel = Titanium.UI.createLabel({
 	font : {
@@ -174,30 +428,60 @@ var cgIconLabel = Titanium.UI.createLabel({
 		fontSize: 22
 	},
 	text: fontawesome.icon('fa-plus'),
-	left: '5%',
-	color: '#000',
+	left: 20,
+	color: '#FFF',
 });
 createGroupBtn.add(cgIconLabel);
 
 cGroupLabel = Titanium.UI.createLabel({
 	text: Alloy.Globals.PHRASES.createGroupTxt,
-	font: {
-		fontSize: 22,
-		fontFamily: "Impact"
-	},
-	color: "#000000"
+	font: Alloy.Globals.getFontCustom(18, "Regular"),
+	color: "#FFF",
+	left: 50,
 });
 createGroupBtn.add(cGroupLabel);
 
-var shareBtn = Titanium.UI.createView({
-	top:"1%",
-	height: '10%',
-	width: '80%',
-	left: '10%',
-	backgroundColor: '#fff',
-	borderRadius: 5
+sections[0].add(createGroupBtn);
+
+
+var child = false;
+if(OS_IOS){
+	child = true;
+}else if(OS_ANDROID){
+	child = false;
+}
+var shareBtn = Titanium.UI.createTableViewRow({
+	id : 'shareBtn',
+	hasChild : child,
+	width : Ti.UI.FILL,
+	left : 0,
+	className : 'gameTypeRow',
+	height : 75,
 });
-mainView.add(shareBtn);
+
+
+	if (child != true) {
+		var rightPercentage = '5%';
+
+		font = 'fontawesome-webfont';
+
+		if (Titanium.Platform.displayCaps.platformWidth < 350) {
+			rightPercentage = '3%';
+		}
+
+		row.add(Ti.UI.createLabel({
+			font : {
+				fontFamily : font
+			},
+			text : fontawesome.icon('icon-chevron-right'),
+			right : rightPercentage,
+			color : '#FFF',
+			fontSize : 80,
+			height : 'auto',
+			width : 'auto'
+		}));
+	}
+
 
 var sIconLabel = Titanium.UI.createLabel({
 	font : {
@@ -205,20 +489,21 @@ var sIconLabel = Titanium.UI.createLabel({
 		fontSize: 22
 	},
 	text: fontawesome.icon('fa-share-alt'),
-	left: '5%',
-	color: '#000',
+	left: 20,
+	color: '#FFF',
 });
 shareBtn.add(sIconLabel);
 
 shareLabel = Titanium.UI.createLabel({
 	text: Alloy.Globals.PHRASES.inviteFriendsTxt,
-	font: {
-		fontSize: 22,
-		fontFamily: "Impact"
-	},
-	color: "#000000"
+	font: Alloy.Globals.getFontCustom(18, "Regular"),
+	color: "#FFF",
+	left: 50,
 });
 shareBtn.add(shareLabel);
+
+sections[0].add(shareBtn);
+
 
 fbFriendBtn.addEventListener('click', function(e){
 	// check connection
@@ -338,6 +623,9 @@ shareBtn.addEventListener('click', function(e){
 			win = null;
 		}
 });
+
+table.setData(sections);
+mainView.add(table);
 
 if(OS_ANDROID){
 	$.friendZone.addEventListener('open', function() {

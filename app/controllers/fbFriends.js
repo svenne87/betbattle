@@ -12,6 +12,14 @@ var fontawesome = require('lib/IconicFont').IconicFont({
 
 var font = 'FontAwesome';
 var myFbFriends = null;
+var table = null;
+var sections = [];
+
+var iOSVersion;
+
+if (OS_IOS) {
+	iOSVersion = parseInt(Ti.Platform.version);
+}
 
 if (OS_ANDROID) {
 	font = 'fontawesome-webfont';
@@ -94,7 +102,6 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 
 					var activity = Titanium.Android.currentActivity;
 					activity.finish();
-
 					// start app again
 					var intent = Ti.Android.createIntent({
 						action : Ti.Android.ACTION_MAIN,
@@ -121,18 +128,101 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 	// app id and permission's
 	fb.appid = Ti.App.Properties.getString('ti.facebook.appid');
 	//USER IS CONNECTED WITH FACEBOOK-----------------------------------------------------------------------------------------------------------
+	var header = Ti.UI.createView({
+	 	height : '15%',
+        width : Ti.UI.FILL,
+       
+        backgroundColor : '#303030',
+        backgroundGradient : {
+            type : "linear",
+            startPoint : {
+                x : "0%",
+                y : "0%"
+            },
+            endPoint : {
+                x : "0%",
+                y : "100%"
+            },
+            colors : [{
+                color : "#151515",
 
+            }, {
+                color : "#2E2E2E",
+
+            }]
+        }
+	});
+	
 	var faceBookLabel = Ti.UI.createLabel({
 		text : Alloy.Globals.PHRASES.fbUserFriendsLbl,
-		textAlign : "center",
-		top : 10,
-		font : {
-			fontSize : 18,
-			fontFamily : "Impact"
-		},
+		left : 20,
+		font : Alloy.Globals.getFontCustom(20, "Bold"),
 		color : "#FFF"
 	});
-	mainView.add(faceBookLabel);
+	header.add(faceBookLabel);
+	
+	mainView.add(header);
+	///*******Create Table View*******///
+
+	var tableHeaderView = Ti.UI.createView({
+		height : 0.1
+	});
+
+	var fontawesome = require('lib/IconicFont').IconicFont({
+		font : 'lib/FontAwesome'
+	});
+
+	var font = 'FontAwesome';
+
+	if (OS_ANDROID) {
+		font = 'fontawesome-webfont';
+	}
+
+	var tableFooterView = Ti.UI.createView({
+		height : 0.1
+	});
+
+	if (OS_IOS) {
+		var separatorS;
+		var separatorCol;
+
+		if (iOSVersion < 7) {
+			separatorS = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
+			separatorColor = 'transparent';
+		} else {
+			separatorS = Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE;
+			separatorColor = '#6d6d6d';
+		}
+
+		table = Titanium.UI.createTableView({
+			//width : Ti.UI.FILL,
+			left : 0,
+			headerView : tableHeaderView,
+			footerView : tableFooterView,
+			height : '85%',
+			width : '100%',
+			//backgroundImage: '/images/profileBG.jpg',
+			backgroundColor : 'transparent',
+			style : Ti.UI.iPhone.TableViewStyle.GROUPED,
+			separatorInsets : {
+				left : 0,
+				right : 0
+			},
+			id : 'challengeTable',
+			separatorStyle : separatorS,
+			separatorColor : separatorColor
+		});
+	} else if (OS_ANDROID) {
+		table = Titanium.UI.createTableView({
+			width : Ti.UI.FILL,
+			left : 0,
+			headerView : tableHeaderView,
+			height : '85%',
+			//backgroundColor : '#303030',
+			separatorColor : '#6d6d6d',
+			id : 'challengeTable'
+		});
+	}
 
 	function createGUI(obj) {
 		var fr = [];
@@ -149,35 +239,30 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 				return false;
 			return (fr.indexOf(search) >= 0) ? true : false;
 		}
-
-		var row = Ti.UI.createView({
-			width : '100%',
-			height : 40,
-			top : 1
+		var child = false;
+		
+		var row = Ti.UI.createTableViewRow({
+			id : obj.id,
+			hasChild : child,
+			width : Ti.UI.FILL,
+			left : 0,
+			className : 'gameTypeRow',
+			height : 75,
+			isFriend : false
 		});
-		mainView.add(row);
-
-		var member = Ti.UI.createView({
-			width : '78%',
-			backgroundColor : '#fff',
-			color : '#000',
-			opacity : 0.7,
-			borderRadius : 5,
-			left : '1%'
-		});
-		row.add(member);
-
+		
+		
 		//profilepicture
 
 		var profilePic = Titanium.UI.createImageView({
 			image : image = "https://graph.facebook.com/" + obj.id + "/picture?type=large",
 			height : 35,
 			width : 35,
-			left : '2%',
+			left : 10,
 			borderRadius : 17
 		});
 
-		member.add(profilePic);
+		row.add(profilePic);
 
 		boardName = obj.name.toString();
 		if (boardName.length > 22) {
@@ -185,142 +270,134 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 		}
 		var name = Ti.UI.createLabel({
 			text : boardName,
-			left : '20%',
-			font : {
-				fontSize : 18,
-				fontFamily : "Impact"
-			},
+			left : 50,
+			font : Alloy.Globals.getFontCustom(16, "Regular"),
+			color : "#FFF",
 		});
-		member.add(name);
+		row.add(name);
 		if (isInArray(fr, obj.id)) {
 			//if you already are friends disable add button
-			var addBtn = Ti.UI.createButton({
-				width : '19%',
-				left : '80%',
+			var addBtn = Ti.UI.createLabel({
+				right : 10,
 				id : obj.id,
 				font : {
 					fontFamily : font,
 					fontSize : 32
 				},
-				title : fontawesome.icon('fa-check'),
-				backgroundColor : '#00ff00',
-				color : '#000',
-				opacity : 0.7,
-				borderRadius : 5,
-				enabled : false
+				text : fontawesome.icon('fa-check'),
+				color : '#FFF',
 			});
 			row.add(addBtn);
-			var click = 1;
+			row.setBackgroundColor(Alloy.Globals.themeColor());
+			row.isFriend = true;
 		} else {
 			// add button for adding your new friend
-			var addBtn = Ti.UI.createButton({
-				width : '19%',
-				left : '80%',
+			var addBtn = Ti.UI.createLabel({
+				right : 10,
 				id : obj.id,
 				fName : obj.name,
 				font : {
 					fontFamily : font,
 					fontSize : 32
 				},
-				title : fontawesome.icon('fa-plus'),
-				backgroundColor : '#fff',
-				color : '#000',
-				opacity : 0.7,
-				borderRadius : 5,
+				text : fontawesome.icon('fa-plus'),
+				color : '#FFF',
 			});
 			row.add(addBtn);
-			var click = 0;
+
 		}
 
-		addBtn.addEventListener('click', function(e) {
-			if (click == 0) {
+		row.addEventListener('click', function(e) {
+			Ti.API.info("CLICKAT : " + JSON.stringify(e.row));
+			if (e.row.isFriend == false) {
 				//add fb friend to friendlist
-				addBtn.backgroundColor = '#00ff00';
-				addBtn.title = fontawesome.icon('fa-check');
-				member.borderColor = '#00ff00';
-				var getUID = Ti.Network.createHTTPClient();
-				getUID.onload = function() {
-					Ti.API.info(this.responseText);
-					uid = JSON.parse(this.responseText);
-					name = e.source.fName;
-					addFbFriend(uid, name);
-					click++;
-				};
-				getUID.open('GET', Alloy.Globals.BETKAMPENURL + '/api/get_uid_from_fbid.php?fbid=' + e.source.id + '&lang=' + Alloy.Globals.LOCALE);
-				getUID.send();
-			} else if (click == 1) {
+
+				addBtn.text = fontawesome.icon('fa-check');
+				e.row.setBackgroundColor(Alloy.Globals.themeColor());
+				addFbFriend(e.row.id, obj.name); 
+				e.row.isFriend = true;
+				
+			} else if (e.row.isFriend == true) {
 				//if you clicked on wrong person and click again you remove him from your friendlist
-				addBtn.backgroundColor = '#fff';
-				addBtn.title = fontawesome.icon('fa-plus');
-				member.borderColor = '#fff';
-				var getUID = Ti.Network.createHTTPClient();
-				getUID.onload = function() {
-					Ti.API.info(this.responseText);
-					uid = JSON.parse(this.responseText);
-					delFbFriend(uid);
-					click--;
-				};
-				getUID.open('GET', Alloy.Globals.BETKAMPENURL + '/api/get_uid_from_fbid.php?fbid=' + e.source.id + '&lang=' + Alloy.Globals.LOCALE);
-				getUID.send();
+
+				addBtn.text = fontawesome.icon('fa-plus');
+				e.row.setBackgroundColor("transparent");
+				deleteFbFriend(e.row.id, obj.name);
+				e.row.isFriend = false;
 			}
 
 		});
+
+		return row;
 	}
 
 	//getInvitableFbFriends();
-// gets friends how got the app installed
+	// gets friends how got the app installed
 	function getFbFriendsWithApp() {
-		fb.requestWithGraphPath('me/friends', {
+		
+		fb.requestWithGraphPath('v2.1/me/friends', {
 			fields : 'name'
 		}, 'GET', function(e) {
 			var data = JSON.parse(e.result);
 			myFbFriends = data.data;
 			//Ti.API.info(data);
 			myFbFriends = myFbFriends.sort(sortByName);
+
+			sections[0] = Ti.UI.createTableViewSection({
+				headerView : Ti.UI.createView({
+					height : 0.1
+				}),
+				footerView : Ti.UI.createView({
+					height : 0.1
+				}),
+			});
 			for (var i = 0; i < myFbFriends.length; i++) {
-				createGUI(myFbFriends[i]);
+				sections[0].add(createGUI(myFbFriends[i]));
 			}
-			
-			// this gets a list of all your friends but it only sends requsts to people how got the app 
+
+			table.setData(sections);
+			mainView.add(table);
+			indicator.closeIndicator();
+			// this gets a list of all your friends but it only sends requsts to people how got the app
 			// you need a facebook canvas app to invite people who dont have the app in new fb sdk 2.0-2.1
 			/*
-			var sendToFb = Ti.UI.createButton({
-				height : 45,
-				width : '80%',
-				left : '10%',
-				top : 40,
-				title : Alloy.Globals.PHRASES.inviteBtnTxt,
-				backgroundColor : '#3B5998',
-				color : '#fff',
-				font : {
-					fontSize : 19,
-					fontFamily : "Impact"
-				},
-				borderRadius : 3
-			});
-			mainView.add(sendToFb);
+			 var sendToFb = Ti.UI.createButton({
+			 height : 45,
+			 width : '80%',
+			 left : '10%',
+			 top : 40,
+			 title : Alloy.Globals.PHRASES.inviteBtnTxt,
+			 backgroundColor : '#3B5998',
+			 color : '#fff',
+			 font : {
+			 fontSize : 19,
+			 fontFamily : "Impact"
+			 },
+			 borderRadius : 3
+			 });
+			 mainView.add(sendToFb);
 
-			sendToFb.addEventListener('click', function(e) {
+			 sendToFb.addEventListener('click', function(e) {
 
-				var data = {
-					app_id : fb.appid,
-					message : 'say what'
-				};
-				fb.dialog("apprequests", data, function(e) {
-					if (e.success && e.result) {
-						Alloy.Globals.addExperience(Alloy.Globals.BETKAMPENUID, 5);
-						Alloy.Globals.showToast(Alloy.Globals.PHRASES.inviteSentTxt);
-					} else {
-						if (e.error) {
-							Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.facebookConnectionErrorTxt);
-						} else {
-							Alloy.Globals.showToast(Alloy.Globals.PHRASES.abortInviteTxt);
-						}
-					}
-				});
-			});*/
+			 var data = {
+			 app_id : fb.appid,
+			 message : 'say what'
+			 };
+			 fb.dialog("apprequests", data, function(e) {
+			 if (e.success && e.result) {
+			 Alloy.Globals.addExperience(Alloy.Globals.BETKAMPENUID, 5);
+			 Alloy.Globals.showToast(Alloy.Globals.PHRASES.inviteSentTxt);
+			 } else {
+			 if (e.error) {
+			 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.facebookConnectionErrorTxt);
+			 } else {
+			 Alloy.Globals.showToast(Alloy.Globals.PHRASES.abortInviteTxt);
+			 }
+			 }
+			 });
+			 });*/
 
-			indicator.closeIndicator();
+			
 		});
 
 	}
@@ -351,8 +428,10 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 
 	var friendResp = null;
 
+	indicator.openIndicator();
 	// get all users friends to see if you already are friends with the searchresult
 	var xhr = Ti.Network.createHTTPClient({
+		
 		onload : function(e) {
 			Ti.API.info("Received text: " + this.responseText);
 			friendResp = JSON.parse(this.responseText);
@@ -375,26 +454,86 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 	xhr.send();
 }
 
-function addFbFriend(uid, name) {
-	var addFriends = Ti.Network.createHTTPClient();
-	addFriends.open("POST", Alloy.Globals.BETKAMPENADDFRIENDSURL);
-	var params = {
-		uid : Alloy.Globals.BETKAMPENUID,
-		fid : uid
-	};
-	addFriends.send(params);
+function addFbFriend(fbid, name) {
+	Ti.API.info("skickar in fbid : " + fbid);
+	Ti.API.info("namnet som skickades : " + name);
+	var xhr = Titanium.Network.createHTTPClient();
+    xhr.onerror = function(e) {
+        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+        Ti.API.info('FEL : ' + JSON.stringify(this.responseText));
+        Ti.API.error('Bad Sever =>' + e.error);
+     
+    };
+
+    try {
+        xhr.open('POST', Alloy.Globals.BETKAMPENADDFRIENDSURL + '?frid=' + fbid + '&fb=1&lang=' + Alloy.Globals.LOCALE);
+        xhr.setRequestHeader("challengesView-type", "application/json");
+        xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
+        xhr.setTimeout(Alloy.Globals.TIMEOUT);
+        xhr.send();
+    } catch(e) {
+        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+        
+
+    }
+    xhr.onload = function() {
+        if (this.status == '200') {
+            if (this.readyState == 4) {
+            	Ti.API.info("RESPONSE ADD FRIEND : " + JSON.stringify(this.responseText));
+                var response = JSON.parse(this.responseText);
+                Alloy.Globals.showToast(Alloy.Globals.PHRASES.friendSuccess + ' ' + name);
+            } else {
+                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+            }
+        } else {
+            indicator.closeIndicator();
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+            Ti.API.error("Error =>" + this.response);
+        }
+    };
+	
 	//alert(Alloy.Globals.PHRASES.friendSuccess + ' ' + name);
-	Alloy.Globals.showToast(Alloy.Globals.PHRASES.friendSuccess + ' ' + name);
+	
 }
 
-function delFbFriend(uid, name) {
-	var removeFriend = Ti.Network.createHTTPClient();
-	removeFriend.open("POST", Alloy.Globals.BETKAMPENDELETEFRIENDURL);
-	var params = {
-		uid : Alloy.Globals.BETKAMPENUID,
-		fid : uid
-	};
-	removeFriend.send(params);
+function deleteFbFriend(fbid, name) {
+	Ti.API.info("skickar in fbid : " + fbid);
+	Ti.API.info("namnet som skickades : " + name);
+	var xhr = Titanium.Network.createHTTPClient();
+    xhr.onerror = function(e) {
+        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+        Ti.API.info('FEL : ' + JSON.stringify(this.responseText));
+        Ti.API.error('Bad Sever =>' + e.error);
+     
+    };
+
+    try {
+        xhr.open('POST', Alloy.Globals.BETKAMPENDELETEFRIENDURL + '?frid=' + fbid + '&fb=1&lang=' + Alloy.Globals.LOCALE);
+        xhr.setRequestHeader("challengesView-type", "application/json");
+        xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
+        xhr.setTimeout(Alloy.Globals.TIMEOUT);
+        xhr.send();
+    } catch(e) {
+        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+        
+
+    }
+    xhr.onload = function() {
+        if (this.status == '200') {
+            if (this.readyState == 4) {
+            	Ti.API.info("RESPONSE DELETE FRIEND : " + JSON.stringify(this.responseText));
+                var response = JSON.parse(this.responseText);
+                Alloy.Globals.showToast(name + Alloy.Globals.PHRASES.friendRemovedTxt);
+            } else {
+                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+            }
+        } else {
+            indicator.closeIndicator();
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+            Ti.API.error("Error =>" + this.response);
+        }
+    };
+
 }
 
 $.fbFriends.add(mainView);
