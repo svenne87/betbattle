@@ -474,6 +474,42 @@ function createLayout(gameObject) {
 		width : 'auto',
 		layout : 'vertical',
 	});
+	    
+    // if we want to remove the match from coupon
+    if(couponTable) {
+        var removeBtn = Alloy.Globals.createButtonView('#d50f25', '#FFF', Alloy.Globals.PHRASES.deleteTxt);
+        removeBtn.top = 5;
+        removeBtn.bottom = 5;
+        
+        // remove game from coupon
+        removeBtn.addEventListener('click', function() {
+            var msg = Alloy.Globals.PHRASES.couponGameRemoveConfirm;
+            if (games.length === '1') {
+                msg = Alloy.Globals.PHRASES.couponGameRemoveFinalConfirm;
+            }
+            var alertWindow = Titanium.UI.createAlertDialog({
+                title : Alloy.Globals.PHRASES.betbattleTxt,
+                message : msg,
+                buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtnTxt]
+            });
+
+            alertWindow.addEventListener("click", function(d) {
+                alertWindow.hide();
+                if (d.index == 0) {
+                    removeCouponGame(gameID);
+                } 
+            });
+            alertWindow.show(); 
+        });
+        
+        view.add(removeBtn);
+        
+        view.add(Ti.UI.createView({
+            height : 0.5,
+            width: Ti.UI.FILL,
+            backgroundColor : '#6d6d6d'
+        }));
+    }
 
 	var image = Ti.UI.createView({
 		height : "15%",
@@ -519,47 +555,14 @@ function createLayout(gameObject) {
 		borderRadius : 3,
 		text : teamNames
 	}));
-
-    // if we want to remove the match from coupon
-    if(couponTable) {
-        var removeBtn = Ti.UI.createLabel({
-            top : 20,
-            right : 10,
-            height : 30,
-            width : 30,
-            font : {
-                fontFamily : fontAwe,
-                fontSize : 40
-            },
-            text : fontawesome.icon('icon-trash'),
-            color : Alloy.Globals.themeColor()
-        });
-        
-        // remove game from coupon
-        removeBtn.addEventListener('click', function() {
-            var msg = Alloy.Globals.PHRASES.couponGameRemoveConfirm;
-            if (games.length === '1') {
-                msg = Alloy.Globals.PHRASES.couponGameRemoveFinalConfirm;
-            }
-            var alertWindow = Titanium.UI.createAlertDialog({
-                title : Alloy.Globals.PHRASES.betbattleTxt,
-                message : msg,
-                buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtnTxt]
-            });
-
-            alertWindow.addEventListener("click", function(d) {
-                alertWindow.hide();
-                if (d.index == 0) {
-                    removeCouponGame(gameID);
-                } 
-            });
-            alertWindow.show(); 
-        });
-        
-        image.add(removeBtn);
-    }
     
     view.add(image);
+    view.add(Ti.UI.createView({
+        height : 0.5,
+        width: Ti.UI.FILL,
+        backgroundColor : '#6d6d6d'
+    }));
+
 
 	function doRest(gameObject) {
 
@@ -604,7 +607,7 @@ function createLayout(gameObject) {
 				left : 0,
 				headerView : tableHeaderView,
 				footerView : tableFooterView,
-				height : '85%',
+				height : '75%',
 				width: '100%',
 				//backgroundImage: '/images/profileBG.jpg',
 				backgroundColor : 'transparent',
@@ -622,7 +625,7 @@ function createLayout(gameObject) {
 				width : Ti.UI.FILL,
 				left : 0,
 				headerView : tableHeaderView,
-				height : '85%',
+				height : '75%',
 				//backgroundColor : '#303030',
 				separatorColor : '#6d6d6d',
 				id : 'challengeTable'
