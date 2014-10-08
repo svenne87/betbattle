@@ -264,6 +264,14 @@ if (OS_IOS) {
 var deviceToken;
 
 if (OS_IOS) {
+    // Check if the device is running iOS 8 or later, before registering for local notifications
+    //Ti.Platform.name == "iPhone OS" && 
+    if (parseInt(Ti.Platform.version.split(".")[0]) >= 8) {
+        Ti.App.iOS.registerUserNotificationSettings({
+            types : [Ti.App.iOS.USER_NOTIFICATION_TYPE_ALERT, Ti.App.iOS.UESR_NOTIFICATION_TYPE_BADGE]
+        });
+    }
+    
 	// only iOS
 	if (appResume != 0)
 		$.landingPage.addEventListener('open', function() {
@@ -347,18 +355,6 @@ if (OS_IOS) {
 	// in order to unregister:
 	// require('net.iamyellow.gcmjs').unregister();
 
-}
-
-
-// Check if the device is running iOS 8 or later, before registering for local notifications
-if (Ti.Platform.name == "iPhone OS" && parseInt(Ti.Platform.version.split(".")[0]) >= 8) {
-    Ti.App.iOS.registerUserNotificationSettings({
-        types: [
-            Ti.App.iOS.USER_NOTIFICATION_TYPE_ALERT,
-            Ti.App.iOS.USER_NOTIFICATION_TYPE_SOUND,
-            Ti.App.iOS.UESR_NOTIFICATION_TYPE_BADGE
-        ]
-    });
 }
 
 var beacons = [];

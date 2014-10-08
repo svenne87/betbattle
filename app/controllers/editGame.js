@@ -1,8 +1,22 @@
 var args = arguments[0] || {};
 var gameID = args.gameID;
+var couponTable = args.table || null;
+var couponWin = args.couponWin || null;
 var gameObjects = [];
 var gameArray = [];
+
+var games = null;
+if (Alloy.Globals.COUPON && Alloy.Globals.COUPON.games.length > 0) {
+    games = Alloy.Globals.COUPON.games;
+} else {
+    Alloy.Globals.showToast("Fel i coupons....");
+    $.editGame.close();
+}
+
+var amount_games = games.length;
+var amount_deleted = 0;
 var modalPickersToHide = [];
+
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({
 	top : 200,
@@ -24,6 +38,65 @@ var fontAwe = 'FontAwesome';
 if (OS_ANDROID) {
 	fontAwe = 'fontawesome-webfont';
 }
+
+
+function removeCouponGame(gameID) {
+    if (Alloy.Globals.checkConnection()) {
+        indicator.openIndicator();
+        var xhr = Titanium.Network.createHTTPClient();
+        xhr.onerror = function(e) {
+            indicator.closeIndicator();
+            Ti.API.error('Bad Sever =>' + e.error);
+        };
+
+        try {
+            xhr.open('POST', Alloy.Globals.BETKAMPENDELETECOUPONGAMEURL + '?lang=' + Alloy.Globals.LOCALE + '&gameID=' + gameID + '&cid=' + Alloy.Globals.COUPON.id);
+            xhr.setRequestHeader("content-type", "application/json");
+            xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
+            xhr.setTimeout(Alloy.Globals.TIMEOUT);
+
+            xhr.send();
+        } catch(e) {
+            indicator.closeIndicator();
+        }
+
+        xhr.onload = function() {
+            if (this.status == '200') {
+                if (this.readyState == 4) {
+                    var response = null;
+                    Ti.API.info("Tagit bort" + JSON.stringify(this.responseText));
+                    response = JSON.parse(this.responseText);
+                    Alloy.Globals.showToast(Alloy.Globals.PHRASES.couponGameRemoved);
+                    amount_deleted++;
+
+                    // make sure match is removed so that we can check the dates for matches in the array
+                    for (var i in games) {
+                        if (games[i].game_id == gameID) {
+                            var index = Alloy.Globals.COUPON.games.indexOf(games[i]);
+                            Alloy.Globals.COUPON.games.splice(index, 1);
+                        }
+                    }
+
+                    // remove table row
+                    var index = couponTable.getIndexByName(gameID);
+                    couponTable.deleteRow(index);
+
+                    if (amount_deleted == amount_games) {
+                        couponWin.setOpacity(0);
+                        couponWin.close();
+                    }
+                    Alloy.Globals.getCoupon();
+                    $.editGame.setOpacity(0);
+                    $.editGame.close();
+                }
+            } else {
+                Ti.API.error("Error =>" + this.response);
+            }
+            indicator.closeIndicator();
+        };
+    }
+}
+
 
 function createGameType(gameType, gameObject, i, gameArray, index) {
 	var type = gameType.type;
@@ -447,7 +520,46 @@ function createLayout(gameObject) {
 		text : teamNames
 	}));
 
-	view.add(image);
+    // if we want to remove the match from coupon
+    if(couponTable) {
+        var removeBtn = Ti.UI.createLabel({
+            top : 20,
+            right : 10,
+            height : 30,
+            width : 30,
+            font : {
+                fontFamily : fontAwe,
+                fontSize : 40
+            },
+            text : fontawesome.icon('icon-trash'),
+            color : Alloy.Globals.themeColor()
+        });
+        
+        // remove game from coupon
+        removeBtn.addEventListener('click', function() {
+            var msg = Alloy.Globals.PHRASES.couponGameRemoveConfirm;
+            if (games.length === '1') {
+                msg = Alloy.Globals.PHRASES.couponGameRemoveFinalConfirm;
+            }
+            var alertWindow = Titanium.UI.createAlertDialog({
+                title : Alloy.Globals.PHRASES.betbattleTxt,
+                message : msg,
+                buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtnTxt]
+            });
+
+            alertWindow.addEventListener("click", function(d) {
+                alertWindow.hide();
+                if (d.index == 0) {
+                    removeCouponGame(gameID);
+                } 
+            });
+            alertWindow.show(); 
+        });
+        
+        image.add(removeBtn);
+    }
+    
+    view.add(image);
 
 	function doRest(gameObject) {
 

@@ -30,6 +30,19 @@ var imageErrorHandler = function (e) {
 };
 
 
+function checkDate(date) {
+    // check if match has started
+    var gameDateMilli = date + "000";
+    var gameDate = new Date((gameDateMilli - 0));
+    var now = new Date();
+
+    if (now.getTime() >= gameDate.getTime()) {
+        return true;
+    }
+    return false;
+}
+
+
 function createGameType(gameType, game, values, index, sections) {
     var type = gameType.type;
     
@@ -84,7 +97,7 @@ function createGameType(gameType, game, values, index, sections) {
                 //if the json says team1 or team2. get the actual team  names
                 if (resultText === "(team1)") {
                     resultText = game.team_1.team_name;
-                } else if (valueText === "(team2)") {
+                } else if (resultText === "(team2)") {
                     resultText = game.team_2.team_name;
                 }
                 
@@ -125,18 +138,21 @@ function createGameType(gameType, game, values, index, sections) {
         if (values[i].game_type === type && values[i].gid === game.game_id) {
             
             var correct = false;
-
-            for (var m in game.result_values) {
-                if (values[i].game_type === game.result_values[m].game_type) {
-                    if (values[i].value_1 === game.result_values[m].value_1) {
-                        if (values[i].value_2 === game.result_values[m].value_2) {
-                            correct = true;
-                            break;
+            
+            // only check games that has started
+            if (checkDate(game.game_date)) {
+                for (var m in game.result_values) {
+                    if (values[i].game_type === game.result_values[m].game_type) {
+                        if (values[i].value_1 === game.result_values[m].value_1) {
+                            if (values[i].value_2 === game.result_values[m].value_2) {
+                                correct = true;
+                                break;
+                            }
                         }
                     }
                 }
             }
-            
+
             var row = Ti.UI.createTableViewRow({
                 hasChild : false,
                 width : Ti.UI.FILL,
@@ -610,4 +626,4 @@ if (Alloy.Globals.checkConnection()) {
 }
 
 
-// TODO fix current result in matches (visa rätt score under match och visa bokc bara vid börjad match), fix standings, att game types visas i fel ordning (kan vara på ej rättade?)
+// TODO fix standings

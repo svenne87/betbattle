@@ -1,9 +1,16 @@
 var apns = function(){
+    var typesArray = [];
+    
+    // only send types with if iOS version is less than 8
+    if(parseInt(Ti.Platform.version.split(".")[0]) < 8) {
+        typesArray = [
+            Titanium.Network.NOTIFICATION_TYPE_BADGE,
+            Titanium.Network.NOTIFICATION_TYPE_ALERT
+        ];
+    }  
+    
   Titanium.Network.registerForPushNotifications({
-    types: [
-        Titanium.Network.NOTIFICATION_TYPE_BADGE,
-        Titanium.Network.NOTIFICATION_TYPE_ALERT
-    ],
+    types: typesArray,
     success:function(e)
     {
         var deviceToken = e.deviceToken;
@@ -31,7 +38,7 @@ var apns = function(){
       }
       var message = data.alert;
       if(message != ''){
-        var my_alert = Ti.UI.createAlertDialog({title:'Betkampen', message:message});
+        var my_alert = Ti.UI.createAlertDialog({title:Alloy.Globals.PHRASES.betbattleTxt, message:message});
         my_alert.show();
         my_alert.addEventListener('click', function(e) {
         	Ti.API.info("CLICKADE PÅ NOTIFICATION");

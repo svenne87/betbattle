@@ -15,11 +15,12 @@ if (Alloy.Globals.COUPON && Alloy.Globals.COUPON.games.length > 0) {
 
 var modalPickersToHide = [];
 var coinsToJoin = -1;
-//var rows = [];
 var amount_games = games.length;
 var amount_deleted = 0;
 var added = false;
 var betPicker;
+var table;
+var child = true;
 
 var iOSVersion;
 
@@ -125,65 +126,12 @@ function checkFriends() {
 
 }
 
-function removeCouponGame(gameID) {
-    Ti.API.info("GAMEID : " + gameID);
-    if (Alloy.Globals.checkConnection()) {
-        indicator.openIndicator();
-        var xhr = Titanium.Network.createHTTPClient();
-        xhr.onerror = function(e) {
-            indicator.closeIndicator();
-            Ti.API.error('Bad Sever =>' + e.error);
-        };
-
-        try {
-            xhr.open('POST', Alloy.Globals.BETKAMPENDELETECOUPONGAMEURL + '?lang=' + Alloy.Globals.LOCALE + '&gameID=' + gameID + '&cid=' + Alloy.Globals.COUPON.id);
-            xhr.setRequestHeader("content-type", "application/json");
-            xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
-            xhr.setTimeout(Alloy.Globals.TIMEOUT);
-
-            xhr.send();
-        } catch(e) {
-            indicator.closeIndicator();
-        }
-
-        xhr.onload = function() {
-            if (this.status == '200') {
-                if (this.readyState == 4) {
-                    var response = null;
-                    Ti.API.info("Tagit bort" + JSON.stringify(this.responseText));
-                    response = JSON.parse(this.responseText);
-                    Alloy.Globals.showToast(Alloy.Globals.PHRASES.couponGameRemoved);
-                    amount_deleted++;
-
-                    // make sure match is removed so that we can check the dates for matches in the array
-                    for (var i in games) {
-                        if (games[i].game_id == gameID) {
-                            var index = Alloy.Globals.COUPON.games.indexOf(games[i]);
-                            Alloy.Globals.COUPON.games.splice(index, 1);
-                        }
-                    }
-
-                    // remove view
-                    var index = table.getIndexByName(gameID);
-                    table.deleteRow(index);
-
-                    if (amount_deleted == amount_games) {
-                        $.showCoupon.close();
-                    }
-                    Alloy.Globals.getCoupon();
-                }
-            } else {
-                Ti.API.error("Error =>" + this.response);
-            }
-            indicator.closeIndicator();
-        };
-    }
-}
-
 // When clicking the edit icon of a match
 var editEvent = function(e) {
     var args = {
         gameID : e.row.id,
+        table : table,
+        couponWin : $.showCoupon
     };
 
     var win = Alloy.createController("editGame", args).getView();
@@ -198,35 +146,6 @@ var editEvent = function(e) {
         });
     }
 };
-
-/*
-// When clicking the delete icon of a match
-var removeEvent = function(e) {
-    var msg = Alloy.Globals.PHRASES.couponGameRemoveConfirm;
-    if (games.length === '1') {
-        msg = Alloy.Globals.PHRASES.couponGameRemoveFinalConfirm;
-    }
-    var alertWindow = Titanium.UI.createAlertDialog({
-        title : Alloy.Globals.PHRASES.betbattleTxt,
-        message : msg,
-        buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtnTxt]
-    });
-
-    alertWindow.addEventListener("click", function(d) {
-        Ti.API.info("valde : " + e.row.id);
-        alertWindow.hide();
-        if (d.index == 0) {
-            removeCouponGame(e.row.id);
-        } else if (d.index == 1) {
-
-        }
-    });
-    alertWindow.show();
-};
-*/
-
-var table;
-var child = true;
 
 if (OS_IOS) {
     var separatorS;

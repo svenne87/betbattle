@@ -391,7 +391,6 @@ function createEmptyTableRow(text) {
 }
 
 function constructTableView(array) {
-
     if (OS_IOS) {
         refresher = Ti.UI.createRefreshControl({
             tintColor : Alloy.Globals.themeColor()
@@ -404,7 +403,6 @@ function constructTableView(array) {
             } else {
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
                 refresher.endRefreshing();
-
             }
 
         });
