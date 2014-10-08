@@ -436,10 +436,7 @@ function createLayout(gameObject) {
 	image.add(Ti.UI.createLabel({
 		top : 30,
 		left: 20,
-		font : {
-			fontFamily : Alloy.Globals.getFont(),
-			fontSize : fontSize
-		},
+		font : Alloy.Globals.getFontCustom(fontSize, "Bold"),
 		color : '#FFF',
 		width : '100%',
 		opacity : 0.85,
@@ -566,10 +563,7 @@ function createLayout(gameObject) {
 				//textAlign: "left",
 				//width: Ti.UI.FILL,
 				left: 20,
-				font:{
-					fontFamily: Alloy.Globals.getFont(),
-					fontSize: 16,
-				},
+				font: Alloy.Globals.getFontCustom(18, "Bold"),
 				color: "#FFF"
 			});
 			gameTypeHeaderView.add(gameTypeLabel);

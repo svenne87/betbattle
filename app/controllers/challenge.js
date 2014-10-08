@@ -488,6 +488,7 @@ function postMatchOfTheDay(){
 		indicator.openIndicator();
 		var xhr = Titanium.Network.createHTTPClient();
 		xhr.onerror = function(e) {
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 			Ti.API.error("FEL : " + JSON.stringify(e));
 			Ti.API.error('Bad Sever =>' + e.error);
 			indicator.closeIndicator();
@@ -641,6 +642,7 @@ function updateChallenge() {
 		indicator.openIndicator();
 		var xhr = Titanium.Network.createHTTPClient();
 		xhr.onerror = function(e) {
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 			Ti.API.error("FEL : " + JSON.stringify(e));
 			Ti.API.error('Bad Sever =>' + e.error);
 			indicator.closeIndicator();
@@ -723,6 +725,7 @@ function saveChallenge() {
 		var xhr = Titanium.Network.createHTTPClient();
 		indicator.openIndicator();
 		xhr.onerror = function(e) {
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 			Ti.API.error("FEL : " + JSON.stringify(e));
 			Ti.API.error('Bad Sever =>' + e.error);
 		};
@@ -847,7 +850,8 @@ function postAnswer(gameArray) {
 
 			} else {
 				// any other "bad request error"
-				Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
+				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+				
 			}
 
 			Ti.API.error('Bad Sever =>' + e.error);
@@ -1032,10 +1036,7 @@ function createLayout(gameObject) {
 
 	image.add(Ti.UI.createLabel({
 		top : 30,
-		font : {
-			fontFamily : Alloy.Globals.getFont(),
-			fontSize : fontSize
-		},
+		font : Alloy.Globals.getFontCustom(fontSize, "Bold"),
 		color : '#FFF',
 		//width : '100%',
 		opacity : 0.85,
@@ -1200,10 +1201,7 @@ function createLayout(gameObject) {
 				//textAlign: "left",
 				//width: Ti.UI.FILL,
 				left: 20,
-				font:{
-					fontFamily: Alloy.Globals.getFont(),
-					fontSize: 16,
-				},
+				font: Alloy.Globals.getFontCustom(18, "Bold"),
 				color: "#FFF"
 			});
 			gameTypeHeaderView.add(gameTypeLabel);
@@ -1268,6 +1266,16 @@ function createLayout(gameObject) {
 						},
 						color: "#FFF"
 					});
+					
+					var coinsAmountLabel = Ti.UI.createLabel({
+						text : bet_amount,
+						right: 20,
+						font:{
+							fontFamily: Alloy.Globals.getFont(),
+							fontSize: 16
+						},
+						color: "#FFF"
+					});
 					gameTypeHeaderView.add(gameTypeLabel);
 					
 					sections[sectionIndex]  = Ti.UI.createTableViewSection({
@@ -1276,7 +1284,7 @@ function createLayout(gameObject) {
 										height: 0.1,
 									}),
 								});
-					sections[sectionIndex].add(createBetAmountView());	
+					
 				}
 				sections[sectionIndex+1] = Ti.UI.createTableViewSection({
 					headerView: Ti.UI.createView({
