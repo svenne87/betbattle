@@ -131,15 +131,21 @@ function createPopupLayout(win, playerObj, isFriend, isMe, friendIndex) {
         font : Alloy.Globals.getFontCustom(16, 'Regular'),
     });
     win.add(friendStats);
-
-    var friend = Ti.UI.createView({
-        top : 2,
-        width : Ti.UI.FILL,
-        height : 45,
-    });
-
-    win.add(friend);
-
+    
+    
+    var friend;
+    
+    if(OS_IOS) {
+        friend = Ti.UI.createView({
+            top : 2,
+            width : Ti.UI.FILL,
+            height : 45,
+        });
+        win.add(friend);
+    } else {
+        friend = win;
+    }
+ 
     var image;
 
     if (playerObj.fbid !== null) {
@@ -162,6 +168,7 @@ function createPopupLayout(win, playerObj, isFriend, isMe, friendIndex) {
     profilePic.addEventListener('error', imageErrorHandler);
 
     friend.add(profilePic);
+    
     if (isFriend || isMe) {
         var friendObj;
 
@@ -206,8 +213,6 @@ function createPopupLayout(win, playerObj, isFriend, isMe, friendIndex) {
             left : 10,
             top : 115,
             height : 40,
-            borderColor : '#000',
-            borderWidth : 0.4,
             id : playerObj.id,
             fName : playerObj.name
         });
@@ -299,46 +304,39 @@ function getFriendIndex(playerId) {
     }
     return -1;
 }
-// TODO ANDROID
+
 function popupAndroid(objId, playerIndex) {
     var w = Ti.UI.createView({
-        height : "100%",
-        width : "100%",
+        height : Ti.UI.FILL,
+        width : Ti.UI.FILL,
         backgroundColor : 'transparent',
         top : 0,
         left : 0,
         zIndex : "1000",
     });
     
-    /*
-     
-     var blur = mod.createBasicBlurView({
-        width : 150,
-        height : 150,
-        borderRadius : 10,
-        blurRadius : 35,
-        //opacity: '0.5',
-     });
-     w.add(blur); 
-     
-    */
-    
     var modal = Ti.UI.createView({
         height : 250,
         width : "85%",
+        top : 80,
+        left : '7.5%',
+        right : '7.5%',
         backgroundColor : '#FFF',
         borderRadius : 10
     });
+   
+    w.add(modal);
     
     var textWrapper = Ti.UI.createView({
         height : 250,
         width : "85%"
     });  
+    
+    w.add(textWrapper);
 
     var friendIndex = getFriendIndex(objId);
 
     if (objId === Alloy.Globals.BETKAMPENUID) {
-        Ti.API.log("ad");
         // this is me
         createPopupLayout(modal, players[playerIndex], true, true, -1);
     } else if (friendIndex > -1) {
@@ -348,9 +346,6 @@ function popupAndroid(objId, playerIndex) {
         // some one else
         createPopupLayout(modal, players[playerIndex], false, false, -1);
     }
-            
-    w.add(modal);
-    w.add(textWrapper);
 
     // When clicking on the modal
     textWrapper.addEventListener("click", function(e) {
@@ -363,9 +358,21 @@ function popupAndroid(objId, playerIndex) {
     w.addEventListener('click', function() {
         winOpen = false;
         w.hide();
-        w = null;
     });
-    $.scoreView.add(w);
+    
+    var clickPreventer = function(){
+        winOpen = false;
+        w.hide();
+        $.scoreBoardTable.removeEventListener('click', clickPreventer);
+    };
+    
+    // add a event listener to the "parent" of the modal so that window will be closed when clicking outside of it
+    // we need to delay the adding since we open modal on table row click
+    setTimeout(function() { 
+        $.scoreBoardTable.addEventListener('click', clickPreventer);
+    }, 300);      
+
+    $.scoreBoardTable.add(w);
 }
 
 function popupWinIOS(objId, playerIndex) {
@@ -381,8 +388,8 @@ function popupWinIOS(objId, playerIndex) {
         left : 0,
         zIndex : 100,
     });
-
-    $.scoreView.add(transparent_overlay);
+    
+    $.scoreBoardTable.add(transparent_overlay);
 
     var w = Titanium.UI.createWindow({
         backgroundColor : '#fff',
@@ -438,18 +445,17 @@ function popupWinIOS(objId, playerIndex) {
     });
 
     /* Listen to the click event outside of the achievement window */
-                                transparent_overlay.addEventListener('click', function(e) {
-                                    Ti.API.log("click");
-                                    var t3 = Titanium.UI.create2DMatrix();
-                                    t3 = t3.scale(0);
-                                    w.close({
-                                        transform : t3,
-                                        duration : 300
-                                    });
-                                    transparent_overlay.hide();
-                                    transparent_overlay = null;
-                                });
-
+    transparent_overlay.addEventListener('click', function(e) {
+        winOpen = false;
+        var t3 = Titanium.UI.create2DMatrix();
+        t3 = t3.scale(0);
+        w.close({
+            transform : t3,
+            duration : 300
+        });
+        transparent_overlay.hide();
+        transparent_overlay = null;
+    });
 
     openWindows.push(w);
     transparent_overlay.add(w.open(a));
@@ -463,7 +469,7 @@ var rowClick = function(e) {
     }
 
     winOpen = true;
-
+    
     if (OS_IOS) {
         popupWinIOS(e.row.id, e.row.name);
     } else {
@@ -666,7 +672,7 @@ if (OS_ANDROID) {
 
         // sometimes the view remain in memory, then we don't need to show the "loading"
         if (!name) {
-            indicator.openIndicator();
+           // indicator.openIndicator(); // TODO
         }
     });
 }
@@ -682,3 +688,5 @@ $.scoreView.addEventListener('close', function() {
         }
     }
 });
+
+$.scoreBoardTable.setOpacity(1);
