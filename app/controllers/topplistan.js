@@ -13,10 +13,101 @@ var sections = [];
 var iOSVersion;
 var players = [];
 var friends = [];
+var scoreboardCount = 0;
+var scroreboardFetched = 0;
+var footerViewLabel = '';
+var isLoading = false;
+var initialTableSize = 0;
+var currentSize = 0;
+var overlap = 62;
 
 var imageErrorHandler = function(e) {
     e.image = '/images/no_pic.png';
 };
+
+var footerView = Ti.UI.createView({
+    height : 75,
+    width : Ti.UI.FILL,
+    layout : 'vertical',
+    backgroundColor : '#303030',
+    backgroundGradient : {
+        type : "linear",
+        startPoint : {
+            x : "0%",
+            y : "0%"
+        },
+        endPoint : {
+            x : "0%",
+            y : "100%"
+        },
+        colors : [{
+            color : "#151515",
+
+        }, {
+            color : "#2E2E2E",
+
+        }]
+    }
+});
+
+footerViewLabel = Ti.UI.createLabel({
+    left : 10,
+    top : 25,
+    text : '',
+    height : Ti.UI.SIZE,
+    width : Ti.UI.SIZE,
+    font : Alloy.Globals.getFontCustom(12, 'Regular'),
+    color : '#FFF'
+});
+
+footerView.add(footerViewLabel);
+
+$.scoreBoardTable.footerView = footerView;
+
+if (OS_IOS) {
+    // get initial table size for iOS
+    $.scoreBoardTable.addEventListener('postlayout', function() {
+        initialTableSize = $.scoreBoardTable.rect.height;
+    });
+}
+
+$.scoreBoardTable.addEventListener('scroll', function(_evt) {
+    if (OS_IOS) {
+        // include a timeout for better UE
+        setTimeout(function() {
+            if (currentSize - overlap < _evt.contentOffset.y + initialTableSize) {
+                if (isLoading) {
+                    return;
+                }
+
+                if (scoreboardCount <= scroreboardFetched) {
+                    // can't load more
+                    return;
+                } else {
+                    // try to fetch 20 more games each time
+                    getScore(false, ((scroreboardFetched - 0) + 20), 20);
+                }
+            }
+        }, 500);
+    } else {
+        if (_evt.firstVisibleItem + _evt.visibleItemCount == _evt.totalItemCount) {
+            if (isLoading) {
+                return;
+            }
+
+            if (scoreboardCount <= scroreboardFetched) {
+                // can't load more
+                return;
+            } else {
+                setTimeout(function() {
+                    // try to fetch 20 more games each time
+                    getScore(false, ((scroreboardFetched - 0) + 20), 20);
+                }, 200);
+            }
+        }
+    }
+
+});
 
 var scoreBoardInfoView = Ti.UI.createView({
     height : 75,
@@ -131,11 +222,10 @@ function createPopupLayout(win, playerObj, isFriend, isMe, friendIndex) {
         font : Alloy.Globals.getFontCustom(16, 'Regular'),
     });
     win.add(friendStats);
-    
-    
+
     var friend;
-    
-    if(OS_IOS) {
+
+    if (OS_IOS) {
         friend = Ti.UI.createView({
             top : 2,
             width : Ti.UI.FILL,
@@ -145,7 +235,7 @@ function createPopupLayout(win, playerObj, isFriend, isMe, friendIndex) {
     } else {
         friend = win;
     }
- 
+
     var image;
 
     if (playerObj.fbid !== null) {
@@ -168,7 +258,7 @@ function createPopupLayout(win, playerObj, isFriend, isMe, friendIndex) {
     profilePic.addEventListener('error', imageErrorHandler);
 
     friend.add(profilePic);
-    
+
     if (isFriend || isMe) {
         var friendObj;
 
@@ -314,7 +404,7 @@ function popupAndroid(objId, playerIndex) {
         left : 0,
         zIndex : "1000",
     });
-    
+
     var modal = Ti.UI.createView({
         height : 250,
         width : "85%",
@@ -324,14 +414,14 @@ function popupAndroid(objId, playerIndex) {
         backgroundColor : '#FFF',
         borderRadius : 10
     });
-   
+
     w.add(modal);
-    
+
     var textWrapper = Ti.UI.createView({
         height : 250,
         width : "85%"
-    });  
-    
+    });
+
     w.add(textWrapper);
 
     var friendIndex = getFriendIndex(objId);
@@ -359,18 +449,18 @@ function popupAndroid(objId, playerIndex) {
         winOpen = false;
         w.hide();
     });
-    
-    var clickPreventer = function(){
+
+    var clickPreventer = function() {
         winOpen = false;
         w.hide();
         $.scoreBoardTable.removeEventListener('click', clickPreventer);
     };
-    
+
     // add a event listener to the "parent" of the modal so that window will be closed when clicking outside of it
     // we need to delay the adding since we open modal on table row click
-    setTimeout(function() { 
+    setTimeout(function() {
         $.scoreBoardTable.addEventListener('click', clickPreventer);
-    }, 300);      
+    }, 300);
 
     $.scoreBoardTable.add(w);
 }
@@ -388,7 +478,7 @@ function popupWinIOS(objId, playerIndex) {
         left : 0,
         zIndex : 100,
     });
-    
+
     $.scoreBoardTable.add(transparent_overlay);
 
     var w = Titanium.UI.createWindow({
@@ -469,7 +559,7 @@ var rowClick = function(e) {
     }
 
     winOpen = true;
-    
+
     if (OS_IOS) {
         popupWinIOS(e.row.id, e.row.name);
     } else {
@@ -527,9 +617,15 @@ function createRow(obj, friends, index) {
     });
     row.add(nameLabel);
 
+    var customTopPos = 38;
+
+    if (!child) {
+        customTopPos = 40;
+    }
+
     var statusIcon = Ti.UI.createLabel({
         left : 60,
-        top : 38,
+        top : customTopPos,
         height : Ti.UI.SIZE,
         width : Ti.UI.SIZE,
         font : {
@@ -545,7 +641,7 @@ function createRow(obj, friends, index) {
     var scoreLabel = Ti.UI.createLabel({
         text : obj.score,
         left : 60 + statusIcon.toImage().width + 2,
-        top : 38,
+        top : customTopPos,
         height : Ti.UI.SIZE,
         width : Ti.UI.SIZE,
         font : Alloy.Globals.getFontCustom(12, 'Regular'),
@@ -554,11 +650,37 @@ function createRow(obj, friends, index) {
 
     row.add(scoreLabel);
 
+    var posImage = 10;
+
+    if (!child) {
+        var rightPercentage = '5%';
+        posImage = '10%';
+
+        font = 'fontawesome-webfont';
+
+        if (Titanium.Platform.displayCaps.platformWidth < 350) {
+            rightPercentage = '3%';
+            posImage = '8%';
+        }
+
+        row.add(Ti.UI.createLabel({
+            font : {
+                fontFamily : font
+            },
+            text : fontawesome.icon('icon-chevron-right'),
+            right : rightPercentage,
+            color : '#FFF',
+            fontSize : 80,
+            height : 'auto',
+            width : 'auto'
+        }));
+    }
+
     var positionImage = Ti.UI.createImageView({
         image : null,
         height : 20,
         width : 20,
-        right : 10,
+        right : posImage,
         borerRadius : 10
     });
 
@@ -595,6 +717,13 @@ function createRow(obj, friends, index) {
     }
 
     row.className = "scoreBoardRow";
+    
+    if (OS_IOS) {
+        // keep track of the table total heigth, to decide when to start fetching more
+        currentSize += row.toImage().height;
+    }
+
+    
     return row;
 }
 
@@ -602,20 +731,47 @@ if (OS_IOS) {
     indicator.openIndicator();
 }
 
-getScore();
+getScore(true, 0, 20);
 
-function runFirstTime(players, friends) {
-    for (var i = 0; i < players.length; i++) {
-        sections[0].add(createRow(players[i], friends, i));
+function runFirstTime(firstTime, players, friends) {
+    if (firstTime) {
+        for (var i = 0; i < players.length; i++) {
+            sections[0].add(createRow(players[i], friends, i));
+        }
+        $.scoreBoardTable.setData(sections);
+    } else {
+        for (var i = 0; i < players.length; i++) {
+            $.scoreBoardTable.appendRow(createRow(players[i], friends, i));
+
+        }
     }
-    $.scoreBoardTable.setData(sections);
 }
 
-function getScore() {
+/* Set text with information about how many games we are displaying */ 
+function setDisplayText() {
+    if (scoreboardCount <= scroreboardFetched) {
+        footerViewLabel.setText(Alloy.Globals.PHRASES.showningPlayersTxt + ': ' + scoreboardCount + '/' + scoreboardCount);
+    } else {
+        footerViewLabel.setText(Alloy.Globals.PHRASES.showningPlayersTxt + ': ' + scroreboardFetched + '/' + scoreboardCount);
+    }
+}
+
+function getScore(firstTime, start, rows) {
     // check connection
     if (Alloy.Globals.checkConnection()) {
+        if (isLoading) {
+            return;
+        }
+
+        if (OS_IOS && firstTime) {
+            indicator.openIndicator();
+        } else if (!firstTime) {
+            indicator.openIndicator();
+        }
+
         var xhr = Titanium.Network.createHTTPClient();
         xhr.onerror = function(e) {
+            isLoading = false;
             indicator.closeIndicator();
             Ti.API.error('Bad Sever =>' + JSON.stringify(e));
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
@@ -626,8 +782,10 @@ function getScore() {
             xhr.setRequestHeader("content-type", "application/json");
             xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
             xhr.setTimeout(Alloy.Globals.TIMEOUT);
+            isLoading = true;
             xhr.send();
         } catch(e) {
+            isLoading = false;
             indicator.closeIndicator();
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
         }
@@ -637,6 +795,27 @@ function getScore() {
                 if (this.readyState == 4) {
                     var resp = JSON.parse(this.responseText);
 
+                    scoreboardCount = resp.scoreboard_count;
+
+                    if (scoreboardCount <= scroreboardFetched) {
+                        scroreboardFetched = scoreboardCount;
+                    } else {
+                        scroreboardFetched = start;
+                    }
+
+                    if (firstTime) {
+                        scroreboardFetched = 20;
+                        setDisplayText();
+                    } else {
+
+                        // we can't fetch more games
+                        if (((scroreboardFetched - 0) + 20) >= scoreboardCount) {
+                            // all games are visible. update values
+                            scroreboardFetched = scoreboardCount;
+                        }
+                        setDisplayText();
+                    }
+
                     for (var player in resp.scoreboard) {
                         // add each player
                         players.push(resp.scoreboard[player]);
@@ -644,11 +823,12 @@ function getScore() {
 
                     // friends will be this array
                     friends = resp.friends;
-
-                    runFirstTime(players, friends);
+                    runFirstTime(firstTime, players, friends);
                 }
                 indicator.closeIndicator();
+                isLoading = false;
             } else {
+                isLoading = false;
                 indicator.closeIndicator();
                 Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
                 Ti.API.error("Error =>" + this.response);
@@ -672,7 +852,7 @@ if (OS_ANDROID) {
 
         // sometimes the view remain in memory, then we don't need to show the "loading"
         if (!name) {
-           // indicator.openIndicator(); // TODO
+            // indicator.openIndicator(); // TODO
         }
     });
 }
