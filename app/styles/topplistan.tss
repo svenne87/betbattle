@@ -20,7 +20,8 @@
     },
     headerView : null,
     footerView : null,
-    separatorColor : '#303030'
+    separatorColor : '#303030',
+    opacity : 0
 },
 "#scoreBoardTable[platform=android]": {
 	height : Ti.UI.FILL,
