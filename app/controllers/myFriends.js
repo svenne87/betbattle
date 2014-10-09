@@ -109,7 +109,7 @@ function createGUI(obj) {
 			var images = Alloy.Globals.BETKAMPENURL + finalUrl;	
 
 			var modal = Ti.UI.createView({
-				height : 250,
+				height : 330,
 				width : "85%",
 				backgroundColor : '#fff',
 				borderRadius : 10,
@@ -132,10 +132,7 @@ function createGUI(obj) {
 				left : '38%',
 				color : "#000",
 				top : 45,
-				font : {
-					fontSize : 18,
-					fontFamily : "Impact",
-				}
+				font : Alloy.Globals.getFontCustom(16, "Regular")
 			});
 			modal.add(friendStats);
 
@@ -167,10 +164,7 @@ function createGUI(obj) {
 				left : '5%',
 				color : "#000",
 				top : 110,
-				font : {
-					fontSize : 18,
-					fontFamily : "Impact",
-				}
+				font : Alloy.Globals.getFontCustom(16, "Regular")
 			});
 			modal.add(frLvl);
 
@@ -179,10 +173,7 @@ function createGUI(obj) {
 				left : '5%',
 				color : "#000",
 				top : 130,
-				font : {
-					fontSize : 18,
-					fontFamily : "Impact",
-				}
+				font : Alloy.Globals.getFontCustom(16, "Regular")
 			});
 			modal.add(frScore);
 
@@ -191,10 +182,7 @@ function createGUI(obj) {
 				left : '5%',
 				color : "#000",
 				top : 150,
-				font : {
-					fontSize : 18,
-					fontFamily : "Impact",
-				}
+				font :Alloy.Globals.getFontCustom(16, "Regular")
 			});
 			modal.add(frWins);
 
@@ -203,10 +191,7 @@ function createGUI(obj) {
 				left : "5%",
 				color : "#000",
 				top : 190,
-				font : {
-					fontSize : 18,
-					fontFamily : "Impact",
-				}
+				font : Alloy.Globals.getFontCustom(16, "Regular")
 			});
 			modal.add(favTeam);
 
@@ -215,10 +200,7 @@ function createGUI(obj) {
 				left : "5%",
 				color : "#000",
 				top : 210,
-				font : {
-					fontSize : 18,
-					fontFamily : "Impact",
-				}
+				font : Alloy.Globals.getFontCustom(16, "Regular")
 			});
 			modal.add(frTeam);
 
@@ -268,7 +250,7 @@ function createGUI(obj) {
 
 			var w = Titanium.UI.createWindow({
 				backgroundColor : '#fff',
-				height : 250,
+				height : 330,
 				width : "85%",
 				borderRadius : 10,
 				opacity : 1,
@@ -303,10 +285,7 @@ function createGUI(obj) {
 				left : '38%',
 				color : "#000",
 				top : 45,
-				font : {
-					fontSize : 18,
-					fontFamily : "Impact",
-				}
+				font : Alloy.Globals.getFontCustom(16, "Regular")
 			});
 			w.add(friendStats);
 
@@ -344,6 +323,7 @@ function createGUI(obj) {
 				left : "5%",
 				color : "#000",
 				top : 110,
+				font : Alloy.Globals.getFontCustom(16, "Regular")
 			});
 			friend.add(frLvl);
 
@@ -352,6 +332,7 @@ function createGUI(obj) {
 				left : "5%",
 				color : "#000",
 				top : 130,
+				font : Alloy.Globals.getFontCustom(16, "Regular")
 			});
 			friend.add(frScore);
 
@@ -360,6 +341,7 @@ function createGUI(obj) {
 				left : "5%",
 				color : "#000",
 				top : 150,
+				font : Alloy.Globals.getFontCustom(16, "Regular")
 			});
 			friend.add(frWins);
 
@@ -368,6 +350,7 @@ function createGUI(obj) {
 				left : "5%",
 				color : "#000",
 				top : 190,
+				font : Alloy.Globals.getFontCustom(16, "Regular")
 			});
 			friend.add(favTeam);
 
@@ -376,6 +359,7 @@ function createGUI(obj) {
 				left : "5%",
 				color : "#000",
 				top : 210,
+				font : Alloy.Globals.getFontCustom(16, "Regular")
 			});
 			friend.add(frTeam);
 
@@ -395,6 +379,27 @@ function createGUI(obj) {
 
 			friend.add(profilePics);
 
+
+			var buttonView = Ti.UI.createView({
+				width: "80%",
+				height: 60,
+				borderRadius : 5,
+				backgroundColor: "#d50f25",
+				top: 245,
+			});
+			
+			
+			var buttonLabel = Ti.UI.createLabel({
+				text: "Ta Bort",
+				font: Alloy.Globals.FONT,
+				color: "#FFF",
+				textAlign: "center"
+			});
+			
+			buttonView.add(buttonLabel);
+			
+			friend.add(buttonView);
+			
 			w.addEventListener('click', function() {
 				var t3 = Titanium.UI.create2DMatrix();
 				t3 = t3.scale(0);

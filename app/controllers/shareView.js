@@ -32,26 +32,43 @@ var mainView = Ti.UI.createScrollView({
 	layout : "vertical"
 });
 
+var header = Ti.UI.createView({
+	 	height : '15%',
+        width : Ti.UI.FILL,
+       
+        backgroundColor : '#303030',
+        backgroundGradient : {
+            type : "linear",
+            startPoint : {
+                x : "0%",
+                y : "0%"
+            },
+            endPoint : {
+                x : "0%",
+                y : "100%"
+            },
+            colors : [{
+                color : "#151515",
+
+            }, {
+                color : "#2E2E2E",
+
+            }]
+        }
+	});
+	
 var socialShareLabel = Ti.UI.createLabel({
 	text : Alloy.Globals.PHRASES.shareSocial,
-	textAlign : "center",
-	top : 30,
-	font : {
-		fontSize : 22,
-		fontFamily : "Impact"
-	},
+	//textAlign : "center",
+	//top : 30,
+	left: 20,
+	font : Alloy.Globals.getFontCustom(20, "Bold"),
 	color : "#FFF"
 });
-mainView.add(socialShareLabel);
+header.add(socialShareLabel);
+mainView.add(header);
 //----------------------------------------------------------------------EMAIL-----------------------------------------------------------------------------
-var mailBtn = Titanium.UI.createView({
-	top : "4%",
-	height : '11%',
-	width : '80%',
-	left : '10%',
-	backgroundColor : '#fff',
-	borderRadius : 5
-});
+var mailBtn = Alloy.Globals.createButtonView("#FFF", "#000", Alloy.Globals.PHRASES.sendMailTxt);
 mainView.add(mailBtn);
 
 var mailIconLabel = Titanium.UI.createLabel({
@@ -65,24 +82,8 @@ var mailIconLabel = Titanium.UI.createLabel({
 });
 mailBtn.add(mailIconLabel);
 
-mailLabel = Titanium.UI.createLabel({
-	text : Alloy.Globals.PHRASES.sendMailTxt,
-	font : {
-		fontSize : 18,
-		fontFamily : "Impact"
-	},
-	color : "#000000"
-});
-mailBtn.add(mailLabel);
 //----------------------------------------------------------------------SMS-----------------------------------------------------------------------------
-var smsBtn = Titanium.UI.createView({
-	top : "2%",
-	height : '11%',
-	width : '80%',
-	left : '10%',
-	backgroundColor : '#fff',
-	borderRadius : 5
-});
+var smsBtn = Alloy.Globals.createButtonView("#FFF", "#000", Alloy.Globals.PHRASES.sendSMSTxt);
 mainView.add(smsBtn);
 
 var smsIconLabel = Titanium.UI.createLabel({
@@ -96,14 +97,6 @@ var smsIconLabel = Titanium.UI.createLabel({
 });
 smsBtn.add(smsIconLabel);
 
-smsLabel = Titanium.UI.createLabel({
-	text : Alloy.Globals.PHRASES.sendSMSTxt,
-	font : {
-		fontSize : 18,
-		fontFamily : "Impact"
-	},
-	color : "#000000"
-});
 smsBtn.add(smsLabel);
 //----------------------------------------------------------------------FACEBOOK-----------------------------------------------------------------------------
 if (Alloy.Globals.FACEBOOKOBJECT != null) {
