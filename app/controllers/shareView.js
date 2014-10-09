@@ -101,14 +101,7 @@ smsBtn.add(smsLabel);
 //----------------------------------------------------------------------FACEBOOK-----------------------------------------------------------------------------
 if (Alloy.Globals.FACEBOOKOBJECT != null) {
 
-	var fbUserBtn = Titanium.UI.createView({
-		top : "2%",
-		height : '11%',
-		width : '80%',
-		left : '10%',
-		backgroundColor : '#3B5998',
-		borderRadius : 5
-	});
+	var fbUserBtn = Alloy.Globals.createButtonView('#3B5998', '#FFF', Alloy.Globals.PHRASES.shareFBTxt);
 	mainView.add(fbUserBtn);
 
 	var fbIconLabel = Titanium.UI.createLabel({
@@ -122,28 +115,12 @@ if (Alloy.Globals.FACEBOOKOBJECT != null) {
 	});
 	fbUserBtn.add(fbIconLabel);
 
-	fbLabel = Titanium.UI.createLabel({
-		text : Alloy.Globals.PHRASES.shareFBTxt,
-		font : {
-			fontSize : 18,
-			fontFamily : "Impact"
-		},
-		color : "#FFF"
-	});
-	fbUserBtn.add(fbLabel);
 }
 //-------------------------------------------------------------------TWITTER--------------------------------------------------------------------------------
 if(OS_IOS){
 	if (Titanium.Platform.canOpenURL('twitter://')) {
 
-	var twitterBtn = Titanium.UI.createView({
-		top : "2%",
-		height : '11%',
-		width : '80%',
-		left : '10%',
-		backgroundColor : '#00ACED',
-		borderRadius : 5
-	});
+	var twitterBtn = Alloy.Globals.createButtonView("#00ACED", "#FFF", Alloy.Globals.PHRASES.shareTwitterTxt);
 	mainView.add(twitterBtn);
 
 	var twitterIconLabel = Titanium.UI.createLabel({
@@ -157,25 +134,9 @@ if(OS_IOS){
 	});
 	twitterBtn.add(twitterIconLabel);
 
-	twitterLabel = Titanium.UI.createLabel({
-		text : Alloy.Globals.PHRASES.shareTwitterTxt,
-		font : {
-			fontSize : 18,
-			fontFamily : "Impact"
-		},
-		color : "#FFF"
-	});
-	twitterBtn.add(twitterLabel);
 }
 } else {
-	var twitterBtn = Titanium.UI.createView({
-		top : "2%",
-		height : '11%',
-		width : '80%',
-		left : '10%',
-		backgroundColor : '#00ACED',
-		borderRadius : 5
-	});
+	var twitterBtn = Alloy.Globals.createButtonView("#00ACED", "#FFF", Alloy.Globals.PHRASES.shareTwitterTxt);
 	mainView.add(twitterBtn);
 
 	var twitterIconLabel = Titanium.UI.createLabel({
@@ -189,25 +150,9 @@ if(OS_IOS){
 	});
 	twitterBtn.add(twitterIconLabel);
 
-	twitterLabel = Titanium.UI.createLabel({
-		text : Alloy.Globals.PHRASES.shareTwitterTxt,
-		font : {
-			fontSize : 18,
-			fontFamily : "Impact"
-		},
-		color : "#FFF"
-	});
-	twitterBtn.add(twitterLabel);
 }
 //---------------------------------------------------------------------------------------------------------------------------------------------------
-var googleBtn = Titanium.UI.createView({
-	top : "2%",
-	height : '11%',
-	width : '80%',
-	left : '10%',
-	backgroundColor : '#DD4B39',
-	borderRadius : 5
-});
+var googleBtn = Alloy.Globals.createButtonView("#DD4B39", "#FFF", Alloy.Globals.PHRASES.shareGoogleTxt);
 mainView.add(googleBtn);
 
 var gplusIconLabel = Titanium.UI.createLabel({
@@ -221,15 +166,6 @@ var gplusIconLabel = Titanium.UI.createLabel({
 });
 googleBtn.add(gplusIconLabel);
 
-googleLabel = Titanium.UI.createLabel({
-	text : Alloy.Globals.PHRASES.shareGoogleTxt,
-	font : {
-		fontSize : 18,
-		fontFamily : "Impact"
-	},
-	color : "#FFF"
-});
-googleBtn.add(googleLabel);
 
 // functions for the buttons
 
