@@ -17,9 +17,17 @@ if (OS_ANDROID) {
 }
 var mod = require('bencoding.blur');
 var openWindows = [];
+var sections = [];
+var table = null;
 
-var mainView = Ti.UI.createScrollView({
-	class : "topView",
+var iOSVersion;
+
+if (OS_IOS) {
+	iOSVersion = parseInt(Ti.Platform.version);
+}
+
+var mainView = Ti.UI.createView({
+	//class : "topView",
 	height : "100%",
 	width : "100%",
 	top : 0,
@@ -27,79 +35,50 @@ var mainView = Ti.UI.createScrollView({
 	layout : "vertical"
 });
 
-var friendLabel = Ti.UI.createLabel({
-	text : Alloy.Globals.PHRASES.myFriendsTxt,
-	textAlign : "center",
-	top : 10,
-	font : {
-		fontSize : 22,
-		fontFamily : "Impact"
-	},
-	color : "#FFF"
-});
-mainView.add(friendLabel);
+var header = Ti.UI.createView({
+	 	height : '15%',
+        width : Ti.UI.FILL,
+       
+        backgroundColor : '#303030',
+        backgroundGradient : {
+            type : "linear",
+            startPoint : {
+                x : "0%",
+                y : "0%"
+            },
+            endPoint : {
+                x : "0%",
+                y : "100%"
+            },
+            colors : [{
+                color : "#151515",
 
-var infoTxt = Ti.UI.createView({
-	top : 20,
-	backgroundColor : '#EA7337',
-	backgroundGradient : {
-		type : "linear",
-		startPoint : {
-			x : "0%",
-			y : "0%"
-		},
-		endPoint : {
-			x : "0%",
-			y : "100%"
-		},
-		colors : [{
-			color : "#F09C00",
-		}, {
-			color : "#D85000",
-		}]
-	},
-	width : "100%",
-	height : 30
+            }, {
+                color : "#2E2E2E",
 
-});
-mainView.add(infoTxt);
-
-var nameInfo = Ti.UI.createLabel({
-	text : Alloy.Globals.PHRASES.nameTxt,
-	left : '10%',
-	color : "#fff",
-	font : {
-		fontSize : 18,
-		fontFamily : "Impact"
-	},
-});
-infoTxt.add(nameInfo);
-
-var scoreInfo = Ti.UI.createLabel({
-	text : Alloy.Globals.PHRASES.deleteTxt,
-	left : '82%',
-	color : "#fff",
-	font : {
-		fontSize : 18,
-		fontFamily : "Impact"
-	},
-});
-infoTxt.add(scoreInfo);
-
-function createGUI(obj) {
-	var friend = Ti.UI.createView({
-		top : 2,
-		width : "100%",
-		height : 45,
+            }]
+        }
 	});
 
-	mainView.add(friend);
+var friendLabel = Ti.UI.createLabel({
+	text : Alloy.Globals.PHRASES.myFriendsTxt,
+	left: 20,
+	font : Alloy.Globals.getFontCustom(20, "Bold"),
+	color : "#FFF"
+});
+header.add(friendLabel);
+mainView.add(header);
 
-	var friendInfo = Ti.UI.createView({
-		backgroundColor : '#fff',
-		width : "78%",
-		left : "1%",
-		opacity : 0.7,
+function createGUI(obj) {
+	var child = true;
+	
+	var friend = Ti.UI.createTableViewRow({
+		hasChild : child,
+		width : Ti.UI.FILL,
+		left : 0,
+		className : 'gameTypeRow',
+		height : 75,
+		isFriend : false,
 		id : obj.id,
 		name : obj.name,
 		fbid : obj.fbid,
@@ -108,11 +87,10 @@ function createGUI(obj) {
 		level : obj.level,
 		teamName : obj.team.data[0].name,
 		teamLogo : obj.team.data[0].team_logo,
-		borderRadius : 5
 	});
 
-	friend.add(friendInfo);
-	friendInfo.addEventListener("click", function(e) {
+	
+	friend.addEventListener("click", function(e) {
 
 		//getFriendInfo(e.source.id);
 		if (OS_ANDROID) {
@@ -465,7 +443,7 @@ function createGUI(obj) {
 		profilePic.image = Alloy.Globals.BETKAMPENURL + '/profile_images/0.png';
 	});
 
-	friendInfo.add(profilePic);
+	friend.add(profilePic);
 
 	boardName = obj.name.toString();
 	if (boardName.length > 22) {
@@ -482,33 +460,14 @@ function createGUI(obj) {
 		level : obj.level,
 		teamName : obj.team.data[0].name,
 		teamLogo : obj.team.data[0].team_logo,
-		font : {
-			fontSize : 18,
-			fontFamily : "Impact"
-		},
+		font : Alloy.Globals.getFontCustom(18, "Regular"),
+		color: "#FFF"
 	});
-	friendInfo.add(name);
+	friend.add(name);
 
-	var deleteBtn = Ti.UI.createButton({
-		top : "0.4%",
-		height : 45,
-		width : '19%',
-		left : '80%',
-		id : obj.id,
-		fName : obj.name,
-		font : {
-			fontFamily : font,
-			fontSize : 32
-		},
-		title : fontawesome.icon('fa-trash-o'),
-		backgroundColor : '#fff',
-		color : '#000',
-		opacity : 0.7,
-		borderRadius : 5
-	});
-	friend.add(deleteBtn);
-
-	deleteBtn.addEventListener('click', function(e) {
+	
+	return friend;
+	/*deleteBtn.addEventListener('click', function(e) {
 
 		//deletefriend
 		var aL = Titanium.UI.createAlertDialog({
@@ -556,7 +515,7 @@ function createGUI(obj) {
 		});
 		aL.show();
 
-	});
+	});*/
 
 }
 
@@ -565,24 +524,12 @@ function createBtn() {
 		text : Alloy.Globals.PHRASES.noFriendsTxt,
 		textAlign : "center",
 		top : 10,
-		font : {
-			fontSize : 22,
-			fontFamily : "Impact"
-		},
+		font : Alloy.Globals.getFontCustom(20, "Regular"),
 		color : "#FFF"
 	});
 	mainView.add(addFriendsLabel);
 
-	var openFriendSearchBtn = Ti.UI.createButton({
-		height : 40,
-		width : '60%',
-		left : '20%',
-		top : '0.5%',
-		title : Alloy.Globals.PHRASES.addFriendsTxt,
-		backgroundColor : '#FFF',
-		color : '#000',
-		borderRadius : 5
-	});
+	var openFriendSearchBtn = Alloy.Globals.createButtonView("#FFF", "#000", Alloy.Globals.PHRASES.addFriendsTxt);
 	mainView.add(openFriendSearchBtn);
 
 	openFriendSearchBtn.addEventListener('click', function(e) {
@@ -607,20 +554,98 @@ var friends = null;
 var xhr = Ti.Network.createHTTPClient({
 	// function called when the response data is available
 	onload : function(e) {
-		Ti.API.info("Received text: " + this.responseText);
+		Ti.API.info("Received friends: " + this.responseText);
 		friends = JSON.parse(this.responseText);
 		if (friends.length == 0) {
 			createBtn();
 		} else {
+			Ti.API.info("VÄNNER ? " + JSON.stringify(friends));
+			
 			friends.sort(function(a, b) {
 				var x = a.name.toLowerCase();
 				var y = b.name.toLowerCase();
 				return ((x < y) ? -1 : ((x > y) ? 1 : 0));
 			});
+			
+			///*******Create Table View*******///
+
+			var tableHeaderView = Ti.UI.createView({
+				height : 0.1
+			});
+		
+			var fontawesome = require('lib/IconicFont').IconicFont({
+				font : 'lib/FontAwesome'
+			});
+		
+			var font = 'FontAwesome';
+		
+			if (OS_ANDROID) {
+				font = 'fontawesome-webfont';
+			}
+		
+			var tableFooterView = Ti.UI.createView({
+				height : 0.1
+			});
+		
+			if (OS_IOS) {
+				var separatorS;
+				var separatorCol;
+		
+				if (iOSVersion < 7) {
+					separatorS = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
+					separatorColor = 'transparent';
+				} else {
+					separatorS = Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE;
+					separatorColor = '#6d6d6d';
+				}
+		
+				table = Titanium.UI.createTableView({
+					//width : Ti.UI.FILL,
+					left : 0,
+					headerView : tableHeaderView,
+					footerView : tableFooterView,
+					height : '85%',
+					width : '100%',
+					//backgroundImage: '/images/profileBG.jpg',
+					backgroundColor : 'transparent',
+					style : Ti.UI.iPhone.TableViewStyle.GROUPED,
+					separatorInsets : {
+						left : 0,
+						right : 0
+					},
+					id : 'challengeTable',
+					separatorStyle : separatorS,
+					separatorColor : separatorColor
+				});
+			} else if (OS_ANDROID) {
+				table = Titanium.UI.createTableView({
+					width : Ti.UI.FILL,
+					left : 0,
+					headerView : tableHeaderView,
+					height : '85%',
+					//backgroundColor : '#303030',
+					separatorColor : '#6d6d6d',
+					id : 'challengeTable'
+				});
+			}
+			
+			sections[0] = Ti.UI.createTableViewSection({
+				headerView : Ti.UI.createView({
+					height : 0.1
+				}),
+				footerView : Ti.UI.createView({
+					height : 0.1
+				}),
+			});
+			Ti.API.info("VÄNNERNA : " + JSON.stringify(friends));
 			for (var i = 0; i < friends.length; i++) {
 				//alert(friends[i].team.data);
-				createGUI(friends[i]);
+				sections[0].add(createGUI(friends[i]));
 			}
+			
+			table.setData(sections);
+			mainView.add(table);
+
 		}
 		indicator.closeIndicator();
 	},
@@ -633,10 +658,12 @@ var xhr = Ti.Network.createHTTPClient({
 	timeout : Alloy.Globals.TIMEOUT // in milliseconds
 });
 // Prepare the connection.
+
+Ti.API.info("ÄR DU HÄR ELLER?");
 xhr.open('GET', Alloy.Globals.BETKAMPENGETFRIENDSURL + '?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
 
 xhr.setRequestHeader("content-type", "application/json");
-//xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
+xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
 xhr.setTimeout(Alloy.Globals.TIMEOUT);
 
 if (OS_IOS) {
