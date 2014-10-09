@@ -1,4 +1,8 @@
 <Alloy>
 	<Window class="container" id="scoreView">
+		<View id="scoreBoardView">
+			<TableView id="scoreBoardTable">
+			</TableView>
+		</View>
 	</Window>
 </Alloy>

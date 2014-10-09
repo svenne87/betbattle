@@ -507,7 +507,7 @@ function createLayout(gameObject) {
         view.add(Ti.UI.createView({
             height : 0.5,
             width: Ti.UI.FILL,
-            backgroundColor : '#6d6d6d'
+            backgroundColor : '#303030'
         }));
     }
 
@@ -557,7 +557,7 @@ function createLayout(gameObject) {
     view.add(Ti.UI.createView({
         height : 0.5,
         width: Ti.UI.FILL,
-        backgroundColor : '#6d6d6d'
+        backgroundColor : '#303030'
     }));
 
 
@@ -595,7 +595,7 @@ function createLayout(gameObject) {
 				separatorColor = 'transparent';
 			} else {
 				separatorS = Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE;
-				separatorColor = '#6d6d6d';
+				separatorColor = '#303030';
 			}
 			
 	
@@ -624,7 +624,7 @@ function createLayout(gameObject) {
 				headerView : tableHeaderView,
 				height : '75%',
 				//backgroundColor : '#303030',
-				separatorColor : '#6d6d6d',
+				separatorColor : '#303030',
 				id : 'challengeTable'
 			});
 		}
@@ -738,7 +738,7 @@ function createBorderView() {
 	view.add(Titanium.UI.createView({
 		height : '1dp',
 		width : '100%',
-		backgroundColor : '#6d6d6d'
+		backgroundColor : '#303030'
 	}));
 }
 

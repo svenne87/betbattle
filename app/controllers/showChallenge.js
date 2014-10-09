@@ -327,7 +327,7 @@ function createLayout(game, values, games, currentStanding, isFirst) {
     header.add(Ti.UI.createView({
         top : 12,
         height : 0.5,
-        backgroundColor : '#6d6d6d',
+        backgroundColor : '#303030',
         width : Ti.UI.FILL
     }));
 
@@ -344,7 +344,7 @@ function createLayout(game, values, games, currentStanding, isFirst) {
             separatorColor = 'transparent';
         } else {
             separatorS = Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE;
-            separatorColor = '#6d6d6d';
+            separatorColor = '#303030';
         }
 
         table = Titanium.UI.createTableView({
@@ -364,7 +364,7 @@ function createLayout(game, values, games, currentStanding, isFirst) {
             width : Ti.UI.FILL,
             height : '85%',
             backgroundColor : '#000',
-            separatorColor : '#6d6d6d',
+            separatorColor : '#303030',
         });
     }
     
@@ -573,7 +573,7 @@ function createBorderView() {
     $.showChallenge.add(Titanium.UI.createView({
         height : '1dp',
         width : '100%',
-        backgroundColor : '#6d6d6d'
+        backgroundColor : '#303030'
     }));
 }
 

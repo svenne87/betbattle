@@ -186,6 +186,7 @@ Alloy.Globals.BETKAMPENGETUSERTEAM = Alloy.Globals.BETKAMPENURL + '/api/get_user
 Alloy.Globals.BETKAMPENGETTEAMS = Alloy.Globals.BETKAMPENURL + '/api/get_teams.php'; // get all teams
 Alloy.Globals.BETKAMPENSETUSERTEAM = Alloy.Globals.BETKAMPENURL + '/api/add_user_team.php'; //set user team 
 Alloy.Globals.BETKAMPENPREVIOUSMATCHDAY = Alloy.Globals.BETKAMPENURL + '/api/get_last_match_day.php';
+Alloy.Globals.SCOREBOARDURL = Alloy.Globals.BETKAMPENURL + '/api/get_scoreboard.php';
 
 
 Alloy.Globals.performTimeout = function(func) {
