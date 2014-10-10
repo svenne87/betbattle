@@ -4,6 +4,16 @@ var winsLabel;
 var coinsLabel;
 var nameLabel;
 
+
+var fontawesome = require('lib/IconicFont').IconicFont({
+    font : 'lib/FontAwesome'
+});
+
+var font = 'FontAwesome';
+
+if(OS_ANDROID){
+    font = 'fontawesome-webfont';
+}
 checkRatestatus();
 /* Used to update the menu and add a indicator for a new challenge */
 Ti.App.addEventListener('app:updateMenu', function() {
@@ -135,10 +145,7 @@ function createMenuHeader() {
 	
 	nameLabel = Ti.UI.createLabel({
 		text : profileName,
-		font : {
-			fontSize : 14,
-			fontFamily : 'Impact'
-		},
+		font : Alloy.Globals.getFontCustom(14, "Regular"),
 		color : '#FFF',
 		left : 0
 	});
@@ -160,37 +167,36 @@ function createMenuHeader() {
 		layout : 'horizontal'
 	});
 
-	coinsView.add(Ti.UI.createImageView({
-		height : 15,
-		width : 20,
-		image : '/images/totalt_saldo.png'
+	coinsView.add(Ti.UI.createLabel({
+        font : {
+            fontFamily : font
+        },
+        text : fontawesome.icon('fa-database'),
+        color : '#CCC'
 	}));
 	
 	coinsLabel = Ti.UI.createLabel({
 		text : Alloy.Globals.PHRASES.loadingTxt,
-		font : {
-			fontSize : 14,
-			fontFamily : 'Impact'
-		},
+        font : Alloy.Globals.getFontCustom(14, "Regular"),
 		color : '#FFF',
 		left : 5
 	});
 	
 	coinsView.add(coinsLabel);
 
-	coinsView.add(Ti.UI.createImageView({
+	coinsView.add(Ti.UI.createLabel({
 		left : 10,
 		height : 15,
-		width : 20,
-		image : '/images/vinster_top.png'
+        font : {
+            fontFamily : font
+        },
+        text : fontawesome.icon('icon-signal'),
+        color : '#CCC'
 	}));
 	
 	winsLabel = Ti.UI.createLabel({
 		text : '',
-		font : {
-			fontSize : 14,
-			fontFamily : 'Impact'
-		},
+        font : Alloy.Globals.getFontCustom(14, "Regular"),
 		color : '#FFF',
 		left : 5
 	}); 

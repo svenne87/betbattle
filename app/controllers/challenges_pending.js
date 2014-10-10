@@ -2,6 +2,12 @@ var args = arguments[0] || {};
 var iOSVersion;
 
 if (OS_IOS) {
+    $.challenges_pending.titleControl = Ti.UI.createLabel({
+        text : Alloy.Globals.PHRASES.pendingTxt,
+        font : Alloy.Globals.getFontCustom(18, "Bold"),
+        color : '#FFF'
+    });
+
     iOSVersion = parseInt(Ti.Platform.version);
 }
 var uie = require('lib/IndicatorWindow');
@@ -99,7 +105,7 @@ function constructChallengeRows(obj, index, type) {
             // do nothing
             betGroupName = "";
         }
-  
+
         if (betGroupName <= 0) {
             betGroupName = obj.attributes.name;
         }
@@ -136,48 +142,47 @@ function constructChallengeRows(obj, index, type) {
         font : Alloy.Globals.getFontCustom(16, 'Regular'),
         color : '#FFF'
     }));
-    
-    
-    // set the length of the images you have in your sequence
-var loaderArrayLength=2;
- 
-// initialize the index to 1
-var loaderIndex=1;
- 
- var liveIcon = null;
-// this function will be called by the setInterval
-function loadingAnimation(){
-  // set the image property of the imageview by constructing the path with the loaderIndex variable
-  liveIcon.image = "/images/ikon_" + loaderIndex + "_live.png";
-  //increment the index so that next time it loads the next image in the sequence
-  loaderIndex++;
-  // if you have reached the end of the sequence, reset it to 1
-  if(loaderIndex===3)loaderIndex=1;
-}
- 
-// start the setInverval -- adjust the time to make a smooth animation
 
-    
+    // set the length of the images you have in your sequence
+    var loaderArrayLength = 2;
+
+    // initialize the index to 1
+    var loaderIndex = 1;
+
+    var liveIcon = null;
+    // this function will be called by the setInterval
+    function loadingAnimation() {
+        // set the image property of the imageview by constructing the path with the loaderIndex variable
+        liveIcon.image = "/images/ikon_" + loaderIndex + "_live.png";
+        //increment the index so that next time it loads the next image in the sequence
+        loaderIndex++;
+        // if you have reached the end of the sequence, reset it to 1
+        if (loaderIndex === 3)
+            loaderIndex = 1;
+    }
+
+    // start the setInverval -- adjust the time to make a smooth animation
+
     // check all matches in a challenge to check if any of the matches are active
     for (var i = 0; i < obj.attributes.matches.length; i++) {
         if (obj.attributes.matches[i].status === '3') {
-        	var liveLabel = Ti.UI.createLabel({
-        		text: "Live",
-        		left: 175,
-        		font : Alloy.Globals.getFontCustom(12, "Regular"),
-        		color: Alloy.Globals.themeColor()
-        	});
-        	
-        	firstRowView.add(liveLabel);
-            liveIcon = Ti.UI.createImageView({
-            	left: 160,
-            	image: '/images/ikon_1_live.png',
-            	height: 10,
-            	width: 10,
+            var liveLabel = Ti.UI.createLabel({
+                text : "Live",
+                left : 175,
+                font : Alloy.Globals.getFontCustom(12, "Regular"),
+                color : Alloy.Globals.themeColor()
             });
-            
+
+            firstRowView.add(liveLabel);
+            liveIcon = Ti.UI.createImageView({
+                left : 160,
+                image : '/images/ikon_1_live.png',
+                height : 10,
+                width : 10,
+            });
+
             firstRowView.add(liveIcon);
-            var loaderAnimate = setInterval(loadingAnimation,280);
+            var loaderAnimate = setInterval(loadingAnimation, 280);
             break;
         }
     }
@@ -455,7 +460,7 @@ function constructTableView(array) {
 
     var tableHeaderView = Ti.UI.createView({
         height : 0.1,
-     });
+    });
 
     var fontawesome = require('lib/IconicFont').IconicFont({
         font : 'lib/FontAwesome'
@@ -705,15 +710,15 @@ if (OS_ANDROID) {
             $.challenges_pending = null;
         };
         $.challenges_pending.activity.actionBar.displayHomeAsUp = true;
-        $.challenges_pending.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
-        indicator.openIndicator(); 
+        $.challenges_pending.activity.actionBar.title = Alloy.Globals.PHRASES.pendingTxt;
+        indicator.openIndicator();
     });
-} 
+}
 //constructTableView(Alloy.Globals.CHALLENGEOBJECTARRAY);
 
 if (Alloy.Globals.checkConnection()) {
-    if(OS_IOS) {
-        indicator.openIndicator(); 
+    if (OS_IOS) {
+        indicator.openIndicator();
     }
     getChallenges();
 } else {

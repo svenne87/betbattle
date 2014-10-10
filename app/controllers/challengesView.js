@@ -1,5 +1,4 @@
 // ikoner, annan font, vänster, dela av med gradient, user pengar klocka, öka namn. de andra mindre
-
     if (Alloy.Globals.hasCoupon) {
         if (OS_IOS) {
             Ti.API.info("challenge succces");
@@ -9,7 +8,7 @@
                     var labels = children[i].getChildren();
                     for (var y in labels) {
                         if (labels[y].id == "badge") {
-                            labels[y].setBackgroundColor("red");
+                            labels[y].setBackgroundColor(Alloy.Globals.themeColor());
                             labels[y].setBorderColor("#c5c5c5");
                             labels[y].setText("" + Alloy.Globals.COUPON.games.length);
                         }
