@@ -418,15 +418,11 @@ addEvent();
 // TODO går inte att logga in, kan vara fb session som löpt up, sen går de inte försöka igen....
 // set correct language phrase
 $.facebookBtnText.text = Alloy.Globals.PHRASES.loginFacebookButtonTxt;
-$.viewOneLabel.text = Alloy.Globals.PHRASES.labelOneTxt;
-$.viewTwoLabel.text = Alloy.Globals.PHRASES.labelTwoTxt;
-$.viewThreeLabel.text = Alloy.Globals.PHRASES.labelThreeTxt;
-$.viewFourLabel.text = Alloy.Globals.PHRASES.labelFourTxt;
-$.viewFiveLabel.text = Alloy.Globals.PHRASES.labelFiveTxt;
+
 
 // try to get Betkampen token
 Alloy.Globals.readToken();
-
+getTutorialImages();
 // check login
 if (Alloy.Globals.checkConnection()) {
 	if (fb.loggedIn) {
@@ -537,6 +533,78 @@ function loginBetkampenAuthenticated() {
 			Ti.API.log("4");
 		}
 	};
+}
+
+function getTutorialImages(){
+	var platform = "";
+	if (Alloy.Globals.checkConnection()) {
+		
+		if(OS_IOS){
+			platform = "iphone";
+		}else if(OS_ANDROID){
+			platform = "android";
+		}
+		var xhr = Titanium.Network.createHTTPClient();
+		xhr.onerror = function(e) {
+			Ti.API.error('Bad Sever =>' + JSON.stringify(e));
+			if (e.code == 401) {
+				
+			} else {
+				
+			}
+		};
+	
+		try {
+			xhr.open('POST', Alloy.Globals.BETKAMPENGETTUTORIALURL + "?lang=" + Alloy.Globals.LOCALE + '&platform=' + platform);
+			xhr.setRequestHeader("content-type", "application/json");
+			xhr.setTimeout(Alloy.Globals.TIMEOUT);
+		
+			xhr.send();
+		} catch(e) {
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.internetMayBeOffErrorTxt);
+		}
+	
+		xhr.onload = function() {
+			if (this.status == '200') {
+				if (this.readyState == 4) {
+					var response = null;
+					try {
+						response = JSON.parse(this.responseText);
+					} catch(e) {
+						
+					}
+	
+					if (response !== null) {
+						Ti.API.info("TUTORIAL BILD : " + JSON.stringify(response));
+						for (var i in response){
+							
+							var view = Ti.UI.createView({
+								height: Ti.UI.FILL,
+								width: Ti.UI.FILL,
+							});
+							var imageUrl =  Alloy.Globals.BETKAMPENURL + '/tutorial/' + platform + '/' + Alloy.Globals.LOCALE + '/tut_' + response[i] + '.png';
+							Ti.API.info("IMAGE URL " + imageUrl);
+							var image = Ti.UI.createImageView({
+								image :imageUrl,
+								text : Ti.UI.FILL,
+								text : Ti.UI.FILL, 
+							});
+							
+							view.add(image);
+							$.scrollableView.addView(view);
+						}
+					} else {
+						
+					}
+				} else {
+					
+					
+				}
+			} else {
+				
+			}
+		};
+	}
 }
 
 // Try to authenticate using refresh token
