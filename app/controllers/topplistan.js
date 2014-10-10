@@ -55,7 +55,7 @@ footerViewLabel = Ti.UI.createLabel({
     top : 25,
     text : '',
     height : Ti.UI.SIZE,
-    width : Ti.UI.SIZE,
+    width : Ti.UI.FILL,
     font : Alloy.Globals.getFontCustom(12, 'Regular'),
     color : '#FFF'
 });
@@ -632,7 +632,7 @@ function createRow(obj, friends, index) {
             fontFamily : font,
             //fontSize : 20
         },
-        text : fontawesome.icon('icon-trophy'),
+        text : fontawesome.icon('icon-signal'),
         color : Alloy.Globals.themeColor()
     });
 

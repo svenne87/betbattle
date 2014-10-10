@@ -59,18 +59,22 @@ function constructChallengeRows(obj, index, type) {
     }
 
     var imageLocation;
-    if (type === 'tournament' || type === 'tournament_finished') {
-        imageLocation = '/images/Topplista.png';
-    } else if(type == 'accept'){
-        imageLocation = '/images/status_go.png';
-    }else if(type == 'pending'){
-        imageLocation = '/images/status_waiting.png';
-    }else{
-        imageLocation = '/images/ikon_spelanasta.png';
+    // set correct image
+    if (obj.attributes.leagueMixed) {
+        // this is a mixed challenge
+        imageLocation = '/images/ikoner_mix_sport.png';
+    } else {
+        // not a mixed challenge, just get sport from league[0]
+        if (obj.attributes.leagues[0].sport_id === '1') {
+            // Hockey
+            imageLocation = '/images/ikon_sport_hockey.png';
+        } else if (obj.attributes.leagues[0].sport_id === '2') {
+            // Soccer
+            imageLocation = '/images/ikon_sport_fotboll.png';
+        } else {
+            imageLocation = '/images/ikoner_mix_sport.png';
+        }
     }
-    
-    // TMP TODO
-    imageLocation = '/images/Skapa_Utmaning_Default.png';
 
     row.add(Ti.UI.createImageView({
         image : imageLocation,
@@ -219,7 +223,7 @@ function constructChallengeRows(obj, index, type) {
         font : {
             fontFamily : font
         },
-        text : fontawesome.icon('icon-money'),
+        text : fontawesome.icon('fa-database'),
         color : Alloy.Globals.themeColor()
     });
 

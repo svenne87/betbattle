@@ -1,30 +1,30 @@
 // ikoner, annan font, vänster, dela av med gradient, user pengar klocka, öka namn. de andra mindre
 
-if(Alloy.Globals.hasCoupon){
-	if (OS_IOS) {
-							Ti.API.info("challenge succces");
-							var children = Alloy.Globals.NAV.getChildren();
-							for (var i in children) {
-								if (children[i].id == "ticketView") {
-									var labels = children[i].getChildren();
-									for (var y in labels) {
-										if (labels[y].id == "badge") {
-											labels[y].setBackgroundColor("red");
-											labels[y].setBorderColor("#c5c5c5");
-											labels[y].setText("" + Alloy.Globals.COUPON.games.length);
-										}
-										if (labels[y].id == "label") {
-											labels[y].setColor("#FFF");
-										}
-									}
+    if (Alloy.Globals.hasCoupon) {
+        if (OS_IOS) {
+            Ti.API.info("challenge succces");
+            var children = Alloy.Globals.NAV.getChildren();
+            for (var i in children) {
+                if (children[i].id == "ticketView") {
+                    var labels = children[i].getChildren();
+                    for (var y in labels) {
+                        if (labels[y].id == "badge") {
+                            labels[y].setBackgroundColor("red");
+                            labels[y].setBorderColor("#c5c5c5");
+                            labels[y].setText("" + Alloy.Globals.COUPON.games.length);
+                        }
+                        if (labels[y].id == "label") {
+                            labels[y].setColor("#FFF");
+                        }
+                    }
 
-								}
-							}
-						} else if (OS_ANDROID) {
-							// will rebuild action bar menu
-							Ti.App.fireEvent('app:rebuildAndroidMenu');
-						}
-}
+                }
+            }
+        } else if (OS_ANDROID) {
+            // will rebuild action bar menu
+            Ti.App.fireEvent('app:rebuildAndroidMenu');
+        }
+    }
 
  Ti.App.addEventListener("sliderToggled", function(e) {
 	if ( typeof table !== 'undefined') {
@@ -272,18 +272,15 @@ function constructChallengeRows(obj, index, type) {
     var font = 'FontAwesome';
 
 	// add custom icon on Android to symbol that the row has child
-	if (child != true) {
+	if (child !== true) {
 		var rightPercentage = '5%';
 
-		if (OS_ANDROID) {
-			font = 'fontawesome-webfont';
+        font = 'fontawesome-webfont';
 
-			if (Titanium.Platform.displayCaps.platformWidth < 350) {
-				rightPercentage = '3%';
-			}
-
-		}
-
+	   if (Titanium.Platform.displayCaps.platformWidth < 350) {
+	       rightPercentage = '3%';
+	   }
+		
 		row.add(Ti.UI.createLabel({
 			font : {
 				fontFamily : font
@@ -297,19 +294,23 @@ function constructChallengeRows(obj, index, type) {
 		}));
 	}
 
-	var imageLocation;
-	if (type === 'tournament' || type === 'tournament_finished') {
-		imageLocation = '/images/Topplista.png';
-	} else if(type == 'accept'){
-		imageLocation = '/images/status_go.png';
-	}else if(type == 'pending'){
-		imageLocation = '/images/status_waiting.png';
-	}else{
-		imageLocation = '/images/ikon_spelanasta.png';
-	}
-	
-	// TMP TODO
-	imageLocation = '/images/Skapa_Utmaning_Default.png';
+    var imageLocation;
+    // set correct image
+    if (obj.attributes.leagueMixed) {
+        // this is a mixed challenge
+        imageLocation = '/images/ikoner_mix_sport.png';
+    } else {
+        // not a mixed challenge, just get sport from league[0]
+        if (obj.attributes.leagues[0].sport_id === '1') {
+            // Hockey
+            imageLocation = '/images/ikon_sport_hockey.png';
+        } else if (obj.attributes.leagues[0].sport_id === '2') {
+            // Soccer
+            imageLocation = '/images/ikon_sport_fotboll.png';
+        } else {
+            imageLocation = '/images/ikoner_mix_sport.png';
+        }
+    }
 
 	row.add(Ti.UI.createImageView({
 		image : imageLocation,
@@ -458,7 +459,7 @@ function constructChallengeRows(obj, index, type) {
         font : {
             fontFamily : font
         },
-        text : fontawesome.icon('icon-money'),
+        text : fontawesome.icon('fa-database'),
         color : Alloy.Globals.themeColor()
     });
 
@@ -610,7 +611,6 @@ function constructTableView(array) {
 			headerView : tableHeaderView,
 			height : Ti.UI.FILL,
 			width : '100%',
-			//backgroundImage: '/images/profileBG.jpg',
 			backgroundColor : 'transparent',
 			style : Ti.UI.iPhone.TableViewStyle.GROUPED,
 			separatorInsets : {
@@ -690,14 +690,12 @@ function constructTableView(array) {
 		hasChild : child
 	});
 
-    var visualImagePrefs = {
+	acceptRow.add(Ti.UI.createImageView({
         left : 10,
         width : 30,
         height : 30,
-        image : '/images/Skapa_Utmaning_Default.png',
-    }; 
-
-	acceptRow.add(Ti.UI.createImageView(visualImagePrefs));
+        image : '/images/ikoner_utmaning_ny.png',
+    }));
 
 	acceptRow.add(Ti.UI.createLabel({
 		font : Alloy.Globals.getFontCustom(16, 'Regular'),
@@ -725,7 +723,12 @@ function constructTableView(array) {
     }
 
 	
-	pendingRow.add(Ti.UI.createImageView(visualImagePrefs));
+	pendingRow.add(Ti.UI.createImageView({
+        left : 10,
+        width : 30,
+        height : 30,
+        image : '/images/ikoner_utmaning_pagaende.png',
+    }));
 	
 	pendingRow.add(Ti.UI.createLabel({
 		font : Alloy.Globals.getFontCustom(16, 'Regular'),
@@ -751,7 +754,12 @@ function constructTableView(array) {
     }
 
 	
-	finishedRow.add(Ti.UI.createImageView(visualImagePrefs));
+	finishedRow.add(Ti.UI.createImageView({
+        left : 10,
+        width : 30,
+        height : 30,
+        image : '/images/ikoner_utmaning_klar.png',
+    }));
 	
 	finishedRow.add(Ti.UI.createLabel({
 		font : Alloy.Globals.getFontCustom(16, 'Regular'),

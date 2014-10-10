@@ -6,17 +6,7 @@ function WPATH(s) {
 
 module.exports = [ {
     isClass: true,
-    priority: 10000.9003,
-    key: "navLogo",
-    style: {
-        image: "/images/lakers_header.png",
-        left: 99,
-        width: 130,
-        height: 40
-    }
-}, {
-    isClass: true,
-    priority: 10000.9005,
+    priority: 10000.9002,
     key: "challengesSection",
     style: {
         height: 60,
@@ -25,7 +15,7 @@ module.exports = [ {
     }
 }, {
     isId: true,
-    priority: 100000.001,
+    priority: 100000.0012,
     key: "overlay",
     style: {
         width: Ti.UI.FILL,
@@ -35,11 +25,6 @@ module.exports = [ {
 }, {
     isId: true,
     priority: 100000.9001,
-    key: "betbattleLogo",
-    style: {}
-}, {
-    isId: true,
-    priority: 100000.90019999999,
     key: "facebookBtn",
     style: {
         top: "65%",
@@ -50,20 +35,9 @@ module.exports = [ {
     }
 }, {
     isId: true,
-    priority: 100101.0011,
+    priority: 100101.0013,
     key: "overlay",
     style: {
         opacity: .25
-    }
-}, {
-    isId: true,
-    priority: 100101.9004,
-    key: "nav",
-    style: {
-        translucent: false,
-        statusBarStyle: Titanium.UI.iPhone.StatusBar.LIGHT_CONTENT,
-        backgroundImage: "none",
-        backgroundColor: "none",
-        backgroundGradient: "none"
     }
 } ];
