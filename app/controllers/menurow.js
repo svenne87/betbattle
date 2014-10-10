@@ -10,9 +10,5 @@ if($.rightIcon.text !== null) {
 	$.rightIcon.setColor('#FFF');
 	$.rightIcon.setTextAlign('center');
 	$.rightIcon.setBorderRadius(8);
-	$.rightIcon.setFont({
-		fontSize : 12,
-		fontWeight : 'normal',
-		fontFamily : 'Impact',
-	});
+	$.rightIcon.setFont(Alloy.Globals.getFontCustom(12, "Regular"));
 }

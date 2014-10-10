@@ -42,8 +42,13 @@ function Controller() {
     });
     var url = Alloy.Globals.BETKAMPENURL + "/webviews/terms_wv.php";
     var win = $.terms;
-    indicator.openIndicator();
     var extwebview;
+    $.terms.titleControl = Ti.UI.createLabel({
+        text: Alloy.Globals.PHRASES.termsTxt,
+        font: Alloy.Globals.getFontCustom(18, "Bold"),
+        color: "#FFF"
+    });
+    indicator.openIndicator();
     extwebview = Titanium.UI.createWebView({
         top: 0,
         left: 0,

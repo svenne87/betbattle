@@ -409,14 +409,15 @@ function createSubmitButtonAnswer() {
 }
 
 function createSubmitButtonMatchOTD() {
-    var submitView = Titanium.UI.createView({
-        id : 'submitButtonOTD',
+    var submitView = Titanium.UI.createTableViewRow({
+        id : 'submitButton',
         hasChild : false,
         width : Ti.UI.FILL,
         left : 0,
         className : 'gameTypeRow',
-        height : 75,
+        height : 90,
     });
+
 
     submitButton = Titanium.UI.createButton({
         top : 10,
@@ -444,8 +445,7 @@ function createSubmitButtonMatchOTD() {
     });
 
     submitView.add(submitButton);
-
-    view.add(submitView);
+    return submitView;
 }
 
 function createBetAmountView() {
@@ -1248,7 +1248,7 @@ function createLayout(gameObject) {
         Ti.API.info("ARRAY LENGTH :  " + gameObjects.length);
         if (gameObjects.indexOf(gameObject) == (gameObjects.length - 1)) {
             // last game
-            if (answer == 1) {
+            if (answer == 1 || matchOTD == 1) {
                 if (bet_amount > 0) {
                     Ti.API.info("HUR MÅNGA SECTIONS : " + sections.length);
                     var sectionIndex = sections.length;
@@ -1311,19 +1311,24 @@ function createLayout(gameObject) {
                         height : 10,
                     })
                 });
+                if(answer) {
+   
                 sections[sectionIndex + 1].add(createSubmitButtonAnswer());
-            }
-
-        } else {
-
-        }
-
+                }
+                                
+                
         if (matchOTD == 1) {
             if (bet_amount > 0) {
                 createBetAmountView();
             }
-            createSubmitButtonMatchOTD();
+           sections[sectionIndex + 1].add(createSubmitButtonMatchOTD());
         }
+                
+             
+            }
+
+        } 
+
         table.setData(sections);
         /*if (roundId === -1) {
          createBetCoinsView(coinsToJoin);
@@ -1480,7 +1485,7 @@ if (OS_ANDROID) {
     });
 } else {
     $.challengeWindow.titleControl = Ti.UI.createLabel({
-        text : menuTxt,
+        text : menuText,
         font : Alloy.Globals.getFontCustom(18, "Bold"),
         color : '#FFF'
     });

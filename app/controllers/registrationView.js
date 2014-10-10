@@ -19,7 +19,7 @@ if (OS_ANDROID) {
             $.registrationView = null;
         };
         $.registrationView.activity.actionBar.displayHomeAsUp = true;
-        $.registrationView.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
+        $.registrationView.activity.actionBar.title = Alloy.Globals.PHRASES.Register;
     });
 
     var headerView = Ti.UI.createView({
@@ -39,7 +39,7 @@ if (OS_ANDROID) {
     });
 } else {
     $.registrationView.titleControl = Ti.UI.createLabel({
-        text : Alloy.Globals.PHRASES.betbattleTxt,
+        text : Alloy.Globals.PHRASES.Register,
         font : Alloy.Globals.FONT,
         color : 'white'
     });
