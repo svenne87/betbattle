@@ -12,8 +12,9 @@ function createGameType(gameType, gameObject, i, gameArray, index) {
 		width : Ti.UI.FILL,
 		left : 0,
 		className : 'gameTypeRow',
-		height : 75,
-		value : i + 1
+		height : 65,
+		value : i + 1,
+		selectionStyle : 'none',
 	});
 			//get the corresponding text inside each button from the JSON file
 			var text = Alloy.Globals.PHRASES.gameTypes[type].buttonValues[i + 1];
@@ -70,20 +71,21 @@ function createGameType(gameType, gameObject, i, gameArray, index) {
 						height : "auto",
 						width : "auto",
 				}));
-				
+				e.row.setBackgroundColor(Alloy.Globals.themeColor());
 				for (var x in children.rows){
-					children.rows[x].setBackgroundColor("#000");
+					
 					labels = children.rows[x].getChildren();
 					if(children.rows[x].value != e.row.value){
 						for (var k in labels){
 							var selected = "selected_"+e.row.id;
 							if(labels[k].id == selected){
 								children.rows[x].remove(labels[k]);
+								children.rows[x].setBackgroundColor("#000");
 							}
 						}
 					}
 				}
-				e.row.setBackgroundColor(Alloy.Globals.themeColor());
+				
 				
 				
 				Ti.API.info("gameArray : " + JSON.stringify(gameArray));
@@ -1202,7 +1204,7 @@ function createLayout(gameObject) {
 			var index = gameArray.indexOf(gameObj);
 			
 			var gameTypeHeaderView = Ti.UI.createView({
-				height: 75,
+				height: 65,
 				backgroundColor : '#303030',
 						        backgroundGradient : {
 						            type : "linear",
@@ -1228,11 +1230,21 @@ function createLayout(gameObject) {
 				text: Alloy.Globals.PHRASES.gameTypes[gametypes[y].type].description,
 				//textAlign: "left",
 				//width: Ti.UI.FILL,
+				top: 10,
 				left: 20,
 				font: Alloy.Globals.getFontCustom(18, "Bold"),
 				color: "#FFF"
 			});
 			gameTypeHeaderView.add(gameTypeLabel);
+			
+			var gameTypeScoreLabel = Ti.UI.createLabel({
+				text: "ger " + gametypes[y].number_of_values + " poäng",
+				top: 40,
+				left: 20,
+				font: Alloy.Globals.getFontCustom(12, "Regular"),
+				color: Alloy.Globals.themeColor(),
+			});
+			gameTypeHeaderView.add(gameTypeScoreLabel);
 			
 			sections[y] = Ti.UI.createTableViewSection({
 							headerView: gameTypeHeaderView,
@@ -1261,7 +1273,7 @@ function createLayout(gameObject) {
 					var sectionIndex = sections.length;
 					
 					var gameTypeHeaderView = Ti.UI.createView({
-						height: 75,
+						height: 70,
 						backgroundColor : '#303030',
 								        backgroundGradient : {
 								            type : "linear",
