@@ -69,10 +69,10 @@ function constructChallengeRows(obj, index, type) {
         // not a mixed challenge, just get sport from league[0]
         if (obj.attributes.leagues[0].sport_id === '1') {
             // Hockey
-            imageLocation = '/images/ikon_sport_hockey.png';
+            imageLocation = '/images/Ikonhockey.png';
         } else if (obj.attributes.leagues[0].sport_id === '2') {
             // Soccer
-            imageLocation = '/images/ikon_sport_fotboll.png';
+            imageLocation = '/images/Ikonfotboll.png';
         } else {
             imageLocation = '/images/ikoner_mix_sport.png';
         }

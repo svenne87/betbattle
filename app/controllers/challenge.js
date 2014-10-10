@@ -419,21 +419,7 @@ function createSubmitButtonMatchOTD() {
     });
 
 
-    submitButton = Titanium.UI.createButton({
-        top : 10,
-        width : '70%',
-        height : 40,
-        color : '#FFF',
-        backgroundColor : Alloy.Globals.themeColor(),
-        borderRadius : 6,
-        font : {
-            fontFamily : Alloy.Globals.getFont(),
-            fontSize : Alloy.Globals.getFontSize(2)
-        },
-        title : Alloy.Globals.PHRASES.respondTxt,
-        backgroundImage : 'none',
-        touchEnabled : true,
-    });
+    submitButton = Alloy.Globals.createButtonView(Alloy.Globals.themeColor(), "#FFF", Alloy.Globals.PHRASES.respondTxt);
 
     submitButton.addEventListener("click", function(e) {
         Ti.API.info("match of the day");
@@ -546,14 +532,12 @@ function postMatchOfTheDay() {
 
                     if (answer) {
                         $.challengeWindow.close();
-                        for (var win in Alloy.Globals.WINDOWS) {
-                            Alloy.Globals.WINDOWS[win].close();
-                        }
-
+                        prevWin.close();
+                        
                         var args = {
                             gameID : gameID,
                         };
-
+                            // TODO
                         var win = Alloy.createController('showMatchOTD', args).getView();
 
                         if (OS_IOS) {
@@ -1017,14 +1001,17 @@ function createLayout(gameObject) {
         }
     }
 
+    var topMargin = 12;
     var fontSize = Alloy.Globals.getFontSize(2);
     if (teamNames == null) {
         var teamNames = gameObject.attributes.team_1.team_name + " - " + gameObject.attributes.team_2.team_name;
     }
     if (teamNames.length > 26) {
         fontSize = 18;
+        topMargin = 16;
     } else if (teamNames.length > 36) {
         fontSize = 16;
+        topMargin = 20;
     }
 
     image.add(Ti.UI.createLabel({
@@ -1057,7 +1044,7 @@ function createLayout(gameObject) {
     }));
 
     image.add(Ti.UI.createView({
-        top : 12,
+        top : topMargin,
         height : 0.5,
         backgroundColor : '#6d6d6d',
         width : Ti.UI.FILL
@@ -1311,7 +1298,7 @@ function createLayout(gameObject) {
                         height : 10,
                     })
                 });
-                if(answer) {
+                if(answer == 1) {
    
                 sections[sectionIndex + 1].add(createSubmitButtonAnswer());
                 }
@@ -1378,6 +1365,8 @@ var fontAwe = 'FontAwesome';
 if (OS_ANDROID) {
     fontAwe = 'fontawesome-webfont';
 }
+
+var prevWin = args.win;
 
 var roundId = -1;
 if ( typeof args.round !== 'undefined') {
@@ -1466,6 +1455,8 @@ var submitButton;
 var menuText = Alloy.Globals.PHRASES.createChallengeTxt;
 if (roundId === -1) {
     menuText = Alloy.Globals.PHRASES.answerTxt;
+} else if(matchOTD == 1) {
+     menuText = Alloy.Globals.PHRASES.answerTxt;
 }
 
 if (OS_ANDROID) {

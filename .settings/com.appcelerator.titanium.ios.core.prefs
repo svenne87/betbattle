@@ -1,10 +1,10 @@
 eclipse.preferences.version=1
 iosLaunchConfigurationAttributes/ATTR_MINIFY=true
-iosLaunchConfigurationAttributes/ATTR_PROJECT_NAME=betbattle
+iosLaunchConfigurationAttributes/ATTR_PROJECT_NAME=BetKampen
 iosLaunchConfigurationAttributes/appid=apps.topgame.betkampen
 iosLaunchConfigurationAttributes/certificate=Topgame AB (WA424AJXKV)
-iosLaunchConfigurationAttributes/distribute_path=/Users/sashe/Desktop
-iosLaunchConfigurationAttributes/keychain=/Users/sashe/Library/Keychains/login.keychain
-iosLaunchConfigurationAttributes/output_format=archive
-iosLaunchConfigurationAttributes/sdk_version=7.1
-iosLaunchConfigurationAttributes/uuid=BCD1191B-0A3E-40A7-A180-F90D0C3151A6
+iosLaunchConfigurationAttributes/distribute_path=/Users/Svempa/Downloads/Betkampen/exe
+iosLaunchConfigurationAttributes/keychain=/Library/Keychains/System.keychain
+iosLaunchConfigurationAttributes/output_format=ipa
+iosLaunchConfigurationAttributes/sdk_version=8.0
+iosLaunchConfigurationAttributes/uuid=d22e6aec-eafe-48eb-97d8-888ec1e87a65
