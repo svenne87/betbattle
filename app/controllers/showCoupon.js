@@ -464,7 +464,7 @@ var footerView = Ti.UI.createView({
     backgroundColor : '#000'
 });
 
-var submitButton = Alloy.Globals.createButtonView('#FFF', '#000', Alloy.Globals.PHRASES.challengeBtnTxt);
+var submitButton = Alloy.Globals.createButtonView(Alloy.Globals.themeColor(), '#FFF', Alloy.Globals.PHRASES.challengeBtnTxt);
 submitButton.top = 45;
 submitButton.addEventListener('click', function() {
     var gameDatesValid = true;

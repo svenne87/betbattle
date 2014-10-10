@@ -381,24 +381,91 @@ function createGUI(obj) {
 
 
 			var buttonView = Ti.UI.createView({
-				width: "80%",
-				height: 60,
-				borderRadius : 5,
-				backgroundColor: "#d50f25",
-				top: 245,
+				width : Ti.UI.SIZE,
+	           // height : Ti.UI.SIZE,
+	            layout : 'horizontal',
+	            left : 10,
+	            top : 245,
+	            height: 40,
+	            id: e.source.id,
+	            fName : e.source.name
 			});
 			
 			
-			var buttonLabel = Ti.UI.createLabel({
-				text: "Ta Bort",
-				font: Alloy.Globals.FONT,
-				color: "#FFF",
-				textAlign: "center"
+			 buttonView.add(Ti.UI.createLabel({
+	            width : Ti.UI.SIZE,
+	            height : Ti.UI.SIZE,
+	            top : 12,
+	            left : 2,
+	            text : fontawesome.icon('icon-trash'),
+	            color : '#000',
+	            font : {
+	                fontFamily : font
+	            },
+	          	 id: e.source.id,
+	            fName : e.source.name
+	        }));
+	
+	        buttonView.add(Ti.UI.createLabel({
+	            width : Ti.UI.SIZE,
+	            height : Ti.UI.SIZE,
+	            top : 8,
+	            left : 6,
+	            text : "Ta bort vän",
+	            font : Alloy.Globals.getFontCustom(16, 'Regular'),
+	            color : "#000",
+	             id: e.source.id,
+	            fName : e.source.name
+	        }));
+			
+			buttonView.addEventListener("click", function(e) {
+				var aL = Titanium.UI.createAlertDialog({
+					title : Alloy.Globals.PHRASES.betbattleTxt,
+					message : Alloy.Globals.PHRASES.removeFriendTxt + ' ' + e.source.fName + '?',
+					buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtnTxt],
+					cancel : 1,
+					id : e.source.id,
+					fName : e.source.fName
+				});
+		
+				aL.addEventListener('click', function(e) {
+					switch(e.index) {
+					case 0:
+						var removeFriend = Ti.Network.createHTTPClient();
+						removeFriend.open("POST", Alloy.Globals.BETKAMPENDELETEFRIENDURL + '?frid=' + e.source.id + '&fb=0&lang=' + Alloy.Globals.LOCALE);
+						removeFriend.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
+						
+						
+						removeFriend.send();
+						//Ti.API.info(params);
+						//deleteBtn.visible = false;
+						//friendInfo.borderColor = '#ff0000';
+						var win = Alloy.createController('myFriends').getView();
+						if (OS_IOS) {
+							Alloy.Globals.NAV.openWindow(win, {
+								animated : false
+							});
+						} else {
+							win.open({
+								fullScreen : true
+							});
+							win = null;
+						}
+						$.myFriends.close();
+						Alloy.Globals.showToast(e.source.fName + ' ' + Alloy.Globals.PHRASES.groupMemberDeletedTxt);
+		
+						break;
+					case 1:
+						Titanium.API.info('cancel');
+						break;
+					}
+		
+				});
+				aL.show();
+		
 			});
 			
-			buttonView.add(buttonLabel);
-			
-			friend.add(buttonView);
+			w.add(buttonView);
 			
 			w.addEventListener('click', function() {
 				var t3 = Titanium.UI.create2DMatrix();

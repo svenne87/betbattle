@@ -167,12 +167,14 @@ for (var i in leagues) {
 		left : 10,
 		height : 40,
 		width : 40,
+		borderRadius: 20,
+		backgroundColor : "white",
 		image : imageLocation,
-		defaultImage : '/images/Skapa_Utmaning_Default.png'
+		defaultImage : '/images/Liga_Default.png'
 	});
 	
 	leagueImageView.addEventListener('error',function(e){
-      leagueImageView.image = '/images/Skapa_Utmaning_Default.png';
+      leagueImageView.image = '/images/Liga_Default.png';
 	});
 	
 	tableRow.add(leagueImageView);

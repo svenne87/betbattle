@@ -375,6 +375,43 @@ function createEmptyTableRow(text) {
 	return row;
 }
 
+function createNewChallengeRow(){
+	var tableFooterView = Ti.UI.createTableViewRow({
+		height:65,
+		hasChild: true,
+	});
+	
+	tableFooterView.add(Ti.UI.createImageView({
+		image: '/images/Skapa_Utmaning.png',
+		width: 30,
+		height: 30,
+		left: 10,
+	}));
+	
+	tableFooterView.add(Ti.UI.createLabel({
+		text: Alloy.Globals.PHRASES.createChallengeTxt,
+		font: Alloy.Globals.getFontCustom(16, "Regular"),
+		color:"#FFF",
+		left: 45,
+	}));
+	
+	tableFooterView.addEventListener("click", function(e){
+		var win = Alloy.createController('newChallengeLeague').getView();
+		Alloy.Globals.WINDOWS.push(win);
+
+		if (OS_IOS) {
+			Alloy.Globals.NAV.openWindow(win, {
+				animated : true
+			});
+		} else if (OS_ANDROID) {
+			win.open({
+				fullScreen : true
+			});
+		}
+	});
+	
+	return tableFooterView;
+}
 
 function constructTableView(array) {
 
@@ -450,6 +487,10 @@ function constructTableView(array) {
 	tableHeaderView.add(tableHeaderLabel);
 
 
+	tableFooterView = Ti.UI.createView({
+		height: 0.1,
+	});
+
 	var fontawesome = require('lib/IconicFont').IconicFont({
 		font : 'lib/FontAwesome'
 	});
@@ -477,6 +518,7 @@ function constructTableView(array) {
 			//width : Ti.UI.FILL,
 			left : 0,
 			headerView : tableHeaderView,
+			footerView: tableFooterView,
 			height : '100%',
 			width: '100%',
 			//backgroundImage: '/images/profileBG.jpg',
@@ -496,6 +538,7 @@ function constructTableView(array) {
 			width : Ti.UI.FILL,
 			left : 0,
 			headerView : tableHeaderView,
+			footerView: tableFooterView,
 			height : '100%',
 			//backgroundColor : '#303030',
 			separatorColor : '#6d6d6d',
@@ -544,6 +587,7 @@ function constructTableView(array) {
 				}
 			} else if (arrayObj.length === 0 && challengesTournamentsCount > 0) {
 				sections[0].add(createEmptyTableRow(Alloy.Globals.PHRASES.challengesSmallTxt + '/' + Alloy.Globals.PHRASES.tournamentsSmallTxt));
+				
 			}
 		} else if (x === 3) {
 			// create 'accept' / 'pending' tournaments rows
@@ -556,6 +600,7 @@ function constructTableView(array) {
 			}
 		} 
 	}
+	sections[0].add(createNewChallengeRow());
 
 	table.setData(sections);
 
