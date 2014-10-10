@@ -870,7 +870,7 @@ Alloy.Globals.getCoupon = function(uid) {
 									var labels = children[i].getChildren();
 									for (var y in labels) {
 										if (labels[y].id == "badge") {
-											labels[y].setBackgroundColor("red");
+											labels[y].setBackgroundColor(Alloy.Globals.themeColor());
 											labels[y].setBorderColor("#c5c5c5");
 											labels[y].setText("" + Alloy.Globals.COUPON.games.length);
 										}

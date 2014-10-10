@@ -108,7 +108,7 @@ $.scoreBoardTable.addEventListener('scroll', function(_evt) {
     }
 
 });
-
+/*
 var scoreBoardInfoView = Ti.UI.createView({
     height : 75,
     width : Ti.UI.FILL,
@@ -143,9 +143,18 @@ scoreBoardInfoView.add(Ti.UI.createLabel({
     font : Alloy.Globals.getFontCustom(18, 'Regular'),
     color : '#FFF'
 }));
+*/
+$.scoreView.titleControl = Ti.UI.createLabel({
+    text : Alloy.Globals.PHRASES.scoreboardTxt,
+    font : Alloy.Globals.getFontCustom(18, "Bold"),
+    color : '#FFF'
+});
+
 
 sections[0] = Ti.UI.createTableViewSection({
-    headerView : scoreBoardInfoView,
+    headerView : Ti.UI.createView({
+        height : 0.1
+    }),
     footerView : Ti.UI.createView({
         height : 0.1
     })
@@ -848,7 +857,7 @@ if (OS_ANDROID) {
             $.scoreView = null;
         };
         $.scoreView.activity.actionBar.displayHomeAsUp = true;
-        $.scoreView.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
+        $.scoreView.activity.actionBar.title = Alloy.Globals.PHRASES.scoreboardTxt;
 
         // sometimes the view remain in memory, then we don't need to show the "loading"
         if (!name) {

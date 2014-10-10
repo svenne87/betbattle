@@ -660,7 +660,7 @@ Ti.App.addEventListener("sliderToggled", function(e) {
 
 if (OS_IOS){
 	Alloy.Globals.NAV = $.nav;
-	
+
 	var labelsMenu = [{ image : '/images/ButtonMenu.png'}];
 	
 	var buttonBarMenu = Titanium.UI.createButtonBar({
@@ -677,12 +677,6 @@ if (OS_IOS){
 		// show / hide slide menu
    		$.ds.toggleLeftSlider();
 	});
-	
-	var fontawesome = require('lib/IconicFont').IconicFont({
-		font : 'lib/FontAwesome'
-	});
-
-	var font = 'FontAwesome';
 
     $.mainWin.titleControl = Ti.UI.createLabel({
         text : Alloy.Globals.PHRASES.betbattleTxt,
@@ -712,14 +706,11 @@ if (OS_IOS){
 		width: 15,
 		height: 15,
 		borderRadius: 7,
-		//text: 1,
 		right: 5,
 		id: "badge",
 		textAlign: "center",
-		font: {
-			fontSize: 10,
-			fontFamily: "Impact",
-		},
+		color : '#FFF',
+		font : Alloy.Globals.getFontCustom(10, "Regular"),
 		backgroundColor: "transparent",
 		borderColor: "transparent",
 		borderWidth: 1,	
@@ -769,10 +760,7 @@ if (OS_IOS){
         	height : Ti.UI.SIZE,
         	width : Ti.UI.SIZE,
         	color : '#FFF',
-        	font : {
-				fontSize : 19,
-				fontFamily : "Impact"
-			},
+        	font : Alloy.Globals.getFontCustom(19, "Regular"),
 			text : Alloy.Globals.PHRASES.loadingTxt
         });
         $.ds.contentview.add(loadingLabel);

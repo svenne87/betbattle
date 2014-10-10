@@ -1479,7 +1479,7 @@ var submitButton;
 // create menu label
 var menuText = Alloy.Globals.PHRASES.createChallengeTxt;
 if (roundId === -1) {
-	menuText = challengeObject.attributes.league[0].league_name;
+	menuText = Alloy.Globals.PHRASES.answerTxt;
 }
 
 if (OS_ANDROID) {

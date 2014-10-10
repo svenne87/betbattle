@@ -6,7 +6,7 @@ $.row.customTitle = $.title;
 $.rightIcon.text = args.rightIcon || null; 
 
 if($.rightIcon.text !== null) {
-	$.rightIcon.setBackgroundColor("blue");
+	$.rightIcon.setBackgroundColor(Alloy.Globals.themeColor());
 	$.rightIcon.setColor('#FFF');
 	$.rightIcon.setTextAlign('center');
 	$.rightIcon.setBorderRadius(8);
