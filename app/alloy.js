@@ -256,18 +256,6 @@ Alloy.Globals.setAndroidCouponMenu = function(activity) {
 				win = null;
 			}
 		});
-		
-		homeItem = e.menu.add({
-            showAsAction : Ti.Android.SHOW_AS_ACTION_ALWAYS,
-            icon : 'images/ic_action_refresh.png'
-        });
-  
-        homeItem.addEventListener("click", function(e){
-			for(var win in Alloy.Globals.WINDOWS) {
-				Alloy.Globals.WINDOWS[win].close();
-			}     			 		
-			Alloy.Globals.MAINWIN.close();
-       	});
 	};
 
 	activity.onPrepareOptionsMenu = function(e) {
@@ -739,6 +727,15 @@ Alloy.Globals.constructChallenge = function(responseAPI) {
 			
 			if(c === 1 ) {
 			    // handle pending challenge's
+			    var leagues = response[i].leagues;
+                var leagueMixed = false;
+                
+                for(var x = 0; x < leagues.length; x++) {
+                    if(leagues[x].id !== leagues[0].id) {
+                        leagueMixed = true;
+                    }
+                }
+                
                 var challenge = Alloy.createModel('challenge', {
                     id : response[i].c_id,
                     name : response[i].c_name,
@@ -750,10 +747,11 @@ Alloy.Globals.constructChallenge = function(responseAPI) {
                     potential_pot : response[i].potential_pot,
                     winners : cWinners,
                     group : response[i].group,
-                    league : response[i].league,
+                    leagues : response[i].leagues,
                     round : response[i].round,
                     show : response[i].show,
-                    matches : response[i].matches
+                    matches : response[i].matches,
+                    leagueMixed : leagueMixed
                 });
 			    
 			} else if (c === 3 || c === 4) {
@@ -773,6 +771,16 @@ Alloy.Globals.constructChallenge = function(responseAPI) {
 				});
 			} else {
 				// handle normal challenge's
+				                
+                var leagues = response[i].leagues;
+                var leagueMixed = false;
+                
+                for(var x = 0; x < leagues.length; x++) {
+                    if(leagues[x].id !== leagues[0].id) {
+                        leagueMixed = true;
+                    }
+                }
+				
 				var challenge = Alloy.createModel('challenge', {
 					id : response[i].c_id,
 					name : response[i].c_name,
@@ -784,10 +792,12 @@ Alloy.Globals.constructChallenge = function(responseAPI) {
 					potential_pot : response[i].potential_pot,
 					winners : cWinners,
 					group : response[i].group,
-					league : response[i].league,
+					leagues : response[i].leagues,
 					round : response[i].round,
-					show : response[i].show
-				});
+					show : response[i].show,
+					matches : response[i].matches,
+					leagueMixed : leagueMixed
+				});				
 			}
 
 			array.push(challenge);

@@ -49,22 +49,24 @@ var apns = function(){
 			args = {
 				refresh : 1,
 			};
-			var loginSuccessWindow = Alloy.createController('main', args).getView();
-				if (OS_IOS) {
-					loginSuccessWindow.open({
-						fullScreen : true,
-						transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
-					});
-				} else if (OS_ANDROID) {
-					loginSuccessWindow.open({
-						fullScreen : true,
-						navBarHidden : false,
-						orientationModes : [Titanium.UI.PORTRAIT]
-					});
-				}
-				loginSuccessWindow = null;
-			
-			
+					         
+            if(Alloy.Globals.MAINWIN !== null) {
+                var arg = {
+                    refresh : true
+                };
+
+                var obj = {
+                    controller : 'challengesView',
+                    arg : arg
+                };
+                Ti.App.fireEvent('app:updateView', obj);
+            } else {
+                var loginSuccessWindow = Alloy.createController('main', args).getView();
+                loginSuccessWindow.open({
+                    fullScreen : true
+                });
+                loginSuccessWindow = null;      
+            }			
 		});
         
       }
