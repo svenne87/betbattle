@@ -32,7 +32,7 @@ if (OS_ANDROID) {
             $.loginView = null;
         };
         $.loginView.activity.actionBar.displayHomeAsUp = true;
-        $.loginView.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
+        $.loginView.activity.actionBar.title = Alloy.Globals.PHRASES.signInTxt;
     });
 
     $.loginView.windowSoftInputMode = Ti.UI.Android.SOFT_INPUT_ADJUST_PAN;
@@ -54,9 +54,9 @@ if (OS_ANDROID) {
     });
 } else {
     $.loginView.titleControl = Ti.UI.createLabel({
-        text : Alloy.Globals.PHRASES.betbattleTxt,
-        font : Alloy.Globals.FONT,
-        color : 'white'
+        text : Alloy.Globals.PHRASES.signInTxt,
+         font : Alloy.Globals.getFontCustom(18, "Bold"),
+        color : '#FFF'
     });
 
     var headerView = Ti.UI.createView({

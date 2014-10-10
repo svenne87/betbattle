@@ -408,6 +408,11 @@ function Controller() {
         top: 200,
         text: Alloy.Globals.PHRASES.loadingTxt
     });
+    $.friendSelectWindow.titleControl = Ti.UI.createLabel({
+        text: Alloy.Globals.PHRASES.pickFriendsTxt,
+        font: Alloy.Globals.getFontCustom(18, "Bold"),
+        color: "#FFF"
+    });
     $.friendSelectWindow.addEventListener("close", function() {
         indicator.closeIndicator();
     });

@@ -249,44 +249,8 @@ function createAndShowTableView(league, array) {
     }
 
     var tableHeaderView = Ti.UI.createView({
-        height : 75,
-        width : Ti.UI.FILL,
-        layout : 'vertical',
-        backgroundColor : '#242424',
-        backgroundGradient : {
-            type : "linear",
-            startPoint : {
-                x : "0%",
-                y : "0%"
-            },
-            endPoint : {
-                x : "0%",
-                y : "100%"
-            },
-            colors : [{
-                color : "#2E2E2E",
-                offset : 0.0
-            }, {
-                color : "#151515",
-                offset : 1.0
-            }]
-        }
+        height : 0.1
     });
-
-    tableHeaderView.add(Ti.UI.createLabel({
-        top : 20,
-        text : Alloy.Globals.PHRASES.pickMatchTxt,
-        left : 20,
-        color : "#FFF",
-        font : Alloy.Globals.getFontCustom(22, 'Regular'),
-    }));
-
-    tableHeaderView.add(Ti.UI.createView({
-        top : 25,
-        height : 0.5,
-        width : Ti.UI.FILL,
-        backgroundColor : '#303030'
-    }));
 
     if (OS_IOS) {
         // Table
@@ -662,12 +626,18 @@ if (OS_ANDROID) {
             $.newChallenge = null;
         };
         $.newChallenge.activity.actionBar.displayHomeAsUp = true;
-        $.newChallenge.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
+        $.newChallenge.activity.actionBar.title = Alloy.Globals.PHRASES.pickMatchTxt;
 
         // sometimes the view remain in memory, then we don't need to show the "loading"
         if (totalNumberOfGames === 20) {
             indicator.openIndicator();
         }
+    });
+} else {
+    $.newChallenge.titleControl = Ti.UI.createLabel({
+        text : Alloy.Globals.PHRASES.pickMatchTxt,
+        font : Alloy.Globals.getFontCustom(18, "Bold"),
+        color : '#FFF'
     });
 }
 

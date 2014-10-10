@@ -19,8 +19,14 @@ if (OS_ANDROID) {
 			$.settingsWindow = null;
 		};
 		$.settingsWindow.activity.actionBar.displayHomeAsUp = true;
-		$.settingsWindow.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
+		$.settingsWindow.activity.actionBar.title = Alloy.Globals.PHRASES.settings;
 	});
+} else {
+    $.settingsWindow.titleControl = Ti.UI.createLabel({
+        text : Alloy.Globals.PHRASES.settings,
+        font : Alloy.Globals.getFontCustom(18, "Bold"),
+        color : '#FFF'
+    });
 }
 
 var picker;
@@ -101,12 +107,12 @@ function sendSettingsServer(param, type, valueToStore) {
 						// update event
 						Ti.App.fireEvent('app:updateMenu');
 					}
-					Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
+					Alloy.Globals.showToast(JSON.parse(this.responseText));
 				}
 				indicator.closeIndicator();
 			} else {
 				indicator.closeIndicator();
-				Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
+				Alloy.Globals.showToast(JSON.parse(this.responseText));
 				Ti.API.error("Error =>" + this.response);
 			}
 		};
@@ -215,7 +221,7 @@ function createGUI() {
    
     $.profile_picture_row.addEventListener('click', function() {
         if(Alloy.Globals.FACEBOOKOBJECT) {
-            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.fbImageChangeError);
+            Alloy.Globals.showToast(Alloy.Globals.PHRASES.fbImageChangeError);
             return;
         }
         
@@ -254,7 +260,7 @@ function createGUI() {
                     xhr.onload = function() {
                         if (this.status == '200') {
                             var response = JSON.parse(this.responseText);
-                            Alloy.Globals.showFeedbackDialog(response);
+                            Alloy.Globals.showToast(response);
                             $.upload_indicator.hide();
                         } else {
                             $.upload_indicator.hide();
@@ -333,7 +339,7 @@ function createGUI() {
                     sendSettingsServer(param, 1, profileName);
 
                 } else {
-                    Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.groupNameErrorTxt);
+                    Alloy.Globals.showToast(Alloy.Globals.PHRASES.groupNameErrorTxt);
                 }
             } else {
                 dialog.hide();

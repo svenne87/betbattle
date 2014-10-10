@@ -23,12 +23,32 @@ var font = 'FontAwesome';
 
 if (OS_ANDROID) {
     font = 'fontawesome-webfont';
+
+    $.showChallengeWindow.scrollType = 'vertical';
+    $.showChallengeWindow.orientationModes = [Titanium.UI.PORTRAIT];
+
+    $.showChallengeWindow.addEventListener('open', function() {
+        Alloy.Globals.setAndroidCouponMenu($.showChallengeWindow.activity);
+
+        $.showChallengeWindow.activity.actionBar.onHomeIconItemSelected = function() {
+            $.showChallengeWindow.close();
+            $.showChallengeWindow = null;
+        };
+        $.showChallengeWindow.activity.actionBar.displayHomeAsUp = true;
+        $.showChallengeWindow.activity.actionBar.title = Alloy.Globals.PHRASES.challengeBtnTxt;
+        indicator.openIndicator();
+    });
+} else {
+    $.showChallengeWindow.titleControl = Ti.UI.createLabel({
+        text : Alloy.Globals.PHRASES.challengeBtnTxt,
+        font : Alloy.Globals.getFontCustom(18, "Bold"),
+        color : '#FFF'
+    });
 }
 
-var imageErrorHandler = function (e) {
-    e.image = '/images/no_pic.png';  
+var imageErrorHandler = function(e) {
+    e.image = '/images/no_pic.png';
 };
-
 
 function checkDate(date) {
     // check if match has started
@@ -42,10 +62,9 @@ function checkDate(date) {
     return false;
 }
 
-
 function createGameType(gameType, game, values, index, sections) {
     var type = gameType.type;
-    
+
     var gameTypeView = Ti.UI.createView({
         height : 75,
         width : Ti.UI.FILL,
@@ -72,10 +91,10 @@ function createGameType(gameType, game, values, index, sections) {
     });
 
     var gameTypeText = Alloy.Globals.PHRASES.gameTypes[type].displayResult;
-    if(gameTypeText.length > 20) {
+    if (gameTypeText.length > 20) {
         gameTypeText = gameTypeText.substring(0, 17) + '...';
     }
-    
+
     gameTypeView.add(Ti.UI.createLabel({
         text : gameTypeText,
         left : 10,
@@ -85,30 +104,30 @@ function createGameType(gameType, game, values, index, sections) {
         font : Alloy.Globals.getFontCustom(18, 'Regular'),
         color : '#FFF'
     }));
-    
+
     var resultText = '';
-    
+
     for (var i = 0; i < game.result_values.length; i++) {
         if (game.result_values[i].game_type === type && game.result_values[i].gid === game.game_id) {
             if (gameType.number_of_values === '1') {
                 // check for the gametype "draw"
                 resultText = '(' + Alloy.Globals.PHRASES.gameTypes[type].buttonValues[game.result_values[i].value_1] + ')';
-                
+
                 //if the json says team1 or team2. get the actual team  names
                 if (resultText === "(team1)") {
                     resultText = game.team_1.team_name;
                 } else if (resultText === "(team2)") {
                     resultText = game.team_2.team_name;
                 }
-                
-                if(resultText.length > 15) {
+
+                if (resultText.length > 15) {
                     resultText = valueText.substring(0, 12) + '...';
                 }
-       
-                // resultText will be undefined if it's gametype "draw" 
-                if(typeof resultText === 'undefined') {
+
+                // resultText will be undefined if it's gametype "draw"
+                if ( typeof resultText === 'undefined') {
                     resultText = '(' + game.result_values[i].value_1 + ')';
-                }            
+                }
             } else if (gameType.number_of_values === '2') {
                 resultText = '(' + game.result_values[i].value_1 + " - " + game.result_values[i].value_2 + ')';
             }
@@ -132,13 +151,13 @@ function createGameType(gameType, game, values, index, sections) {
             height : 0.1
         })
     });
-    
+
     // loop all values
     for (var i = 0; i < values.length; i++) {
         if (values[i].game_type === type && values[i].gid === game.game_id) {
-            
+
             var correct = false;
-            
+
             // only check games that has started
             if (checkDate(game.game_date)) {
                 for (var m in game.result_values) {
@@ -168,7 +187,7 @@ function createGameType(gameType, game, values, index, sections) {
                 // get betkampen image
                 image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + values[i].uid + '.png';
             }
-            
+
             var profileImgView = Ti.UI.createImageView({
                 defaultImage : '/images/no_pic.png',
                 image : image,
@@ -179,10 +198,10 @@ function createGameType(gameType, game, values, index, sections) {
             });
 
             profileImgView.addEventListener('error', imageErrorHandler);
-            
+
             var profileName = values[i].name;
-            
-            if(profileName.length > 18) {
+
+            if (profileName.length > 18) {
                 profileName = profileName.substring(0, 15) + '...';
             }
 
@@ -200,22 +219,22 @@ function createGameType(gameType, game, values, index, sections) {
             if (gameType.number_of_values === '1') {
                 // check for the gametype "draw"
                 valueText = Alloy.Globals.PHRASES.gameTypes[type].buttonValues[values[i].value_1];
-                
+
                 //if the json says team1 or team2. get the actual team names
                 if (valueText === "team1") {
                     valueText = game.team_1.team_name;
                 } else if (valueText === "team2") {
                     valueText = game.team_2.team_name;
                 }
-                
-                if(valueText.length > 15) {
+
+                if (valueText.length > 15) {
                     valueText = valueText.substring(0, 12) + '...';
                 }
-       
-                // valueText will be undefined if it's gametype "draw" 
-                if(typeof valueText === 'undefined') {
+
+                // valueText will be undefined if it's gametype "draw"
+                if ( typeof valueText === 'undefined') {
                     valueText = values[i].value_1;
-                }            
+                }
             } else if (gameType.number_of_values === '2') {
                 valueText = values[i].value_1 + " - " + values[i].value_2;
             }
@@ -227,14 +246,14 @@ function createGameType(gameType, game, values, index, sections) {
                 width : Ti.UI.SIZE,
                 font : Alloy.Globals.getFontCustom(16, 'Regular'),
                 color : '#FFF'
-            });       
+            });
 
             row.add(profileImgView);
             row.add(nameLabel);
-            row.add(valueLabel);          
-            
+            row.add(valueLabel);
+
             // if the player guessed correct
-            if(correct) {
+            if (correct) {
                 var correctValueLabel = Ti.UI.createLabel({
                     font : {
                         fontFamily : font
@@ -248,7 +267,7 @@ function createGameType(gameType, game, values, index, sections) {
 
                 row.add(correctValueLabel);
             }
-            
+
             sections[index].add(row);
         }
     }
@@ -303,7 +322,7 @@ function createLayout(game, values, games, currentStanding, isFirst) {
     } else if (teamNames.length > 40) {
         header.font = Alloy.Globals.getFontCustom(16, 'Regular');
     }
-    
+
     header.add(Ti.UI.createLabel({
         left : 10,
         top : 3,
@@ -313,7 +332,7 @@ function createLayout(game, values, games, currentStanding, isFirst) {
         text : fontawesome.icon('fa-clock-o'),
         color : Alloy.Globals.themeColor()
     }));
-    
+
     header.add(Ti.UI.createLabel({
         top : -17,
         left : 25,
@@ -323,7 +342,7 @@ function createLayout(game, values, games, currentStanding, isFirst) {
         color : Alloy.Globals.themeColor(),
         text : game.game_date_string
     }));
-    
+
     header.add(Ti.UI.createView({
         top : 12,
         height : 0.5,
@@ -367,7 +386,7 @@ function createLayout(game, values, games, currentStanding, isFirst) {
             separatorColor : '#303030',
         });
     }
-    
+
     // remove empty space
     table.headerView = Ti.UI.createView({
         height : 0.1
@@ -485,7 +504,7 @@ function createLayout(game, values, games, currentStanding, isFirst) {
     var gametypes = game.game_types;
     for (var y in gametypes) {
         // send in y and sections to add the data to the correct section. (y+1 will be that section, since section[0] is used)
-        createGameType(gametypes[y], game, values, ((y -0 )+ 1), sections);
+        createGameType(gametypes[y], game, values, ((y - 0 ) + 1), sections);
     }
 
     // add slide text, if this is not the last game
@@ -587,8 +606,8 @@ function showResults(challenge) {
         }
 
         // create layout
-       createLayout(challenge.games[y], challenge.values, challenge.games, challenge.current_standing, isFirst);
-       isFirst = false;
+        createLayout(challenge.games[y], challenge.values, challenge.games, challenge.current_standing, isFirst);
+        isFirst = false;
     }
 
     setTimeout(function() {
@@ -599,22 +618,6 @@ function showResults(challenge) {
 
 }
 
-if (OS_ANDROID) {
-    $.showChallengeWindow.scrollType = 'vertical';
-    $.showChallengeWindow.orientationModes = [Titanium.UI.PORTRAIT];
-
-    $.showChallengeWindow.addEventListener('open', function() {
-        Alloy.Globals.setAndroidCouponMenu($.showChallengeWindow.activity);
-
-        $.showChallengeWindow.activity.actionBar.onHomeIconItemSelected = function() {
-            $.showChallengeWindow.close();
-            $.showChallengeWindow = null;
-        };
-        $.showChallengeWindow.activity.actionBar.displayHomeAsUp = true;
-        $.showChallengeWindow.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
-        indicator.openIndicator();
-    });
-}
 if (Alloy.Globals.checkConnection()) {
     if (OS_IOS) {
         indicator.openIndicator();
@@ -624,6 +627,5 @@ if (Alloy.Globals.checkConnection()) {
 } else {
     Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 }
-
 
 // TODO fix standings

@@ -5,7 +5,7 @@ if (OS_IOS) {
     iOSVersion = parseInt(Ti.Platform.version);
 
     $.challenges_new.titleControl = Ti.UI.createLabel({
-        text : Alloy.Globals.PHRASES.finishedeTxt,
+        text : Alloy.Globals.PHRASES.newTxt,
         font : Alloy.Globals.getFontCustom(18, "Bold"),
         color : '#FFF'
     });
@@ -758,7 +758,7 @@ if (OS_ANDROID) {
             $.challenges_new = null;
         };
         $.challenges_new.activity.actionBar.displayHomeAsUp = true;
-        $.challenges_new.activity.actionBar.title = Alloy.Globals.PHRASES.finishedTxt;
+        $.challenges_new.activity.actionBar.title = Alloy.Globals.PHRASES.newTxt;
     });
 }
 constructTableView(Alloy.Globals.CHALLENGEOBJECTARRAY);

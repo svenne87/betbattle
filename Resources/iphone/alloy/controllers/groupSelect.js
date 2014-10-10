@@ -699,6 +699,11 @@ function Controller() {
     var font = "FontAwesome";
     var iOSVersion;
     iOSVersion = parseInt(Ti.Platform.version);
+    $.groupSelectWindow.titleControl = Ti.UI.createLabel({
+        text: Alloy.Globals.PHRASES.chooseConfirmBtnTxt,
+        font: Alloy.Globals.getFontCustom(18, "Bold"),
+        color: "#FFF"
+    });
     var topView = Ti.UI.createView({
         height: 40,
         width: Ti.UI.FILL,

@@ -26,6 +26,12 @@ var iOSVersion;
 
 if (OS_IOS) {
     iOSVersion = parseInt(Ti.Platform.version);
+
+    $.showCoupon.titleControl = Ti.UI.createLabel({
+        text : Alloy.Globals.PHRASES.couponTxt,
+        font : Alloy.Globals.getFontCustom(18, "Bold"),
+        color : '#FFF'
+    });
 }
 
 var fontawesome = require('lib/IconicFont').IconicFont({
@@ -290,7 +296,7 @@ for (var i in games) {
         left : 25,
         top : 40
     });
-    
+
     if (child != true) {
         var rightPercentage = '5%';
         font = 'fontawesome-webfont';
@@ -515,7 +521,7 @@ if (OS_ANDROID) {
             $.showCoupon = null;
         };
         $.showCoupon.activity.actionBar.displayHomeAsUp = true;
-        $.showCoupon.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
+        $.showCoupon.activity.actionBar.title = Alloy.Globals.PHRASES.couponTxt;
     });
 
 }
