@@ -138,16 +138,46 @@ function constructChallengeRows(obj, index, type) {
     }));
     
     
+    // set the length of the images you have in your sequence
+var loaderArrayLength=2;
+ 
+// initialize the index to 1
+var loaderIndex=1;
+ 
+ var liveIcon = null;
+// this function will be called by the setInterval
+function loadingAnimation(){
+  // set the image property of the imageview by constructing the path with the loaderIndex variable
+  liveIcon.image = "/images/ikon_" + loaderIndex + "_live.png";
+  //increment the index so that next time it loads the next image in the sequence
+  loaderIndex++;
+  // if you have reached the end of the sequence, reset it to 1
+  if(loaderIndex===3)loaderIndex=1;
+}
+ 
+// start the setInverval -- adjust the time to make a smooth animation
+
+    
     // check all matches in a challenge to check if any of the matches are active
     for (var i = 0; i < obj.attributes.matches.length; i++) {
         if (obj.attributes.matches[i].status === '3') {
-            firstRowView.add(Ti.UI.createImageView({
-                left : 160,
-                image : '/images/ikon_live.png',
-                height : 15,
-                width : 22
-            }));
+        	var liveLabel = Ti.UI.createLabel({
+        		text: "Live",
+        		left: 175,
+        		font : Alloy.Globals.getFontCustom(12, "Regular"),
+        		color: Alloy.Globals.themeColor()
+        	});
+        	
+        	firstRowView.add(liveLabel);
+            liveIcon = Ti.UI.createImageView({
+            	left: 160,
+            	image: '/images/ikon_1_live.png',
+            	height: 10,
+            	width: 10,
+            });
             
+            firstRowView.add(liveIcon);
+            var loaderAnimate = setInterval(loadingAnimation,280);
             break;
         }
     }
@@ -424,40 +454,8 @@ function constructTableView(array) {
     var sections = [];
 
     var tableHeaderView = Ti.UI.createView({
-        height : 70,
-        backgroundColor : '#303030',
-        backgroundGradient : {
-            type : "linear",
-            startPoint : {
-                x : "0%",
-                y : "0%"
-            },
-            endPoint : {
-                x : "0%",
-                y : "100%"
-            },
-            colors : [{
-                color : "#151515",
-
-            }, {
-                color : "#2E2E2E",
-
-            }]
-        },
-        //opacity: 0.6,
-        layout : "absolute",
-    });
-
-    var tableHeaderLabel = Ti.UI.createLabel({
-        text : Alloy.Globals.PHRASES.pendingChallengesTxt,
-        left : 10,
-        color : "#FFF",
-        font : Alloy.Globals.getFontCustom(22, 'Regular'),
-        height : 70,
-        top : 0,
-    });
-
-    tableHeaderView.add(tableHeaderLabel);
+        height : 0.1,
+     });
 
     var fontawesome = require('lib/IconicFont').IconicFont({
         font : 'lib/FontAwesome'
