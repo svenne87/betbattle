@@ -452,6 +452,7 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 }
 
 function addFbFriend(fbid, name) {
+	table.touchEnabled = false;
 	Ti.API.info("skickar in fbid : " + fbid);
 	Ti.API.info("namnet som skickades : " + name);
 	var xhr = Titanium.Network.createHTTPClient();
@@ -459,7 +460,7 @@ function addFbFriend(fbid, name) {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
         Ti.API.info('FEL : ' + JSON.stringify(this.responseText));
         Ti.API.error('Bad Sever =>' + e.error);
-     
+     	table.touchEnabled = true;
     };
 
     try {
@@ -470,7 +471,7 @@ function addFbFriend(fbid, name) {
         xhr.send();
     } catch(e) {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-        
+         table.touchEnabled = true;
 
     }
     xhr.onload = function() {
@@ -479,13 +480,16 @@ function addFbFriend(fbid, name) {
             	Ti.API.info("RESPONSE ADD FRIEND : " + JSON.stringify(this.responseText));
                 var response = JSON.parse(this.responseText);
                 Alloy.Globals.showToast(Alloy.Globals.PHRASES.friendSuccess + ' ' + name);
+                table.touchEnabled = true;
             } else {
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+                table.touchEnabled = true;
             }
         } else {
             indicator.closeIndicator();
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             Ti.API.error("Error =>" + this.response);
+             table.touchEnabled = true;
         }
     };
 	
@@ -494,6 +498,7 @@ function addFbFriend(fbid, name) {
 }
 
 function deleteFbFriend(fbid, name) {
+	table.touchEnabled = false;
 	Ti.API.info("skickar in fbid : " + fbid);
 	Ti.API.info("namnet som skickades : " + name);
 	var xhr = Titanium.Network.createHTTPClient();
@@ -501,7 +506,7 @@ function deleteFbFriend(fbid, name) {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
         Ti.API.info('FEL : ' + JSON.stringify(this.responseText));
         Ti.API.error('Bad Sever =>' + e.error);
-     
+     	 table.touchEnabled = true;
     };
 
     try {
@@ -512,7 +517,7 @@ function deleteFbFriend(fbid, name) {
         xhr.send();
     } catch(e) {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-        
+         table.touchEnabled = true;
 
     }
     xhr.onload = function() {
@@ -521,13 +526,16 @@ function deleteFbFriend(fbid, name) {
             	Ti.API.info("RESPONSE DELETE FRIEND : " + JSON.stringify(this.responseText));
                 var response = JSON.parse(this.responseText);
                 Alloy.Globals.showToast(name + Alloy.Globals.PHRASES.friendRemovedTxt);
+                 table.touchEnabled = true;
             } else {
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+                 table.touchEnabled = true;
             }
         } else {
             indicator.closeIndicator();
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             Ti.API.error("Error =>" + this.response);
+             table.touchEnabled = true;
         }
     };
 
