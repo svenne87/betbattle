@@ -23,7 +23,7 @@ var clickListener = function(e){
             text : fontawesome.icon('fa-check'),
             textAlign : "center",
             right : 10,
-            color : "#FFF",
+            color : Alloy.Globals.themeColor(),
             parent : e.row,
             font : {
                 fontSize : 30,
@@ -32,7 +32,7 @@ var clickListener = function(e){
             height : "auto",
             width : "auto",
         }));
-        e.row.setBackgroundColor(Alloy.Globals.themeColor());
+        //e.row.setBackgroundColor(Alloy.Globals.themeColor());
         for (var x in children.rows) {
 
             labels = children.rows[x].getChildren();
@@ -42,7 +42,7 @@ var clickListener = function(e){
                     var selected = "selected_" + e.row.id;
                     if (labels[k].id == selected) {
                         children.rows[x].remove(labels[k]);
-                        children.rows[x].setBackgroundColor("#000");
+                        //children.rows[x].setBackgroundColor("#000");
                     }
                 }
             }

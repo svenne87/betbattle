@@ -1,6 +1,11 @@
 var args = arguments[0] || {};
+var pastRow = args.row;
+var gAdmin = args.gAdmin;
+var gName = args.gName;
+var gID = args.gID;
 var friends = null;
 var iOSVersion;
+
 
 if (OS_IOS) {
     iOSVersion = parseInt(Ti.Platform.version);
@@ -109,24 +114,57 @@ if (gAdmin == Alloy.Globals.BETKAMPENUID) {
 
     var groupNameBtn = Alloy.Globals.createButtonView("#FFF", "#000", Alloy.Globals.PHRASES.saveTxt);
     mainView.add(groupNameBtn);
-
+    
+    var isSubmitting = false;
+    
     groupNameBtn.addEventListener('click', function(e) {
+        if(isSubmitting) {
+            return;
+        }
+        
+        if(groupName.value === gName) {
+            Alloy.Globals.showToast(Alloy.Globals.PHRASES.updateTxt);
+            return;
+        }
+        
         if (groupName.value.length > 2 && groupName.value.length <= 15) {
             var editName = Ti.Network.createHTTPClient();
-
+            isSubmitting = true;
+            indicator.openIndicator();
+            editName.setTimeout(Alloy.Globals.TIMEOUT);
             editName.open("POST", Alloy.Globals.BETKAMEPNCHANGEGROUPNAMEURL + '/?lang=' + Alloy.Globals.LOCALE);
             var params = {
-                groupID : e.source.id,
+                groupID : gID,
                 group_name : groupName.value,
             };
+            
             editName.send(params);
-            Ti.App.fireEvent('groupSelectRefresh');
-            $.editGroup.close();
-        } else if (groupName.value.length < 3) {
-            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.shortGroupNameTxt);
-        } else if (groupName.value.length > 15) {
-            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.longGroupNameTxt);
-        }
+            
+            editName.onerror = function(e) {
+                isSubmitting = false;
+                indicator.closeIndicator(); 
+                Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
+            };
+                
+            editName.onload = function(e) {
+                if (this.status == '200') {
+                    if (this.readyState == 4) {
+                        gName = groupName.value;
+                        Alloy.Globals.showToast(JSON.parse(this.responseText)); 
+                    }
+                }
+                    
+                isSubmitting = false;
+                indicator.closeIndicator();
+            };
+           
+            Ti.API.log(pastRow);
+            //Ti.App.fireEvent('groupSelectRefresh');  // TODO find and update row in past table
+           
+            //$.editGroup.close();
+        } else if (groupName.value.length < 3 || groupName.value.length > 15) {
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.groupNameErrorTxt);
+        } 
     });
 }
 
@@ -158,7 +196,7 @@ function createGUI(obj) {
             image : image,
             height : 35,
             width : 35,
-            left : 20,
+            left : 10,
             borderRadius : 17
         });
         profilePic.addEventListener('error', function(e) {
@@ -170,7 +208,7 @@ function createGUI(obj) {
 
         boardName = obj.username.toString();
         if (boardName.length > 22) {
-            boardName = boardName.substring(0, 22);
+            boardName = boardName.substring(0, 19) + '...';
         }
         var name = Ti.UI.createLabel({
             text : boardName,
@@ -203,15 +241,16 @@ function createGUI(obj) {
 
                         removeMember.open("POST", Alloy.Globals.BETKAMPENREMOVEGROUPMEMBERURL + '/?lang=' + Alloy.Globals.LOCALE);
                         var params = {
-                            group_id : e.row.id,
+                            group_id : e.source.id,
                             id : Alloy.Globals.BETKAMPENUID,
-                            member_to_remove : e.row.uid,
+                            member_to_remove : e.source.uid,
                         };
                         removeMember.send(params);
                         Ti.API.info(params);
-                        deleteBtn.visible = false;
-                        member.backgroundColor = '#ff0000';
-                        Alloy.Globals.showToast(e.row.mName + ' ' + Alloy.Globals.PHRASES.groupMemberDeletedTxt);
+                        
+                        // TODO ta bort ifrån section
+                      
+                        Alloy.Globals.showToast(e.source.mName + ' ' + Alloy.Globals.PHRASES.groupMemberDeletedTxt);
 
                         break;
                     case 1:
@@ -255,6 +294,7 @@ function createGUI(obj) {
         }
 
         var profilePic = Titanium.UI.createImageView({
+            defaultImage : "/images/no_pic.png",
             image : image,
             height : 35,
             width : 35,
@@ -325,6 +365,7 @@ function createFriendGUI(friend, members) {
         }
 
         var profilePic = Titanium.UI.createImageView({
+            defaultImage : "/images/no_pic.png",
             image : image,
             height : 35,
             width : 35,
@@ -364,6 +405,7 @@ function createFriendGUI(friend, members) {
         row.add(addBtn);
 
         row.addEventListener('click', function(e) {
+            var thisRow = e.row;
             //delete member
             Ti.API.info("CLICKADE VÄN " + JSON.stringify(e.row));
             var aL = Titanium.UI.createAlertDialog({
@@ -381,7 +423,7 @@ function createFriendGUI(friend, members) {
                 switch(e.index) {
                 case 0:
                     var addMember = Ti.Network.createHTTPClient();
-
+                    addMember.setTimeout(Alloy.Globals.TIMEOUT);
                     addMember.open("POST", Alloy.Globals.BETKAMPENADDGROUPMEMBERSURL + '/?lang=' + Alloy.Globals.LOCALE);
                     var params = {
                         group_id : e.source.id,
@@ -391,8 +433,18 @@ function createFriendGUI(friend, members) {
                     };
                     addMember.send(params);
                     Ti.API.info(params);
+                    
+                    //sections[0].add(thisRow);  // TODO
+                    
+                    //table.setData(sections);
+                   
                     addBtn.setText(fontawesome.icon('fa-check'));
-                    row.setBackgroundColor(Alloy.Globals.themeColor());
+                   addBtn.setColor(Alloy.Globals.themeColor());
+                    
+                    addMember.onload = function() {
+                        
+                    };
+                    
                     Alloy.Globals.showToast(e.source.fName + ' ' + Alloy.Globals.PHRASES.groupMemberAddedTxt);
 
                     break;
