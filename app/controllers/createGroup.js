@@ -195,20 +195,20 @@ sections[0].add(groupNameRow);
 
 var rowClick = function(e) {
     // find label
-    for(var i = e.source.children.length -1; i >= 0; i--) {
+    for(var i = e.row.children.length -1; i >= 0; i--) {
         // find correct child
-        if(e.source.children[i].id === 'statusIcon') {
-            if(e.source.children[i].text === fontawesome.icon('fa-check')) {
+        if(e.row.children[i].id === 'statusIcon') {
+            if(e.row.children[i].text === fontawesome.icon('fa-check')) {
                 // had this selected, now unselect
-                var index = selectedFriends.indexOf(e.source.name);
+                var index = selectedFriends.indexOf(e.row.name);
                 selectedFriends.splice(index, 1);
-                e.source.children[i].text = fontawesome.icon('fa-plus');
-                e.source.children[i].color = '#FFF';
+                e.row.children[i].text = fontawesome.icon('fa-plus');
+                e.row.children[i].color = '#FFF';
             } else {
                 // select row and add friend
                 selectedFriends.push(e.source.name);               
-                e.source.children[i].text = fontawesome.icon('fa-check');
-                e.source.children[i].color = Alloy.Globals.themeColor();
+                e.row.children[i].text = fontawesome.icon('fa-check');
+                e.row.children[i].color = Alloy.Globals.themeColor();
             }
             break;
         }   
@@ -346,7 +346,7 @@ function createSaveBtn() {
         layout : 'vertical'
     });
 
-    var saveBtn = Alloy.Globals.createButtonView('#FFF', '#000', Alloy.Globals.PHRASES.save);
+    var saveBtn = Alloy.Globals.createButtonView('#FFF', '#000', Alloy.Globals.PHRASES.saveTxt);
     saveBtn.top = 5;
 
    
