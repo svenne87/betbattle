@@ -129,6 +129,7 @@ var wrapperView = Ti.UI.createView({
 
 var matchOTDinfo = Ti.UI.createLabel({
     top : 20,
+    width: "90%",
     text : Alloy.Globals.PHRASES.matchOTDInfo,
     textAlign : "center",
     color : "#FFF",

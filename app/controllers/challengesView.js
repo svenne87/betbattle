@@ -1131,6 +1131,7 @@ function getDynamicTopImage(){
 				var views = header.getChildren();
 				for (var i in views){
 					if(views[i].id == 'headerImage'){
+						Ti.API.info("headerImage Hittad");
 						views[i].setBackgroundImage(response.image);
 						views[i].addEventListener("click", function(e){
 							Ti.API.info("CLICKADE LOSS ");

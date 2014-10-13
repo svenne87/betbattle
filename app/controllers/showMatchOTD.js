@@ -12,37 +12,45 @@ var indicator = uie.createIndicatorWindow({
 
 function createGameType(type, values, game) {
     var gameTypeView = Ti.UI.createView({
-        height : 70,
+        height : 65,
         width : Ti.UI.FILL,
-        backgroundColor : "transparent",
-        layout : "vertical",
+      	backgroundColor : '#303030',
+		backgroundGradient : {
+			type : "linear",
+			startPoint : {
+				x : "0%",
+				y : "0%"
+			},
+			endPoint : {
+				x : "0%",
+				y : "100%"
+			},
+			colors : [{
+				color : "#151515",
+
+			}, {
+				color : "#2E2E2E",
+
+			}]
+		}, 
     });
 
     var gameTypeDescription = Ti.UI.createLabel({
         text : Alloy.Globals.PHRASES.gameTypes[type.type].description,
-        textAlign : "center",
-        font : {
-            fontFamily : "Impact",
-            fontSize : 18,
-        },
+        left: 20,
+        font : Alloy.Globals.getFontCustom(18, "Bold"),
         color : "#FFF",
     });
     gameTypeView.add(gameTypeDescription);
 
     var gameValueWrapper = Ti.UI.createView({
         width : Ti.UI.FILL,
+        height: 70,
+        backgroundColor:"transparent",
         layout : 'absolute',
     });
 
-    var gameValueButton = Ti.UI.createView({
-        borderColor : "#c5c5c5",
-        borderWidth : 1,
-        borderRadius : 5,
-        backgroundColor : "#303030",
-        width : 90,
-        height : 35,
-        layout : 'absolute',
-    });
+    
 
     for (var i in values) {
         if (values[i].game_type == type.type) {
@@ -78,67 +86,146 @@ function createGameType(type, values, game) {
                 }
             }
 
-            var color = "#303030";
+            var color = "#000000";
             if (correct) {
                 color = "#d6d6d6";
             } else {
-                color = "#303030";
+                color = "#000000";
             }
-            gameValueButton.setBackgroundColor(color);
+            gameValueWrapper.setBackgroundColor(color);
+            
             var gameValueLabel = Ti.UI.createLabel({
                 text : text,
-                font : {
-                    fontSize : 16,
-                },
+                font : Alloy.Globals.getFontCustom(18, "Regular"),
                 color : "#FFF",
-                textAlign : "center",
+                left: 20,
             });
-            gameValueButton.add(gameValueLabel);
+            gameValueWrapper.add(gameValueLabel);
         }
 
     }
 
-    gameValueWrapper.add(gameValueButton);
-    gameTypeView.add(gameValueWrapper);
+   
+  
 
     botView.add(gameTypeView);
+    botView.add(gameValueWrapper);
+    
 }
 
 function createLayout(resp) {
-    view = Ti.UI.createScrollView({
+	Ti.API.info("VISA MATCHOTD " + JSON.stringify(resp));
+	Ti.API.info("TEAM 1 " + resp.game.team_1.team_name);
+	
+    view = Ti.UI.createView({
         height : 'auto',
         width : 'auto',
         layout : 'vertical',
-        scrollType : 'vertical',
-        //backgroundColor:"blue",
-        showVerticalScrollIndicator : true,
+       
     });
-    topView = Ti.UI.createView({
-        width : Ti.UI.FILL,
-        height : "20%",
-        backgroundColor : "transparent",
-        layout : "vertical",
+    
+    
+    var sections = [];
+
+	var tableHeaderView = Ti.UI.createView({
+		height : 0.1,
+		width : Ti.UI.FILL,
+		backgroundColor : 'transparent',
+		layout : "absolute",
+	});
+
+	if (OS_IOS) {
+		var separatorS;
+		var separatorCol;
+
+		if (iOSVersion < 7) {
+			separatorS = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
+			separatorColor = 'transparent';
+		} else {
+			separatorS = Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE;
+			separatorColor = '#6d6d6d';
+		}
+
+		table = Titanium.UI.createTableView({
+			//width : Ti.UI.FILL,
+			left : 0,
+			headerView : tableHeaderView,
+			height : '100%',
+			width : '100%',
+			//backgroundImage: '/images/profileBG.jpg',
+			backgroundColor : 'transparent',
+			style : Ti.UI.iPhone.TableViewStyle.GROUPED,
+			separatorInsets : {
+				left : 0,
+				right : 0
+			},
+			id : 'winnersTable',
+			separatorStyle : separatorS,
+			separatorColor : separatorColor,
+		});
+		
+		
+		
+		
+		
+	} else if (OS_ANDROID) {
+		table = Titanium.UI.createTableView({
+			width : Ti.UI.FILL,
+			left : 0,
+			headerView : tableHeaderView,
+			height : '100%',
+			backgroundColor : 'transparent',
+			separatorColor : '#6d6d6d',
+			id : 'challengeTable'
+		});
+		
+	}
+    
+    var matchHeader = Ti.UI.createView({
+    	height: 70,
+    	backgroundColor : '#303030',
+		backgroundGradient : {
+			type : "linear",
+			startPoint : {
+				x : "0%",
+				y : "0%"
+			},
+			endPoint : {
+				x : "0%",
+				y : "100%"
+			},
+			colors : [{
+				color : "#151515",
+
+			}, {
+				color : "#2E2E2E",
+
+			}]
+		}, 
     });
+    
+    var matchLabel = Ti.UI.createLabel({
+    	text: resp.game.team_1.team_name + " - " + resp.game.team_2.team_name,
+    	font: Alloy.Globals.getFontCustom(20, "Bold"),
+    	color:"#FFF",
+    	left: 20,
+    });
+    
+    matchHeader.add(matchLabel);
 
     var usersCountLabel = Ti.UI.createLabel({
         text : Alloy.Globals.PHRASES.showMatchOTDusers + resp.stats.count,
-        font : {
-            fontFamily : "Impact",
-            fontSize : 22,
-        },
+        font : Alloy.Globals.getFontCustom(20, "Bold"),
         color : "#FFF",
-        textAlign : "center",
+        left:20,
     });
 
     var potSize = resp.stats.count * resp.stats.bet_amount;
     var potSizeLabel = Ti.UI.createLabel({
         text : Alloy.Globals.PHRASES.showMatchOTDpot + potSize,
-        font : {
-            fontFamily : "Impact",
-            fontSize : 22,
-        },
+        font : Alloy.Globals.getFontCustom(20, "Bold"),
         color : "#FFF",
-        textAlign : "center"
+        left: 20,
     });
 
     topView.add(usersCountLabel);
@@ -146,8 +233,8 @@ function createLayout(resp) {
 
     botView = Ti.UI.createView({
         width : Ti.UI.FILL,
-        height : "80%",
-        backgroundColor : "#303030",
+        height : "85%",
+        backgroundColor : "transparent",
         layout : 'vertical',
 
     });

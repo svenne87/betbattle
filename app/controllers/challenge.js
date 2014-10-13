@@ -1,4 +1,69 @@
 /* Functions */
+var clickListener = function(e){
+	Ti.API.info("CLICKADE PÅ EN ROW : " + JSON.stringify(e));
+        gameArray[e.row.id].gameValue[0] = e.row.value;
+        gameArray[e.row.id].gameValue[1] = 0;
+       
+         var children = e.section;
+        /*for(var k in table.data){
+        	Ti.API.info("table data id : " + table.data[k].id);
+        	Ti.API.info("hitta rätt : " + gameObject.attributes.game_id + '' + e.row.id);
+        	if(table.data[k].id == gameObject.attributes.game_id + '' + e.row.id){
+        		Ti.API.info("hittade section");
+        		children = table.data[k];
+        	}
+        }*/
+       
+        var labels = [];
+
+        //Ti.API.info("TABLE CHILDREN : " + JSON.stringify(children.rows));
+        //changeColors(e);
+        e.row.add(Ti.UI.createLabel({
+            id : 'selected_' + e.row.id,
+            text : fontawesome.icon('fa-check'),
+            textAlign : "center",
+            right : 10,
+            color : "#FFF",
+            parent : e.row,
+            font : {
+                fontSize : 30,
+                fontFamily : fontAwe,
+            },
+            height : "auto",
+            width : "auto",
+        }));
+        e.row.setBackgroundColor(Alloy.Globals.themeColor());
+        for (var x in children.rows) {
+
+            labels = children.rows[x].getChildren();
+            Ti.API.info("LABELS : " + JSON.stringify(labels));
+            if (children.rows[x].value != e.row.value) {
+                for (var k in labels) {
+                    var selected = "selected_" + e.row.id;
+                    if (labels[k].id == selected) {
+                        children.rows[x].remove(labels[k]);
+                        children.rows[x].setBackgroundColor("#000");
+                    }
+                }
+            }
+        }
+
+        Ti.API.info("gameArray : " + JSON.stringify(gameArray));
+        if (validate()) {
+            if (answer == 1) {
+                Ti.API.info("svara");
+                //postAnswer(gameArray);
+            } else if (matchOTD == 1) {
+                Ti.API.info("Matchens mästare");
+            } else if (Alloy.Globals.COUPON != null) {
+                Ti.API.info("update");
+                updateChallenge();
+            } else {
+                Ti.API.info("save");
+                saveChallenge();
+            }
+        }
+};
 
 function createGameType(gameType, gameObject, i, gameArray, index) {
     var type = gameType.type;
@@ -45,60 +110,7 @@ function createGameType(gameType, gameObject, i, gameArray, index) {
 
     gameTypeView.add(optionLabel);
 
-    gameTypeView.addEventListener("click", function(e) {
-        Ti.API.info("CLICKADE PÅ EN ROW : " + JSON.stringify(e));
-        gameArray[index].gameValue[0] = e.row.value;
-        gameArray[index].gameValue[1] = 0;
-        var children = table.data[e.row.id];
-        var labels = [];
-
-        //Ti.API.info("TABLE CHILDREN : " + JSON.stringify(children.rows));
-        //changeColors(e);
-        e.row.add(Ti.UI.createLabel({
-            id : 'selected_' + e.row.id,
-            text : fontawesome.icon('fa-check'),
-            textAlign : "center",
-            right : 10,
-            color : "#FFF",
-            parent : gameTypeView,
-            font : {
-                fontSize : 30,
-                fontFamily : fontAwe,
-            },
-            height : "auto",
-            width : "auto",
-        }));
-        e.row.setBackgroundColor(Alloy.Globals.themeColor());
-        for (var x in children.rows) {
-
-            labels = children.rows[x].getChildren();
-            if (children.rows[x].value != e.row.value) {
-                for (var k in labels) {
-                    var selected = "selected_" + e.row.id;
-                    if (labels[k].id == selected) {
-                        children.rows[x].remove(labels[k]);
-                        children.rows[x].setBackgroundColor("#000");
-                    }
-                }
-            }
-        }
-
-        Ti.API.info("gameArray : " + JSON.stringify(gameArray));
-        if (validate()) {
-            if (answer == 1) {
-                Ti.API.info("svara");
-                //postAnswer(gameArray);
-            } else if (matchOTD == 1) {
-                Ti.API.info("Matchens mästare");
-            } else if (Alloy.Globals.COUPON != null) {
-                Ti.API.info("update");
-                updateChallenge();
-            } else {
-                Ti.API.info("save");
-                saveChallenge();
-            }
-        }
-    });
+    gameTypeView.addEventListener("click", clickListener);
     return gameTypeView;
     //add click event to all buttonviews. this is done here so that we can change color correctly when clicking one
 
@@ -1064,7 +1076,7 @@ function createLayout(gameObject) {
         }
 
         ///*******Create Table View*******///
-        var sections = [];
+      	var sections = [];
 
         var tableHeaderView = Ti.UI.createView({
             height : 0.1
@@ -1214,8 +1226,9 @@ function createLayout(gameObject) {
                 color : Alloy.Globals.themeColor(),
             });
             gameTypeHeaderView.add(gameTypeScoreLabel);
-
-            sections[y] = Ti.UI.createTableViewSection({
+			var sectionIndexen = sections.length;
+            sections[sectionIndexen] = Ti.UI.createTableViewSection({
+            	id : gameObject.attributes.game_id + '' + y,
                 headerView : gameTypeHeaderView,
                 footerView : Ti.UI.createView({
                     height : 0.1,
@@ -1223,10 +1236,10 @@ function createLayout(gameObject) {
             });
             if (gametypes[y].option_type == "button") {
                 for (var i = 0; i < gametypes[y].options; i++) {
-                    sections[y].add(createGameType(gametypes[y], gameObject, i, gameArray, index));
+                    sections[sectionIndexen].add(createGameType(gametypes[y], gameObject, i, gameArray, index));
                 }
             } else if (gametypes[y].option_type == "select") {
-                sections[y].add(createSelectGameType(gametypes[y], gameObject, i, gameArray, index));
+                sections[sectionIndexen].add(createSelectGameType(gametypes[y], gameObject, i, gameArray, index));
             }
 
         }
@@ -1350,6 +1363,7 @@ var indicator = uie.createIndicatorWindow({
     text : Alloy.Globals.PHRASES.loadingTxt
 });
 var table = null;
+
 var iOSVersion;
 
 if (OS_IOS) {

@@ -13,6 +13,28 @@ var uie = require('lib/IndicatorWindow');
 	iOSVersion = parseInt(Ti.Platform.version);
  }
  
+ if (OS_ANDROID) {
+    isAndroid = true;
+
+    $.previousMatchOTD.orientationModes = [Titanium.UI.PORTRAIT];
+
+    $.previousMatchOTD.addEventListener('open', function() {
+        $.previousMatchOTD.activity.actionBar.onHomeIconItemSelected = function() {
+            $.previousMatchOTD.close();
+            $.previousMatchOTD = null;
+        };
+        $.previousMatchOTD.activity.actionBar.displayHomeAsUp = true;
+        $.previousMatchOTD.activity.actionBar.title = Alloy.Globals.PHRASES.matchOTDPreviousBtn;
+    });
+} else {
+    $.previousMatchOTD.titleControl = Ti.UI.createLabel({
+        text : Alloy.Globals.PHRASES.matchOTDPreviousBtn,
+        font : Alloy.Globals.getFontCustom(18, "Bold"),
+        color : '#FFF'
+    });
+
+}
+ 
 function getPreviousMatchDay(){
 	Ti.API.info("CLIKCADE MACHENS MÄSTARE");
 	indicator.openIndicator();
@@ -52,7 +74,7 @@ function getPreviousMatchDay(){
 					Ti.API.info("responsen previous" + JSON.stringify(resp));
 					showPreviousMatch(resp);
 					
-					$.previousMatchOTD.add(wrapperView);
+					
 				}
 				
 			} else {
@@ -68,21 +90,37 @@ function getPreviousMatchDay(){
 }
 
 function createSectionsForTable(sectionText) {
+	
 	var sectionView = $.UI.create('View', {
 		classes : ['winnersSection'],
-		height:40
-	});
+		height : 70,
+		backgroundColor : '#303030',
+		backgroundGradient : {
+			type : "linear",
+			startPoint : {
+				x : "0%",
+				y : "0%"
+			},
+			endPoint : {
+				x : "0%",
+				y : "100%"
+			},
+			colors : [{
+				color : "#151515",
+
+			}, {
+				color : "#2E2E2E",
+
+			}]
+		},
+	}); 
+
 
 	sectionView.add(Ti.UI.createLabel({
-		top : '25%',
 		width : '100%',
-		textAlign : 'center',
+		left: 20,
 		text : sectionText,
-		font : {
-			fontSize : Alloy.Globals.getFontSize(2),
-			fontWeight : 'normal',
-			fontFamily : 'Impact',
-		},
+		font : Alloy.Globals.getFontCustom(20, "Bold"),
 		color : '#FFF'
 	}));
 
@@ -110,7 +148,7 @@ function constructChallengeRows(obj, index) {
 		width : Ti.UI.FILL,
 		left : 0,
 		className : 'winnerRow',
-		height : 50,
+		height : 65,
 		selectionStyle:'none',
 	});
 
@@ -127,11 +165,7 @@ function constructChallengeRows(obj, index) {
 
 	
 
-	var secondRowView = Ti.UI.createView({
-		top : 0,
-		layout : 'absolute', 
-		width : 'auto'
-	});
+	
 
 
 	var participantsValueLabel = Ti.UI.createLabel({
@@ -145,9 +179,9 @@ function constructChallengeRows(obj, index) {
 		color : "#FFF"
 	});
 	
-	secondRowView.add(participantsValueLabel);
+	row.add(participantsValueLabel);
 
-	row.add(secondRowView);
+	
 /*
 	row.add(Ti.UI.createView({
 		top : 60,
@@ -174,7 +208,7 @@ function constructTableView(obj) {
 	var sections = [];
 
 	var tableHeaderView = Ti.UI.createView({
-		height : 20,
+		height : 0.1,
 		width : Ti.UI.FILL,
 		backgroundColor : 'transparent',
 		layout : "absolute",
@@ -196,7 +230,7 @@ function constructTableView(obj) {
 			//width : Ti.UI.FILL,
 			left : 0,
 			headerView : tableHeaderView,
-			height : '70%',
+			height : '100%',
 			width : '100%',
 			//backgroundImage: '/images/profileBG.jpg',
 			backgroundColor : 'transparent',
@@ -209,36 +243,139 @@ function constructTableView(obj) {
 			separatorStyle : separatorS,
 			separatorColor : separatorColor,
 		});
-		sections[0] = Ti.UI.createTableViewSection({
-			headerView : Ti.UI.createView({
-				height : 0.1,
-			}),
-			footerView : Ti.UI.createView({
-				height : 0.1,
-			})
-		});
+		
+		
+		
+		
+		
 	} else if (OS_ANDROID) {
 		table = Titanium.UI.createTableView({
 			width : Ti.UI.FILL,
 			left : 0,
 			headerView : tableHeaderView,
-			//height : '100%',
+			height : '100%',
 			backgroundColor : 'transparent',
 			separatorColor : '#6d6d6d',
 			id : 'challengeTable'
 		});
-		sections[0] = Ti.UI.createTableViewSection({});
+		
 	}
 
+	var teamHeader = Ti.UI.createView({
+			height: 70,
+			backgroundColor : '#303030',
+                backgroundGradient : {
+                    type : "linear",
+                    startPoint : {
+                        x : "0%",
+                        y : "0%"
+                    },
+                    endPoint : {
+                        x : "0%",
+                        y : "100%"
+                    },
+                    colors : [{
+                        color : "#151515",
+
+                    }, {
+                        color : "#2E2E2E",
+
+                    }]
+                },
+		});
+
+	var teamsLabel = Ti.UI.createLabel({
+			height: 30,
+			text: obj.match.team1_name + " - " + obj.match.team2_name,
+			left:20,
+			color:"#FFF",
+			font:Alloy.Globals.getFontCustom(20, "Bold"),
+			top: 15
+		});
+		
+		var dateLabel = Ti.UI.createLabel({
+			height: 20,
+			top:40,
+			left:20,
+			text: obj.match.game_date,
+			color: Alloy.Globals.themeColor(),
+			font: Alloy.Globals.getFont(14, "Regular"),
+		});
+		
+		teamHeader.add(teamsLabel);
+		teamHeader.add(dateLabel);
 	
-
-
+	sections[0] = Ti.UI.createTableViewSection({
+			headerView : teamHeader,
+			footerView : Ti.UI.createView({
+				height : 0.1,
+			})
+		});
+		
+		
+	var bet_amount = obj.match.bet_amount;
+	var count = obj.stats.count;
+	var winners_count = obj.winners.length;
 	
-
+	var total_pot = bet_amount * count;
+	var win_amount = 0;
+	if(winners_count > 0){
+		win_amount = Math.floor(total_pot/winners_count);
+	}
+	
+	
+	var participantRow = Ti.UI.createTableViewRow({
+		height: 65,
+		width: Ti.UI.FILL,
+	});
+	
+	var winAmountRow = Ti.UI.createTableViewRow({
+		height: 65,
+		width: Ti.UI.FILL
+	});
+	
+	var matchParticipantsLabel = Ti.UI.createLabel({
+		text: "Participants : " + count,
+		left: 20,
+		color:"#FFF",
+		font:Alloy.Globals.getFontCustom(18, "Regular"),
+	});
+	
+	participantRow.add(matchParticipantsLabel);
+	
+	var matchWinnersPot = Ti.UI.createLabel({
+		text: "Win amount : " + win_amount,
+		left: 20,
+		color:"#FFF",
+		font:Alloy.Globals.getFontCustom(18, "Regular"),
+	});
+	
+	winAmountRow.add(matchWinnersPot);	
+		
+	sections[0].add(participantRow);
+	sections[0].add(winAmountRow);	
+		
 	sections[1] = createSectionsForTable("Winners");
 
-	for(var i in obj.winners){
-		sections[1].add(constructChallengeRows(obj.winners[i], i));
+	if(obj.winners.length > 0){
+		for(var i in obj.winners){
+			sections[1].add(constructChallengeRows(obj.winners[i], i));
+		}
+	
+	}else{
+		var emptyRow = Ti.UI.createTableViewRow({
+			height: 65,
+			width: Ti.UI.FILL,
+		});
+		
+		emptyRow.add(Ti.UI.createLabel({
+			text: "Det fanns inga vinnare den här matchen",
+			left: 20,
+			font: Alloy.Globals.getFontCustom(18, "Regular"),
+			color:"#FFF"
+		}));
+		
+		sections[1].add(emptyRow);
 	}
 	
 
@@ -256,74 +393,13 @@ function constructTableView(obj) {
 	
 	
 
-	wrapperView.add(table);			
+	$.previousMatchOTD.add(table);			
 	
 	
 }
 
 function showPreviousMatch(obj){
-	wrapperView = Ti.UI.createView({
-		height: Ti.UI.FILL,
-		width: Ti.UI.FILL,
-		layout: 'vertical'
-	});
-	
-	var teamsLabel = Ti.UI.createLabel({
-		height: 30,
-		text: obj.match.team1_name + " - " + obj.match.team2_name,
-		textAlign: "center",
-		color:"#FFF",
-		font:{
-			fontSize: 18,
-			fontFamily: "Impact",
-		},
-		top: 5
-	});
-	
-	var dateLabel = Ti.UI.createLabel({
-		height: 20,
-		text: obj.match.game_date,
-		textAlign: "center",
-		color: "#FFF",
-		font: {
-			fontSize: 16,
-		}
-	});
-	
-	var bet_amount = obj.match.bet_amount;
-	var count = obj.stats.count;
-	var winners_count = obj.winners.length;
-	
-	var total_pot = bet_amount * count;
-	var win_amount = Math.floor(total_pot/winners_count);
-	
-	var matchParticipantsLabel = Ti.UI.createLabel({
-		top: 15,
-		text: "Participants : " + count,
-		textAlign: "center",
-		color:"#FFF",
-		font:{
-			fontSize: 18,
-			fontFamily: "Impact",
-		},
-	});
-	
-	var matchWinnersPot = Ti.UI.createLabel({
-		text: "Win amount : " + win_amount,
-		textAlign: "center",
-		color:"#FFF",
-		font:{
-			fontSize: 18,
-			fontFamily: "Impact"
-		}
-	});
-	
-	
-	
-	wrapperView.add(teamsLabel);
-	wrapperView.add(dateLabel);
-	wrapperView.add(matchParticipantsLabel);
-	wrapperView.add(matchWinnersPot);
+
 	
 	constructTableView(obj);
 	

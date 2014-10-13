@@ -422,7 +422,7 @@ $.facebookBtnText.text = Alloy.Globals.PHRASES.loginFacebookButtonTxt;
 
 // try to get Betkampen token
 Alloy.Globals.readToken();
-getTutorialImages();
+
 // check login
 if (Alloy.Globals.checkConnection()) {
 	if (fb.loggedIn) {
@@ -726,3 +726,4 @@ $.registerBtn.addEventListener('click', function(e) {
 
 $.registerBtnText.text = Alloy.Globals.PHRASES.registerTxt;
 $.loginBtnText.text = Alloy.Globals.PHRASES.signInTxt;
+getTutorialImages();

@@ -36,9 +36,10 @@ if (OS_ANDROID) {
 $.friendSearch.addEventListener('close', function() {
     indicator.closeIndicator();
 });
-var mainView = Ti.UI.createScrollView({
+var mainView = Ti.UI.createView({
     class : "topView",
     height : "100%",
+    id: 'mainView',
     width : "100%",
     top : 0,
     backgroundColor : "transparent",
@@ -82,6 +83,93 @@ searchBtn.add(searchIcon);
 mainView.add(searchBtn);
 //search starting when you click searchbutton
 searchBtn.addEventListener('click', function(e) {
+	var children = $.friendSearch.children;
+	for(var i in children){
+		if(children[i].id == 'mainView'){
+			mainChildren = children[i].children;
+			for(var k in mainChildren){
+				if(mainChildren[k].id == 'challengeTable'){
+					Ti.API.info("HITTADE TABLE");
+					children[i].remove(mainChildren[k]);
+					mainChildren[k] = null;
+				}
+				
+			}
+			
+			
+		}
+	}
+	sections = [];
+	 var tableHeaderView = Ti.UI.createView({
+        height : 0.1
+    });
+
+    var fontawesome = require('lib/IconicFont').IconicFont({
+        font : 'lib/FontAwesome'
+    });
+
+    var font = 'FontAwesome';
+
+    if (OS_ANDROID) {
+        font = 'fontawesome-webfont';
+    }
+
+    var tableFooterView = Ti.UI.createView({
+        height : 0.1
+    });
+
+    if (OS_IOS) {
+        var separatorS;
+        var separatorCol;
+
+        if (iOSVersion < 7) {
+            separatorS = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
+            separatorColor = 'transparent';
+        } else {
+            separatorS = Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE;
+            separatorColor = '#6d6d6d';
+        }
+
+        table = Titanium.UI.createTableView({
+            //width : Ti.UI.FILL,
+            left : 0,
+            headerView : tableHeaderView,
+            footerView : tableFooterView,
+            height : '85%',
+            width : '100%',
+            //backgroundImage: '/images/profileBG.jpg',
+            backgroundColor : 'transparent',
+            style : Ti.UI.iPhone.TableViewStyle.GROUPED,
+            separatorInsets : {
+                left : 0,
+                right : 0
+            },
+            id : 'challengeTable',
+            separatorStyle : separatorS,
+            separatorColor : separatorColor
+        });
+    } else if (OS_ANDROID) {
+        table = Titanium.UI.createTableView({
+            width : Ti.UI.FILL,
+            left : 0,
+            headerView : tableHeaderView,
+            height : '85%',
+            //backgroundColor : '#303030',
+            separatorColor : '#6d6d6d',
+            id : 'challengeTable'
+        });
+    }
+    
+    sections[0] = Ti.UI.createTableViewSection({
+                headerView : Ti.UI.createView({
+                    height : 0.1
+                }),
+                footerView : Ti.UI.createView({
+                    height : 0.1
+                }),
+            });
+            
+    mainView.add(table);
     getSearchResult();
     //searchText.removeEventListener('return');
 });
@@ -164,6 +252,8 @@ var sections = [];
                     height : 0.1
                 }),
             });
+            
+            mainView.add(table);
 a = 0;
 function createGUI(obj) {
     //adding your friends to array to check so you dont add same friend again
@@ -190,6 +280,8 @@ function createGUI(obj) {
         width : '100%',
         height : 65,
         id: obj.fid,
+        isFriend : false,
+        fName :  obj.name.toString(),
     });
     
     //mainView.add(row);
@@ -207,7 +299,7 @@ function createGUI(obj) {
         image : image,
         height : 35,
         width : 35,
-        left : '3%',
+        left : 20,
         borderRadius : 17
     });
     profilePic.addEventListener('error', function(e) {
@@ -222,105 +314,82 @@ function createGUI(obj) {
     }
     var name = Ti.UI.createLabel({
         text : boardName,
-        left : '20%',
-        font : {
-            fontSize : 18,
-            fontFamily : "Impact"
-        },
+        left : 50,
+        font : Alloy.Globals.getFontCustom(18, "Regular"),
+        color:"#FFF",
+        fName :  obj.name.toString(),
     });
     row.add(name);
 
+
+	
     //check if you already are friends
     if (isInArray(fr, obj.fid)) {
         //if you are disable add button
-        var addBtn = Ti.UI.createButton({
-            hight : 45,
-            width : '19%',
-            left : '80%',
-            id : obj.fid,
-            font : {
-                fontFamily : font,
-                fontSize : 32
-            },
-            title : fontawesome.icon('fa-check'),
-            backgroundColor : '#00ff00',
-            color : '#000',
-            opacity : 0.7,
-            borderRadius : 5,
-            enabled : false
-        });
+        
        // row.add(addBtn);
-        var click = 1;
+       	var rowIcon = Ti.UI.createLabel({
+       		 right : 10,
+             id : obj.fid,
+			 font : {
+	                    fontFamily : font,
+	                    fontSize : 32
+	                },
+	         text : fontawesome.icon('fa-check'),
+	         color : '#FFF',
+	         fName :  obj.name.toString(),
+		});
+		row.add(rowIcon);
+		row.setBackgroundColor(Alloy.Globals.themeColor());
+        row.isFriend = true;
     } else if (obj.fid == Alloy.Globals.BETKAMPENUID) {
-        var addBtn = Ti.UI.createButton({
-            height : 45,
-            width : '19%',
-            left : '80%',
-            id : obj.fid,
-            font : {
-                fontFamily : font,
-                fontSize : 32
-            },
-            title : fontawesome.icon('fa-times'),
-            backgroundColor : '#ff0000',
-            color : '#000',
-            opacity : 0.7,
-            borderRadius : 5,
-            enabled : false
-        });
+       row.isFriend = true;
         //row.add(addBtn);
-        var click = 1;
+       var rowIcon = Ti.UI.createLabel({
+       		 right : 10,
+             id : obj.fid,
+			 font : {
+	                    fontFamily : font,
+	                    fontSize : 32
+	                },
+	         text : fontawesome.icon('fa-check'),
+	         color : '#FFF',
+	         fName :  obj.name.toString(),
+		});
+		row.add(rowIcon);
+		row.setBackgroundColor(Alloy.Globals.themeColor());
     } else {
         // add button for adding your new friend
-        var addBtn = Ti.UI.createButton({
-            width : '19%',
-            left : '80%',
-            id : obj.fid,
-            fName : obj.name,
-            font : {
-                fontFamily : font,
-                fontSize : 32
-            },
-            title : fontawesome.icon('fa-plus'),
-            backgroundColor : '#fff',
-            color : '#000',
-            opacity : 0.7,
-            borderRadius : 5,
-        });
-       // row.add(addBtn);
-        var click = 0;
+        var rowIcon = Ti.UI.createLabel({
+        	right : 10,
+             id : obj.fid,
+			 font : {
+	                    fontFamily : font,
+	                    fontSize : 32
+	                },
+	         text : fontawesome.icon('fa-plus'),
+	         color : '#FFF',
+	         fName :  obj.name.toString()
+		});
+		row.add(rowIcon);
+       row.isFriend = false;
     }
 
     row.addEventListener('click', function(e) {
-        if (click == 0) {
+        if (e.row.isFriend == false) {
             //add friend to friendlist
-            addBtn.backgroundColor = '#00ff00';
-            addBtn.title = fontawesome.icon('fa-check');
-            member.borderColor = '#00ff00';
-            var addFriends = Ti.Network.createHTTPClient();
-            addFriends.open("POST", Alloy.Globals.BETKAMPENADDFRIENDSURL);
-            var params = {
-                uid : Alloy.Globals.BETKAMPENUID,
-                fid : e.source.id
-            };
-            addFriends.send(params);
-            //alert(Alloy.Globals.PHRASES.friendSuccess + ' ' + e.source.fName);
-            Alloy.Globals.showToast(Alloy.Globals.PHRASES.friendSuccess + ' ' + e.source.fName);
-
-            click++;
-        } else if (click == 1) {
+         	rowIcon.setText(fontawesome.icon('fa-check'));
+            e.row.setBackgroundColor(Alloy.Globals.themeColor());
+           	addFriend(e.source.id, e.source.fName);
+			e.row.isFriend = true;
+           
+        } else if (e.row.isFriend == true) {
             //if you clicked on wrong person and click again you remove him from your friendlist
-            addBtn.backgroundColor = '#fff';
-            addBtn.title = fontawesome.icon('fa-plus');
-            member.borderColor = '#fff';
-            var removeFriend = Ti.Network.createHTTPClient();
-            removeFriend.open("POST", Alloy.Globals.BETKAMPENDELETEFRIENDURL);
-            var params = {
-                uid : Alloy.Globals.BETKAMPENUID,
-                fid : e.source.id
-            };
-            removeFriend.send(params);
-            click--;
+           
+          	rowIcon.setText(fontawesome.icon('fa-plus'));
+            e.row.setBackgroundColor('transparent');
+            deleteFriend(e.source.id, e.source.fName);
+          	e.row.isFriend = false;
         }
 
     });
@@ -335,23 +404,30 @@ function getSearchResult() {
     }
 
     if (searchText.value.length > 2) {
+    	table.removeAllChildren();
+    	sections[0].removeAllChildren();
         var client = Ti.Network.createHTTPClient({
             // function called when the response data is available
             onload : function(e) {
                 var response = JSON.parse(this.responseText);
                 // if response is empty show no result text
                 if (response.data.length == 0) {
+                	var row = Ti.UI.createTableViewRow({
+                		height: 65,
+                		width: Ti.UI.FILL,
+                	});
+                	
                     var resultLabel = Ti.UI.createLabel({
                         text : Alloy.Globals.PHRASES.noResultTxt + " " + searchText.value,
-                        textAlign : "center",
-                        top : 10,
+                        left:20,
                         font : Alloy.Globals.getFontCustom(18, "Regular"),
                         color : "#FFF"
                     });
-                    mainView.add(resultLabel);
+                    row.add(resultLabel);
+                    sections[0].add(row);
                     
-                    searchView.visible = false;
-                    refreshBtn.visible = true;
+                   table.setData(sections);
+                   // refreshBtn.visible = true;
                     //creating gui with top ten result of your search
                 } else {
                   
@@ -364,7 +440,7 @@ function getSearchResult() {
                     }
                     
                     table.setData(sections);
-                    mainView.add(table);
+                    
                 }
                 indicator.closeIndicator();
             },
@@ -383,6 +459,97 @@ function getSearchResult() {
     } else {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.searchCharsTxt);
     }
+}
+
+
+function addFriend(frid, name) {
+    table.touchEnabled = false;
+    Ti.API.info("skickar in fbid : " + frid);
+    Ti.API.info("namnet som skickades : " + name);
+    var xhr = Titanium.Network.createHTTPClient();
+    xhr.onerror = function(e) {
+        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+        Ti.API.info('FEL : ' + JSON.stringify(this.responseText));
+        Ti.API.error('Bad Sever =>' + e.error);
+        table.touchEnabled = true;
+    };
+
+    try {
+        xhr.open('POST', Alloy.Globals.BETKAMPENADDFRIENDSURL + '?frid=' + frid + '&fb=0&lang=' + Alloy.Globals.LOCALE);
+        xhr.setRequestHeader("challengesView-type", "application/json");
+        xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
+        xhr.setTimeout(Alloy.Globals.TIMEOUT);
+        xhr.send();
+    } catch(e) {
+        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+        table.touchEnabled = true;
+
+    }
+    xhr.onload = function() {
+        if (this.status == '200') {
+            if (this.readyState == 4) {
+                Ti.API.info("RESPONSE ADD FRIEND : " + JSON.stringify(this.responseText));
+                var response = JSON.parse(this.responseText);
+                Alloy.Globals.showToast(Alloy.Globals.PHRASES.friendSuccess + ' ' + name);
+                table.touchEnabled = true;
+            } else {
+                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+                table.touchEnabled = true;
+            }
+        } else {
+            indicator.closeIndicator();
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+            Ti.API.error("Error =>" + this.response);
+            table.touchEnabled = true;
+        }
+    };
+
+    //alert(Alloy.Globals.PHRASES.friendSuccess + ' ' + name);
+
+}
+
+function deleteFriend(frid, name) {
+    table.touchEnabled = false;
+    Ti.API.info("skickar in fbid : " + frid);
+    Ti.API.info("namnet som skickades : " + name);
+    var xhr = Titanium.Network.createHTTPClient();
+    xhr.onerror = function(e) {
+        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+        Ti.API.info('FEL : ' + JSON.stringify(this.responseText));
+        Ti.API.error('Bad Sever =>' + e.error);
+        table.touchEnabled = true;
+    };
+
+    try {
+        xhr.open('POST', Alloy.Globals.BETKAMPENDELETEFRIENDURL + '?frid=' + frid + '&fb=0&lang=' + Alloy.Globals.LOCALE);
+        xhr.setRequestHeader("challengesView-type", "application/json");
+        xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
+        xhr.setTimeout(Alloy.Globals.TIMEOUT);
+        xhr.send();
+    } catch(e) {
+        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+        table.touchEnabled = true;
+
+    }
+    xhr.onload = function() {
+        if (this.status == '200') {
+            if (this.readyState == 4) {
+                Ti.API.info("RESPONSE DELETE FRIEND : " + JSON.stringify(this.responseText));
+                var response = JSON.parse(this.responseText);
+                Alloy.Globals.showToast(name + Alloy.Globals.PHRASES.friendRemovedTxt);
+                table.touchEnabled = true;
+            } else {
+                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+                table.touchEnabled = true;
+            }
+        } else {
+            indicator.closeIndicator();
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+            Ti.API.error("Error =>" + this.response);
+            table.touchEnabled = true;
+        }
+    };
+
 }
 
 var friendResp = null;
