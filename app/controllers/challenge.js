@@ -531,13 +531,13 @@ function postMatchOfTheDay() {
                     }
 
                     if (answer) {
-                        $.challengeWindow.close();
                         prevWin.close();
+                        $.challengeWindow.close();
                         
                         var args = {
                             gameID : gameID,
                         };
-                            // TODO
+                        
                         var win = Alloy.createController('showMatchOTD', args).getView();
 
                         if (OS_IOS) {

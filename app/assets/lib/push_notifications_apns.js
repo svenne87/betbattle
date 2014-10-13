@@ -59,6 +59,7 @@ var apns = function(){
                     controller : 'challengesView',
                     arg : arg
                 };
+                
                 for(var win in Alloy.Globals.WINDOWS) {
                     Alloy.Globals.WINDOWS[win].close();
                 }
