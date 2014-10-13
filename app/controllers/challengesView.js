@@ -580,6 +580,7 @@ function constructTableView(array) {
 	tableHeaderView.add(Ti.UI.createView({
 	    backgroundImage : '/images/header.png',  // TODO header
 	    height : 80,
+	    backgroundColor : 'transparent',
 	    id: 'headerImage',
 	    width : Ti.UI.FILL
 	}));
