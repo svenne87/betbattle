@@ -11,7 +11,7 @@ var fontawesome = require('lib/IconicFont').IconicFont({
 });
 
 var font = 'FontAwesome';
-
+var iOSVersion;
 if (OS_ANDROID) {
     font = 'fontawesome-webfont';
     $.friendSearch.addEventListener('open', function() {
@@ -25,6 +25,7 @@ if (OS_ANDROID) {
         $.friendSearch.activity.actionBar.title = Alloy.Globals.PHRASES.addFriendsTxt;
     });
 } else {
+	iOSVersion = parseInt(Ti.Platform.version);
     $.friendSearch.titleControl = Ti.UI.createLabel({
         text : Alloy.Globals.PHRASES.addFriendsTxt,
         font : Alloy.Globals.getFontCustom(18, "Bold"),
@@ -44,17 +45,6 @@ var mainView = Ti.UI.createScrollView({
     layout : "vertical"
 });
 
-var searchLabel = Ti.UI.createLabel({
-    text : Alloy.Globals.PHRASES.addFriendsTxt,
-    textAlign : "center",
-    top : 10,
-    font : {
-        fontSize : 22,
-        fontFamily : "Impact"
-    },
-    color : "#FFF"
-});
-mainView.add(searchLabel);
 
 var searchView = Ti.UI.createView({
     width : '100%',
@@ -67,8 +57,8 @@ var searchText = Ti.UI.createTextField({
     color : '#336699',
     backgroundColor : '#707070',
     borderColor : '#000',
-    left : '1%',
-    width : '69%',
+    left : 18,
+    width : '90%',
     height : 40,
     hintText : Alloy.Globals.PHRASES.searchHintTxt,
     tintColor : '#000',
@@ -78,20 +68,18 @@ var searchText = Ti.UI.createTextField({
 });
 searchView.add(searchText);
 
-var searchBtn = Ti.UI.createButton({
-    width : '28%',
-    left : '71%',
-    height : 40,
-    font : {
-        fontFamily : font,
-        fontSize : 27
-    },
-    title : fontawesome.icon('fa-search'),
-    backgroundColor : '#fff',
-    color : '#000',
-    borderRadius : 5,
+var searchBtn = Alloy.Globals.createButtonView("#FFF", "#000", Alloy.Globals.PHRASES.searchBtnTxt);
+
+var searchIcon = Ti.UI.createLabel({
+	left: 20,
+	text: fontawesome.icon('fa-search'),
+	font: font,
+	color:"#000",
 });
-searchView.add(searchBtn);
+
+searchBtn.add(searchIcon);
+
+mainView.add(searchBtn);
 //search starting when you click searchbutton
 searchBtn.addEventListener('click', function(e) {
     getSearchResult();
@@ -102,39 +90,80 @@ searchBtn.addEventListener('click', function(e) {
 getSearchResult();
 });*/
 
-//refresh
-var refreshBtn = Ti.UI.createButton({
-    width : '70%',
-    left : '15%',
-    height : 40,
-    top : '-8%',
-    visible : false,
-    title : Alloy.Globals.PHRASES.newSearchTxt,
-    backgroundColor : '#fff',
-    font : {
-        fontSize : 19,
-        fontFamily : "Impact"
-    },
-    color : '#000',
-    borderRadius : 5,
-});
-mainView.add(refreshBtn);
+var table = null;
+var sections = [];
 
-refreshBtn.addEventListener('click', function(e) {
-    var win = Alloy.createController('friendSearch').getView();
-    if (OS_IOS) {
-        Alloy.Globals.NAV.openWindow(win, {
-            animated : true
-        });
-    } else {
-        win.open({
-            fullScreen : true
-        });
-        win = null;
+
+ ///*******Create Table View*******///
+
+    var tableHeaderView = Ti.UI.createView({
+        height : 0.1
+    });
+
+    var fontawesome = require('lib/IconicFont').IconicFont({
+        font : 'lib/FontAwesome'
+    });
+
+    var font = 'FontAwesome';
+
+    if (OS_ANDROID) {
+        font = 'fontawesome-webfont';
     }
-    $.friendSearch.close();
-});
 
+    var tableFooterView = Ti.UI.createView({
+        height : 0.1
+    });
+
+    if (OS_IOS) {
+        var separatorS;
+        var separatorCol;
+
+        if (iOSVersion < 7) {
+            separatorS = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
+            separatorColor = 'transparent';
+        } else {
+            separatorS = Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE;
+            separatorColor = '#6d6d6d';
+        }
+
+        table = Titanium.UI.createTableView({
+            //width : Ti.UI.FILL,
+            left : 0,
+            headerView : tableHeaderView,
+            footerView : tableFooterView,
+            height : '85%',
+            width : '100%',
+            //backgroundImage: '/images/profileBG.jpg',
+            backgroundColor : 'transparent',
+            style : Ti.UI.iPhone.TableViewStyle.GROUPED,
+            separatorInsets : {
+                left : 0,
+                right : 0
+            },
+            id : 'challengeTable',
+            separatorStyle : separatorS,
+            separatorColor : separatorColor
+        });
+    } else if (OS_ANDROID) {
+        table = Titanium.UI.createTableView({
+            width : Ti.UI.FILL,
+            left : 0,
+            headerView : tableHeaderView,
+            height : '85%',
+            //backgroundColor : '#303030',
+            separatorColor : '#6d6d6d',
+            id : 'challengeTable'
+        });
+    }
+    
+    sections[0] = Ti.UI.createTableViewSection({
+                headerView : Ti.UI.createView({
+                    height : 0.1
+                }),
+                footerView : Ti.UI.createView({
+                    height : 0.1
+                }),
+            });
 a = 0;
 function createGUI(obj) {
     //adding your friends to array to check so you dont add same friend again
@@ -155,44 +184,16 @@ function createGUI(obj) {
 
     a++;
     //add label and line to view when results is showed
-    if (a == 1) {
-        var resultLabel = Ti.UI.createLabel({
-            text : Alloy.Globals.PHRASES.topresultsTxt + " " + searchText.value,
-            textAlign : "center",
-            top : 10,
-            font : {
-                fontSize : 18,
-                fontFamily : "Impact"
-            },
-            color : "#FFF"
-        });
-        mainView.add(resultLabel);
+   
 
-        var line = Ti.UI.createView({
-            width : '100%',
-            height : '1%',
-            top : '1%',
-            backgroundColor : '#fff'
-        });
-        mainView.add(line);
-    }
-
-    var row = Ti.UI.createView({
+    var row = Ti.UI.createTableViewRow({
         width : '100%',
-        height : 45,
-        top : 2
+        height : 65,
+        id: obj.fid,
     });
-    mainView.add(row);
+    
+    //mainView.add(row);
 
-    var member = Ti.UI.createView({
-        width : '78%',
-        backgroundColor : '#fff',
-        color : '#000',
-        opacity : 0.7,
-        borderRadius : 5,
-        left : '1%'
-    });
-    row.add(member);
     //profilepicture
     var image;
     if (obj.fbid !== null) {
@@ -213,7 +214,7 @@ function createGUI(obj) {
         // fallback for image
         profilePic.image = '/images/no_pic.png';
     });
-    member.add(profilePic);
+    row.add(profilePic);
     //short down username so its fits on the screen
     boardName = obj.name.toString();
     if (boardName.length > 22) {
@@ -227,7 +228,7 @@ function createGUI(obj) {
             fontFamily : "Impact"
         },
     });
-    member.add(name);
+    row.add(name);
 
     //check if you already are friends
     if (isInArray(fr, obj.fid)) {
@@ -248,7 +249,7 @@ function createGUI(obj) {
             borderRadius : 5,
             enabled : false
         });
-        row.add(addBtn);
+       // row.add(addBtn);
         var click = 1;
     } else if (obj.fid == Alloy.Globals.BETKAMPENUID) {
         var addBtn = Ti.UI.createButton({
@@ -267,7 +268,7 @@ function createGUI(obj) {
             borderRadius : 5,
             enabled : false
         });
-        row.add(addBtn);
+        //row.add(addBtn);
         var click = 1;
     } else {
         // add button for adding your new friend
@@ -286,11 +287,11 @@ function createGUI(obj) {
             opacity : 0.7,
             borderRadius : 5,
         });
-        row.add(addBtn);
+       // row.add(addBtn);
         var click = 0;
     }
 
-    addBtn.addEventListener('click', function(e) {
+    row.addEventListener('click', function(e) {
         if (click == 0) {
             //add friend to friendlist
             addBtn.backgroundColor = '#00ff00';
@@ -323,6 +324,8 @@ function createGUI(obj) {
         }
 
     });
+    
+    sections[0].add(row);
 }
 
 function getSearchResult() {
@@ -342,26 +345,16 @@ function getSearchResult() {
                         text : Alloy.Globals.PHRASES.noResultTxt + " " + searchText.value,
                         textAlign : "center",
                         top : 10,
-                        font : {
-                            fontSize : 18,
-                            fontFamily : "Impact"
-                        },
+                        font : Alloy.Globals.getFontCustom(18, "Regular"),
                         color : "#FFF"
                     });
                     mainView.add(resultLabel);
-                    var line = Ti.UI.createView({
-                        width : '100%',
-                        height : '1%',
-                        top : '1%',
-                        backgroundColor : '#fff'
-                    });
-                    mainView.add(line);
+                    
                     searchView.visible = false;
                     refreshBtn.visible = true;
                     //creating gui with top ten result of your search
                 } else {
-                    searchView.visible = false;
-                    refreshBtn.visible = true;
+                  
                     for (var i = 0; i < response.data.length; i++) {
                         if (i == 10) {
                             break;
@@ -369,6 +362,9 @@ function getSearchResult() {
                         createGUI(response.data[i]);
 
                     }
+                    
+                    table.setData(sections);
+                    mainView.add(table);
                 }
                 indicator.closeIndicator();
             },
