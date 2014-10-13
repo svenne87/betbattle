@@ -74,7 +74,8 @@ function checkResponded(match) {
                             leagueId : match.leagueID,
                             gameID : match.game_id,
                             matchOTD : 1,
-                            bet_amount : match.bet_amount
+                            bet_amount : match.bet_amount,
+                            win : $.matchDay
                         };
 
                         var win = Alloy.createController('challenge', arg).getView();
