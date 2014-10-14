@@ -894,10 +894,7 @@ top_img.add(Ti.UI.createLabel({
     color : "#FFF",
     left : 10,
     bottom : 1,
-    font : {
-        fontSize : '20',
-        fontFamily : 'Impact'
-    }
+    font : Alloy.Globals.getFontCustom(18, "Bold")
 }));
 
 top_img.add(Ti.UI.createLabel({
@@ -909,10 +906,7 @@ top_img.add(Ti.UI.createLabel({
     textAlign : "right",
     right : 25,
     bottom : 1,
-    font : {
-        fontSize : '14',
-        fontFamily : 'Impact'
-    }
+    font : Alloy.Globals.getFontCustom(12, "Bold")
 }));
 top_img.add(Ti.UI.createView({
     width : 8,
@@ -946,14 +940,12 @@ mid_img.add(Ti.UI.createLabel({
     text : Alloy.Globals.PHRASES.landingPageMatch,
     zIndex : "100",
     height : "25%",
-    width : "60%",
+    width : "80%",
+    backgroundColor:"red",
     color : "#FFF",
     left : 10,
     bottom : 1,
-    font : {
-        fontSize : '20',
-        fontFamily : 'Impact'
-    }
+    font : Alloy.Globals.getFontCustom(18, "Bold")
 }));
 mid_img.add(Ti.UI.createLabel({
     text : Alloy.Globals.PHRASES.landingPageMatchBtn,
@@ -964,10 +956,7 @@ mid_img.add(Ti.UI.createLabel({
     textAlign : "right",
     right : 25,
     bottom : 1,
-    font : {
-        fontSize : '14',
-        fontFamily : 'Impact'
-    }
+    font : Alloy.Globals.getFontCustom(12, "Bold")
 }));
 mid_img.add(Ti.UI.createView({
     width : 8,
@@ -990,10 +979,7 @@ bot_img.add(Ti.UI.createLabel({
     color : "#FFF",
     left : 10,
     bottom : 1,
-    font : {
-        fontSize : '20',
-        fontFamily : custom_font
-    }
+    font : Alloy.Globals.getFontCustom(18, "Bold")
 }));
 bot_img.add(Ti.UI.createLabel({
     text : Alloy.Globals.PHRASES.landingPageZoneBtn,
@@ -1004,10 +990,7 @@ bot_img.add(Ti.UI.createLabel({
     color : "#FFF",
     right : 25,
     bottom : 1,
-    font : {
-        fontSize : '14',
-        fontFamily : 'Impact'
-    }
+    font : Alloy.Globals.getFontCustom(12, "Bold")
 }));
 bot_img.add(Ti.UI.createView({
     width : 8,
@@ -1038,10 +1021,7 @@ profileBtn.add(Ti.UI.createLabel({
     width : "100%",
     textAlign : "center",
     bottom : 20,
-    font : {
-        fontSize : '20',
-        fontFamily : 'Impact'
-    },
+    font : Alloy.Globals.getFontCustom(18, "Bold"),
     color : "#FFF",
     text : Alloy.Globals.PHRASES.landingPageProfileBtn
 }));
@@ -1070,10 +1050,7 @@ inviteBtn.add(Ti.UI.createLabel({
     width : "100%",
     textAlign : "center",
     bottom : "20%",
-    font : {
-        fontSize : '20',
-        fontFamily : 'Impact'
-    },
+    font : Alloy.Globals.getFontCustom(18, "Bold"),
     color : "#FFF",
     text : Alloy.Globals.PHRASES.landingPageInviteBtnBot
 }));
@@ -1084,10 +1061,7 @@ inviteBtn.add(Ti.UI.createLabel({
     textAlign : "left",
     bottom : "40%",
     left : "20%",
-    font : {
-        fontSize : '20',
-        fontFamily : 'Impact'
-    },
+    font : Alloy.Globals.getFontCustom(18, "Bold"),
     color : "#FFF",
     text : Alloy.Globals.PHRASES.landingPageInviteBtnTop
 }));
@@ -1193,10 +1167,7 @@ function createTopView(resp) {
         color : "#FFF",
         left : 10,
         bottom : 1,
-        font : {
-            fontSize : '20',
-            fontFamily : 'Impact'
-        }
+        font : Alloy.Globals.getFontCustom(18, "Bold")
     }));
 
     top_img.add(Ti.UI.createLabel({
@@ -1208,10 +1179,7 @@ function createTopView(resp) {
         textAlign : "right",
         right : 25,
         bottom : 1,
-        font : {
-            fontSize : '14',
-            fontFamily : 'Impact'
-        }
+        font : Alloy.Globals.getFontCustom(12, "Bold")
     }));
     top_img.add(Ti.UI.createView({
         width : 8,
@@ -1258,14 +1226,11 @@ function createTopView(resp) {
         text : Alloy.Globals.PHRASES.landingPageMatch,
         zIndex : "100",
         height : "25%",
-        width : "60%",
+        width : "70%",
         color : "#FFF",
         left : 10,
         bottom : 1,
-        font : {
-            fontSize : '20',
-            fontFamily : 'Impact'
-        }
+        font : Alloy.Globals.getFontCustom(18, "Bold")
     }));
     mid_img.add(Ti.UI.createLabel({
         text : Alloy.Globals.PHRASES.landingPageMatchBtn,
@@ -1276,10 +1241,7 @@ function createTopView(resp) {
         textAlign : "right",
         right : 25,
         bottom : 1,
-        font : {
-            fontSize : '14',
-            fontFamily : 'Impact'
-        }
+        font : Alloy.Globals.getFontCustom(12, "Bold")
     }));
     mid_img.add(Ti.UI.createView({
         width : 8,
@@ -1302,10 +1264,7 @@ function createTopView(resp) {
         color : "#FFF",
         left : 10,
         bottom : 1,
-        font : {
-            fontSize : '20',
-            fontFamily : custom_font
-        }
+        font : Alloy.Globals.getFontCustom(18, "Bold")
     }));
     bot_img.add(Ti.UI.createLabel({
         text : Alloy.Globals.PHRASES.landingPageZoneBtn,
@@ -1316,10 +1275,7 @@ function createTopView(resp) {
         color : "#FFF",
         right : 25,
         bottom : 1,
-        font : {
-            fontSize : '14',
-            fontFamily : 'Impact'
-        }
+        font :Alloy.Globals.getFontCustom(12, "Bold")
     }));
     bot_img.add(Ti.UI.createView({
         width : 8,
@@ -1375,10 +1331,7 @@ function createTopView(resp) {
         text : "VS",
         textAlign : "center",
         color : "#FFFFFF",
-        font : {
-            fontSize : 22,
-            fontFamily : "Impact",
-        }
+        font : Alloy.Globals.getFontCustom(22, "Bold")
     });
     matchWrapperView.add(versusLabel);
 
@@ -1426,10 +1379,7 @@ function createBotView() {
         width : "100%",
         textAlign : "center",
         bottom : 20,
-        font : {
-            fontSize : '20',
-            fontFamily : 'Impact'
-        },
+        font : Alloy.Globals.getFontCustom(18, "Bold"),
         color : "#FFF",
         text : Alloy.Globals.PHRASES.landingPageProfileBtn
     }));
@@ -1452,10 +1402,7 @@ function createBotView() {
         width : "100%",
         textAlign : "center",
         bottom : "20%",
-        font : {
-            fontSize : '20',
-            fontFamily : 'Impact'
-        },
+        font : Alloy.Globals.getFontCustom(18, "Bold"),
         color : "#FFF",
         text : Alloy.Globals.PHRASES.landingPageInviteBtnBot
     }));
@@ -1466,10 +1413,7 @@ function createBotView() {
         textAlign : "left",
         bottom : "40%",
         left : "20%",
-        font : {
-            fontSize : '20',
-            fontFamily : 'Impact'
-        },
+        font :Alloy.Globals.getFontCustom(18, "Bold"),
         color : "#FFF",
         text : Alloy.Globals.PHRASES.landingPageInviteBtnTop
     }));
@@ -1525,10 +1469,7 @@ var versusLabel = Ti.UI.createLabel({
     text : "VS",
     textAlign : "center",
     color : "#FFFFFF",
-    font : {
-        fontSize : 22,
-        fontFamily : "Impact",
-    }
+    font : Alloy.Globals.getFontCustom(22, "Bold")
 });
 matchWrapperView.add(versusLabel);
 
