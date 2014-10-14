@@ -1,4 +1,9 @@
 var args = arguments[0] || {};
+
+if(args.refresh) {
+    getChallenges();
+}
+
 var iOSVersion;
 
 if (OS_IOS) {
