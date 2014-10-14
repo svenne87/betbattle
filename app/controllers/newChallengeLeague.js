@@ -63,6 +63,13 @@ table = Titanium.UI.createTableView({
 });
 
 if (OS_IOS) {
+    var iOSVersion = parseInt(Ti.Platform.version);
+   
+    if (iOSVersion < 7) {
+        table.separatorStyle = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
+        table.separatorColor = 'transparent';
+    } 
+    
     table.separatorInsets = {
         left : 0,
         right : 0
@@ -141,8 +148,8 @@ for (var i in leagues) {
 
     var leagueName = leagues[i].name;
 
-    if (leagueName.length > 17) {
-        leagueName = leagueName.substring(0, 14);
+    if (leagueName.length > 20) {
+        leagueName = leagueName.substring(0, 17);
         leagueName = leagueName + '...';
     }
 

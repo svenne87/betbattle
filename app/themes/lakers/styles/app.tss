@@ -5,28 +5,3 @@
 	backgroundColor: '#336699',
 	borderRadius: 3
 }
-".challengesSection":{
-	height : 60,
-	backgroundColor : '#000000',
-	//opacity: 0.6,
-	/*backgroundGradient : {
-		type : "linear",
-		startPoint : {
-			x : "0%",
-			y : "0%"
-		},
-		endPoint : {
-			x : "0%",
-			y : "100%"
-		},
-		colors : [{
-			color : "#151515",
-			
-		},{
-			color : "#2E2E2E",
-			
-		}]
-	},*/
-	layout : 'vertical'
-
-}

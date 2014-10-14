@@ -389,11 +389,14 @@ function createViews(array) {
          });*/
 
         group.addEventListener('click', function(e) {
-            //alert('editera mig' + e.source.id);
-            gID = e.row.id;
-            gName = e.row.gName;
-            gAdmin = e.row.creator;
-            var win = Alloy.createController('editGroup', gID, gName, gAdmin).getView();
+            var args = {
+                row : e.row.children[1], 
+                gID : e.row.id,
+                gName : e.row.gName,
+                gAdmin : e.row.creator
+            };
+     
+            var win = Alloy.createController('editGroup', args).getView();
             if (OS_IOS) {
                 Alloy.Globals.NAV.openWindow(win, {
                     animated : true

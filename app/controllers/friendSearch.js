@@ -133,6 +133,7 @@ searchBtn.addEventListener('click', function(e) {
         table = Titanium.UI.createTableView({
             //width : Ti.UI.FILL,
             left : 0,
+            top : 10,
             headerView : tableHeaderView,
             footerView : tableFooterView,
             height : '85%',
@@ -152,6 +153,7 @@ searchBtn.addEventListener('click', function(e) {
         table = Titanium.UI.createTableView({
             width : Ti.UI.FILL,
             left : 0,
+            top : 10,
             headerView : tableHeaderView,
             height : '85%',
             //backgroundColor : '#303030',
@@ -182,78 +184,6 @@ var table = null;
 var sections = [];
 
 
- ///*******Create Table View*******///
-
-    var tableHeaderView = Ti.UI.createView({
-        height : 0.1
-    });
-
-    var fontawesome = require('lib/IconicFont').IconicFont({
-        font : 'lib/FontAwesome'
-    });
-
-    var font = 'FontAwesome';
-
-    if (OS_ANDROID) {
-        font = 'fontawesome-webfont';
-    }
-
-    var tableFooterView = Ti.UI.createView({
-        height : 0.1
-    });
-
-    if (OS_IOS) {
-        var separatorS;
-        var separatorCol;
-
-        if (iOSVersion < 7) {
-            separatorS = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
-            separatorColor = 'transparent';
-        } else {
-            separatorS = Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE;
-            separatorColor = '#6d6d6d';
-        }
-
-        table = Titanium.UI.createTableView({
-            //width : Ti.UI.FILL,
-            left : 0,
-            headerView : tableHeaderView,
-            footerView : tableFooterView,
-            height : '85%',
-            width : '100%',
-            //backgroundImage: '/images/profileBG.jpg',
-            backgroundColor : 'transparent',
-            style : Ti.UI.iPhone.TableViewStyle.GROUPED,
-            separatorInsets : {
-                left : 0,
-                right : 0
-            },
-            id : 'challengeTable',
-            separatorStyle : separatorS,
-            separatorColor : separatorColor
-        });
-    } else if (OS_ANDROID) {
-        table = Titanium.UI.createTableView({
-            width : Ti.UI.FILL,
-            left : 0,
-            headerView : tableHeaderView,
-            height : '85%',
-            //backgroundColor : '#303030',
-            separatorColor : '#6d6d6d',
-            id : 'challengeTable'
-        });
-    }
-    
-    sections[0] = Ti.UI.createTableViewSection({
-                headerView : Ti.UI.createView({
-                    height : 0.1
-                }),
-                footerView : Ti.UI.createView({
-                    height : 0.1
-                }),
-            });
-            
-            mainView.add(table);
 a = 0;
 function createGUI(obj) {
     //adding your friends to array to check so you dont add same friend again
@@ -310,11 +240,11 @@ function createGUI(obj) {
     //short down username so its fits on the screen
     boardName = obj.name.toString();
     if (boardName.length > 22) {
-        boardName = boardName.substring(0, 22);
+        boardName = boardName.substring(0, 19) + '...';
     }
     var name = Ti.UI.createLabel({
         text : boardName,
-        left : 50,
+        left : 60,
         font : Alloy.Globals.getFontCustom(18, "Regular"),
         color:"#FFF",
         fName :  obj.name.toString(),
@@ -336,11 +266,10 @@ function createGUI(obj) {
 	                    fontSize : 32
 	                },
 	         text : fontawesome.icon('fa-check'),
-	         color : '#FFF',
+	         color : Alloy.Globals.themeColor(),
 	         fName :  obj.name.toString(),
 		});
 		row.add(rowIcon);
-		row.setBackgroundColor(Alloy.Globals.themeColor());
         row.isFriend = true;
     } else if (obj.fid == Alloy.Globals.BETKAMPENUID) {
        row.isFriend = true;
@@ -353,7 +282,7 @@ function createGUI(obj) {
 	                    fontSize : 32
 	                },
 	         text : fontawesome.icon('fa-check'),
-	         color : '#FFF',
+	         color : Alloy.Globals.themeColor(),
 	         fName :  obj.name.toString(),
 		});
 		row.add(rowIcon);
@@ -379,7 +308,7 @@ function createGUI(obj) {
         if (e.row.isFriend == false) {
             //add friend to friendlist
          	rowIcon.setText(fontawesome.icon('fa-check'));
-            e.row.setBackgroundColor(Alloy.Globals.themeColor());
+            rowIcon.setColor(Alloy.Globals.themeColor());
            	addFriend(e.source.id, e.source.fName);
 			e.row.isFriend = true;
            
@@ -387,6 +316,7 @@ function createGUI(obj) {
             //if you clicked on wrong person and click again you remove him from your friendlist
            
           	rowIcon.setText(fontawesome.icon('fa-plus'));
+          	rowIcon.setColor("#FFF");
             e.row.setBackgroundColor('transparent');
             deleteFriend(e.source.id, e.source.fName);
           	e.row.isFriend = false;

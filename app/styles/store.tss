@@ -2,5 +2,28 @@
 	layout: 'vertical',
 	width: Ti.UI.FILL,
 	height: Ti.UI.FILL,
-	backgroundColor: "#303030"
-}
+	backgroundColor: "#000"
+},
+"#table[platform=ios]": {
+	height : Ti.UI.SIZE,
+	width : Ti.UI.FILL,
+	backgroundColor : '#000',
+	separatorInsets : {
+    	left : 0,
+        right : 0
+    },
+    headerView : null,
+    footerView : null,
+    scrollable : false,
+    separatorColor : '#303030',
+    backgroundColor : '#000'
+},
+"#table[platform=android]": {
+	height : Ti.UI.SIZE,
+	width : Ti.UI.FILL,
+	backgroundColor : '#000',
+    headerView : null,
+    footerView : null,
+    scrollable : false,
+    separatorColor : '#303030'
+},

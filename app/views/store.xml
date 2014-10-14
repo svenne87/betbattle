@@ -1,4 +1,6 @@
 <Alloy>
 	<Window class="container" id="store">
+		<TableView id="table">
+		</TableView>
 	</Window>
 </Alloy>
