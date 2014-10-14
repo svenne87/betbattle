@@ -46,31 +46,35 @@ var apns = function(){
 			my_alert.hide();
 			Ti.UI.iPhone.setAppBadge(0);
 			Titanium.UI.iPhone.appBadge = 0;
-			args = {
-				refresh : 1,
-			};
-					         
+	         
             if(Alloy.Globals.MAINWIN !== null) {
-                var arg = {
-                    refresh : true
-                };
-
                 var obj = {
                     controller : 'challengesView',
-                    arg : arg
+                    arg : {refresh : true}
                 };
-                
+                /*
                 for(var win in Alloy.Globals.WINDOWS) {
                     Alloy.Globals.WINDOWS[win].close();
                 }
-                
+                */
                 Ti.App.fireEvent('app:updateView', obj);
+
+                // måste köra refresh och kolla om man blir utmanad i pushen...
+                var args = {refresh:true};
+                var win = Alloy.createController('challenges_new', args).getView();
+                Alloy.Globals.NAV.openWindow(win); // , { animated : true }
+                win = null;      
+                
             } else {
-                var loginSuccessWindow = Alloy.createController('main', args).getView();
+                var loginSuccessWindow = Alloy.createController('main').getView();
                 loginSuccessWindow.open({
                     fullScreen : true
                 });
-                loginSuccessWindow = null;      
+                loginSuccessWindow = null;
+                
+                var win = Alloy.createController('challenges_new').getView();
+                Alloy.Globals.NAV.openWindow(win); // , { animated : true }
+                win = null;       
             }			
 		});
         
