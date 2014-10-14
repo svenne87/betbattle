@@ -335,7 +335,7 @@ function constructTableView(obj) {
 	});
 	
 	var matchParticipantsLabel = Ti.UI.createLabel({
-		text: "Participants : " + count,
+		text: Alloy.Globals.PHRASES.matchOTDparticipants + ': ' + count,
 		left: 20,
 		color:"#FFF",
 		font:Alloy.Globals.getFontCustom(18, "Regular"),
@@ -344,7 +344,7 @@ function constructTableView(obj) {
 	participantRow.add(matchParticipantsLabel);
 	
 	var matchWinnersPot = Ti.UI.createLabel({
-		text: "Win amount : " + win_amount,
+		text: Alloy.Globals.PHRASES.matchOTDwinAmount + ': ' + win_amount,
 		left: 20,
 		color:"#FFF",
 		font:Alloy.Globals.getFontCustom(18, "Regular"),
@@ -355,7 +355,7 @@ function constructTableView(obj) {
 	sections[0].add(participantRow);
 	sections[0].add(winAmountRow);	
 		
-	sections[1] = createSectionsForTable("Winners");
+	sections[1] = createSectionsForTable(Alloy.Globals.PHRASES.matchOTDwinners);
 
 	if(obj.winners.length > 0){
 		for(var i in obj.winners){
