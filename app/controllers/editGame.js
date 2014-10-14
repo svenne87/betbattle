@@ -150,13 +150,13 @@ function createGameType(gameType, gameObject, i, gameArray, index) {
 
     var val = gameArray[index].gameValue[0];
     if (gameTypeView.value == val) {
-        gameTypeView.setBackgroundColor(Alloy.Globals.themeColor());
+       // gameTypeView.setBackgroundColor(Alloy.Globals.themeColor());
         gameTypeView.add(Ti.UI.createLabel({
             id : 'selected_' + gameTypeView.id,
             text : fontawesome.icon('fa-check'),
             textAlign : "center",
             right : 10,
-            color : "#FFF",
+            color : Alloy.Globals.themeColor(),
             parent : gameTypeView,
             font : {
                 fontSize : 30,
@@ -201,7 +201,7 @@ function createGameType(gameType, gameObject, i, gameArray, index) {
             text : fontawesome.icon('fa-check'),
             textAlign : "center",
             right : 10,
-            color : "#FFF",
+            color : Alloy.Globals.themeColor(),
             parent : gameTypeView,
             font : {
                 fontSize : 30,
@@ -212,7 +212,7 @@ function createGameType(gameType, gameObject, i, gameArray, index) {
         }));
 
         for (var x in children.rows) {
-            children.rows[x].setBackgroundColor("#000");
+            //children.rows[x].setBackgroundColor("#000");
             labels = children.rows[x].getChildren();
             if (children.rows[x].value != e.row.value) {
                 for (var k in labels) {
@@ -223,7 +223,7 @@ function createGameType(gameType, gameObject, i, gameArray, index) {
                 }
             }
         }
-        e.row.setBackgroundColor(Alloy.Globals.themeColor());
+       // e.row.setBackgroundColor(Alloy.Globals.themeColor());
 
         Ti.API.info("gameArray : " + JSON.stringify(gameArray));
 
