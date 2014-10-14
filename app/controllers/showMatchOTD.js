@@ -10,40 +10,19 @@ var indicator = uie.createIndicatorWindow({
     text : Alloy.Globals.PHRASES.loadingTxt
 });
 
+var iOSVersion;
+
+if (OS_IOS) {
+    iOSVersion = parseInt(Ti.Platform.version);
+}
+
+ var sections = [];
+ var table = null;
+ 
 function createGameType(type, values, game) {
-    var gameTypeView = Ti.UI.createView({
-        height : 65,
-        width : Ti.UI.FILL,
-      	backgroundColor : '#303030',
-		backgroundGradient : {
-			type : "linear",
-			startPoint : {
-				x : "0%",
-				y : "0%"
-			},
-			endPoint : {
-				x : "0%",
-				y : "100%"
-			},
-			colors : [{
-				color : "#151515",
-
-			}, {
-				color : "#2E2E2E",
-
-			}]
-		}, 
-    });
-
-    var gameTypeDescription = Ti.UI.createLabel({
-        text : Alloy.Globals.PHRASES.gameTypes[type.type].description,
-        left: 20,
-        font : Alloy.Globals.getFontCustom(18, "Bold"),
-        color : "#FFF",
-    });
-    gameTypeView.add(gameTypeDescription);
-
-    var gameValueWrapper = Ti.UI.createView({
+   
+	
+    var gameValueWrapper = Ti.UI.createTableViewRow({
         width : Ti.UI.FILL,
         height: 70,
         backgroundColor:"transparent",
@@ -108,8 +87,8 @@ function createGameType(type, values, game) {
    
   
 
-    botView.add(gameTypeView);
-    botView.add(gameValueWrapper);
+ 
+  	return gameValueWrapper;
     
 }
 
@@ -125,7 +104,7 @@ function createLayout(resp) {
     });
     
     
-    var sections = [];
+   
 
 	var tableHeaderView = Ti.UI.createView({
 		height : 0.1,
@@ -209,42 +188,104 @@ function createLayout(resp) {
     	font: Alloy.Globals.getFontCustom(20, "Bold"),
     	color:"#FFF",
     	left: 20,
+    	top: 15,
+    });
+    
+    var matchDateLabel = Ti.UI.createLabel({
+    	text: resp.game.game_date_string,
+    	font: Alloy.Globals.getFontCustom(14, "Regular"),
+    	color: Alloy.Globals.themeColor(),
+    	left: 20,
+    	top: 40,
     });
     
     matchHeader.add(matchLabel);
-
+    matchHeader.add(matchDateLabel);
+    
+	sections[0] = Ti.UI.createTableViewSection({
+		headerView: matchHeader,
+		footerView : Ti.UI.createView({
+			height: 0.1
+		})
+	});
+	var rowUser = Ti.UI.createTableViewRow({
+		height: 65,
+		width: Ti.UI.FILL,
+	});
+	
     var usersCountLabel = Ti.UI.createLabel({
         text : Alloy.Globals.PHRASES.showMatchOTDusers + resp.stats.count,
-        font : Alloy.Globals.getFontCustom(20, "Bold"),
+        font : Alloy.Globals.getFontCustom(18, "Regular"),
         color : "#FFF",
         left:20,
     });
-
+	rowUser.add(usersCountLabel);
+	
+    var rowPot = Ti.UI.createTableViewRow({
+    	height: 65,
+    	width: Ti.UI.FILL,
+    });
+    
     var potSize = resp.stats.count * resp.stats.bet_amount;
     var potSizeLabel = Ti.UI.createLabel({
         text : Alloy.Globals.PHRASES.showMatchOTDpot + potSize,
-        font : Alloy.Globals.getFontCustom(20, "Bold"),
+        font : Alloy.Globals.getFontCustom(18, "Regular"),
         color : "#FFF",
         left: 20,
     });
+    
+    rowPot.add(potSizeLabel);
+    
+    sections[0].add(rowUser);
+    sections[0].add(rowPot);
 
-    topView.add(usersCountLabel);
-    topView.add(potSizeLabel);
-
-    botView = Ti.UI.createView({
-        width : Ti.UI.FILL,
-        height : "85%",
-        backgroundColor : "transparent",
-        layout : 'vertical',
-
-    });
+    
+    
 
     for (var i in resp.game.game_types) {
-        createGameType(resp.game.game_types[i], resp.values, resp.game);
+    	 var gameTypeViewDesc = Ti.UI.createView({
+	        height : 65,
+	        width : Ti.UI.FILL,
+	      	backgroundColor : '#303030',
+			backgroundGradient : {
+				type : "linear",
+				startPoint : {
+					x : "0%",
+					y : "0%"
+				},
+				endPoint : {
+					x : "0%",
+					y : "100%"
+				},
+				colors : [{
+					color : "#151515",
+	
+				}, {
+					color : "#2E2E2E",
+	
+				}]
+			}, 
+	    });
+	
+	    var gameTypeDescription = Ti.UI.createLabel({
+	        text : Alloy.Globals.PHRASES.gameTypes[resp.game.game_types[i].type].description,
+	        left: 20,
+	        font : Alloy.Globals.getFontCustom(18, "Bold"),
+	        color : "#FFF",
+	    });
+	    gameTypeViewDesc.add(gameTypeDescription);
+		var sectionIndex = sections.length;
+		sections[sectionIndex] = Ti.UI.createTableViewSection({
+			headerView: gameTypeViewDesc,
+			footerView: Ti.UI.createView({
+				height: 0.1
+			}),
+		});
+        sections[sectionIndex].add(createGameType(resp.game.game_types[i], resp.values, resp.game));
     }
 
-    view.add(topView);
-    view.add(botView);
+	table.setData(sections);
+    view.add(table);
 
     $.showMatchOTD.add(view);
 }

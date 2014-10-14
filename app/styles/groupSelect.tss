@@ -2,7 +2,7 @@
 	layout: 'vertical',
 	width: Ti.UI.FILL,
 	height: Ti.UI.FILL,
-	backgroundColor: "#303030"
+	backgroundColor: "#000000"
 },
 "#groupSelect":{
 	height: '100%',
@@ -11,7 +11,7 @@
 },
 ".challengesSectionDefault":{
 	width: '100%',
-	backgroundColor: '#242424',
+	backgroundColor: '#000',
 	backgroundGradient: {
 		type: "linear",
 		startPoint: {

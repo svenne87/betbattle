@@ -432,7 +432,7 @@ Alloy.Globals.showToast = function(msg) {
 			top : '80%',
 			height : 30,
 			width : '80%',
-			backgroundColor : '#000',
+			backgroundColor : '#FFF',
 			opacity : 0.9
 		});
 
@@ -441,7 +441,7 @@ Alloy.Globals.showToast = function(msg) {
 		// message
 		var message = Titanium.UI.createLabel({
 			text : msg,
-			color : '#fff',
+			color : '#000',
 			width : 'auto',
 			height : 'auto',
 			textAlign : 'center',
