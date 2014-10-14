@@ -1209,8 +1209,6 @@ function createLayout(gameObject) {
 
             var gameTypeLabel = Ti.UI.createLabel({
                 text : Alloy.Globals.PHRASES.gameTypes[gametypes[y].type].description,
-                //textAlign: "left",
-                //width: Ti.UI.FILL,
                 top : 15,
                 left : 20,
                 font : Alloy.Globals.getFontCustom(18, "Bold"),
@@ -1219,8 +1217,8 @@ function createLayout(gameObject) {
             gameTypeHeaderView.add(gameTypeLabel);
 
             var gameTypeScoreLabel = Ti.UI.createLabel({
-                text : "ger " + gametypes[y].number_of_values + " poäng",
-                top : 35,
+                text : Alloy.Globals.giveTxt + " " + gametypes[y].number_of_values + " " + Alloy.Globals.pointsTxt,
+                top : 38,
                 left : 20,
                 font : Alloy.Globals.getFontCustom(12, "Regular"),
                 color : Alloy.Globals.themeColor(),

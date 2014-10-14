@@ -42,6 +42,7 @@ function Controller() {
     });
     var url = Alloy.Globals.BETKAMPENURL + "/webviews/terms_wv.php";
     var win = $.terms;
+    var extwebview;
     $.terms.orientationModes = [ Titanium.UI.PORTRAIT ];
     $.terms.addEventListener("open", function() {
         $.terms.activity.actionBar.onHomeIconItemSelected = function() {
@@ -49,10 +50,9 @@ function Controller() {
             $.terms = null;
         };
         $.terms.activity.actionBar.displayHomeAsUp = true;
-        $.terms.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
+        $.terms.activity.actionBar.title = Alloy.Globals.PHRASES.termsTxt;
         indicator.openIndicator();
     });
-    var extwebview;
     extwebview = Titanium.UI.createWebView({
         top: 0,
         left: 0,
