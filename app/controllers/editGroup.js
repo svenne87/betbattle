@@ -217,6 +217,7 @@ var removeMemberClick = function(e) {
                     if (this.readyState == 4) {
                         sections[0].remove(thisRow);
                         sections[1].add(thisRow);
+                        table.setData(sections);
                         thisRow.removeEventListener('click', removeMemberClick);
                         thisRow.addEventListener('click', addMemberClick);
 
@@ -231,7 +232,7 @@ var removeMemberClick = function(e) {
                             id : 'awesome'
                         }));
 
-                        table.setData(sections);
+                        //table.setData(sections);
                         Alloy.Globals.showToast(e.source.mName + ' ' + Alloy.Globals.PHRASES.groupMemberDeletedTxt);
                     }
                 }
@@ -302,6 +303,7 @@ var addMemberClick = function(e) {
                     if (this.readyState == 4) {
                         sections[1].remove(thisRow);
                         sections[0].add(thisRow);
+                        table.setData(sections);
                         thisRow.removeEventListener('click', addMemberClick);
                         thisRow.addEventListener('click', removeMemberClick);
                         
@@ -311,7 +313,7 @@ var addMemberClick = function(e) {
                             }
                         }
                  
-                        table.setData(sections);
+                        //table.setData(sections);
                         Alloy.Globals.showToast(e.source.fName + ' ' + Alloy.Globals.PHRASES.groupMemberAddedTxt);
                     }
                 }
@@ -361,10 +363,10 @@ function createGUI(obj) {
         var profilePic = Titanium.UI.createImageView({
             defaultImage : '/images/no_pic.png',
             image : image,
-            height : 35,
-            width : 35,
+            height : 40,
+            width : 40,
             left : 10,
-            borderRadius : 17
+            borderRadius : 20
         });
         profilePic.addEventListener('error', function(e) {
             // fallback for image
@@ -415,10 +417,10 @@ function createGUI(obj) {
         var profilePic = Titanium.UI.createImageView({
             defaultImage : "/images/no_pic.png",
             image : image,
-            height : 35,
-            width : 35,
+            height : 40,
+            width : 40,
             left : 10,
-            borderRadius : 17
+            borderRadius : 20
         });
         profilePic.addEventListener('error', function(e) {
             // fallback for image
@@ -478,10 +480,10 @@ function createFriendGUI(friend, members) {
         var profilePic = Titanium.UI.createImageView({
             defaultImage : "/images/no_pic.png",
             image : image,
-            height : 35,
-            width : 35,
-            left : 20,
-            borderRadius : 17
+            height : 40,
+            width : 40,
+            left : 10,
+            borderRadius : 20
         });
         profilePic.addEventListener('error', function(e) {
             // fallback for image

@@ -15,14 +15,9 @@ if (OS_IOS) {
         color : '#FFF'
     });
 
-    var heightVal = 50;
-    var topPos = 30;
-    var textFontSize = Alloy.Globals.getFontSize(2);
-
     if (iOSVersion < 7) {
-        heightVal = 40;
-        topPos = 19;
-        textFontSize = 16;
+        table.separatorStyle = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
+        table.separatorColor = 'transparent';
     }
 
     // This call (or any other) may fail on Android if the module hasn't finished
@@ -39,7 +34,7 @@ if (OS_IOS) {
         Ti.API.info('Received stateChange event with state ' + e.state);
         switch(InAppProducts.state) {
         case InAppProducts.STATE_NOT_READY:
-            Alloy.Globals.showFeedbackDialog('Modulen är inte redo!');
+            Alloy.Globals.showFeedbackDialog('Module is not ready!');
             if (e.errorCode) {
                 Ti.API.info('Initialization error code: ' + e.errorCode);
             }
@@ -95,7 +90,7 @@ if (OS_IOS) {
             case InAppProducts.PURCHASE_STATE_CANCELED:
                 // Android only
                 indicator.closeIndicator();
-                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.purchaseCanceledTxt);
+                Alloy.Globals.showToast(Alloy.Globals.PHRASES.purchaseCanceledTxt);
                 break;
             case InAppProducts.PURCHASE_STATE_REFUNDED:
                 // Android only
@@ -202,10 +197,10 @@ if (OS_IOS) {
                 xhr.open('POST', Alloy.Globals.BETKAMPENCOINSURL);
                 xhr.setRequestHeader("content-type", "application/json");
                 xhr.setTimeout(Alloy.Globals.TIMEOUT);
+                xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
                 var storeTest = 0;
                 //TODO should be 0 for Production
-                var param = '{"receipt":"' + receiptText64String + '", "coins_item":"' + identifier + '", "sandbox":"' + storeTest + '", "user":"' + Alloy.Globals.FACEBOOKOBJECT.id + '", "betkampen_id":"' + Alloy.Globals.BETKAMPENUID + '", "lang" : "' + Alloy.Globals.LOCALE + '"}';
-
+                var param = '{"receipt":"' + receiptText64String + '", "coins_item":"' + identifier + '", "sandbox":"' + storeTest + '", "betkampen_id":"' + Alloy.Globals.BETKAMPENUID + '", "lang" : "' + Alloy.Globals.LOCALE + '"}';
                 xhr.send(param);
             } catch(e) {
                 indicator.closeIndicator();
@@ -232,7 +227,7 @@ if (OS_IOS) {
     }
 
     function purchaseCurrentProduct(prod) {
-        var developerPayloadRaw = Ti.Utils.base64encode(Alloy.Globals.FACEBOOKOBJECT.id).text;
+        var developerPayloadRaw = Ti.Utils.base64encode(Alloy.Globals.BETKAMPENUID).text;
         var appPayload = developerPayloadRaw.replace(/\r/g, '').replace(/\n/g, '');
 
         if (Alloy.Globals.checkConnection()) {
@@ -264,41 +259,49 @@ if (OS_IOS) {
             // should not be an issue
         }
 
+        var buyClick = function(e) {
+            purchaseCurrentProduct(e.source.index);
+        };
+        
+        var data = [];
+
         for (product in products) {
-            var buyCoinsButton = Ti.UI.createButton({
-                title : products[product].priceAsString,
-                top : topPos,
-                textAlign : 'center',
-                height : heightVal,
-                width : '70%',
-                borderRadius : 6,
-                font : {
-                    fontFamily : Alloy.Globals.getFont(),
-                    fontSize : Alloy.Globals.getFontSize(2)
-                },
-                color : '#FFF',
-                backgroundImage : 'none',
-                backgroundColor : '#58B101',
+            var row = Ti.UI.createTableViewRow({
+                hasChild : true,
+                width : Ti.UI.FILL,
+                left : 0,
+                className : 'storeRow',
+                height : 75,
+                layout : 'vertical',
                 index : product
             });
-            buyCoinsButton.addEventListener('click', function(e) {
-                purchaseCurrentProduct(e.source.index);
-            });
-
-            $.store.add(buyCoinsButton);
-
-            $.store.add(Ti.UI.createLabel({
-                top : 5,
-                font : {
-                    fontFamily : Alloy.Globals.getFont(),
-                    fontSize : textFontSize
-                },
+            
+            var buyCoins = Ti.UI.createLabel({
+                text : products[product].priceAsString,
+                height : Ti.UI.SIZE,
+                width : Ti.UI.SIZE,
+                font : Alloy.Globals.getFontCustom(18, "Regular"),
                 color : '#FFF',
-                text : 'Ger ' + products[product].title,
-                textAlign : 'center'
-            }));
+                left : 10,
+                top : 13,
+                index : product
+            });
+            
+            row.addEventListener('click', buyClick);
+            row.add(buyCoins);
 
+            row.add(Ti.UI.createLabel({
+                top : 1,
+                font : Alloy.Globals.getFontCustom(14, "Regular"),
+                color : Alloy.Globals.themeColor(),
+                text : products[product].title,
+                left : 10,
+                index : product
+           }));
+           
+           data.push(row);
         }
+        $.table.setData(data);
     }
 
     function fetchProductsError() {
@@ -329,23 +332,6 @@ if (OS_IOS) {
 
         Ti.API.info('Initializing app...');
 
-        var imageView = Ti.UI.createImageView({
-            height : 142,
-            width : '100%',
-            image : '/images/header.png'
-        });
-
-        imageView.add(Ti.UI.createLabel({
-            top : 50,
-            color : '#FFF',
-            font : {
-                fontFamily : Alloy.Globals.getFont(),
-                fontSize : Alloy.Globals.getFontSize(3)
-            },
-            text : Alloy.Globals.PHRASES.buyCoinsTxt
-        }));
-
-        $.store.add(imageView);
         indicator.openIndicator();
 
         addEventListeners();
@@ -383,6 +369,8 @@ if (OS_IOS) {
     });
 
 } else if (OS_ANDROID) {
+    var data = [];
+    
     $.store.orientationModes = [Titanium.UI.PORTRAIT];
 
     $.store.addEventListener('open', function() {
@@ -413,6 +401,7 @@ if (OS_IOS) {
                 xhr.open('POST', Alloy.Globals.BETKAMPENCOINSANDROIDURL + '?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
                 xhr.setRequestHeader("content-type", "application/json");
                 xhr.setTimeout(Alloy.Globals.TIMEOUT);
+                xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
 
                 var param = JSON.stringify(product);
 
@@ -510,6 +499,7 @@ if (OS_IOS) {
 
         indicator.closeIndicator();
         if (e.success) {
+            
             for (var i = 0,
                 j = productIds.length; i < j; i++) {
 
@@ -520,9 +510,8 @@ if (OS_IOS) {
                 }
 
                 // TODO should handle if a purchase is interrupted before serverside? will work with what I have?
-
             }
-
+            $.table.setData(data);
             logInApp('success!!!');
         } else {
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
@@ -626,63 +615,47 @@ if (OS_IOS) {
     // UI
     ////////////////////////////////////////////////////////
 
-    var imageView = Ti.UI.createView({
-        top : 0,
-        height : 142,
-        width : '100%',
-        backgroundImage : '/images/header.png'
-    });
-
-    imageView.add(Ti.UI.createLabel({
-        top : 50,
-        color : '#FFF',
-        font : {
-            fontFamily : Alloy.Globals.getFont(),
-            fontWeight : 'normal',
-            fontSize : Alloy.Globals.getFontSize(3)
-        },
-        text : Alloy.Globals.PHRASES.buyCoinsTxt
-    }));
-
-    $.store.add(imageView);
-
     // used to create button for product
     function createPurchaseButton(product) {
+         var row = Ti.UI.createTableViewRow({
+              hasChild : false,
+              width : Ti.UI.FILL,
+              left : 0,
+              className : 'storeRow',
+              height : 75,
+              layout : 'vertical',
+         });
+        
 
-        var buyCoins = Ti.UI.createButton({
-            title : product.price,
-            top : 30,
-            width : '70%',
-            borderRadius : 6,
-            textAlign : 'center',
-            height : 40,
-            font : {
-                fontFamily : Alloy.Globals.getFont(),
-                fontSize : Alloy.Globals.getFontSize(2)
-            },
-            color : '#FFF',
-            backgroundImage : 'none',
-            backgroundColor : '#58B101'
+        var buyCoins = Ti.UI.createLabel({
+            text : product.price,
+            top : 13,
+            width : Ti.UI.SIZE,
+            left : 10,
+            height : Ti.UI.SIZE,
+            font : Alloy.Globals.getFontCustom(18, "Regular"),
+            color : '#FFF'
         });
-        buyCoins.addEventListener('click', function() {
+        
+        row.addEventListener('click', function() {
             InAppBilling.purchase({
                 productId : product.productId,
                 type : InAppBilling.ITEM_TYPE_INAPP,
                 developerPayload : DEVELOPER_PAYLOAD
             });
         });
-        $.store.add(buyCoins);
+        
+        row.add(buyCoins);
 
-        $.store.add(Ti.UI.createLabel({
+        row.add(Ti.UI.createLabel({
             top : 5,
-            font : {
-                fontFamily : Alloy.Globals.getFont(),
-                fontSize : Alloy.Globals.getFontSize(1)
-            },
-            color : '#FFF',
-            text : product.description,
-            textAlign : 'center'
+            left : 10,
+            font : Alloy.Globals.getFontCustom(14, "Regular"),
+            color : Alloy.Globals.themeColor(),
+            text : product.description
         }));
+        
+        data.push(row);
     }
 
     if (PUBLIC_KEY === '<< Public Key >>') {

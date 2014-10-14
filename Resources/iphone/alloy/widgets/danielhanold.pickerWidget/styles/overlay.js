@@ -5,15 +5,6 @@ function WPATH(s) {
 }
 
 module.exports = [ {
-    isClass: true,
-    priority: 10000.9002,
-    key: "challengesSection",
-    style: {
-        height: 60,
-        backgroundColor: "#000000",
-        layout: "vertical"
-    }
-}, {
     isId: true,
     priority: 100000.001,
     key: "overlay",
