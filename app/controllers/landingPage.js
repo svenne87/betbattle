@@ -306,6 +306,8 @@ if (OS_IOS) {
             // when a gcm notification is received WHEN the app IS IN FOREGROUND
 
             try {
+                Ti.API.log("pushkinnnn");
+                
                 var alertWindow = Titanium.UI.createAlertDialog({
                     title : e.title,
                     message : e.message,
@@ -314,7 +316,10 @@ if (OS_IOS) {
 
                 alertWindow.addEventListener('click', function(e) {
                     alertWindow.hide();
-                    Ti.App.fireEvent('challengesViewRefresh');
+                    
+                    // TODO
+                   
+                    //Ti.App.fireEvent('challengesViewRefresh');
                 });
                 alertWindow.show();
             } catch(e) {
@@ -332,9 +337,9 @@ if (OS_IOS) {
             // and we set extras in the intent
             // and the app WAS RUNNING (=> RESUMED)
             // (again don't worry, we'll see more of this later)
-
+/*
             try {
-
+Ti.API.log("pushkinnnn 2222");
                 var alertWindow = Titanium.UI.createAlertDialog({
                     title : e.title,
                     message : e.message,
@@ -343,12 +348,15 @@ if (OS_IOS) {
 
                 alertWindow.addEventListener('click', function(e) {
                     alertWindow.hide();
+                    
+                    // TODO
+                    
                     Ti.App.fireEvent('challengesViewRefresh');
                 });
                 alertWindow.show();
             } catch(e) {
                 // something went wrong
-            }
+            }*/
         }
     });
 

@@ -306,10 +306,19 @@ function constructChallengeRows(obj, index, type) {
         // not a mixed challenge, just get sport from league[0]
         if (obj.attributes.leagues[0].sport_id === '1') {
             // Hockey
-            imageLocation = '/images/Ikonhockey.png';
+            if(isAndroid) {
+                imageLocation = '/images/ikonhockey.png';
+            } else {
+                imageLocation = '/images/Ikonhockey.png';
+            }     
         } else if (obj.attributes.leagues[0].sport_id === '2') {
             // Soccer
-            imageLocation = '/images/Ikonfotboll.png';
+            if(isAndroid) {
+                imageLocation = '/images/ikonfotboll.png';
+            } else {
+               imageLocation = '/images/Ikonfotboll.png'; 
+            }
+            
         } else {
             imageLocation = '/images/ikoner_mix_sport.png';
         }
@@ -509,7 +518,19 @@ function constructChallengeRows(obj, index, type) {
     var text = '';
 
     if (type === 'accept') {
+
         text = Alloy.Globals.PHRASES.newTxt;
+
+        firstRowView.add(Ti.UI.createLabel({
+            left : 40,
+            font : {
+                fontFamily : font
+            },
+            text : fontawesome.icon('fa-arrow-right'),
+            color : Alloy.Globals.themeColor()
+
+        }));
+        
     } else if (type === 'pending') {
         Ti.API.log("match");
         text = Alloy.Globals.PHRASES.pendingTxt;
@@ -1133,7 +1154,7 @@ function getDynamicTopImage() {
                 for (var i in views) {
                     if (views[i].id == 'headerImage') {
                         Ti.API.info("headerImage Hittad");
-                        // views[i].setBackgroundImage(response.image);  TODO
+                        views[i].setBackgroundImage(Alloy.Globals.BETKAMPENURL + response.image);
                         views[i].addEventListener("click", function(e) {
                             Ti.API.info("CLICKADE LOSS ");
                             var params = {
@@ -1271,9 +1292,12 @@ if (args.refresh == 1) {
 }
 
 var iOSVersion;
+var isAndroid = false;;
 
 if (OS_IOS) {
     iOSVersion = parseInt(Ti.Platform.version);
+} else {
+    isAndroid = true;
 }
 
 $.challengesView.addEventListener('close', function() {

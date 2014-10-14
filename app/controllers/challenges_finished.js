@@ -1,5 +1,11 @@
 var args = arguments[0] || {};
+
+if(args.refresh) {
+    getChallenges();
+}
+
 var iOSVersion;
+var isAndroid = false;
 
 if (OS_IOS) {
     iOSVersion = parseInt(Ti.Platform.version);
@@ -8,6 +14,8 @@ if (OS_IOS) {
         font : Alloy.Globals.getFontCustom(18, "Bold"),
         color : '#FFF'
     });
+} else {
+    isAndroid = true;
 }
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({
@@ -69,10 +77,18 @@ function constructChallengeRows(obj, index, type) {
         // not a mixed challenge, just get sport from league[0]
         if (obj.attributes.leagues[0].sport_id === '1') {
             // Hockey
-            imageLocation = '/images/Ikonhockey.png';
+            if(isAndroid) {
+                imageLocation = '/images/ikonhockey.png';
+            } else {
+               imageLocation = '/images/Ikonhockey.png'; 
+            }
         } else if (obj.attributes.leagues[0].sport_id === '2') {
             // Soccer
-            imageLocation = '/images/Ikonfotboll.png';
+            if(isAndroid) {
+                imageLocation = '/images/ikonfotboll.png';
+            } else {
+               imageLocation = '/images/Ikonfotboll.png'; 
+            }
         } else {
             imageLocation = '/images/ikoner_mix_sport.png';
         }

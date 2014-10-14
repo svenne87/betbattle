@@ -568,6 +568,7 @@ function FontAwesome() {
         "fa-comment-o": 61669,
         "fa-comments-o": 61670,
         "fa-bolt": 61671,
+        "fa-database": 61888,
         "fa-sitemap": 61672,
         "fa-umbrella": 61673,
         "fa-clipboard": 61674,
