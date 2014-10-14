@@ -390,7 +390,7 @@ function createViews(array) {
 
         group.addEventListener('click', function(e) {
             var args = {
-                row : e.row, 
+                row : e.row.children[1], 
                 gID : e.row.id,
                 gName : e.row.gName,
                 gAdmin : e.row.creator
