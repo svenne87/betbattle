@@ -65,7 +65,7 @@ var smsIconLabel = Titanium.UI.createLabel({
 });
 smsBtn.add(smsIconLabel);
 
-smsBtn.add(smsLabel);
+
 //----------------------------------------------------------------------FACEBOOK-----------------------------------------------------------------------------
 if (Alloy.Globals.FACEBOOKOBJECT != null) {
 
