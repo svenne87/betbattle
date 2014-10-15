@@ -306,19 +306,19 @@ function constructChallengeRows(obj, index, type) {
         // not a mixed challenge, just get sport from league[0]
         if (obj.attributes.leagues[0].sport_id === '1') {
             // Hockey
-            if(isAndroid) {
+            if (isAndroid) {
                 imageLocation = '/images/ikonhockey.png';
             } else {
                 imageLocation = '/images/Ikonhockey.png';
-            }     
+            }
         } else if (obj.attributes.leagues[0].sport_id === '2') {
             // Soccer
-            if(isAndroid) {
+            if (isAndroid) {
                 imageLocation = '/images/ikonfotboll.png';
             } else {
-               imageLocation = '/images/Ikonfotboll.png'; 
+                imageLocation = '/images/Ikonfotboll.png';
             }
-            
+
         } else {
             imageLocation = '/images/ikoner_mix_sport.png';
         }
@@ -530,7 +530,7 @@ function constructChallengeRows(obj, index, type) {
             color : Alloy.Globals.themeColor()
 
         }));
-        
+
     } else if (type === 'pending') {
         Ti.API.log("match");
         text = Alloy.Globals.PHRASES.pendingTxt;
@@ -1199,8 +1199,12 @@ function endRefresher() {
             refresher.endRefreshing();
         }
     } else {
-        if ( typeof swipeRefresh !== 'undefined') {
-            swipeRefresh.setRefreshing(false);
+        try {
+            if ( typeof swipeRefresh !== 'undefined') {
+                swipeRefresh.setRefreshing(false);
+            }
+        } catch(e) {
+
         }
     }
 }
@@ -1292,7 +1296,8 @@ if (args.refresh == 1) {
 }
 
 var iOSVersion;
-var isAndroid = false;;
+var isAndroid = false;
+;
 
 if (OS_IOS) {
     iOSVersion = parseInt(Ti.Platform.version);

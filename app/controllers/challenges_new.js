@@ -16,7 +16,7 @@ if (OS_IOS) {
         color : '#FFF'
     });
 } else {
-    
+    isAndroid = true;
 }
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({

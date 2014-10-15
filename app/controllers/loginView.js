@@ -283,13 +283,13 @@ function getChallengesAndStart() {
                     onload : function(e) {
                         Ti.API.info("Received text: " + this.responseText);
                         var team = JSON.parse(this.responseText);
-           
+
                         for (var win in Alloy.Globals.WINDOWS) {
                             Alloy.Globals.WINDOWS[win].close();
                         }
-                        
-                         var loginSuccessWindow = Alloy.createController('landingPage', args).getView();
-                         Alloy.Globals.CURRENTVIEW = loginSuccessWindow;
+
+                        var loginSuccessWindow = Alloy.createController('landingPage', args).getView();
+                        Alloy.Globals.CURRENTVIEW = loginSuccessWindow;
                                 
                         if (team.data.length > 0) {
                             if (OS_IOS) {
@@ -306,19 +306,8 @@ function getChallengesAndStart() {
                                 });
                                 loginSuccessWindow = null;
                             }
-                                // Uncaught TypeError: Cannot call method 'addEventListener' of undefined
-                               // hänger sig här android, why??? // TODO kommer in i landing page men ifrån denna filen = hänger sig. Ej ifrån vanliga login.
 
                             $.loginView.close();
-
-                            if (Alloy.Globals.INDEXWIN !== null) {
-                                Alloy.Globals.INDEXWIN.close();
-                            }
-
-                            if (OS_ANDROID) {
-                               // var activity = Titanium.Android.currentActivity;
-                                //activity.finish();
-                            }
 
                         } else {
                             var loginSuccessWindow = Alloy.createController('pickTeam', args).getView();
@@ -339,15 +328,6 @@ function getChallengesAndStart() {
                             }
 
                             $.loginView.close();
-
-                            if (Alloy.Globals.INDEXWIN !== null) {
-                                Alloy.Globals.INDEXWIN.close();
-                            }
-
-                            if (OS_ANDROID) {
-                                var activity = Titanium.Android.currentActivity;
-                                activity.finish();
-                            }
                         }
                     },
                     // function called when an error occurs, including a timeout
@@ -535,8 +515,6 @@ signInBtn.addEventListener('click', function(e) {
 });
 
 abortBtn.addEventListener('click', function(e) {
-    //var login = Alloy.createController('login').getView();
-    //login.open();
     $.loginView.close();
 });
 

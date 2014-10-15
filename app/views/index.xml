@@ -1,4 +1,4 @@
 <Alloy>
-	<Window class="container" id="index">
+	<Window class="container" id="indexWin" exitOnClose="true">
 	</Window>
 </Alloy>

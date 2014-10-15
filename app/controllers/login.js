@@ -116,8 +116,8 @@ function getChallengesAndStart() {
 							}
 
 							if (OS_ANDROID) {
-								var activity = Titanium.Android.currentActivity;
-								activity.finish();
+							//	var activity = Titanium.Android.currentActivity; // TODO
+							//	activity.finish();
 							}
 						} else {
 							var loginSuccessWindow = Alloy.createController('pickTeam', args).getView();
@@ -145,8 +145,8 @@ function getChallengesAndStart() {
 							}
 
 							if (OS_ANDROID) {
-								var activity = Titanium.Android.currentActivity;
-								activity.finish();
+							//	var activity = Titanium.Android.currentActivity;  // TODO
+							//	activity.finish();
 							}
 						}
 
@@ -347,8 +347,6 @@ var indicator = uie.createIndicatorWindow({
 });
 /* Main Flow */
 
-var opened = Ti.App.Properties.getString('appLaunch');
-
 // add facebook icon to the "login with facebook button"
 var fontawesome = require('lib/IconicFont').IconicFont({
 	font : 'lib/FontAwesome'
@@ -426,13 +424,7 @@ Alloy.Globals.readToken();
 // check login
 if (Alloy.Globals.checkConnection()) {
 	if (fb.loggedIn) {
-		if (!opened) {
-			// don't show the dialog at auto login
-			Ti.App.Properties.setString("appLaunch", JSON.stringify({
-				opened : true
-			}));
-		}
-
+	    
 		removeEvent();
 		if (OS_ANDROID) {
 			$.login.addEventListener('open', function() {
@@ -456,15 +448,7 @@ if (Alloy.Globals.checkConnection()) {
 		// Betkampen auto sign in
 		indicator.openIndicator();
 		loginBetkampenAuthenticated();
-	} else {
-		if (!opened) {
-			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.welcomePhrase);
-			//finally
-			Ti.App.Properties.setString("appLaunch", JSON.stringify({
-				opened : true
-			}));
-		}
-	}
+	} 
 } else {
 	Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 }

@@ -19,6 +19,8 @@
     });
     launcherIntent.addCategory(Ti.Android.CATEGORY_LAUNCHER);
     launcherIntent.putExtra("ntfId", ntfId);
+    launcherIntent.putExtra("message", message);
+    launcherIntent.putExtra("title", title);
     ntfId += 1;
     Ti.App.Properties.setInt("ntfId", ntfId);
     var pintent = Ti.Android.createPendingIntent({

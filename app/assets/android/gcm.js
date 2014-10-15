@@ -48,6 +48,8 @@
 	});
 	launcherIntent.addCategory(Ti.Android.CATEGORY_LAUNCHER);
 	launcherIntent.putExtra("ntfId", ntfId);
+	launcherIntent.putExtra("message", message);
+	launcherIntent.putExtra("title", title);
 
 	// increase notification id
 	ntfId += 1;

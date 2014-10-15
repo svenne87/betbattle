@@ -212,6 +212,7 @@ Ti.App.addEventListener('pause', function(e) {
     Ti.API.info("APP In background");
     Alloy.Globals.appStatus = 'background';
 });
+
 // resume listener for ios and android
 if (OS_IOS) {
     if (Alloy.Globals.OPEN && Alloy.Globals.RESUME) {
@@ -280,6 +281,65 @@ if (OS_IOS) {
         });
 
 } else if (OS_ANDROID) {
+    function doPush(type) {
+        if (Alloy.Globals.MAINWIN !== null) {
+            var obj = {
+                controller : 'challengesView',
+                arg : {
+                    refresh : true
+                }
+            };
+
+            var args = {
+                refresh : true
+            };
+            var win = null;
+
+            if (type === 'accept') {
+                win = Alloy.createController('challenges_new', args).getView();
+            } else if (type === 'pending') {
+                win = Alloy.createController('challenges_pending', args).getView();
+            } else if (type === 'finished') {
+                win = Alloy.createController('challenges_finished', args).getView();
+            }
+
+            Ti.App.fireEvent('app:updateView', obj);
+
+            if (win !== null) {
+                win.open();
+                win = null;
+            }
+
+            for (var w in Alloy.Globals.WINDOWS) {
+                Ti.API.log(Alloy.Globals.WINDOWS[w] + " " + win);
+                if (Alloy.Globals.WINDOWS[w] === win) {
+                    Alloy.Globals.WINDOWS[w].close();
+                }
+            }
+
+        } else {
+            var winMain = Alloy.createController('main').getView();
+            winMain.open({
+                fullScreen : true
+            });
+            winMain = null;
+
+            var win = null;
+
+            if (type === 'accept') {
+                win = Alloy.createController('challenges_new').getView();
+            } else if (type === 'pending') {
+                win = Alloy.createController('challenges_pending').getView();
+            } else if (type === 'finished') {
+                win = Alloy.createController('challenges_finished').getView();
+            }
+
+            if (win !== null) {
+                win.open();
+                win = null;
+            }
+        }
+    }
 
     var gcm = require('net.iamyellow.gcmjs');
     var pendingData = gcm.data;
@@ -304,10 +364,19 @@ if (OS_IOS) {
         },
         callback : function(e) {
             // when a gcm notification is received WHEN the app IS IN FOREGROUND
-
+            var type = '';
+            
+            if (e.message.charAt(0) === '1') {
+                e.message = e.message.substring(1);
+                type = 'accept';
+            } else if (e.message.charAt(0) === '2') {
+                e.message = e.message.substring(1);
+                type = 'pedning';
+            } else if (e.message.charAt(0) === '3') {
+                e.message = e.message.substring(1);
+                type = 'finished';
+            }
             try {
-                Ti.API.log("pushkinnnn");
-                
                 var alertWindow = Titanium.UI.createAlertDialog({
                     title : e.title,
                     message : e.message,
@@ -315,18 +384,13 @@ if (OS_IOS) {
                 });
 
                 alertWindow.addEventListener('click', function(e) {
+                    doPush(type);
                     alertWindow.hide();
-                    
-                    // TODO
-                   
-                    //Ti.App.fireEvent('challengesViewRefresh');
                 });
                 alertWindow.show();
             } catch(e) {
                 // something went wrong
-                //> THIS should fail
             }
-
         },
         unregister : function(ev) {
             // on unregister
@@ -337,9 +401,27 @@ if (OS_IOS) {
             // and we set extras in the intent
             // and the app WAS RUNNING (=> RESUMED)
             // (again don't worry, we'll see more of this later)
-/*
+            Ti.API.log(JSON.stringify(data));
+            /*
+            var type = '';
+            var e = {
+                title : data.title,
+                message : data.message
+            };
+            
+            if (e.message.charAt(0) === '1') {
+                e.message = e.message.substring(1);
+                type = 'accept';
+            } else if (e.message.charAt(0) === '2') {
+                e.message = e.message.substring(1);
+                type = 'pedning';
+            } else if (e.message.charAt(0) === '3') {
+                e.message = e.message.substring(1);
+                type = 'finished';
+            }
+
             try {
-Ti.API.log("pushkinnnn 2222");
+                Ti.API.log("pushkinnnn trying to show dialog");
                 var alertWindow = Titanium.UI.createAlertDialog({
                     title : e.title,
                     message : e.message,
@@ -348,10 +430,7 @@ Ti.API.log("pushkinnnn 2222");
 
                 alertWindow.addEventListener('click', function(e) {
                     alertWindow.hide();
-                    
-                    // TODO
-                    
-                    Ti.App.fireEvent('challengesViewRefresh');
+                    doPush(type);
                 });
                 alertWindow.show();
             } catch(e) {
@@ -359,10 +438,8 @@ Ti.API.log("pushkinnnn 2222");
             }*/
         }
     });
-
     // in order to unregister:
     // require('net.iamyellow.gcmjs').unregister();
-
 }
 
 var beacons = [];
