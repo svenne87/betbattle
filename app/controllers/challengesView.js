@@ -161,11 +161,11 @@ function createSectionsForTable(sectionText) {
     });
 
     sectionView.add(Ti.UI.createLabel({
-        top : '20%',
+        top : '25%',
         width : Ti.UI.FILL,
         left : 60,
         text : sectionText,
-        font : Alloy.Globals.getFontCustom(22, 'Regular'),
+        font : Alloy.Globals.getFontCustom(18, 'Bold'),
         color : '#FFF'
     }));
 
@@ -602,13 +602,13 @@ function constructTableView(array) {
         layout : "vertical",
     });
 
-    tableHeaderView.add(Ti.UI.createView({
+    /*tableHeaderView.add(Ti.UI.createView({
         backgroundImage : '/images/h_image.png', // TODO header
         height : 80,
         backgroundColor : 'transparent',
         id : 'headerImage',
         width : Ti.UI.FILL
-    }));
+    }));*/
     /*
      tableHeaderView.add(Ti.UI.createView({
      height : 0.1,
@@ -1150,8 +1150,16 @@ function getDynamicTopImage() {
                 // construct array with objects
                 Ti.API.info("TOP IMAGE RESPONSE: " + JSON.stringify(response));
                 var header = table.getHeaderView();
+                var imageView = Ti.UI.createImageView({
+                	image: Alloy.Globals.BETKAMPENURL + response.image,
+                	width: Ti.UI.SIZE,
+                	height: Ti.UI.SIZE
+                });
+                header.add(imageView);
+               	//header.backgroundImage = Alloy.Globals.BETKAMPENURL + response.image;
+               	
                 var views = header.getChildren();
-                for (var i in views) {
+                /*for (var i in views) {
                     if (views[i].id == 'headerImage') {
                         Ti.API.info("headerImage Hittad");
                         views[i].setBackgroundImage(Alloy.Globals.BETKAMPENURL + response.image);
@@ -1172,7 +1180,7 @@ function getDynamicTopImage() {
                             }
                         });
                     }
-                }
+                }*/
 
             } else {
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
