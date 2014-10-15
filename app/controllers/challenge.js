@@ -1217,7 +1217,7 @@ function createLayout(gameObject) {
             gameTypeHeaderView.add(gameTypeLabel);
 
             var gameTypeScoreLabel = Ti.UI.createLabel({
-                text : Alloy.Globals.giveTxt + " " + gametypes[y].number_of_values + " " + Alloy.Globals.pointsTxt,
+                text : Alloy.Globals.PHRASES.giveTxt + " " + gametypes[y].number_of_values + " " + Alloy.Globals.PHRASES.pointsTxt,
                 top : 38,
                 left : 20,
                 font : Alloy.Globals.getFontCustom(12, "Regular"),
