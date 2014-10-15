@@ -695,7 +695,7 @@ $.loginBtn.addEventListener('click', function(e) {
 	Alloy.Globals.WINDOWS.push($.login);
 });
 
-//open rigistration view
+//open registration view
 $.registerBtn.addEventListener('click', function(e) {
 
 	var regWindow = Alloy.createController('registrationView').getView();
@@ -710,4 +710,4 @@ $.registerBtn.addEventListener('click', function(e) {
 
 $.registerBtnText.text = Alloy.Globals.PHRASES.registerTxt;
 $.loginBtnText.text = Alloy.Globals.PHRASES.signInTxt;
-getTutorialImages();
+// TODO in index getTutorialImages();

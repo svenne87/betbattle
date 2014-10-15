@@ -23,6 +23,10 @@
     launcherIntent.putExtra("title", title);
     ntfId += 1;
     Ti.App.Properties.setInt("ntfId", ntfId);
+    if ("1" === message.charAt(0) || "2" === message.charAt(0) || "3" === message.charAt(0)) {
+        message = message.substring(1);
+        statusBarMessage = statusBarMessage.substring(1);
+    }
     var pintent = Ti.Android.createPendingIntent({
         intent: launcherIntent
     }), notification = Ti.Android.createNotification({

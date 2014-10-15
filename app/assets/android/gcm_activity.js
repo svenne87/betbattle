@@ -3,19 +3,13 @@
 (function (activity, gcm) {
 
 	var intent = activity.intent;
-Ti.API.log(JSON.stringify(intent));
+
 	if (intent.hasExtra('ntfId')) {
 		gcm.data = {
-			ntfId: intent.getIntExtra('ntfId', 0)
+			ntfId: intent.getIntExtra('ntfId', 0),
+			message : intent.getStringExtra('message'),
+			title : intent.getStringExtra('title')
 		};
-	}
-	
-	if(intent.hasExtra("message")) {
-	    gcm.data.message = intent.getStringExtra('message');
-	}
-	
-	if(intent.hasExtra("title")) {
-	    gcm.data.title = intent.getStringExtra('title');
 	}
 
 	if (gcm.isLauncherActivity) {

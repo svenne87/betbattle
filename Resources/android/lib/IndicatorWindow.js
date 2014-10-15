@@ -41,9 +41,9 @@ function createIndicatorWindow(args) {
         text: L(text),
         color: "#fff",
         font: {
-            fontFamily: "Helvetica",
             fontSize: 16,
-            fontWeight: "bold"
+            fontFamily: "OpenSans-Regular",
+            fontWeight: "Regular"
         }
     });
     view.add(activityIndicator);

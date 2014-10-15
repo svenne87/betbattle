@@ -603,12 +603,12 @@ function constructTableView(array) {
     });
 
     /*tableHeaderView.add(Ti.UI.createView({
-        backgroundImage : '/images/h_image.png', // TODO header
-        height : 80,
-        backgroundColor : 'transparent',
-        id : 'headerImage',
-        width : Ti.UI.FILL
-    }));*/
+     backgroundImage : '/images/h_image.png', // TODO header
+     height : 80,
+     backgroundColor : 'transparent',
+     id : 'headerImage',
+     width : Ti.UI.FILL
+     }));*/
     /*
      tableHeaderView.add(Ti.UI.createView({
      height : 0.1,
@@ -1151,36 +1151,36 @@ function getDynamicTopImage() {
                 Ti.API.info("TOP IMAGE RESPONSE: " + JSON.stringify(response));
                 var header = table.getHeaderView();
                 var imageView = Ti.UI.createImageView({
-                	image: Alloy.Globals.BETKAMPENURL + response.image,
-                	width: Ti.UI.SIZE,
-                	height: Ti.UI.SIZE
+                    image : Alloy.Globals.BETKAMPENURL + response.image,
+                    width : Ti.UI.SIZE,
+                    height : Ti.UI.SIZE
                 });
                 header.add(imageView);
-               	//header.backgroundImage = Alloy.Globals.BETKAMPENURL + response.image;
-               	
+                //header.backgroundImage = Alloy.Globals.BETKAMPENURL + response.image;
+
                 var views = header.getChildren();
                 /*for (var i in views) {
-                    if (views[i].id == 'headerImage') {
-                        Ti.API.info("headerImage Hittad");
-                        views[i].setBackgroundImage(Alloy.Globals.BETKAMPENURL + response.image);
-                        views[i].addEventListener("click", function(e) {
-                            Ti.API.info("CLICKADE LOSS ");
-                            var params = {
-                                link : response.url
-                            };
-                            var win = Alloy.createController('webview', params).getView();
-                            if (OS_IOS) {
-                                Alloy.Globals.NAV.openWindow(win, {
-                                    animated : true
-                                });
-                            } else {
-                                win.open({
-                                    fullScreen : true
-                                });
-                            }
-                        });
-                    }
-                }*/
+                 if (views[i].id == 'headerImage') {
+                 Ti.API.info("headerImage Hittad");
+                 views[i].setBackgroundImage(Alloy.Globals.BETKAMPENURL + response.image);
+                 views[i].addEventListener("click", function(e) {
+                 Ti.API.info("CLICKADE LOSS ");
+                 var params = {
+                 link : response.url
+                 };
+                 var win = Alloy.createController('webview', params).getView();
+                 if (OS_IOS) {
+                 Alloy.Globals.NAV.openWindow(win, {
+                 animated : true
+                 });
+                 } else {
+                 win.open({
+                 fullScreen : true
+                 });
+                 }
+                 });
+                 }
+                 }*/
 
             } else {
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
@@ -1207,12 +1207,8 @@ function endRefresher() {
             refresher.endRefreshing();
         }
     } else {
-        try {
-            if ( typeof swipeRefresh !== 'undefined') {
-                swipeRefresh.setRefreshing(false);
-            }
-        } catch(e) {
-
+        if ( typeof swipeRefresh !== 'undefined' && swipeRefresh !== null && args.refresh != 1) {
+            swipeRefresh.setRefreshing(false);
         }
     }
 }
@@ -1285,7 +1281,7 @@ var indicator = uie.createIndicatorWindow({
 });
 var refresher;
 var table;
-var swipeRefresh;
+var swipeRefresh = null;
 
 var args = arguments[0] || {};
 if (args.refresh == 1) {

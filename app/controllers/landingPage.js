@@ -401,30 +401,24 @@ if (OS_IOS) {
             // and we set extras in the intent
             // and the app WAS RUNNING (=> RESUMED)
             // (again don't worry, we'll see more of this later)
-            Ti.API.log(JSON.stringify(data));
-            /*
             var type = '';
-            var e = {
-                title : data.title,
-                message : data.message
-            };
-            
-            if (e.message.charAt(0) === '1') {
-                e.message = e.message.substring(1);
+
+            if (data.message.charAt(0) === '1') {
+                data.message = data.message.substring(1);
                 type = 'accept';
-            } else if (e.message.charAt(0) === '2') {
-                e.message = e.message.substring(1);
+            } else if (data.message.charAt(0) === '2') {
+                data.message = data.message.substring(1);
                 type = 'pedning';
-            } else if (e.message.charAt(0) === '3') {
-                e.message = e.message.substring(1);
+            } else if (data.message.charAt(0) === '3') {
+                data.message = data.message.substring(1);
                 type = 'finished';
             }
 
             try {
                 Ti.API.log("pushkinnnn trying to show dialog");
                 var alertWindow = Titanium.UI.createAlertDialog({
-                    title : e.title,
-                    message : e.message,
+                    title : data.title,
+                    message : data.message,
                     buttonNames : ['OK']
                 });
 
@@ -435,7 +429,7 @@ if (OS_IOS) {
                 alertWindow.show();
             } catch(e) {
                 // something went wrong
-            }*/
+            }
         }
     });
     // in order to unregister:

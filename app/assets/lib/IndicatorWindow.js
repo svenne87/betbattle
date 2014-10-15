@@ -65,9 +65,9 @@ function createIndicatorWindow(args) {
 		text : L(text),
 		color : '#fff',
 		font : {
-			fontFamily : 'Helvetica',
-			fontSize : 16,
-			fontWeight : 'bold'
+            fontSize : 16,
+            fontFamily : 'OpenSans-Regular',
+            fontWeight : 'Regular'
 		},
 	});
 
