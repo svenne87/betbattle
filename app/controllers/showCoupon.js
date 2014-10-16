@@ -412,7 +412,7 @@ if (OS_ANDROID) {
                     betPicker.setText(e.data[0].value);
                     coinsToJoin = e.data[0].value;
                 }
-                betpicker.open = false;
+                betPicker.open = false;
             },
         });
     });

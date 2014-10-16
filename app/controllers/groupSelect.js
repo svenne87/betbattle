@@ -1094,7 +1094,6 @@ if (OS_ANDROID) {
         };
         $.groupSelectWindow.activity.actionBar.displayHomeAsUp = true;
         $.groupSelectWindow.activity.title = Alloy.Globals.PHRASES.chooseConfirmBtnTxt;
-        indicator.openIndicator();
     });
 }
 

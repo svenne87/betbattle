@@ -12,15 +12,6 @@ function openChallengesForLeague(league) {
     var arg = {
         leagueId : league
     };
-    /*
-     // change view
-     var obj = {
-     controller : 'newChallenge',
-     arg : arg
-     };
-     TODO ANDROID
-     Ti.App.fireEvent('app:updateView', obj);
-     */
 
     var win = Alloy.createController('newChallenge', arg).getView();
     // store window
@@ -41,13 +32,6 @@ function openChallengesForLeague(league) {
 var table;
 var leagues = Alloy.Globals.LEAGUES;
 
-/*
- var tableHeaderView = Ti.UI.createView({
- height : '142dp',
- backgroundImage : '/images/header.png'
- //backgroundColor: 'transparent',
- });
- */
 
 var tableHeaderView = Ti.UI.createView({
     height : 0.1
@@ -79,6 +63,11 @@ if (OS_IOS) {
         backgroundColor : '#303030'
     });
 } else if (OS_ANDROID) {
+    table.headerView = Ti.UI.createView({
+        height : 0.5,
+        backgroundColor : '#303030'
+    });
+    
     table.footerView = Ti.UI.createView({
         height : 0.5,
         backgroundColor : '#303030'
@@ -92,7 +81,7 @@ for (var i in leagues) {
 
     if (OS_ANDROID) {
         child = false;
-    } else if (OS_IOS) {
+    } else {
         child = true;
     }
 
@@ -141,7 +130,7 @@ for (var i in leagues) {
     });
 
     leagueImageView.addEventListener('error', function(e) {
-        leagueImageView.image = '/images/Liga_Default.png';
+        e.source.image = '/images/Liga_Default.png';
     });
 
     tableRow.add(leagueImageView);

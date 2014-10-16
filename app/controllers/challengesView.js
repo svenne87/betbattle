@@ -215,15 +215,21 @@ function createEmptyTableRow(text) {
 }
 
 function createNewChallengeRow() {
+    child = true;
+       
+    if(isAndroid) {
+        child = false;
+    }
+    
     var tableFooterView = Ti.UI.createTableViewRow({
         height : 65,
-        hasChild : true,
+        hasChild : child,
     });
 
     tableFooterView.add(Ti.UI.createImageView({
         image : '/images/Skapa_Utmaning.png',
-        width : 30,
-        height : 30,
+        width : 40,
+        height : 40,
         left : 10,
     }));
 
@@ -231,7 +237,7 @@ function createNewChallengeRow() {
         text : Alloy.Globals.PHRASES.createChallengeTxt,
         font : Alloy.Globals.getFontCustom(16, "Regular"),
         color : "#FFF",
-        left : 45,
+        left : 65,
     }));
 
     tableFooterView.addEventListener("click", function(e) {
@@ -865,7 +871,7 @@ function constructTableView(array) {
     }
 
     if (rightNowRows == 0) {
-        sections[1].add(createEmptyTableRow(Alloy.Globals.PHRASES.challengesSmallTxt + '/' + Alloy.Globals.PHRASES.tournamentsSmallTxt));
+        sections[1].add(createEmptyTableRow(Alloy.Globals.PHRASES.challengesSmallTxt));
         sections[1].add(createNewChallengeRow());
     }
     table.setData(sections);
