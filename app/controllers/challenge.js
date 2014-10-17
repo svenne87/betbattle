@@ -979,10 +979,6 @@ function createLayout(gameObject) {
         topMargin = 20;
     }
 
-    if (!isIOS) {
-        topMargin = 28;
-    }
-
     image.add(Ti.UI.createLabel({
         top : 10,
         left : 20,
@@ -1010,12 +1006,14 @@ function createLayout(gameObject) {
         text : gameObject.attributes.game_date_string + '  ',
     }));
 
-    image.add(Ti.UI.createView({
-        top : topMargin, // TODO
-        height : 0.5,
-        backgroundColor : '#6d6d6d',
-        width : Ti.UI.FILL
-    }));
+    if (isIOS) {
+        image.add(Ti.UI.createView({
+            top : topMargin,
+            height : 0.5,
+            backgroundColor : '#6d6d6d',
+            width : Ti.UI.FILL
+        }));
+    }
 
     view.add(image);
 

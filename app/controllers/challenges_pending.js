@@ -1,11 +1,12 @@
 var args = arguments[0] || {};
 
-if(args.refresh) {
+if (args.refresh) {
     getChallenges();
 }
 
 var iOSVersion;
 var isAndroid = false;
+var data = [];
 
 if (OS_IOS) {
     $.challenges_pending.titleControl = Ti.UI.createLabel({
@@ -24,10 +25,173 @@ var indicator = uie.createIndicatorWindow({
     text : Alloy.Globals.PHRASES.loadingTxt
 });
 
-// build and return rows that are of the type 'Accept', 'Pending' and 'Finished'
-function constructChallengeRows(obj, index, type) {
+if (!isAndroid) {
+    refresher = Ti.UI.createRefreshControl({
+        tintColor : Alloy.Globals.themeColor()
+    });
+
+    // will refresh on pull
+    refresher.addEventListener('refreshstart', function(e) {
+        if (Alloy.Globals.checkConnection()) {
+            getChallenges();
+        } else {
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+            refresher.endRefreshing();
+        }
+
+    });
+}
+
+var tableHeaderView = Ti.UI.createView({
+    height : 0.1,
+});
+
+var tableFooterView = Ti.UI.createView({
+    height : 0.1
+});
+
+var fontawesome = require('lib/IconicFont').IconicFont({
+    font : 'lib/FontAwesome'
+});
+
+var font = 'FontAwesome';
+
+var font = 'FontAwesome';
+var rightPercentage = '5%';
+
+if (isAndroid) {
+    font = 'fontawesome-webfont';
+
+    if (Titanium.Platform.displayCaps.platformWidth < 350) {
+        rightPercentage = '3%';
+    }
+}
+
+if (!isAndroid) {
+    table = Titanium.UI.createTableView({
+        left : 0,
+        headerView : tableHeaderView,
+        footerView : tableFooterView,
+        height : '100%',
+        width : '100%',
+        backgroundColor : 'transparent',
+        style : Ti.UI.iPhone.TableViewStyle.GROUPED,
+        separatorInsets : {
+            left : 0,
+            right : 0
+        },
+        id : 'challengeTable',
+        refreshControl : refresher,
+        separatorColor : '#303030'
+    });
+
+    if (iOSVersion < 7) {
+        table.separatorStyle = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
+        table.separatorColor = 'transparent';
+    }
+
+} else {
+    table = Titanium.UI.createTableView({
+        width : Ti.UI.FILL,
+        top : 0,
+        left : 0,
+        headerView : tableHeaderView,
+        footerView : tableFooterView,
+        height : Ti.UI.FILL,
+        separatorColor : '#303030',
+        id : 'challengeTable'
+    });
+
+    table.headerView = Ti.UI.createView({
+        height : 0.5,
+        backgroundColor : '#303030'
+    });
+
+    table.footerView = Ti.UI.createView({
+        height : 0.5,
+        backgroundColor : '#303030'
+    });
+}
+
+// when clicking a row
+table.addEventListener('click', function(e) {
+    if (Alloy.Globals.SLIDERZINDEX == 2) {
+        return;
+    }
+
+    // e.rowData is null in android
+    if (isAndroid) {
+        // fix for android
+        e.rowData = e.row;
+    }
+
+    if (e.rowData !== null) {
+        if (Alloy.Globals.checkConnection()) {
+            if ( typeof e.rowData.id !== 'undefined') {
+                var obj = Alloy.Globals.CHALLENGEOBJECTARRAY[1][e.rowData.id];
+                if (obj.attributes.show !== 0) {
+                    // view challenge
+                    var group = null;
+                    try {
+                        group = obj.attributes.group[0].name;
+                    } catch(e) {
+                        group = null;
+                    }
+
+                    if ( typeof group === undefined) {
+                        group = null;
+                    }
+                    var args = {
+                        cid : obj.attributes.id,
+                        group : group
+                    };
+
+                    Alloy.Globals.CHALLENGEINDEX = e.rowData.id;
+                    var win = Alloy.createController('showChallenge', args).getView();
+                    Alloy.Globals.WINDOWS.push(win);
+
+                    if (OS_IOS) {
+                        Alloy.Globals.NAV.openWindow(win, {
+                            animated : true
+                        });
+                    } else if (OS_ANDROID) {
+                        win.open({
+                            fullScreen : true
+                        });
+                    }
+
+                }
+            }
+
+        } else {
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+        }
+    }
+});
+
+buildTableRows();
+$.challenges_pending.add(table);
+
+function buildTableRows() {
+    table.setData([]);
+    data = [];
+
+    var arrayObj = Alloy.Globals.CHALLENGEOBJECTARRAY[1];
+    // create 'accept' rows
+    if (arrayObj.length > 0) {
+        for (var i = 0; i < arrayObj.length; i++) {
+            data.push(constructChallengeRows(arrayObj[i], i));
+        }
+    } else if (arrayObj.length === 0) {
+        data.push(createEmptyTableRow(Alloy.Globals.PHRASES.challengesSmallTxt));
+    }
+
+    table.setData(data);
+}
+
+function constructChallengeRows(obj, index) {
     var child = true;
-    if (OS_ANDROID) {
+    if (isAndroid) {
         child = false;
     }
 
@@ -36,29 +200,12 @@ function constructChallengeRows(obj, index, type) {
         hasChild : child,
         width : Ti.UI.FILL,
         left : 0,
-        className : type,
+        className : "pending_row",
         height : 75
     });
 
-    var fontawesome = require('lib/IconicFont').IconicFont({
-        font : 'lib/FontAwesome'
-    });
-
-    var font = 'FontAwesome';
-
     // add custom icon on Android to symbol that the row has child
     if (child != true) {
-        var rightPercentage = '5%';
-
-        if (OS_ANDROID) {
-            font = 'fontawesome-webfont';
-
-            if (Titanium.Platform.displayCaps.platformWidth < 350) {
-                rightPercentage = '3%';
-            }
-
-        }
-
         row.add(Ti.UI.createLabel({
             font : {
                 fontFamily : font
@@ -81,17 +228,17 @@ function constructChallengeRows(obj, index, type) {
         // not a mixed challenge, just get sport from league[0]
         if (obj.attributes.leagues[0].sport_id === '1') {
             // Hockey
-            if(isAndroid) {
+            if (isAndroid) {
                 imageLocation = '/images/ikonhockey.png';
             } else {
-               imageLocation = '/images/Ikonhockey.png'; 
+                imageLocation = '/images/Ikonhockey.png';
             }
         } else if (obj.attributes.leagues[0].sport_id === '2') {
             // Soccer
-            if(isAndroid) {
+            if (isAndroid) {
                 imageLocation = '/images/ikonfotboll.png';
             } else {
-               imageLocation = '/images/Ikonfotboll.png'; 
+                imageLocation = '/images/Ikonfotboll.png';
             }
         } else {
             imageLocation = '/images/ikoner_mix_sport.png';
@@ -113,43 +260,19 @@ function constructChallengeRows(obj, index, type) {
 
     var betGroupName = Alloy.Globals.PHRASES.unknownGroupTxt;
 
-    if (type !== 'tournament' && type !== 'tournament_finished') {
-        // for normal challenge
-        try {
-            betGroupName = obj.attributes.group[0].name;
-        } catch(e) {
-            // do nothing
-            betGroupName = "";
-        }
+    // for normal challenge
+    try {
+        betGroupName = obj.attributes.group[0].name;
+    } catch(e) {
+        // do nothing
+        betGroupName = "";
+    }
 
-        if (betGroupName <= 0) {
-            betGroupName = obj.attributes.name;
-        }
-        if (betGroupName.length > 15) {
-            betGroupName = betGroupName.substring(0, 12) + '...';
-        }
-
-    } else {
-        // for tournament's
-        if ((type === 'tournament' && obj.attributes.opponents.length === 1) || (type === 'tournament_finished' && obj.attributes.opponents.length === 1)) {
-            betGroupName = Alloy.Globals.PHRASES.betbattleTxt;
-        } else {
-            betGroupName = Alloy.Globals.PHRASES.tournamentTxt;
-
-            if (obj.attributes.group.name != null) {
-                betGroupName = obj.attributes.group.name;
-            }
-
-            if (betGroupName.length === 0 || betGroupName === '') {
-                betGroupName = 'Turnering';
-            } else if (betGroupName === 'BetKampen Community') {
-                betGroupName = Alloy.Globals.PHRASES.betbattleTxt;
-            }
-
-            if (betGroupName.length > 15) {
-                betGroupName = betGroupName.substring(0, 12) + '...';
-            }
-        }
+    if (betGroupName <= 0) {
+        betGroupName = obj.attributes.name;
+    }
+    if (betGroupName.length > 15) {
+        betGroupName = betGroupName.substring(0, 12) + '...';
     }
 
     firstRowView.add(Ti.UI.createLabel({
@@ -263,17 +386,7 @@ function constructChallengeRows(obj, index, type) {
 
     secondRowView.add(participantsTextLabel);
 
-    var oppCount = 0;
-
-    if (type === 'tournament' && checkTournament(obj) === true && obj.attributes.opponents.length === 1) {
-        oppCount = parseInt(obj.attributes.opponentCount);
-    } else {
-        var oppCount = parseInt(obj.attributes.opponents.length);
-
-        if (oppCount === 1 && obj.attributes.group.name === 'BetKampen Community') {
-            oppCount = parseInt(obj.attributes.opponentCount);
-        }
-    }
+    var oppCount = parseInt(obj.attributes.opponents.length);
 
     var participantsValueLabel = Ti.UI.createLabel({
         left : 175,
@@ -297,25 +410,10 @@ function constructChallengeRows(obj, index, type) {
 
     var currentPot = Alloy.Globals.PHRASES.unknownSmallTxt;
 
-    if ((type === 'tournament' && obj.attributes.opponents.length === 1) || (type === 'tournament_finished' && obj.attributes.opponents.length === 1)) {
-        try {
-            currentPot = obj.attributes.tournamentPot;
-        } catch (e) {
-            currentPot = Alloy.Globals.PHRASES.unknownSmallTxt;
-        }
-    } else if ((type === 'tournament' && obj.attributes.opponents.length > 1) || (type === 'tournament_finished' && obj.attributes.opponents.length > 1)) {
-        try {
-            var activeUsers = checkActiveUsers(obj.attributes.opponents);
-            currentPot = activeUsers * obj.attributes.tournamentPot;
-        } catch (e) {
-            currentPot = Alloy.Globals.PHRASES.unknownSmallTxt;
-        }
-    } else {
-        try {
-            currentPot = obj.attributes.pot;
-        } catch (e) {
-            currentPot = Alloy.Globals.PHRASES.unknownSmallTxt;
-        }
+    try {
+        currentPot = obj.attributes.pot;
+    } catch (e) {
+        currentPot = Alloy.Globals.PHRASES.unknownSmallTxt;
     }
 
     var potValueLabel = Ti.UI.createLabel({
@@ -354,7 +452,6 @@ function getChallenges() {
     var xhr = Titanium.Network.createHTTPClient();
     xhr.onerror = function(e) {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-        //alert(JSON.parse(this.responseText));
         if (OS_IOS) {
             if ( typeof refresher !== 'undefined') {
                 refresher.endRefreshing();
@@ -362,7 +459,6 @@ function getChallenges() {
         }
         Ti.API.error('Bad Sever =>' + e.error);
         indicator.closeIndicator();
-        //$.facebookBtn.enabled = true;
     };
 
     try {
@@ -373,8 +469,7 @@ function getChallenges() {
         xhr.send();
     } catch(e) {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-        //alert(JSON.parse(this.responseText));
-        if (OS_IOS) {
+        if (!isAndroid) {
             if ( typeof refresher !== 'undefined') {
                 refresher.endRefreshing();
             }
@@ -387,30 +482,24 @@ function getChallenges() {
                 var response = JSON.parse(this.responseText);
                 // construct array with objects
                 Alloy.Globals.CHALLENGEOBJECTARRAY = Alloy.Globals.constructChallenge(response);
-
-                if (OS_ANDROID) {
-                    $.challenges_pending.removeAllChildren();
-                    for (child in $.challenges_pending.children) {
-
-                        $.challenges_pending.children[child] = null;
-                    }
-                }
-                constructTableView(Alloy.Globals.CHALLENGEOBJECTARRAY);
-
+                buildTableRows();
             } else {
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-                //$.facebookBtn.enabled = true;
+            }
+            if (!isAndroid) {
+                if ( typeof refresher !== 'undefined') {
+                    refresher.endRefreshing();
+                }
             }
             indicator.closeIndicator();
         } else {
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             indicator.closeIndicator();
-            if (OS_IOS) {
+            if (!isAndroid) {
                 if ( typeof refresher !== 'undefined') {
                     refresher.endRefreshing();
                 }
             }
-            //$.facebookBtn.enabled = true;
             Ti.API.error("Error =>" + this.response);
         }
     };
@@ -437,280 +526,12 @@ function createEmptyTableRow(text) {
         row.add(Ti.UI.createView({
             height : 0.5,
             top : 57,
-            backgroundColor : '#6d6d6d',
+            backgroundColor : '#303030',
             width : '120%'
         }));
     }
 
     return row;
-}
-
-function constructTableView(array) {
-    if (OS_IOS) {
-        refresher = Ti.UI.createRefreshControl({
-            tintColor : Alloy.Globals.themeColor()
-        });
-
-        // will refresh on pull
-        refresher.addEventListener('refreshstart', function(e) {
-            if (Alloy.Globals.checkConnection()) {
-                getChallenges();
-            } else {
-                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
-                refresher.endRefreshing();
-            }
-
-        });
-    }
-
-    // check if table exists, and if it does simply remove it
-    var children = $.challenges_pending.children;
-    for (var i = 0; i < children.length; i++) {
-        if (children[i].id === 'challengeTable') {
-            $.challenges_pending.remove(children[i]);
-            children[i] = null;
-        }
-    }
-
-    var sections = [];
-
-    var tableHeaderView = Ti.UI.createView({
-        height : 0.1,
-    });
-
-    var fontawesome = require('lib/IconicFont').IconicFont({
-        font : 'lib/FontAwesome'
-    });
-
-    var font = 'FontAwesome';
-
-    if (OS_ANDROID) {
-        font = 'fontawesome-webfont';
-    }
-
-    if (OS_IOS) {
-        var separatorS;
-        var separatorCol;
-
-        if (iOSVersion < 7) {
-            separatorS = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
-            separatorColor = 'transparent';
-        } else {
-            separatorS = Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE;
-            separatorColor = '#6d6d6d';
-        }
-
-        table = Titanium.UI.createTableView({
-            //width : Ti.UI.FILL,
-            left : 0,
-            headerView : tableHeaderView,
-            height : '100%',
-            width : '100%',
-            //backgroundImage: '/images/profileBG.jpg',
-            backgroundColor : 'transparent',
-            style : Ti.UI.iPhone.TableViewStyle.GROUPED,
-            separatorInsets : {
-                left : 0,
-                right : 0
-            },
-            id : 'challengeTable',
-            refreshControl : refresher,
-            separatorStyle : separatorS,
-            separatorColor : separatorColor
-        });
-    } else if (OS_ANDROID) {
-        table = Titanium.UI.createTableView({
-            width : Ti.UI.FILL,
-            left : 0,
-            headerView : tableHeaderView,
-            height : '100%',
-            //backgroundColor : '#303030',
-            separatorColor : '#6d6d6d',
-            id : 'challengeTable'
-        });
-    }
-
-    sections[0] = Ti.UI.createTableViewSection({
-        headerView : Ti.UI.createView({
-            height : 0.1,
-        }),
-        footerView : Ti.UI.createView({
-            height : 0.1,
-        }),
-    });
-
-    var fontawesome = require('lib/IconicFont').IconicFont({
-        font : 'lib/FontAwesome'
-    });
-
-    var font = 'FontAwesome';
-    var rightPercentage = '5%';
-
-    if (OS_ANDROID) {
-        font = 'fontawesome-webfont';
-
-        if (Titanium.Platform.displayCaps.platformWidth < 350) {
-            rightPercentage = '3%';
-        }
-
-    }
-
-    var challengesTournamentsCount = 0;
-    // set this to 1 if there are no challenges
-
-    // looping array backwards to print out tournaments first
-    Ti.API.info("arrayen : " + JSON.stringify(array));
-    for (var x = array.length; x >= 0; x--) {
-        var arrayObj = array[x];
-
-        if (x === 1) {
-            // create 'pending' rows
-            if (arrayObj.length > 0) {
-                for (var i = 0; i < arrayObj.length; i++) {
-                    sections[0].add(constructChallengeRows(arrayObj[i], i, 'pending'));
-                }
-            } else if (arrayObj.length === 0 && challengesTournamentsCount > 0) {
-                sections[0].add(createEmptyTableRow(Alloy.Globals.PHRASES.challengesSmallTxt + '/' + Alloy.Globals.PHRASES.tournamentsSmallTxt));
-            }
-        } else if (x === 3) {
-            // create 'accept' / 'pending' tournaments rows
-            if (arrayObj.length > 0) {
-                for (var i = 0; i < arrayObj.length; i++) {
-                    sections[0].add(constructChallengeRows(arrayObj[i], i, 'tournament'));
-                }
-            } else if (arrayObj.length === 0) {
-                challengesTournamentsCount = 1;
-            }
-        }
-    }
-
-    table.setData(sections);
-
-    // when clicking a row
-    table.addEventListener('click', function(e) {
-        if (Alloy.Globals.SLIDERZINDEX == 2) {
-            return;
-        }
-
-        // e.rowData is null in android
-        if (OS_ANDROID) {
-            // fix for android
-            e.rowData = e.row;
-        }
-
-        if (e.rowData !== null) {
-            if (Alloy.Globals.checkConnection()) {
-                Ti.API.info("CLICKADE ROW : " + JSON.stringify(e.rowData));
-                if ( typeof e.rowData.id !== 'undefined') {
-                    if (e.rowData.className === 'pending') {
-                        var obj = Alloy.Globals.CHALLENGEOBJECTARRAY[1][e.rowData.id];
-                        if (obj.attributes.show !== 0) {
-                            // view challenge
-                            Ti.API.info("GRUPPEN : " + JSON.stringify(obj.attributes.group));
-                            var group = null;
-                            try {
-                                group = obj.attributes.group[0].name;
-                            } catch(e) {
-                                group = null;
-                            }
-
-                            if ( typeof group === undefined) {
-                                group = null;
-                            }
-                            var args = {
-                                cid : obj.attributes.id,
-                                group : group
-                            };
-
-                            Alloy.Globals.CHALLENGEINDEX = e.rowData.id;
-                            var win = Alloy.createController('showChallenge', args).getView();
-                            Alloy.Globals.WINDOWS.push(win);
-
-                            if (OS_IOS) {
-                                Alloy.Globals.NAV.openWindow(win, {
-                                    animated : true
-                                });
-                            } else if (OS_ANDROID) {
-                                win.open({
-                                    fullScreen : true
-                                });
-                            }
-                        } else {
-                            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.roundHasStartedErrorTxt);
-                        }
-
-                    } else if (e.rowData.className === 'tournament') {
-                        // get correct tournament object, 3 will contain all tournaments
-                        var obj = Alloy.Globals.CHALLENGEOBJECTARRAY[3][e.rowData.id];
-                        // check if my status is 2, that mean I already have answered this challenge
-                        if (checkTournament(obj) === true) {
-                            // open in webview
-                            var group = null;
-                            try {
-                                group = obj.attributes.group.name;
-                            } catch(e) {
-                                group = null;
-                            }
-
-                            if ( typeof group === undefined) {
-                                group = null;
-                            }
-                            var arg = {
-                                tournamentIndex : e.rowData.id,
-                                tournamentRound : obj.attributes.round,
-                                group : group,
-                            };
-
-                            var win = Alloy.createController('showChallenge', arg).getView();
-                            Alloy.Globals.WINDOWS.push(win);
-
-                            if (OS_IOS) {
-                                Alloy.Globals.NAV.openWindow(win, {
-                                    animated : true
-                                });
-
-                            } else if (OS_ANDROID) {
-                                win.open({
-                                    fullScreen : true
-                                });
-                            }
-
-                            group = null;
-                        } else {
-                            if (obj.attributes.show !== 0) {
-                                // open to answer tournament round
-                                var arg = {
-                                    tournamentIndex : e.rowData.id,
-                                    tournamentRound : obj.attributes.round
-                                };
-
-                                var win = Alloy.createController('challenge', arg).getView();
-                                Alloy.Globals.WINDOWS.push(win);
-
-                                if (OS_IOS) {
-                                    Alloy.Globals.NAV.openWindow(win, {
-                                        animated : true
-                                    });
-
-                                } else if (OS_ANDROID) {
-                                    win.open({
-                                        fullScreen : true
-                                    });
-                                }
-                            } else {
-                                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.roundHasStartedErrorTxt);
-                            }
-
-                        }
-                    }
-                }
-            } else {
-                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
-            }
-        }
-    });
-
-    $.challenges_pending.add(table);
 }
 
 if (OS_ANDROID) {
@@ -727,17 +548,8 @@ if (OS_ANDROID) {
         };
         $.challenges_pending.activity.actionBar.displayHomeAsUp = true;
         $.challenges_pending.activity.actionBar.title = Alloy.Globals.PHRASES.pendingTxt;
-        indicator.openIndicator();
     });
 }
-//constructTableView(Alloy.Globals.CHALLENGEOBJECTARRAY);
 
-if (Alloy.Globals.checkConnection()) {
-    if (OS_IOS) {
-        indicator.openIndicator();
-    }
-    getChallenges();
-} else {
-    Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
-}
-
+indicator.openIndicator();
+getChallenges();

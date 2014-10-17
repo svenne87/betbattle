@@ -381,8 +381,8 @@ function challengeGroup(array) {
                     }
 
                     loginSuccessWindow = null;
-                    for (win in Alloy.Globals.WINDOWS) {
-                        if (win !== 0) {
+                    for (var win in Alloy.Globals.WINDOWS) {
+                        if (win !== null) {
                             Alloy.Globals.WINDOWS[win].close();
                         }
                     }

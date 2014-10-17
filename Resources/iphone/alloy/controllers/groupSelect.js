@@ -243,7 +243,7 @@ function Controller() {
                             transition: Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
                         });
                         loginSuccessWindow = null;
-                        for (win in Alloy.Globals.WINDOWS) 0 !== win && Alloy.Globals.WINDOWS[win].close();
+                        for (var win in Alloy.Globals.WINDOWS) null !== win && Alloy.Globals.WINDOWS[win].close();
                     } else {
                         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                         submitButton.touchEnabled = true;

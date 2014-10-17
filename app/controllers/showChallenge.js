@@ -10,9 +10,11 @@ var indicator = uie.createIndicatorWindow({
 });
 
 var iOSVersion;
+var isAndroid = true;
 
 if (OS_IOS) {
     iOSVersion = parseInt(Ti.Platform.version);
+    isAndroid = false;
 }
 
 var fontawesome = require('lib/IconicFont').IconicFont({
@@ -21,7 +23,7 @@ var fontawesome = require('lib/IconicFont').IconicFont({
 
 var font = 'FontAwesome';
 
-if (OS_ANDROID) {
+if (isAndroid) {
     font = 'fontawesome-webfont';
 
     $.showChallengeWindow.scrollType = 'vertical';
@@ -96,7 +98,7 @@ function createGameType(gameType, game, values, index, sections) {
     }
 
     gameTypeView.add(Ti.UI.createLabel({
-        text : gameTypeText,
+        text : gameTypeText + ' ',
         left : 10,
         top : 24,
         height : Ti.UI.SIZE,
@@ -135,7 +137,7 @@ function createGameType(gameType, game, values, index, sections) {
     }
 
     gameTypeView.add(Ti.UI.createLabel({
-        text : resultText,
+        text : resultText + ' ',
         right : 10,
         top : 24,
         height : Ti.UI.SIZE,
@@ -144,13 +146,20 @@ function createGameType(gameType, game, values, index, sections) {
         color : '#FFF'
     }));
 
-    // create a section for each game type
-    sections[index] = Ti.UI.createTableViewSection({
-        headerView : gameTypeView,
-        footerView : Ti.UI.createView({
-            height : 0.1
-        })
-    });
+    if (isAndroid) {
+        // create a section for each game type
+        sections[index] = Ti.UI.createTableViewSection({
+            headerView : gameTypeView
+        });
+    } else {
+        // create a section for each game type
+        sections[index] = Ti.UI.createTableViewSection({
+            headerView : gameTypeView,
+            footerView : Ti.UI.createView({
+                height : 0.1
+            })
+        });
+    }
 
     // loop all values
     for (var i = 0; i < values.length; i++) {
@@ -206,7 +215,7 @@ function createGameType(gameType, game, values, index, sections) {
             }
 
             var nameLabel = Ti.UI.createLabel({
-                text : profileName,
+                text : profileName + ' ',
                 left : 40,
                 height : Ti.UI.SIZE,
                 width : Ti.UI.SIZE,
@@ -240,7 +249,7 @@ function createGameType(gameType, game, values, index, sections) {
             }
 
             var valueLabel = Ti.UI.createLabel({
-                text : valueText,
+                text : valueText + ' ',
                 right : 10,
                 height : Ti.UI.SIZE,
                 width : Ti.UI.SIZE,
@@ -314,7 +323,7 @@ function createLayout(game, values, games, currentStanding, isFirst) {
         width : Ti.UI.SIZE,
         font : Alloy.Globals.getFontCustom(22, 'Regular'),
         color : '#FFF',
-        text : teamNames
+        text : teamNames + ' '
     }));
 
     if (teamNames.length > 30) {
@@ -340,15 +349,17 @@ function createLayout(game, values, games, currentStanding, isFirst) {
         width : Ti.UI.SIZE,
         font : Alloy.Globals.getFontCustom(12, 'Regular'),
         color : Alloy.Globals.themeColor(),
-        text : game.game_date_string
+        text : game.game_date_string + ' '
     }));
 
-    header.add(Ti.UI.createView({
-        top : 12,
-        height : 0.5,
-        backgroundColor : '#303030',
-        width : Ti.UI.FILL
-    }));
+    if (!isAndroid) {
+        header.add(Ti.UI.createView({
+            top : 12,
+            height : 0.5,
+            backgroundColor : '#303030',
+            width : Ti.UI.FILL
+        }));
+    }
 
     view.add(header);
 
@@ -376,7 +387,8 @@ function createLayout(game, values, games, currentStanding, isFirst) {
                 right : 0
             },
             separatorStyle : separatorS,
-            separatorColor : separatorColor
+            separatorColor : separatorColor,
+            selectionStyle : 'none'
         });
     } else if (OS_ANDROID) {
         table = Titanium.UI.createTableView({
@@ -384,6 +396,7 @@ function createLayout(game, values, games, currentStanding, isFirst) {
             height : '85%',
             backgroundColor : '#000',
             separatorColor : '#303030',
+            selectionStyle : 'none'
         });
     }
 
@@ -431,12 +444,20 @@ function createLayout(game, values, games, currentStanding, isFirst) {
             color : '#FFF'
         }));
 
-        sections[0] = Ti.UI.createTableViewSection({
-            headerView : standingsView,
-            footerView : Ti.UI.createView({
-                height : 0.1
-            })
-        });
+        if (isAndroid) {
+            sections[0] = Ti.UI.createTableViewSection({
+                headerView : standingsView
+            });
+
+        } else {
+            sections[0] = Ti.UI.createTableViewSection({
+                headerView : standingsView,
+                footerView : Ti.UI.createView({
+                    height : 0.1
+                })
+            });
+
+        }
 
         for (var i = 0; i < currentStanding.length; i++) {
             var tmpObj = currentStanding[i];
@@ -536,7 +557,7 @@ function createLayout(game, values, games, currentStanding, isFirst) {
         });
 
         footerView.add(Ti.UI.createLabel({
-            text : Alloy.Globals.PHRASES.scrollNextGame,
+            text : Alloy.Globals.PHRASES.scrollNextGame + ' ',
             top : 25,
             left : 10,
             font : Alloy.Globals.getFontCustom(16, 'Regular'),
@@ -544,6 +565,14 @@ function createLayout(game, values, games, currentStanding, isFirst) {
         }));
 
         table.footerView = footerView;
+    } else {
+        if (isAndroid) {
+            table.footerView = Ti.UI.createView({
+                width : Ti.UI.FILL,
+                backgroundColor : '#303030',
+                height : 0.5
+            });
+        }
     }
 
     table.setData(sections);
