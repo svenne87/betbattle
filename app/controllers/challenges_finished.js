@@ -452,7 +452,8 @@ function createEmptyTableRow(text) {
         width : Ti.UI.FILL,
         left : 0,
         name : 'empty',
-        height : 75
+        height : 75,
+        selectionStyle : 'none'
     });
 
     row.add(Ti.UI.createLabel({

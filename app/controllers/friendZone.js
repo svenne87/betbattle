@@ -5,19 +5,20 @@ var fontawesome = require('lib/IconicFont').IconicFont({
 });
 
 var font = 'FontAwesome';
-
+var isAndroid = true;
 var iOSVersion;
 
+var child = false;
+
 if (OS_IOS) {
+    isAndroid = false;
+    child = true;
     iOSVersion = parseInt(Ti.Platform.version);
     $.friendZone.titleControl = Ti.UI.createLabel({
         text : Alloy.Globals.PHRASES.friendZoneTxt,
         font : Alloy.Globals.getFontCustom(18, "Bold"),
         color : '#FFF'
     });
-
-} else {
-    font = 'fontawesome-webfont';
 }
 
 var mainView = Ti.UI.createView({
@@ -41,40 +42,29 @@ var tableHeaderView = Ti.UI.createView({
     height : 0.1
 });
 
-var fontawesome = require('lib/IconicFont').IconicFont({
-    font : 'lib/FontAwesome'
-});
-
-var font = 'FontAwesome';
-
-if (OS_ANDROID) {
+if (isAndroid) {
     font = 'fontawesome-webfont';
+    var rightPercentage = '5%';
+
+    if (Titanium.Platform.displayCaps.platformWidth < 350) {
+        rightPercentage = '3%';
+    }
 }
 
 var tableFooterView = Ti.UI.createView({
     height : 0.1
 });
 
-if (OS_IOS) {
+if (!isAndroid) {
     var separatorS;
     var separatorCol;
 
-    if (iOSVersion < 7) {
-        separatorS = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
-        separatorColor = 'transparent';
-    } else {
-        separatorS = Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE;
-        separatorColor = '#6d6d6d';
-    }
-
     table = Titanium.UI.createTableView({
-        //width : Ti.UI.FILL,
         left : 0,
         headerView : tableHeaderView,
         footerView : tableFooterView,
         height : '85%',
         width : '100%',
-        //backgroundImage: '/images/profileBG.jpg',
         backgroundColor : 'transparent',
         style : Ti.UI.iPhone.TableViewStyle.GROUPED,
         separatorInsets : {
@@ -82,18 +72,33 @@ if (OS_IOS) {
             right : 0
         },
         id : 'challengeTable',
-        separatorStyle : separatorS,
-        separatorColor : separatorColor
+        separatorStyle : Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE,
+        separatorColor : '#303030'
     });
-} else if (OS_ANDROID) {
+    
+    
+    if (iOSVersion < 7) {
+        table.separatorStyle = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
+        table.separatorColor = 'transparent';
+    } 
+    
+} else {
     table = Titanium.UI.createTableView({
         width : Ti.UI.FILL,
         left : 0,
-        headerView : tableHeaderView,
         height : '85%',
-        //backgroundColor : '#303030',
-        separatorColor : '#6d6d6d',
+        separatorColor : '#303030',
         id : 'challengeTable'
+    });
+    
+    table.headerView = Ti.UI.createView({
+        height : 0.5,
+        backgroundColor : '#303030'
+    });
+
+    table.footerView = Ti.UI.createView({
+        height : 0.5,
+        backgroundColor : '#303030'
     });
 }
 
@@ -105,12 +110,6 @@ sections[0] = Ti.UI.createTableViewSection({
         height : 10,
     })
 });
-var child = false;
-if (OS_IOS) {
-    child = true;
-} else if (OS_ANDROID) {
-    child = false;
-}
 
 var fbFriendBtn = Titanium.UI.createTableViewRow({
     //title: Alloy.Globals.PHRASES.fbFriendsTxt,
@@ -123,16 +122,8 @@ var fbFriendBtn = Titanium.UI.createTableViewRow({
 
 });
 
-if (child != true) {
-    var rightPercentage = '5%';
-
-    font = 'fontawesome-webfont';
-
-    if (Titanium.Platform.displayCaps.platformWidth < 350) {
-        rightPercentage = '3%';
-    }
-
-    row.add(Ti.UI.createLabel({
+if (!child) {
+    fbFriendBtn.add(Ti.UI.createLabel({
         font : {
             fontFamily : font
         },
@@ -166,12 +157,6 @@ fbFriendBtn.add(fbLabel);
 
 sections[0].add(fbFriendBtn);
 
-var child = false;
-if (OS_IOS) {
-    child = true;
-} else if (OS_ANDROID) {
-    child = false;
-}
 
 var myFriendBtn = Titanium.UI.createTableViewRow({
     id : 'myFriendBtn',
@@ -182,16 +167,8 @@ var myFriendBtn = Titanium.UI.createTableViewRow({
     height : 75,
 });
 
-if (child != true) {
-    var rightPercentage = '5%';
-
-    font = 'fontawesome-webfont';
-
-    if (Titanium.Platform.displayCaps.platformWidth < 350) {
-        rightPercentage = '3%';
-    }
-
-    row.add(Ti.UI.createLabel({
+if (!child) {
+    myFriendBtn.add(Ti.UI.createLabel({
         font : {
             fontFamily : font
         },
@@ -224,13 +201,6 @@ var mFriendLabel = Titanium.UI.createLabel({
 myFriendBtn.add(mFriendLabel);
 sections[0].add(myFriendBtn);
 
-var child = false;
-if (OS_IOS) {
-    child = true;
-} else if (OS_ANDROID) {
-    child = false;
-}
-
 var myGroupsBtn = Titanium.UI.createTableViewRow({
     id : 'myGroupsBtn',
     hasChild : child,
@@ -240,16 +210,8 @@ var myGroupsBtn = Titanium.UI.createTableViewRow({
     height : 75,
 });
 
-if (child != true) {
-    var rightPercentage = '5%';
-
-    font = 'fontawesome-webfont';
-
-    if (Titanium.Platform.displayCaps.platformWidth < 350) {
-        rightPercentage = '3%';
-    }
-
-    row.add(Ti.UI.createLabel({
+if (!child) {
+    myGroupsBtn.add(Ti.UI.createLabel({
         font : {
             fontFamily : font
         },
@@ -283,12 +245,6 @@ myGroupsBtn.add(mGroupLabel);
 
 sections[0].add(myGroupsBtn);
 
-var child = false;
-if (OS_IOS) {
-    child = true;
-} else if (OS_ANDROID) {
-    child = false;
-}
 
 var addFriendsBtn = Titanium.UI.createTableViewRow({
     id : 'addFriendsBtn',
@@ -299,16 +255,8 @@ var addFriendsBtn = Titanium.UI.createTableViewRow({
     height : 75,
 });
 
-if (child != true) {
-    var rightPercentage = '5%';
-
-    font = 'fontawesome-webfont';
-
-    if (Titanium.Platform.displayCaps.platformWidth < 350) {
-        rightPercentage = '3%';
-    }
-
-    row.add(Ti.UI.createLabel({
+if (!child) {
+    addFriendsBtn.add(Ti.UI.createLabel({
         font : {
             fontFamily : font
         },
@@ -330,6 +278,7 @@ var afIconLabel = Titanium.UI.createLabel({
     left : 20,
     color : '#FFF',
 });
+
 addFriendsBtn.add(afIconLabel);
 
 var aFriendLabel = Titanium.UI.createLabel({
@@ -338,16 +287,10 @@ var aFriendLabel = Titanium.UI.createLabel({
     color : "#FFF",
     left : 50,
 });
-addFriendsBtn.add(aFriendLabel);
 
+addFriendsBtn.add(aFriendLabel);
 sections[0].add(addFriendsBtn);
 
-var child = false;
-if (OS_IOS) {
-    child = true;
-} else if (OS_ANDROID) {
-    child = false;
-}
 
 var createGroupBtn = Titanium.UI.createTableViewRow({
     id : 'createGroupBtn',
@@ -358,16 +301,8 @@ var createGroupBtn = Titanium.UI.createTableViewRow({
     height : 75,
 });
 
-if (child != true) {
-    var rightPercentage = '5%';
-
-    font = 'fontawesome-webfont';
-
-    if (Titanium.Platform.displayCaps.platformWidth < 350) {
-        rightPercentage = '3%';
-    }
-
-    row.add(Ti.UI.createLabel({
+if (!child) {
+    createGroupBtn.add(Ti.UI.createLabel({
         font : {
             fontFamily : font
         },
@@ -397,16 +332,11 @@ cGroupLabel = Titanium.UI.createLabel({
     color : "#FFF",
     left : 50,
 });
-createGroupBtn.add(cGroupLabel);
 
+createGroupBtn.add(cGroupLabel);
 sections[0].add(createGroupBtn);
 
-var child = false;
-if (OS_IOS) {
-    child = true;
-} else if (OS_ANDROID) {
-    child = false;
-}
+
 var shareBtn = Titanium.UI.createTableViewRow({
     id : 'shareBtn',
     hasChild : child,
@@ -416,16 +346,9 @@ var shareBtn = Titanium.UI.createTableViewRow({
     height : 75,
 });
 
-if (child != true) {
-    var rightPercentage = '5%';
 
-    font = 'fontawesome-webfont';
-
-    if (Titanium.Platform.displayCaps.platformWidth < 350) {
-        rightPercentage = '3%';
-    }
-
-    row.add(Ti.UI.createLabel({
+if (!child) {
+    shareBtn.add(Ti.UI.createLabel({
         font : {
             fontFamily : font
         },
@@ -455,8 +378,8 @@ shareLabel = Titanium.UI.createLabel({
     color : "#FFF",
     left : 50,
 });
-shareBtn.add(shareLabel);
 
+shareBtn.add(shareLabel);
 sections[0].add(shareBtn);
 
 fbFriendBtn.addEventListener('click', function(e) {

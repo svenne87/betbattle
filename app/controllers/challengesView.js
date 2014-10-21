@@ -216,11 +216,11 @@ function createEmptyTableRow(text) {
 
 function createNewChallengeRow() {
     child = true;
-       
-    if(isAndroid) {
+
+    if (isAndroid) {
         child = false;
     }
-    
+
     var tableFooterView = Ti.UI.createTableViewRow({
         height : 65,
         hasChild : child,
@@ -521,11 +521,7 @@ function constructChallengeRows(obj, index, type) {
         width : 'auto'
     });
 
-    var text = '';
-
     if (type === 'accept') {
-
-        text = Alloy.Globals.PHRASES.newTxt;
 
         firstRowView.add(Ti.UI.createLabel({
             left : 40,
@@ -537,17 +533,72 @@ function constructChallengeRows(obj, index, type) {
 
         }));
 
-    } else if (type === 'pending') {
-        Ti.API.log("match");
-        text = Alloy.Globals.PHRASES.pendingTxt;
-    }
+        thirdRowView.add(Ti.UI.createLabel({
+            left : 60,
+            text : Alloy.Globals.PHRASES.newTxt,
+            font : Alloy.Globals.getFontCustom(12, 'Regular'),
+            color : Alloy.Globals.themeColor()
+        }));
 
-    thirdRowView.add(Ti.UI.createLabel({
-        left : 60,
-        text : text,
-        font : Alloy.Globals.getFontCustom(12, 'Regular'),
-        color : Alloy.Globals.themeColor()
-    }));
+    } else if (type === 'pending') {
+        var pendingLabel = Ti.UI.createLabel({
+            left : 60,
+            text : Alloy.Globals.PHRASES.pendingTxt,
+            font : Alloy.Globals.getFontCustom(12, 'Regular'),
+            color : Alloy.Globals.themeColor()
+        });
+
+        thirdRowView.add(pendingLabel);
+
+        // check all matches in a challenge to check if any of the matches are active
+        for (var i = 0; i < obj.attributes.matches.length; i++) {
+            if (obj.attributes.matches[i].status === '3') {
+                // set the length of the images you have in your sequence
+                var loaderArrayLength = 2;
+
+                // initialize the index to 1
+                var loaderIndex = 1;
+
+                var liveIcon = null;
+                // this function will be called by the setInterval
+                function loadingAnimation() {
+                    // set the image property of the imageview by constructing the path with the loaderIndex variable
+                    try {
+                        liveIcon.image = "/images/ikon_" + loaderIndex + "_live.png";
+                    } catch (e) {
+
+                    }
+
+                    //increment the index so that next time it loads the next image in the sequence
+                    loaderIndex++;
+                    // if you have reached the end of the sequence, reset it to 1
+                    if (loaderIndex === 3) {
+                        loaderIndex = 1;
+                    }
+                }
+
+                liveIcon = Ti.UI.createImageView({
+                    left : 60 + pendingLabel.toImage().width + 5,
+                    image : '/images/ikon_1_live.png',
+                    height : 10,
+                    width : 10,
+                });
+
+                thirdRowView.add(liveIcon);
+
+                var liveLabel = Ti.UI.createLabel({
+                    text : "Live",
+                    left : 60 + pendingLabel.toImage().width + 15,
+                    font : Alloy.Globals.getFontCustom(12, "Regular"),
+                    color : Alloy.Globals.themeColor()
+                });
+
+                thirdRowView.add(liveLabel);
+
+                var loaderAnimate = setInterval(loadingAnimation, 280);
+            }
+        }
+    }
 
     // Add info to the created row
     row.add(firstRowView);
@@ -1322,3 +1373,5 @@ $.challengesView.addEventListener('close', function() {
 constructTableView(Alloy.Globals.CHALLENGEOBJECTARRAY);
 getUserInfo();
 Alloy.Globals.getCoupon();
+
+// TODO for android we could reset table data... instead of rebuilding the hole table..

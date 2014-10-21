@@ -8,7 +8,10 @@ var fontawesome = require('lib/IconicFont').IconicFont({
 	font : 'lib/FontAwesome'
 });
 
+var isAndroid = false;
+
 if (OS_ANDROID) {
+    isAndroid = true;
 	$.settingsWindow.orientationModes = [Titanium.UI.PORTRAIT];
 
 	$.settingsWindow.addEventListener('open', function() {
@@ -19,11 +22,11 @@ if (OS_ANDROID) {
 			$.settingsWindow = null;
 		};
 		$.settingsWindow.activity.actionBar.displayHomeAsUp = true;
-		$.settingsWindow.activity.actionBar.title = Alloy.Globals.PHRASES.settings;
+		$.settingsWindow.activity.actionBar.title = Alloy.Globals.PHRASES.settingsTxt;
 	});
 } else {
     $.settingsWindow.titleControl = Ti.UI.createLabel({
-        text : Alloy.Globals.PHRASES.settings,
+        text : Alloy.Globals.PHRASES.settingsTxt,
         font : Alloy.Globals.getFontCustom(18, "Bold"),
         color : '#FFF'
     });
@@ -34,7 +37,7 @@ var picker;
 // hide modal pickers (ios)
 $.settingsWindow.addEventListener('close', function() {
 	indicator.closeIndicator();
-	if (OS_IOS) {
+	if (!isAndroid) {
 		picker.close();
 	}
 });
@@ -122,24 +125,18 @@ function sendSettingsServer(param, type, valueToStore) {
 }
 
 function createGUI() {
-    if (OS_ANDROID) {
-        var headerView = Ti.UI.createView({
-            height : 1,
-            top : 5,
-            width : Ti.UI.FILL,
-            layout : 'vertical',
-            backgroundColor : "#303030",
+    if (isAndroid) {
+        $.table.headerView = Ti.UI.createView({
+            height : 0.5,
+            backgroundColor : '#303030'
         });
-        
-        var footerView = Ti.UI.createView({
-            height : 1,
-            top : 5,
-            width : Ti.UI.FILL,
-            layout : 'vertical',
-            backgroundColor : "#303030",
+
+        $.table.footerView = Ti.UI.createView({
+            height : 0.5,
+            backgroundColor : '#303030'
         });
     } else {
-        var headerView = Ti.UI.createView({
+        $.table.headerView = Ti.UI.createView({
             height : 0.3,
             top : 0,
             width : Ti.UI.FILL,
@@ -147,7 +144,7 @@ function createGUI() {
             backgroundColor : '#303030',
         });
 
-        var footerView = Ti.UI.createView({
+        $.table.footerView = Ti.UI.createView({
             height : 0,
             top : 0,
             width : Ti.UI.FILL,
@@ -155,9 +152,7 @@ function createGUI() {
             backgroundColor : "transparent",
         });
     }
-    
-    $.table.setHeaderView(headerView);
-    $.table.setFooterView(footerView);
+   
     
     /* First row */
     $.language_row.add(createPickers());
@@ -180,7 +175,7 @@ function createGUI() {
     pushEnabled = Ti.App.Properties.getBool('pushSetting');
     var basicSwitch;
 
-    if (OS_IOS) {
+    if (!isAndroid) {
         basicSwitch = Ti.UI.createSwitch({
             right : 10,
             width : 40,
@@ -188,7 +183,7 @@ function createGUI() {
             titleOff : Alloy.Globals.PHRASES.offTxt,
             value : pushEnabled
         });
-    } else if (OS_ANDROID) {
+    } else {
         var RealSwitch = require('com.yydigital.realswitch');
         
         basicSwitch = RealSwitch.createRealSwitch({
@@ -214,7 +209,7 @@ function createGUI() {
         } 
     });
     $.push_notification_row.selectionStyle = 'none';
-    $.push_notification_row.add(basicSwitch)
+    $.push_notification_row.add(basicSwitch);
     
     /* Third row */
     $.upload_indicator.message = $.upload_indicator.message + '...';
@@ -300,7 +295,7 @@ function createGUI() {
         var titleTxt = Alloy.Globals.PHRASES.profileNameTitleTxt;
         var messageTxt = Alloy.Globals.PHRASES.profileNameMessageTxt + ": " + profileName;
 
-        if (OS_IOS) {
+        if (!isAndroid) {
             dialog = Ti.UI.createAlertDialog({
                 title : titleTxt,
                 message : messageTxt,
@@ -308,7 +303,7 @@ function createGUI() {
                 buttonNames : [confirm, cancel]
             });
 
-        } else if (OS_ANDROID) {
+        } else {
             var textfield = Ti.UI.createTextField();
             textfield.value = profileName;
 
@@ -350,9 +345,9 @@ function createGUI() {
 
     /* Fifth row */
     $.bluetooth_settings_row.addEventListener('click', function() {
-        if (OS_IOS) {
+        if (!isAndroid) {
             Ti.Platform.openURL('prefs:root=Brightness prefs:root=General&path=Bluetooth');
-        } else if (OS_ANDROID) {
+        } else {
             var intent = Ti.Android.createIntent({
                 className : 'com.android.settings.bluetooth.BluetoothSettings',
                 packageName : 'com.android.settings',
@@ -389,7 +384,7 @@ function createPickers() {
 		dataAndroid[pos] = Alloy.Globals.AVAILABLELANGUAGES[lang].description;
 	}
 
-	if (OS_ANDROID) {
+	if (isAndroid) {
 		picker = Ti.UI.createLabel({
 		    right : 20,
             backgroundColor : 'transparent',
@@ -420,7 +415,7 @@ function createPickers() {
 				},
 			});
 		});
-	} else if (OS_IOS) {
+	} else {
 		var ModalPicker = require("lib/ModalPicker");
 		var visualPrefs = {
 			right : 20,
@@ -456,7 +451,7 @@ function showAlertWithRestartNote() {
 		switch (e.index) {
 		case 0:
 			alertWindow.hide();
-			if (OS_ANDROID) {
+			if (isAndroid) {
 				// close
 				Alloy.Globals.MAINWIN.close();
 				Alloy.Globals.LANDINGWIN.close();
