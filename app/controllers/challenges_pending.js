@@ -6,6 +6,8 @@ if (args.refresh) {
 
 var iOSVersion;
 var isAndroid = false;
+var refresher = null;
+var swipeRefresh = null;
 var data = [];
 
 if (OS_IOS) {
@@ -170,7 +172,45 @@ table.addEventListener('click', function(e) {
 });
 
 buildTableRows();
-$.challenges_pending.add(table);
+
+if(!isAndroid) {
+    $.challenges_pending.add(table);
+} else {
+    var swipeRefreshModule = require('com.rkam.swiperefreshlayout');
+
+        swipeRefresh = swipeRefreshModule.createSwipeRefresh({
+            view : table,
+            height : Ti.UI.FILL,
+            width : Ti.UI.FILL,
+            id : 'swiper'
+        });
+        
+        swipeRefresh.addEventListener('refreshing', function(e) {
+            if (Alloy.Globals.checkConnection()) {
+                setTimeout(function() {
+                    indicator.openIndicator();
+                    getChallenges();
+                }, 800);
+            } else {
+                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+                swipeRefresh.setRefreshing(false);
+            }
+        }); 
+        $.challenges_pending.add(swipeRefresh);   
+}
+
+function endRefresher() {
+    if (!isAndroid) {
+        if ( typeof refresher !== 'undefined' && refresher !== null) {
+            refresher.endRefreshing();
+        }
+    } else {
+        if ( typeof swipeRefresh !== 'undefined' && swipeRefresh !== null) {
+            swipeRefresh.setRefreshing(false);
+        }
+    }
+}
+
 
 function buildTableRows() {
     table.setData([]);
@@ -452,11 +492,7 @@ function getChallenges() {
     var xhr = Titanium.Network.createHTTPClient();
     xhr.onerror = function(e) {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-        if (OS_IOS) {
-            if ( typeof refresher !== 'undefined') {
-                refresher.endRefreshing();
-            }
-        }
+        endRefresher();
         Ti.API.error('Bad Sever =>' + e.error);
         indicator.closeIndicator();
     };
@@ -469,11 +505,7 @@ function getChallenges() {
         xhr.send();
     } catch(e) {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-        if (!isAndroid) {
-            if ( typeof refresher !== 'undefined') {
-                refresher.endRefreshing();
-            }
-        }
+        endRefresher();
         indicator.closeIndicator();
     }
     xhr.onload = function() {
@@ -486,20 +518,12 @@ function getChallenges() {
             } else {
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             }
-            if (!isAndroid) {
-                if ( typeof refresher !== 'undefined') {
-                    refresher.endRefreshing();
-                }
-            }
+            endRefresher();
             indicator.closeIndicator();
         } else {
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             indicator.closeIndicator();
-            if (!isAndroid) {
-                if ( typeof refresher !== 'undefined') {
-                    refresher.endRefreshing();
-                }
-            }
+            endRefresher();
             Ti.API.error("Error =>" + this.response);
         }
     };

@@ -71,7 +71,8 @@ function getGroups() {
                         for (var x = 0; x < response[i].members.length; x++) {
                             // member object
                             var member = {
-                                id : response[i].members[x].uid,
+                                id : response[i].members[x].id,
+                                fbid : response[i].members[x].fbid,
                                 name : response[i].members[x].name
                             };
                             membersArray.push(member);

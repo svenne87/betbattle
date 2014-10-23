@@ -16,11 +16,11 @@ if (OS_ANDROID) {
             $.share = null;
         };
         $.share.activity.actionBar.displayHomeAsUp = true;
-        $.share.activity.actionBar.title = Alloy.Globals.PHRASES.shareSocial;
+        $.share.activity.actionBar.title = Alloy.Globals.PHRASES.shareTxt;
     });
 } else {
     $.share.titleControl = Ti.UI.createLabel({
-        text : Alloy.Globals.PHRASES.shareSocial,
+        text : Alloy.Globals.PHRASES.shareTxt,
         font : Alloy.Globals.getFontCustom(18, "Bold"),
         color : '#FFF'
     });

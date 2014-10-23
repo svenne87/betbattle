@@ -84,7 +84,7 @@ function getUserInfo() {
     xhr.onload = function() {
         if (this.status == '200') {
             if (this.readyState == 4) {
-                Ti.API.info("USER FINO CHALLENGES : " + JSON.stringify(this.responseText));
+                
                 var userInfo = null;
                 try {
                     userInfo = JSON.parse(this.responseText);
@@ -353,7 +353,6 @@ function constructChallengeRows(obj, index, type) {
             // do nothing
             betGroupName = "";
         }
-        Ti.API.info("GRUPPNAMN: " + betGroupName);
         if (betGroupName <= 0) {
             betGroupName = obj.attributes.name;
         }
@@ -1205,7 +1204,7 @@ function getDynamicTopImage() {
             if (this.readyState == 4) {
                 var response = JSON.parse(this.responseText);
                 // construct array with objects
-                Ti.API.info("TOP IMAGE RESPONSE: " + JSON.stringify(response));
+               
                 var header = table.getHeaderView();
                 var imageView = Ti.UI.createImageView({
                     image : Alloy.Globals.BETKAMPENURL + response.image,
@@ -1259,7 +1258,7 @@ function getDynamicTopImage() {
 }
 
 function endRefresher() {
-    if (OS_IOS) {
+    if (!isAndroid) {
         if ( typeof refresher !== 'undefined') {
             refresher.endRefreshing();
         }
@@ -1301,7 +1300,7 @@ function getChallenges() {
                 // Update menu with icon if there are new challenges
                 Ti.App.fireEvent('app:updateMenu');
 
-                if (OS_ANDROID) {
+                if (isAndroid) {
                     $.challengesView.removeAllChildren();
                     for (child in $.challengesView.children) {
 
@@ -1315,7 +1314,7 @@ function getChallenges() {
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             }
 
-            if (OS_ANDROID) {
+            if (isAndroid) {
                 if ( typeof swipeRefresh !== 'undefined') {
                     swipeRefresh.setRefreshing(false);
                 }

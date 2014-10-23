@@ -4,8 +4,11 @@ var botView;
 var groupName = args.group;
 var headerScoreLabel;
 var pendingStandingsArray = [];
+var tempScoreLabelArray = [];
 var challengeFinished = false;
 var refresher;
+var swipeRefresh = null;
+var androidViews = [];
 
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({
@@ -89,6 +92,16 @@ function addPointPendingStandings(game_type, uid) {
             if (pendingStandingsArray[player].uid === uid) {
                 // user found
                 pendingStandingsArray[player].points = ((pendingStandingsArray[player].points - 0) + point);
+
+                // Find correct label and update result
+                if (tempScoreLabelArray.length > 0) {
+                    for (var label in tempScoreLabelArray) {
+                        if (tempScoreLabelArray[label].id === uid) {
+                            tempScoreLabelArray[label].setText(pendingStandingsArray[player].points);
+                            break;
+                        }
+                    }
+                }
                 break;
             }
         }
@@ -157,21 +170,32 @@ function createGameType(gameType, game, values, index, sections) {
 
                     // resultText will be undefined if it's gametype "draw"
                     if ( typeof resultText === 'undefined') {
-                        resultText = game.result_values[i].value_1;
+                        // if game is pending and the status is "no score", hide it
+                        if(game.status === "3") {
+                            resultText = "";
+                        } else {
+                            resultText = Alloy.Globals.PHRASES.gameTypes[type].buttonValues[2];
+                        }
                     }
 
                     if (resultText.length > 15) {
-                        resultText = valueText.substring(0, 12) + '...';
+                        resultText = resultText.substring(0, 12) + '...';
                     }
+                    
+                    // check if game typ is 1, winning team. Should be cleared out when the match is "live" and the score is more than 0-0
+                    if(type === '1' && game.status === '3' && game.result_values[1].value_1 === '0' && game.result_values[1].value_1 === "0") {
+                        resultText = '';
+                    }
+                    
 
                 } else if (gameType.number_of_values === '2') {
                     resultText = game.result_values[i].value_1 + " - " + game.result_values[i].value_2;
 
                     if (game.result_values[i].game_type === '3') {
-                        if (challengeFinished) {
+                        if (game.status === '2') {
                             // final score, update header label
                             headerScoreLabel.setText(resultText + " ");
-                        } else {
+                        } else if(game.status === '3'){
                             // current score, update header label
                             headerScoreLabel.setText("(" + resultText + ") ");
                         }
@@ -180,10 +204,6 @@ function createGameType(gameType, game, values, index, sections) {
             }
         }
     }
-    
-    // TODO kolla om detta funkar?
-        // resultat 1-0 men lagnamn för första mål skrivs ej ut och vinnande lag bör släckas (inte stå oavgjort)
-            // fejka ut om ena laget leder så sätt ut att de kommer vinna och att de gjorde första mål etc.
 
     gameTypeView.add(Ti.UI.createLabel({
         text : resultText + ' ',
@@ -333,32 +353,13 @@ function createGameType(gameType, game, values, index, sections) {
     }
 }
 
-function createLayout(game, values, games, currentStanding, isFirst) {
-    // currentStanding.length will only be greater than 0 when the challenge is finished.
-    if (currentStanding.length > 0) {
+function createLayout(game, values, games, currentStanding, isFirst, isFinished) {
+    // isFinished will be true if all matches are finished
+    if (currentStanding.length > 0 && isFinished) {
         challengeFinished = true;
     } else {
         // only show standings if a match has started
         if (checkDate(game.game_date)) {
-            // create a player object for each participant
-
-            var tmpType = null;
-
-            for (var player in values) {
-                if (tmpType === null) {
-                    tmpType = values[player].game_type;
-                }
-
-                if (values[player].game_type === tmpType) {
-                    // only add participants once
-                    var tmpPlayer = {
-                        uid : values[player].uid,
-                        points : 0,
-                        playerName : values[player].name
-                    };
-                    pendingStandingsArray.push(tmpPlayer);
-                }
-            }
             currentStanding = pendingStandingsArray;
         }
     }
@@ -458,7 +459,7 @@ function createLayout(game, values, games, currentStanding, isFirst) {
             text : game.game_date_string + ' '
         }));
     } else {
-        if (challengeFinished) {
+        if (game.status === '2') {
             // game has started, show result
             header.add(Ti.UI.createLabel({
                 left : 12,
@@ -481,7 +482,7 @@ function createLayout(game, values, games, currentStanding, isFirst) {
             });
 
             header.add(headerScoreLabel);
-        } else {
+        } else if(game.status === '3'){
             liveIcon = Ti.UI.createImageView({
                 left : 12,
                 top : 3,
@@ -747,12 +748,16 @@ function createLayout(game, values, games, currentStanding, isFirst) {
             } else {
                 var potTextLabel = Ti.UI.createLabel({
                     right : 10,
+                    id : tmpObj.uid,
                     height : Ti.UI.SIZE,
                     width : Ti.UI.SIZE,
                     font : Alloy.Globals.getFontCustom(16, 'Regular'),
                     color : Alloy.Globals.themeColor(),
                     text : tmpObj.points || '0'
                 });
+
+                // keep track of all labels for update
+                tempScoreLabelArray.push(potTextLabel);
 
                 row.add(potTextLabel);
             }
@@ -811,8 +816,54 @@ function createLayout(game, values, games, currentStanding, isFirst) {
     }
 
     table.setData(sections);
-    view.add(table);
-    $.showChallenge.addView(view);
+    
+     if (isAndroid) {
+        var swipeRefreshModule = require('com.rkam.swiperefreshlayout');
+
+        swipeRefresh = swipeRefreshModule.createSwipeRefresh({
+            view : view,
+            height : Ti.UI.FILL,
+            width : Ti.UI.FILL,
+            id : 'swiper'
+        });
+        
+        swipeRefresh.addEventListener('refreshing', function(e) {
+            if (Alloy.Globals.checkConnection()) {
+                setTimeout(function() {
+                    indicator.openIndicator();
+                    pendingStandingsArray = [];
+                    androidViews = [];    
+                    
+                    for(var view in $.showChallenge.getViews()) {
+                        androidViews.push($.showChallenge.getViews()[view]);
+                    }
+
+                    getChallengeShow();
+                }, 800);
+            } else {
+                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+                swipeRefresh.setRefreshing(false);
+            }
+        }); 
+        view.add(table);
+        $.showChallenge.addView(swipeRefresh);
+
+    }  else {
+        view.add(table);
+        $.showChallenge.addView(view);
+    }
+}
+
+function endRefresher() {
+    if (OS_IOS) {
+        if ( typeof refresher !== 'undefined' && refresher !== null) {
+            refresher.endRefreshing();
+        }
+    } else {
+        if ( typeof swipeRefresh !== 'undefined' && swipeRefresh !== null) {
+            swipeRefresh.setRefreshing(false);
+        }
+    }
 }
 
 function getChallengeShow() {
@@ -822,6 +873,7 @@ function getChallengeShow() {
         Ti.API.info('FEL : ' + JSON.stringify(this.responseText));
         Ti.API.error('Bad Sever =>' + e.error);
         indicator.closeIndicator();
+        endRefresher();
     };
 
     try {
@@ -833,7 +885,7 @@ function getChallengeShow() {
     } catch(e) {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
         indicator.closeIndicator();
-
+        endRefresher();
     }
     xhr.onload = function() {
         if (this.status == '200') {
@@ -843,8 +895,17 @@ function getChallengeShow() {
             } else {
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             }
+            
+            // custom to handle pull to refresh on android
+            if(isAndroid && androidViews.length > 0) {
+                // clear children
+                for (var view in androidViews) {
+                    $.showChallenge.removeView(androidViews[view]); 
+                }
+            }
         } else {
             indicator.closeIndicator();
+            endRefresher();
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             Ti.API.error("Error =>" + this.response);
         }
@@ -852,17 +913,43 @@ function getChallengeShow() {
 
 }
 
-function createBorderView() {
-    $.showChallenge.add(Titanium.UI.createView({
-        height : '1dp',
-        width : '100%',
-        backgroundColor : '#303030'
-    }));
-}
-
 function showResults(challenge) {
     var isFirst = false;
+    var isFinished = false;
+    var finishedGamesCount = 0;
     $.showChallenge.hide();
+
+    for (var y in challenge.games) {
+        // count all finished matches
+        if (challenge.games[y].status === '2') {
+            finishedGamesCount++;
+        }
+    }
+
+    // get all participants for this challenge and store them for point counting
+    var tmpType = null;
+    var tmpGid = null;
+    for (var player in challenge.values) {
+        if (tmpType === null && tmpGid === null) {
+            tmpType = challenge.values[player].game_type;
+            tmpGid = challenge.values[player].gid;
+        }
+
+        if (challenge.values[player].game_type === tmpType && challenge.values[player].gid === tmpGid) {
+            // only add participants once
+            var tmpPlayer = {
+                uid : challenge.values[player].uid,
+                points : 0,
+                playerName : challenge.values[player].name
+            };
+            pendingStandingsArray.push(tmpPlayer);
+        }
+    }
+
+    if (finishedGamesCount === challenge.games.length) {
+        // all matches are finished
+        isFinished = true;
+    }
 
     for (var y in challenge.games) {
         if (y === '0') {
@@ -870,14 +957,14 @@ function showResults(challenge) {
         }
 
         // create layout
-        createLayout(challenge.games[y], challenge.values, challenge.games, challenge.current_standing, isFirst);
+        createLayout(challenge.games[y], challenge.values, challenge.games, challenge.current_standing, isFirst, isFinished);
         isFirst = false;
     }
 
     setTimeout(function() {
         indicator.closeIndicator();
         // show layout
-        $.showChallenge.show();
+       $.showChallenge.show();
     }, 400);
 }
 
@@ -890,5 +977,3 @@ if (Alloy.Globals.checkConnection()) {
 } else {
     Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 }
-
-// TODO fix standings

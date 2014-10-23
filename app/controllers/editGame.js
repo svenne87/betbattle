@@ -24,8 +24,17 @@ var indicator = uie.createIndicatorWindow({
 });
 
 var iOSVersion;
+var isAndroid = true;
+
+var fontawesome = require('lib/IconicFont').IconicFont({
+    font : 'lib/FontAwesome'
+});
+
+var fontAwe = 'fontawesome-webfont';
 
 if (OS_IOS) {
+    isAndroid = false;
+    fontAwe = 'FontAwesome';
     iOSVersion = parseInt(Ti.Platform.version);
     $.editGame.titleControl = Ti.UI.createLabel({
         text : Alloy.Globals.PHRASES.editTxt,
@@ -34,15 +43,15 @@ if (OS_IOS) {
     });
 }
 
-var fontawesome = require('lib/IconicFont').IconicFont({
-    font : 'lib/FontAwesome'
+$.editGame.addEventListener('close', function() {
+    indicator.closeIndicator();
+    // hide modal pickers (ios)
+    if (!isAndroid) {
+        for (picker in modalPickersToHide) {
+            modalPickersToHide[picker].close();
+        }
+    }
 });
-
-var fontAwe = 'FontAwesome';
-
-if (OS_ANDROID) {
-    fontAwe = 'fontawesome-webfont';
-}
 
 function removeCouponGame(gameID) {
     if (Alloy.Globals.checkConnection()) {
@@ -68,7 +77,6 @@ function removeCouponGame(gameID) {
             if (this.status == '200') {
                 if (this.readyState == 4) {
                     var response = null;
-                    Ti.API.info("Tagit bort" + JSON.stringify(this.responseText));
                     response = JSON.parse(this.responseText);
                     Alloy.Globals.showToast(Alloy.Globals.PHRASES.couponGameRemoved);
                     amount_deleted++;
@@ -123,7 +131,6 @@ function createGameType(gameType, gameObject, i, gameArray, index) {
 
     //if the json says team1 or team2. get the actual team  names
     if (text == "team1") {
-        Ti.API.info("TEAM" + JSON.stringify(gameObject.attributes.team_1.team_name));
         text = gameObject.attributes.team_1.team_name;
     } else if (text == "team2") {
         text = gameObject.attributes.team_2.team_name;
@@ -150,7 +157,7 @@ function createGameType(gameType, gameObject, i, gameArray, index) {
 
     var val = gameArray[index].gameValue[0];
     if (gameTypeView.value == val) {
-       // gameTypeView.setBackgroundColor(Alloy.Globals.themeColor());
+        // gameTypeView.setBackgroundColor(Alloy.Globals.themeColor());
         gameTypeView.add(Ti.UI.createLabel({
             id : 'selected_' + gameTypeView.id,
             text : fontawesome.icon('fa-check'),
@@ -188,13 +195,11 @@ function createGameType(gameType, gameObject, i, gameArray, index) {
      }*/
 
     gameTypeView.addEventListener("click", function(e) {
-        Ti.API.info("CLICKADE PÅ EN ROW : " + JSON.stringify(e));
         gameArray[index].gameValue[0] = e.row.value;
         gameArray[index].gameValue[1] = 0;
         var children = table.data[e.row.id];
         var labels = [];
 
-        //Ti.API.info("TABLE CHILDREN : " + JSON.stringify(children.rows));
         //changeColors(e);
         e.row.add(Ti.UI.createLabel({
             id : 'selected_' + e.row.id,
@@ -223,10 +228,7 @@ function createGameType(gameType, gameObject, i, gameArray, index) {
                 }
             }
         }
-       // e.row.setBackgroundColor(Alloy.Globals.themeColor());
-
-        Ti.API.info("gameArray : " + JSON.stringify(gameArray));
-
+        // e.row.setBackgroundColor(Alloy.Globals.themeColor());
     });
     return gameTypeView;
 }
@@ -253,7 +255,6 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
         layoutType = 'absolute';
     }
     var optionsView = Ti.UI.createView({
-        //height: "70%",
         width : Ti.UI.FILL,
         top : 70,
         height : 70,
@@ -269,35 +270,43 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
 
     });
     var data = [];
-    Ti.API.info("GAMETYPE OPTIONS : " + gameType.options);
     if (gameType.options > 1) {
-        Ti.API.info("Lägger in bild");
-        Ti.API.info("BILD : " + gameObject.attributes.team_1.team_logo);
         var logoWrapper = Ti.UI.createView({
-            width : 130,
+            width : 50,
             height : 50,
-            left : 20,
             layout : 'absolute',
+            left : '21%'
         });
 
         var logoWrapper2 = Ti.UI.createView({
-            width : 130,
-            left : 20,
+            width : 50,
+            height : 50,
             layout : 'absolute',
+            left : '28%'
         });
 
         var team_logo = Ti.UI.createImageView({
+            defaultImage : '/images/no_pic.png',
             image : Alloy.Globals.BETKAMPENURL + gameObject.attributes.team_1.team_logo,
             width : 50,
             height : 50,
-            //left: 40,
+            borderRadius : 25
         });
 
         var team2_logo = Ti.UI.createImageView({
+            defaultImage : '/images/no_pic.png',
             image : Alloy.Globals.BETKAMPENURL + gameObject.attributes.team_2.team_logo,
             width : 50,
             height : 50,
-            //left : 40,
+            borderRadius : 25
+        });
+
+        team_logo.addEventListener('error', function(e) {
+            team_logo.image = '/images/no_pic.png';
+        });
+
+        team2_logo.addEventListener('error', function(e) {
+            team2_logo.image = '/images/no_pic.png';
         });
 
         logoWrapper.add(team_logo);
@@ -307,14 +316,14 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
         logosView.add(logoWrapper2);
     }
 
-    if (OS_ANDROID) {
+    if (isAndroid) {
         var pickerLabels = [];
 
         for (var i = 0; i < gameType.options; i++) {
             var pre_val = gameArray[index].gameValue[i];
             var pickerLabel = Ti.UI.createLabel({
                 top : 20,
-                left : 15,
+                left : '14%',
                 backgroundColor : '#FFF',
                 borderRadius : 2,
                 width : 100,
@@ -368,7 +377,7 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
             optionsView.add(pickerLabel);
         }
 
-    } else if (OS_IOS) {
+    } else {
 
         var pickers = [];
         // create 1-15 values
@@ -415,12 +424,11 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
             var gameID = gameObject.attributes.game_id;
             var id = i + "_" + gameType.type + count + "-" + gameID;
             picker = new ModalPicker(visualPrefs, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt, Alloy.Globals.PHRASES.closeBtnTxt, id);
-            modalPickersToHide[gameType.type + count + gameID] = picker;
+            //modalPickersToHide[gameType.type + count + gameID] = picker;
 
             picker.text = pre_val;
             //picker.text = '-';
 
-            Ti.API.info("Y VÄRDE : " + i);
             picker.self.addEventListener('change', function(e) {
 
                 var id = e.source.id;
@@ -429,21 +437,17 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
                 var d = id.indexOf("-");
                 var gameID = id.substring(d + 1, id.length);
                 var arrayIndex = id.substring(ind + 1, d);
-                Ti.API.info("INDEX : " + arrayIndex);
-                Ti.API.info("ID : " + gameID);
-                picker.value = modalPickersToHide[arrayIndex + gameID].value;
+                //picker.value = modalPickersToHide[arrayIndex + gameID].value;
 
                 gameArray[index].gameValue[i] = picker.value;
                 if (gameType.number_of_values == 1) {
                     gameArray[index].gameValue[1] = 0;
                 }
-                Ti.API.info("gameArray : " + JSON.stringify(gameArray));
-
             });
 
             optionsView.add(picker);
 
-            //pickers.push(picker);
+            modalPickersToHide.push(picker);
 
         }
 
@@ -532,40 +536,17 @@ function createLayout(gameObject) {
             height : 0.1
         });
 
-        var fontawesome = require('lib/IconicFont').IconicFont({
-            font : 'lib/FontAwesome'
-        });
-
-        var font = 'FontAwesome';
-
-        if (OS_ANDROID) {
-            font = 'fontawesome-webfont';
-        }
-
         var tableFooterView = Ti.UI.createView({
             height : 0.1
         });
 
-        if (OS_IOS) {
-            var separatorS;
-            var separatorCol;
-
-            if (iOSVersion < 7) {
-                separatorS = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
-                separatorColor = 'transparent';
-            } else {
-                separatorS = Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE;
-                separatorColor = '#303030';
-            }
-
+        if (!isAndroid) {
             table = Titanium.UI.createTableView({
-                //width : Ti.UI.FILL,
                 left : 0,
                 headerView : tableHeaderView,
                 footerView : tableFooterView,
                 height : '75%',
                 width : '100%',
-                //backgroundImage: '/images/profileBG.jpg',
                 backgroundColor : 'transparent',
                 style : Ti.UI.iPhone.TableViewStyle.GROUPED,
                 separatorInsets : {
@@ -573,16 +554,20 @@ function createLayout(gameObject) {
                     right : 0
                 },
                 id : 'challengeTable',
-                separatorStyle : separatorS,
-                separatorColor : separatorColor
+                separatorStyle : Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE,
+                separatorColor : '#303030'
             });
-        } else if (OS_ANDROID) {
+
+            if (iOSVersion < 7) {
+                table.separatorStyle = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
+                table.separatorColor = 'transparent';
+            }
+        } else {
             table = Titanium.UI.createTableView({
                 width : Ti.UI.FILL,
                 left : 0,
                 headerView : tableHeaderView,
                 height : '75%',
-                //backgroundColor : '#303030',
                 separatorColor : '#303030',
                 id : 'challengeTable'
             });
@@ -595,13 +580,12 @@ function createLayout(gameObject) {
             var gameObj = new Object();
             gameObj.game_id = gameObject.attributes.game_id;
             gameObj.gameType = gametypes[y].type;
-            Ti.API.info("OBJECT ???? " + JSON.stringify(gameObject));
+            
             for (var i in gameObject.attributes.values) {
                 var value = gameObject.attributes.values[i];
                 if (value.game_type == gametypes[y].type) {
                     var valueArray = new Array(value.value_1, value.value_2);
                 }
-                Ti.API.info("EN VALUE : " + JSON.stringify(value));
             }
 
             gameObj.gameValue = valueArray;
@@ -632,7 +616,7 @@ function createLayout(gameObject) {
             });
 
             var gameTypeLabel = Ti.UI.createLabel({
-                text : Alloy.Globals.PHRASES.gameTypes[gametypes[y].type].description,
+                text : Alloy.Globals.PHRASES.gameTypes[gametypes[y].type].description + " ",
                 //textAlign: "left",
                 //width: Ti.UI.FILL,
                 left : 20,
@@ -641,12 +625,19 @@ function createLayout(gameObject) {
             });
             gameTypeHeaderView.add(gameTypeLabel);
 
-            sections[y] = Ti.UI.createTableViewSection({
-                headerView : gameTypeHeaderView,
-                footerView : Ti.UI.createView({
-                    height : 0.1,
-                }),
-            });
+            if (!isAndroid) {
+                sections[y] = Ti.UI.createTableViewSection({
+                    headerView : gameTypeHeaderView,
+                    footerView : Ti.UI.createView({
+                        height : 0.1,
+                    }),
+                });
+            } else {
+                sections[y] = Ti.UI.createTableViewSection({
+                    headerView : gameTypeHeaderView
+                });
+            }
+
             if (gametypes[y].option_type == "button") {
                 for (var i = 0; i < gametypes[y].options; i++) {
                     sections[y].add(createGameType(gametypes[y], gameObject, i, gameArray, index));
@@ -654,36 +645,31 @@ function createLayout(gameObject) {
             } else if (gametypes[y].option_type == "select") {
                 sections[y].add(createSelectGameType(gametypes[y], gameObject, i, gameArray, index));
             }
-            //createBorderView();
         }
         var sectionIndex = sections.length;
-        sections[sectionIndex + 1] = Ti.UI.createTableViewSection({
-            headerView : Ti.UI.createView({
-                height : 0.1,
-            }),
-            footerView : Ti.UI.createView({
-                height : 10,
-            })
-        });
+
+        if (!isAndroid) {
+            sections[sectionIndex + 1] = Ti.UI.createTableViewSection({
+                headerView : Ti.UI.createView({
+                    height : 0.1,
+                }),
+                footerView : Ti.UI.createView({
+                    height : 10,
+                })
+            });
+        } else {
+            sections[sectionIndex + 1] = Ti.UI.createTableViewSection({
+                footerView : Ti.UI.createView({
+                    height : 10,
+                })
+            });
+        }
+
         sections[sectionIndex + 1].add(createSubmitButtonAnswer());
-        sections[sectionIndex + 1].add(createRemoveCouponBtn());    
+        sections[sectionIndex + 1].add(createRemoveCouponBtn());
         table.setData(sections);
 
         view.add(table);
-        /*if (roundId === -1) {
-         createBetCoinsView(coinsToJoin);
-         } else {
-         createBetCoinsChooseView();
-         }
-
-         createBorderView();
-
-         if (roundId === -1) {
-         createSubmitButtonView('Svara', Alloy.Globals.BETKAMPENUID, challengeObject.attributes.id);
-         } else {
-         // -1 here indicates that we are creating a challenge
-         createSubmitButtonView(Alloy.Globals.PHRASES.challengeBtnTxt, Alloy.Globals.BETKAMPENUID, -1);
-         }*/
     }
 
 
@@ -713,9 +699,7 @@ function createSubmitButtonAnswer() {
     submitButton = Alloy.Globals.createButtonView(Alloy.Globals.themeColor(), "#FFF", Alloy.Globals.PHRASES.saveTxt);
 
     submitButton.addEventListener("click", function(e) {
-        Ti.API.info("post answer");
         if (validate()) {
-            Ti.API.info("UPPDATERA");
             updateCouponGame();
         } else {
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.notAllValuesErrorTxt);
@@ -777,7 +761,6 @@ function updateCouponGame() {
         xhr.onerror = function(e) {
             indicator.closeIndicator();
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-            Ti.API.info("ERROREROROR " + JSON.stringify(e));
             Ti.API.error('Bad Sever =>' + e.error);
         };
 
@@ -792,7 +775,6 @@ function updateCouponGame() {
             var param = '{"lang" : "' + Alloy.Globals.LOCALE + '", "cid":"' + Alloy.Globals.COUPON.id + '", "gameID": "' + gameID + '", "gamevalue": {';
 
             for (var i in gameArray) {
-                Ti.API.info("skickar gameArray : " + JSON.stringify(gameArray[i]));
                 // is array
                 param += '"' + gameArray[i].gameType + '": [';
                 for (var x in gameArray[i].gameValue) {
@@ -814,8 +796,6 @@ function updateCouponGame() {
             }
             param += '}}';
 
-            Ti.API.info("JSON STRING : " + param);
-
             xhr.send(param);
         } catch(e) {
             indicator.closeIndicator();
@@ -824,7 +804,6 @@ function updateCouponGame() {
         xhr.onload = function() {
             if (this.status == '200') {
                 if (this.readyState == 4) {
-                    Ti.API.info("UPPDATERAT ELLER : " + JSON.stringify(this.responseText));
                     response = JSON.parse(this.responseText);
                     if (response == 1) {
                         if (OS_ANDROID) {
@@ -893,10 +872,7 @@ function updateCouponGame() {
 
 function getGame() {
     if (Alloy.Globals.checkConnection()) {
-
-        if (OS_IOS) {
-            indicator.openIndicator();
-        }
+        indicator.openIndicator();
 
         // Get game to edit
         var xhr = Titanium.Network.createHTTPClient();
@@ -907,7 +883,6 @@ function getGame() {
         };
 
         try {
-
             xhr.open('GET', Alloy.Globals.BETKAMPENGAMETOEDITURL + '/?gid=' + gameID + '&cid=' + Alloy.Globals.COUPON.id + '&lang=' + Alloy.Globals.LOCALE);
             xhr.setRequestHeader("content-type", "application/json");
             xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
@@ -921,7 +896,6 @@ function getGame() {
         xhr.onload = function() {
             if (this.status == '200') {
                 if (this.readyState == 4) {
-                    Ti.API.info("RESPONSE : " + JSON.stringify(this.responseText));
                     var response = JSON.parse(this.responseText);
                     // Simple work around, if response ain't an array, then simpy add it to one, to use the same code
                     if (response.length == null) {
@@ -930,10 +904,8 @@ function getGame() {
                         response = array;
                         array = null;
                     }
-                    Ti.API.info("PARSED RESPONSE: " + JSON.stringify(response));
                     // This response contains one or several games for a challenge. And each game contains a  set of game types valid for that game
                     for (resp in response) {
-                        //Ti.API.info("EN RESPONSE: " + JSON.stringify(resp));
                         var res = response[resp];
                         var teamOneName = res.team_1.team_name;
 
@@ -959,7 +931,7 @@ function getGame() {
                         };
 
                         var values = [];
-                        Ti.API.info("VALUES : " + JSON.stringify(res.values));
+
                         for (var y in res.values) {
                             var value = {
                                 game_type : res.values[y].game_type,
@@ -1010,7 +982,7 @@ function getGame() {
 
 getGame();
 
-if (OS_ANDROID) {
+if (isAndroid) {
     $.editGame.orientationModes = [Titanium.UI.PORTRAIT];
 
     $.editGame.addEventListener('open', function() {
@@ -1022,6 +994,5 @@ if (OS_ANDROID) {
         };
         $.editGame.activity.actionBar.displayHomeAsUp = true;
         $.editGame.activity.actionBar.title = Alloy.Globals.PHRASES.editTxt;
-        indicator.openIndicator();
     });
 }

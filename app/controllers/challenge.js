@@ -100,7 +100,6 @@ function createGameType(gameType, gameObject, i, gameArray, index) {
             e.source.backgroundColor = "#6d6d6d";
         }
     }
-
 }
 
 function createSelectGameType(gameType, gameObject, i, gameArray, index) {
@@ -1029,11 +1028,44 @@ function createLayout(gameObject) {
         }
 
         ///*******Create Table View*******///
-        var sections = [];
-
         var tableHeaderView = Ti.UI.createView({
             height : 0.1
         });
+
+        if (OS_IOS) {
+            table = Titanium.UI.createTableView({
+                left : 0,
+                headerView : tableHeaderView,
+                footerView : tableFooterView,
+                height : '85%',
+                width : Ti.UI.FILL,
+                backgroundColor : 'transparent',
+                style : Ti.UI.iPhone.TableViewStyle.GROUPED,
+                separatorInsets : {
+                    left : 0,
+                    right : 0
+                },
+                id : 'challengeTable',
+                separatorColor : '#303030',
+                separatorStyle : Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE
+            });
+
+            if (iOSVersion < 7) {
+                table.separatorStyle = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
+                table.separatorColor = 'transparent';
+            }
+
+        } else if (OS_ANDROID) {
+            table = Titanium.UI.createTableView({
+                width : Ti.UI.FILL,
+                left : 0,
+                height : '85%',
+                separatorColor : '#303030',
+                id : 'challengeTable'
+            });
+        }
+
+        var sections = [];
 
         var fontawesome = require('lib/IconicFont').IconicFont({
             font : 'lib/FontAwesome'
@@ -1087,43 +1119,6 @@ function createLayout(gameObject) {
                 table.footerView = tableFooterView;
             }
 
-        }
-        if (OS_IOS) {
-            var separatorS;
-            var separatorCol;
-
-            if (iOSVersion < 7) {
-                separatorS = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
-                separatorColor = 'transparent';
-            } else {
-                separatorS = Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE;
-                separatorColor = '#303030';
-            }
-
-            table = Titanium.UI.createTableView({
-                left : 0,
-                headerView : tableHeaderView,
-                footerView : tableFooterView,
-                height : '85%',
-                width : Ti.UI.FILL,
-                backgroundColor : 'transparent',
-                style : Ti.UI.iPhone.TableViewStyle.GROUPED,
-                separatorInsets : {
-                    left : 0,
-                    right : 0
-                },
-                id : 'challengeTable',
-                separatorStyle : separatorS,
-                separatorColor : separatorColor
-            });
-        } else if (OS_ANDROID) {
-            table = Titanium.UI.createTableView({
-                width : Ti.UI.FILL,
-                left : 0,
-                height : '85%',
-                separatorColor : '#303030',
-                id : 'challengeTable'
-            });
         }
 
         ///*******Create game types******///

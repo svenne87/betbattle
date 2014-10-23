@@ -1,5 +1,7 @@
 var args = arguments[0] || {};
+
 var uie = require('lib/IndicatorWindow');
+
 var indicator = uie.createIndicatorWindow({
     top : 200,
     text : Alloy.Globals.PHRASES.loadingTxt
@@ -20,11 +22,20 @@ var amount_deleted = 0;
 var added = false;
 var betPicker;
 var table;
-var child = true;
-
+var child = false;
+var isAndroid = true;
 var iOSVersion;
 
+var fontawesome = require('lib/IconicFont').IconicFont({
+    font : 'lib/FontAwesome'
+});
+
+var font = 'fontawesome-webfont';
+
 if (OS_IOS) {
+    font = 'FontAwesome';
+    isAndroid = false;
+    child = true;
     iOSVersion = parseInt(Ti.Platform.version);
 
     $.showCoupon.titleControl = Ti.UI.createLabel({
@@ -34,15 +45,15 @@ if (OS_IOS) {
     });
 }
 
-var fontawesome = require('lib/IconicFont').IconicFont({
-    font : 'lib/FontAwesome'
+$.showCoupon.addEventListener('close', function() {
+    indicator.closeIndicator();
+    // hide modal pickers (ios)
+    if (!isAndroid) {
+        for (picker in modalPickersToHide) {
+            modalPickersToHide[picker].close();
+        }
+    }
 });
-
-var font = 'FontAwesome';
-
-if (OS_ANDROID) {
-    font = 'fontawesome-webfont';
-}
 
 function checkFriends() {
     if (Alloy.Globals.checkConnection()) {
@@ -92,7 +103,7 @@ function checkFriends() {
 
                         var message = Alloy.Globals.PHRASES.noFriendsChallengePrompt;
                         var my_alert = Ti.UI.createAlertDialog({
-                            title : 'Betkampen',
+                            title : Alloy.Globals.PHRASES.betbattleTxt,
                             message : message
                         });
                         my_alert.show();
@@ -112,10 +123,8 @@ function checkFriends() {
                                 win = null;
                             }
                             $.showCoupon.close();
-
                         });
                     }
-
                 } else {
                     Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                 }
@@ -153,44 +162,45 @@ var editEvent = function(e) {
     }
 };
 
-if (OS_IOS) {
-    var separatorS;
-    var separatorCol;
+var tableHeaderView = Ti.UI.createView({
+    height : 0.1,
+});
 
-    if (iOSVersion < 7) {
-        separatorS = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
-        separatorColor = 'transparent';
-    } else {
-        separatorS = Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE;
-        separatorColor = '#303030';
-    }
+var tableFooterView = Ti.UI.createView({
+    height : 0.1
+});
 
+if (!isAndroid) {
     table = Titanium.UI.createTableView({
         width : Ti.UI.FILL,
         height : Ti.UI.FILL,
         backgroundColor : '#000',
+        footerView : tableFooterView,
+        headerView : tableHeaderView,
         style : Ti.UI.iPhone.TableViewStyle.GROUPED,
         separatorInsets : {
             left : 0,
             right : 0
         },
-        separatorStyle : separatorS,
-        separatorColor : separatorColor
+        separatorStyle : Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE,
+        separatorColor : '#303030'
     });
-} else if (OS_ANDROID) {
+    
+     if (iOSVersion < 7) {
+        table.separatorStyle = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
+        table.separatorColor = 'transparent';
+     } 
+    
+} else {
     table = Titanium.UI.createTableView({
         width : Ti.UI.FILL,
+        footerView : tableFooterView,
+        headerView : tableHeaderView,
         height : '85%',
         backgroundColor : '#000',
         separatorColor : '#303030',
     });
-    child = true;
 }
-
-table.headerView = Ti.UI.createView({
-    height : 0.1,
-    width : Ti.UI.FILL
-});
 
 var sections = [];
 
@@ -230,11 +240,14 @@ matchesView.add(Ti.UI.createLabel({
 }));
 
 sections[0] = Ti.UI.createTableViewSection({
-    headerView : matchesView,
-    footerView : Ti.UI.createView({
-        height : 0.1
-    })
+    headerView : matchesView
 });
+
+if(!isAndroid) {
+    sections[0].footerView = Ti.UI.createView({
+        height : 0.1
+    });
+}
 
 for (var i in games) {
     var row = Ti.UI.createTableViewRow({
@@ -297,14 +310,13 @@ for (var i in games) {
         top : 40
     });
 
-    if (child != true) {
+    if (!child) {
         var rightPercentage = '5%';
-        font = 'fontawesome-webfont';
 
         if (Titanium.Platform.displayCaps.platformWidth < 350) {
             rightPercentage = '3%';
         }
-
+        
         row.add(Ti.UI.createLabel({
             font : {
                 fontFamily : font
@@ -380,7 +392,7 @@ var coinsRow = Ti.UI.createTableViewRow({
 var betArray = ['20', '40', '60', '80', '100'];
 var data = [];
 
-if (OS_ANDROID) {
+if (isAndroid) {
     coinsToJoin = -1;
     betPicker = Ti.UI.createLabel({
         top : 18,
@@ -416,7 +428,7 @@ if (OS_ANDROID) {
             },
         });
     });
-} else if (OS_IOS) {
+} else {
     // default
     data.push(Titanium.UI.createPickerRow({
         title : Alloy.Globals.PHRASES.chooseConfirmBtnTxt,
@@ -471,7 +483,13 @@ var footerView = Ti.UI.createView({
 });
 
 var submitButton = Alloy.Globals.createButtonView(Alloy.Globals.themeColor(), '#FFF', Alloy.Globals.PHRASES.challengeBtnTxt);
-submitButton.top = 45;
+
+if(isAndroid) {
+  submitButton.top = 35;  
+} else {
+    submitButton.top = 45;
+}
+
 submitButton.addEventListener('click', function() {
     var gameDatesValid = true;
 
@@ -510,9 +528,7 @@ function validate() {
     }
 }
 
-if (OS_ANDROID) {
-    font = 'fontawesome-webfont';
-
+if (isAndroid) {
     $.showCoupon.orientationModes = [Titanium.UI.PORTRAIT];
 
     $.showCoupon.addEventListener('open', function() {

@@ -16,39 +16,36 @@ Ti.App.addEventListener("sliderToggled", function(e) {
 
 var tableWrapper = Ti.UI.createView({
     height : "65%",
-    width : Ti.UI.FILL,
-
+    width : Ti.UI.FILL
 });
 
 function createMemberRow(member, subRow) {
     //profilepicture
-   var userWrapper = Ti.UI.createView({
-   		height:40,
-   		width: Ti.UI.FILL,
-   });
-    
-    var image = '/images/no_pic.png';
-    Ti.API.info("MEMBERS : " + JSON.stringify(member));
-    if (member.fbid != null) {
+    var userWrapper = Ti.UI.createView({
+        height : 40,
+        width : Ti.UI.FILL,
+    });
+
+    var image;
+
+    if (member.fbid !== null) {
         image = "https://graph.facebook.com/" + member.fbid + "/picture?type=large";
     } else {
         // get betkampen image
         image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + member.id + '.png';
     }
 
-    //Ti.API.info("IMAGE : " + typeof image);
     var profilePic = Ti.UI.createImageView({
+        defaultImage : '/images/no_pic.png',
         image : image,
         height : 20,
         width : 20,
         left : 10,
-        borderRadius: 10,
+        borderRadius : 10,
     });
 
-    profilePic.addEventListener("error", function(e) {
-        Ti.API.info("fel på bild");
-        e.source.image = '/images/no_pic.png';
-    });
+    profilePic.addEventListener('error', imageErrorHandler);
+
     userWrapper.add(profilePic);
     userWrapper.add(Ti.UI.createLabel({
         text : member.name,
@@ -59,13 +56,14 @@ function createMemberRow(member, subRow) {
         backgroundColor : 'transparent'
     }));
 
-	var rowLine = Ti.UI.createView({
-		backgroundColor:"#6d6d6d",
-		height: 0.5,
-		width:Ti.UI.FILL
-	});
-	subRow.add(userWrapper);
-	subRow.add(rowLine);
+    var rowLine = Ti.UI.createView({
+        backgroundColor : "#303030",
+        height : 0.5,
+        width : Ti.UI.FILL
+    });
+
+    subRow.add(userWrapper);
+    subRow.add(rowLine);
 }
 
 function getFriends() {
@@ -78,7 +76,7 @@ function getFriends() {
     var xhr = Titanium.Network.createHTTPClient();
     xhr.onerror = function(e) {
         indicator.closeIndicator();
-        if (OS_IOS) {
+        if (!isAndroid) {
             if ( typeof refresher !== 'undefined') {
                 refresher.endRefreshing();
             }
@@ -97,7 +95,7 @@ function getFriends() {
         xhr.send();
     } catch(e) {
         indicator.closeIndicator();
-        if (OS_IOS) {
+        if (!isAndroid) {
             if ( typeof refresher !== 'undefined') {
                 refresher.endRefreshing();
             }
@@ -124,7 +122,7 @@ function getFriends() {
                     }
 
                     // create the views
-                    createViews(friendObjects, 2);
+                    createViews(friendObjects, '2');
                 } else {
                     Ti.API.info("Inga Vänner");
                 }
@@ -135,7 +133,7 @@ function getFriends() {
             indicator.closeIndicator();
         } else {
             indicator.closeIndicator();
-            if (OS_IOS) {
+            if (!isAndroid) {
                 if ( typeof refresher !== 'undefined') {
                     refresher.endRefreshing();
                 }
@@ -151,7 +149,7 @@ function getGroups() {
     selectedGroupIds = [];
     friendsChallenge = [];
 
-    if (OS_IOS || notFirstRun) {
+    if (!isAndroid || notFirstRun) {
         indicator.openIndicator();
     }
 
@@ -159,11 +157,7 @@ function getGroups() {
     var xhr = Titanium.Network.createHTTPClient();
     xhr.onerror = function(e) {
         indicator.closeIndicator();
-        if (OS_IOS) {
-            if ( typeof refresher !== 'undefined') {
-                refresher.endRefreshing();
-            }
-        }
+        endRefresher();
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
         Ti.API.error('Bad Sever =>' + e.error);
     };
@@ -174,22 +168,16 @@ function getGroups() {
         xhr.setRequestHeader("content-type", "application/json");
         xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
         xhr.setTimeout(Alloy.Globals.TIMEOUT);
-
         xhr.send();
     } catch(e) {
         indicator.closeIndicator();
-        if (OS_IOS) {
-            if ( typeof refresher !== 'undefined') {
-                refresher.endRefreshing();
-            }
-        }
+        endRefresher();
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
     }
     xhr.onload = function() {
         if (this.status == '200') {
             if (this.readyState == 4) {
                 var response = JSON.parse(this.responseText);
-
                 if (response.length > 0) {
                     groupObjects = [];
                     for (var i = 0; i < response.length; i++) {
@@ -198,6 +186,7 @@ function getGroups() {
                             // member object
                             var member = {
                                 id : response[i].members[x].id,
+                                fbid : response[i].members[x].fbid,
                                 name : response[i].members[x].name
                             };
                             membersArray.push(member);
@@ -215,28 +204,28 @@ function getGroups() {
                     }
 
                     // create the views
-                    createViews(groupObjects, 1);
+                    createViews(groupObjects, '1');
                 } else {
-                    
+
                     tab_groups.setBackgroundColor('#242424');
-                tab_groups.backgroundGradient = {
-                    type : "linear",
-                    startPoint : {
-                        x : "0%",
-                        y : "0%"
-                    },
-                    endPoint : {
-                        x : "0%",
-                        y : "100%"
-                    },
-                    colors : [{
-                        color : "#2E2E2E",
-                        offset : 0.0
-                    }, {
-                        color : "#151515",
-                        offset : 1.0
-                    }]
-                };
+                    tab_groups.backgroundGradient = {
+                        type : "linear",
+                        startPoint : {
+                            x : "0%",
+                            y : "0%"
+                        },
+                        endPoint : {
+                            x : "0%",
+                            y : "100%"
+                        },
+                        colors : [{
+                            color : "#2E2E2E",
+                            offset : 0.0
+                        }, {
+                            color : "#151515",
+                            offset : 1.0
+                        }]
+                    };
                     tab_friends.setBackgroundColor(Alloy.Globals.themeColor());
                     getFriends();
                 }
@@ -247,11 +236,7 @@ function getGroups() {
             indicator.closeIndicator();
         } else {
             indicator.closeIndicator();
-            if (OS_IOS) {
-                if ( typeof refresher !== 'undefined') {
-                    refresher.endRefreshing();
-                }
-            }
+            endRefresher();
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             Ti.API.error("Error =>" + this.response);
         }
@@ -262,14 +247,14 @@ function challengeGroup(array) {
     if (Alloy.Globals.checkConnection()) {
         // show indicator and disable button
         indicator.openIndicator();
-        submitButton.touchEnabled = false;
+        isSubmitting = true;
 
         var xhr = Titanium.Network.createHTTPClient();
         xhr.onerror = function(e) {
             indicator.closeIndicator();
-            submitButton.touchEnabled = true;
-			Ti.API.info("ERROR RESPONSE : " + JSON.stringify(this.responseText));
-			Ti.API.error('Bad Sever =>' + e.error);
+            isSubmitting = false;
+            Ti.API.info("ERROR RESPONSE : " + JSON.stringify(this.responseText));
+            Ti.API.error('Bad Sever =>' + e.error);
             if (JSON.parse(this.responseText).indexOf('coins') != -1) {
                 // not enough coins
                 // show dialog with "link" to the store
@@ -309,8 +294,6 @@ function challengeGroup(array) {
                 // any other "bad request error"
                 Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
             }
-
-            
         };
 
         try {
@@ -334,19 +317,15 @@ function challengeGroup(array) {
                             // last one
                             param += '"';
                         }
-
                     }
                 }
             }
 
             param += '}]}';
-
-            Ti.API.log("Params : " + param);
-
             xhr.send(param);
         } catch(e) {
             indicator.closeIndicator();
-            submitButton.touchEnabled = true;
+            isSubmitting = false;
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
         }
         xhr.onload = function() {
@@ -354,10 +333,7 @@ function challengeGroup(array) {
                 indicator.closeIndicator();
 
                 if (this.readyState == 4) {
-                    Ti.API.info("RESPONSE NO PARSE : " + JSON.stringify(this.responseText));
                     var response = JSON.parse(this.responseText);
-                    Ti.API.info("RESPONSE : " + JSON.stringify(response));
-
                     response = response.replace(/(<br \/>)+/g, "\n");
                     // show dialog and if ok close window
 
@@ -367,12 +343,12 @@ function challengeGroup(array) {
                         sent_challenge : 1,
                     };
                     var loginSuccessWindow = Alloy.createController('main', argu).getView();
-                    if (OS_IOS) {
+                    if (!isAndroid) {
                         loginSuccessWindow.open({
                             fullScreen : true,
                             transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
                         });
-                    } else if (OS_ANDROID) {
+                    } else {
                         loginSuccessWindow.open({
                             fullScreen : true,
                             navBarHidden : false,
@@ -389,12 +365,12 @@ function challengeGroup(array) {
 
                 } else {
                     Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-                    submitButton.touchEnabled = true;
+                    isSubmitting = false;
                 }
             } else {
                 Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
                 indicator.closeIndicator();
-                submitButton.touchEnabled = true;
+                isSubmitting = false;
                 Ti.API.error("Error =>" + this.response);
             }
         };
@@ -409,12 +385,12 @@ function challengeFriends() {
     if (Alloy.Globals.checkConnection()) {
         // show indicator and disable button
         indicator.openIndicator();
-        submitButton.touchEnabled = false;
+        isSubmitting = true;
 
         var xhr = Titanium.Network.createHTTPClient();
         xhr.onerror = function(e) {
             indicator.closeIndicator();
-            submitButton.touchEnabled = true;
+            isSubmitting = false;
             Ti.API.info("ERROR PARSE : " + JSON.stringify(this.responseText));
             if (JSON.parse(this.responseText).indexOf('coins') != -1) {
                 // not enough coins
@@ -479,12 +455,10 @@ function challengeFriends() {
 
             param += '}]}';
 
-            Ti.API.log(param);
-
             xhr.send(param);
         } catch(e) {
             indicator.closeIndicator();
-            submitButton.touchEnabled = true;
+            isSubmitting = false;
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
         }
         xhr.onload = function() {
@@ -492,7 +466,6 @@ function challengeFriends() {
                 indicator.closeIndicator();
 
                 if (this.readyState == 4) {
-                    Ti.API.log("RESPONSE FRIENDS : " + JSON.stringify(this.responseText));
                     var response = JSON.parse(this.responseText);
 
                     response = response.replace(/(<br \/>)+/g, "\n");
@@ -504,12 +477,12 @@ function challengeFriends() {
                         sent_challenge : 1
                     };
                     var loginSuccessWindow = Alloy.createController('main', argu).getView();
-                    if (OS_IOS) {
+                    if (!isAndroid) {
                         loginSuccessWindow.open({
                             fullScreen : true,
                             transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
                         });
-                    } else if (OS_ANDROID) {
+                    } else {
                         loginSuccessWindow.open({
                             fullScreen : true,
                             navBarHidden : false,
@@ -525,12 +498,12 @@ function challengeFriends() {
                     }
 
                 } else {
-                    submitButton.touchEnabled = true;
+                    isSubmitting = false;
                     Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                 }
             } else {
                 indicator.closeIndicator();
-                submitButton.touchEnabled = true;
+                isSubmitting = false;
                 Ti.API.error("Error =>" + this.response);
                 Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
             }
@@ -547,8 +520,8 @@ function createSubmitButtons(type) {
     var viewHeight = '20%';
 
     botView.removeAllChildren();
-    Ti.API.log(Titanium.Platform.displayCaps.platformHeight);
-    if (OS_ANDROID) {
+
+    if (isAndroid) {
         if (Titanium.Platform.displayCaps.platformHeight < 600) {
             buttonHeight = 30;
             table.setHeight('75%');
@@ -564,16 +537,16 @@ function createSubmitButtons(type) {
         id : 'submitButtonsView'
     });
 
-    if (iOSVersion < 7) {
-        submitButton = Alloy.Globals.createButtonView(Alloy.Globals.themeColor(), "#FFF", Alloy.Globals.PHRASES.challengeBtnTxt);
-		submitButton.id = "submitButton";
-    } else {
-       submitButton = Alloy.Globals.createButtonView(Alloy.Globals.themeColor(), "#FFF", Alloy.Globals.PHRASES.challengeBtnTxt);
-	   submitButton.id = "submitButton";
-    }
+    submitButton = Alloy.Globals.createButtonView(Alloy.Globals.themeColor(), "#FFF", Alloy.Globals.PHRASES.challengeBtnTxt);
+    submitButton.id = "submitButton";
+    submitButton.top = 15;
 
     submitButton.addEventListener('click', function() {
-        if (type == 1) {
+        if (isSubmitting) {
+            return;
+        }
+
+        if (type === '1') {
             if (selectedGroupIds.length === 1) {
                 // call function to send to server
                 Ti.API.info("challenge : Group");
@@ -583,7 +556,7 @@ function createSubmitButtons(type) {
             }
         }
 
-        if (type == 2) {
+        if (type === '2') {
             if (friendsChallenge.length > 0) {
                 Ti.API.info("challenge : Friends");
                 challengeFriends();
@@ -595,7 +568,6 @@ function createSubmitButtons(type) {
 
     });
 
-    //submitButtonsView.add();
     botView.add(submitButton);
 }
 
@@ -612,7 +584,7 @@ function createViews(array, type) {
         children[i] = null;
     }
 
-    if (OS_IOS) {
+    if (!isAndroid) {
         refresher = Ti.UI.createRefreshControl({
             tintColor : Alloy.Globals.themeColor()
         });
@@ -620,9 +592,9 @@ function createViews(array, type) {
         // will refresh on pull
         refresher.addEventListener('refreshstart', function(e) {
             if (Alloy.Globals.checkConnection()) {
-                if (type == 1) {
+                if (type === '1') {
                     getGroups();
-                } else if (type == 2) {
+                } else if (type === '2') {
                     getFriends();
                 }
 
@@ -634,26 +606,35 @@ function createViews(array, type) {
     }
 
     // Table
-    if (OS_IOS) {
+    var hasChild = false;
+
+    if (!isAndroid) {
+        hasChild = true;
+
         table = Ti.UI.createTableView({
-            height : '100%',
+            height : Ti.UI.FILL,
             id : 'groupsTable',
             refreshControl : refresher,
-            backgroundColor : 'transparent'
+            backgroundColor : 'transparent',
+            separatorInsets : {
+                left : 0,
+                right : 0
+            },
+            separatorColor : '#303030',
+            separatorStyle : Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE
         });
 
-        table.separatorInsets = {
-            left : 0,
-            right : 0
-        };
+        if (iOSVersion < 7) {
+            table.separatorStyle = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
+            table.separatorColor = 'transparent';
+        }
     } else {
         table = Ti.UI.createTableView({
-            height : '100%',
+            height : Ti.UI.FILL,
             id : 'groupsTable',
-            refreshControl : refresher,
-            backgroundColor : 'transparent'
+            backgroundColor : '#000',
+            separatorColor : '#303030'
         });
-
     }
 
     table.footerView = Ti.UI.createView({
@@ -663,19 +644,11 @@ function createViews(array, type) {
 
     var data = [];
 
-    var hasChild;
-
-    if (OS_IOS) {
-        hasChild = false;
-    } else if (OS_ANDROID) {
-        hasChild = false;
-    }
-
     // Rows
     for (var i = 0; i < array.length; i++) {
         if (type == 1) {
-        	 var subRowArray = [];
-        	 var count = 0;
+            var subRowArray = [];
+            var count = 0;
             var subRow = Ti.UI.createTableViewRow({
                 layout : 'vertical',
                 backgroundColor : 'transparent',
@@ -688,31 +661,12 @@ function createViews(array, type) {
                 backgroundColor : '#6d6d6d'
             });
 
-           
-			  Ti.API.info("SUB ROWEN INNAN" + JSON.stringify(subRow));
-            	//Ti.API.info("MEMBER CREATE ROW LENGTH: " + array[i].attributes.members.length);
             for (var x = 0; x < array[i].attributes.members.length; x++) {
-            	//Ti.API.info("MEMBER CREATE ROW : " + JSON.stringify(array[i].attributes.members));
-             	createMemberRow(array[i].attributes.members[x], subRow);
-               //Ti.API.info("MEMBER ROWEN " + JSON.stringify(memberRow));
-               
-               count++;
+                createMemberRow(array[i].attributes.members[x], subRow);
+                count++;
             }
 
-           
-			
             // array with views for the sub in table row
-           
-            Ti.API.info("SUB ROWEN " + JSON.stringify(subRow));
-            
-
-            var hasChild;
-
-            if (OS_IOS) {
-                hasChild = false;
-            } else if (OS_ANDROID) {
-                hasChild = false;
-            }
 
             var row = $.UI.create('TableViewRow', {
                 classes : ['challengesSectionDefault'],
@@ -720,9 +674,9 @@ function createViews(array, type) {
                 hasChild : false,
                 isparent : true,
                 opened : false,
-                parent: table,
-                height: 70,
-                memberCount: count,
+                parent : table,
+                height : 70,
+                memberCount : count,
                 //name: array[i].attributes.name,
                 sub : subRow
             });
@@ -738,11 +692,9 @@ function createViews(array, type) {
                 },
                 color : '#FFF'
             }));
-            
-            
+
         } else {
             //profilepicture
-            Ti.API.info("VÄNNEN : " + JSON.stringify(array[i].attributes));
             var image;
             if (array[i].attributes.fbid !== null) {
                 image = "https://graph.facebook.com/" + array[i].attributes.fbid + "/picture?type=large";
@@ -757,26 +709,26 @@ function createViews(array, type) {
                 hasChild : false,
                 isparent : true,
                 opened : false,
-                parent: table,
+                parent : table,
                 name : array[i].attributes.name,
                 height : 70,
                 //sub : subRowArray,
             });
 
             var detailsImg = Ti.UI.createImageView({
+                defaultImage : '/images/no_pic.png',
                 name : 'profilePic',
                 width : 35,
                 height : 35,
                 //top : 11,
-                borderRadius: 17,
+                borderRadius : 17,
                 left : 10,
                 id : "img-" + array[i].attributes.id,
                 image : image
             });
-            detailsImg.addEventListener('error', function(e) {
-                // fallback for image
-                e.source.image = '/images/no_pic.png';
-            });
+
+            detailsImg.addEventListener('error', imageErrorHandler);
+
             row.add(detailsImg);
 
             row.add(Ti.UI.createLabel({
@@ -790,26 +742,9 @@ function createViews(array, type) {
                 },
                 color : '#FFF'
             }));
-
-			
-            /*row.add(Ti.UI.createLabel({
-             id: 'selected',
-             text:fontawesome.icon('fa-check'),
-             textAlign: "center",
-             right: 10,
-             color: "#FFF",
-             parent: row,
-             font: {
-             fontSize: 30,
-             fontFamily: font,
-             },
-             height: "auto",
-             width: "auto",
-             }));*/
-
         }
 
-        if (type == 1) {
+        if (type === '1') {
             row.add(Ti.UI.createLabel({
                 text : Alloy.Globals.PHRASES.nrOfMembersTxt + ': ' + array[i].attributes.members.length,
                 top : 26,
@@ -828,133 +763,114 @@ function createViews(array, type) {
                 height : 8
             }));
 
-            
-			var detailsImg = Ti.UI.createLabel({
+            var detailsImg = Ti.UI.createLabel({
                 name : 'detailsBtn',
                 width : 35,
                 height : 35,
-                
+
                 left : 10,
-                color:"#FFF",
+                color : "#FFF",
                 id : array[i].attributes.round,
                 font : {
-			        fontFamily : font,
-			        fontSize : 22
-			    },
-			    text : fontawesome.icon('fa-users'),
+                    fontFamily : font,
+                    fontSize : 22
+                },
+                text : fontawesome.icon('fa-users'),
             });
 
             row.add(detailsImg);
-           
 
             row.className = 'one_image_per_row';
         }
-		var iconLabel = Ti.UI.createLabel({
-            	right : 10,
-                font : {
-                    fontFamily : font,
-                    fontSize : 32
-                },
-                id : 'icon',
-                parent : row,
-                text : fontawesome.icon('fa-plus'),
-                color : '#FFF',
-            	
-            });
-            
+        var iconLabel = Ti.UI.createLabel({
+            right : 10,
+            font : {
+                fontFamily : font,
+                fontSize : 32
+            },
+            id : 'icon',
+            parent : row,
+            text : fontawesome.icon('fa-plus'),
+            color : '#FFF',
+
+        });
+
         row.add(iconLabel);
-		row.addEventListener("click", function(e){
-			
+        row.addEventListener("click", function(e) {
             // This will show group members
             //Is this a parent cell?
-            if (type == 1) {
+            if (type === '1') {
                 if (e.row.isparent) {
-        			
-        			//get all rows and clear the checked icon from them when a row is clicked.
-        			var rows = table.data[0].rows;
-                	for (var s in rows){
-                		Ti.API.info("ROWS TO FIX : " + JSON.stringify(rows[s]));
-                		var oneRow = rows[s];
-                		if(oneRow != e.row){
-	                		if(oneRow.opened){
-	                			for(var k in oneRow.children){
-	              		
-				              		if(oneRow.children[k].id == 'icon-checked' && oneRow.children[k].parent == oneRow){
-				              			Ti.API.info("REMOVE AGAIN");
-				              			oneRow.children[k] = null;
-				              			oneRow.remove(oneRow.children[k]);
-				              			var rowIndex = rows.indexOf(oneRow);
-				              			table.deleteRow(rowIndex+1);
-				              			oneRow.opened = false;
-				              			 var labelIcon = Ti.UI.createLabel({
-						                	right : 10,
-							                font : {
-							                    fontFamily : font,
-							                    fontSize : 32
-							                },
-							                id : 'icon',
-							                parent : row,
-							                text : fontawesome.icon('fa-plus'),
-							                color : '#FFF',
-						                });
-						                
-						                oneRow.add(labelIcon);
-				              		}
-			              		}
-	                		}
-                		}
-                	}
-                	
-                	Ti.API.info("KOMMER IN HIT? " );
+                    //get all rows and clear the checked icon from them when a row is clicked.
+                    var rows = table.data[0].rows;
+
+                    for (var r in rows) {
+                        if (rows[r] !== e.row && rows[r].opened) {
+                            // another open row
+
+                            for (var k in rows[r].children) {
+                                if (rows[r].children[k].id === 'icon-checked' && rows[r].children[k].parent === rows[r]) {
+                                    rows[r].remove(rows[r].children[k]);
+                                    rows[r].children[k] = null;
+                                }
+                            }
+
+                            var labelIcon = Ti.UI.createLabel({
+                                right : 10,
+                                font : {
+                                    fontFamily : font,
+                                    fontSize : 32
+                                },
+                                id : 'icon',
+                                parent : row,
+                                text : fontawesome.icon('fa-plus'),
+                                color : '#FFF',
+                            });
+
+                            rows[r].add(labelIcon);
+                            var index = table.data[0].rows.indexOf(rows[r]);
+                            table.deleteRow(index + 1);
+                            rows[r].opened = false;
+                            rows[r].clicked = false;
+                        }
+                    }
+
                     //Is it opened?
                     if (e.row.opened) {
-                    	Ti.API.info("OPENED");
-                        for(var k in e.row.children){
-              		
-		              		if(e.row.children[k].id == 'icon-checked' && e.row.children[k].parent == e.row){
-		              			Ti.API.info("REMOVE AGAIN");
-		              			e.row.children[k] = null;
-		              			e.row.remove(e.row.children[k]);
-		              		}
-		              	}
+                        for (var k in e.row.children) {
+                            if ( typeof e.row.children[k] !== 'undefined') {
+                                if (e.row.children[k].id === 'icon-checked' && e.row.children[k].parent === e.row) {
+                                    e.row.remove(e.row.children[k]);
+                                    e.row.children[k] = null;
+                                }
+                            }
+                        }
                         table.deleteRow(e.index + 1);
-                        
+
                         e.row.opened = false;
                     } else {
                         //Add the children.
-                        Ti.API.info("INTE OPENED");
                         var currentIndex = table.data[0].rows.indexOf(e.row);
-                        Ti.API.info("E ROW COUNT" + e.row.memberCount);
-                        Ti.API.info("E ROW SUB : " + e.row.sub.length);
-                        Ti.API.info("E ROW SUB INNEHÅLL : " + JSON.stringify(e.row.sub));
-                        
-                        
-                        Ti.API.info("member : " + JSON.stringify(e.row.sub));
                         table.insertRowAfter(currentIndex, e.row.sub);
-                        
-                        
+
                         e.row.opened = true;
                     }
                 }
                 selectedGroupIds[0] = e.row.id;
             }
-            if (type == 2) {
+            if (type === '2') {
 
-                Ti.API.info("selected: " + JSON.stringify(e));
                 var friend = {
                     name : e.row.name,
                     id : e.row.id
                 };
-                Ti.API.info("Friend : " + JSON.stringify(friend));
+
                 var index = -1;
                 var clicked = false;
                 // remove friend if already in list
                 for (var i in friendsChallenge) {
                     if (friendsChallenge[i].id == e.row.id) {
                         // friend already in list, store index to remove
-                        //var string = "selected_"+e.row.id;
-                        //$.string.setText();
-
                         clicked = true;
                         index = i;
                         break;
@@ -969,86 +885,88 @@ function createViews(array, type) {
                     friendsChallenge.push(friend);
                 }
             }
-            buttonsPushed.push(e.row);
 
-            for (var i = 0; i < buttonsPushed.length; i++) {
-                // change color of lastpressed buttons
-                if (type == 1) {
-                    
-                }
-            }
             // since we are not selecting several groups right now
-            Ti.API.info("friend array: " + JSON.stringify(friendsChallenge));
-            if (clicked) {
-                //e.row.children[(e.row.children.length)-1] = null;
-              	for(var k in e.row.children){
-              		
-              		if(e.row.children[k].id == 'icon-checked' && e.row.children[k].parent == e.row){
-              			Ti.API.info("REMOVE AGAIN");
-              			e.row.children[k] = null;
-              			e.row.remove(e.row.children[k]);
-              		}
-              	}
-               
-                Ti.API.info("ICON LABEL " + JSON.stringify(iconLabel));
-                
+
+            if (e.row.clicked) {
+                // un select and close row
+                e.row.clicked = false;
+                for (var k in e.row.children) {
+                    if ( typeof e.row.children[k] !== 'undefined') {
+                        if (e.row.children[k].id === 'icon-checked' && e.row.children[k].parent === e.row) {
+                            e.row.remove(e.row.children[k]);
+                            e.row.children[k] = null;
+                        }
+                    }
+                }
+
                 var labelIcon = Ti.UI.createLabel({
-                	right : 10,
-	                font : {
-	                    fontFamily : font,
-	                    fontSize : 32
-	                },
-	                id : 'icon',
-	                parent : row,
-	                text : fontawesome.icon('fa-plus'),
-	                color : '#FFF',
+                    right : 10,
+                    font : {
+                        fontFamily : font,
+                        fontSize : 32
+                    },
+                    id : 'icon',
+                    parent : row,
+                    text : fontawesome.icon('fa-plus'),
+                    color : '#FFF',
                 });
-               	
-               	
-               	e.row.add(labelIcon);
-               	
-            } else {
-            	//e.row.children[(e.row.children.length)-1] = null;
-            	for(var k in e.row.children){
-              		if(e.row.children[k].id == 'icon' && e.row.children[k].parent == e.row){
-              			Ti.API.info("REMOVE");
-              			e.row.children[k] = null;
-              			e.row.remove(e.row.children[k]);
-              		}
-              	}
-            	Ti.API.info("ICON LABEL FÖRSTA " + JSON.stringify(iconLabel));
-            	
-                
-                var labelIcon = Ti.UI.createLabel({
-                	right : 10,
-	                font : {
-	                    fontFamily : font,
-	                    fontSize : 32
-	                },
-	                id : 'icon-checked',
-	                parent : row,
-	                text : fontawesome.icon('fa-check'),
-	                color : Alloy.Globals.themeColor(),
-                });
-                
+
                 e.row.add(labelIcon);
-                Ti.API.info("ICON LABEL EFTER CLICK " + JSON.stringify(iconLabel));
-               // e.row.setBackgroundColor(Alloy.Globals.themeColor());
-                
+
+            } else {
+                // select row
+                e.row.clicked = true;
+                for (var k in e.row.children) {
+                    if ( typeof e.row.children[k] !== 'undefined') {
+                        if (e.row.children[k].id === 'icon' && e.row.children[k].parent === e.row) {
+                            e.row.children[k] = null;
+                            e.row.remove(e.row.children[k]);
+                        }
+                    }
+                }
+
+                var labelIcon = Ti.UI.createLabel({
+                    right : 10,
+                    font : {
+                        fontFamily : font,
+                        fontSize : 32
+                    },
+                    id : 'icon-checked',
+                    parent : row,
+                    text : fontawesome.icon('fa-check'),
+                    color : Alloy.Globals.themeColor(),
+                });
+
+                e.row.add(labelIcon);
             }
-		});
-		
+        });
+
         data.push(row);
     }
 
     table.setData(data);
 
-   
-
     tableWrapper.removeAllChildren();
     tableWrapper.add(table);
     createSubmitButtons(type);
 }
+
+function endRefresher() {
+    if (!isAndroid) {
+        if ( typeof refresher !== 'undefined' && refresher !== null) {
+            refresher.endRefreshing();
+        }
+    } else {
+        if ( typeof swipeRefresh !== 'undefined' && swipeRefresh !== null) {
+            swipeRefresh.setRefreshing(false);
+        }
+    }
+}
+
+var imageErrorHandler = function(e) {
+    e.image = '/images/no_pic.png';
+};
 
 var args = arguments[0] || {};
 //var params = args.param || null;
@@ -1057,11 +975,13 @@ var friendObjects = [];
 var selectedGroupIds = [];
 var friendsChallenge = [];
 var submitButton;
+var isSubmitting = false;
 var marginView;
-var buttonsPushed = [];
 var table;
+var isAndroid = false;
 var friendsButton;
-var refresher;
+var refresher = null;
+var swipeRefresh = null;
 var notFirstRun = false;
 
 var uie = require('lib/IndicatorWindow');
@@ -1081,6 +1001,7 @@ var fontawesome = require('lib/IconicFont').IconicFont({
 var font = 'FontAwesome';
 
 if (OS_ANDROID) {
+    isAndroid = true;
     font = 'fontawesome-webfont';
 
     $.groupSelectWindow.orientationModes = [Titanium.UI.PORTRAIT];
@@ -1099,7 +1020,7 @@ if (OS_ANDROID) {
 
 var iOSVersion;
 
-if (OS_IOS) {
+if (!isAndroid) {
     iOSVersion = parseInt(Ti.Platform.version);
 
     $.groupSelectWindow.titleControl = Ti.UI.createLabel({
@@ -1107,7 +1028,6 @@ if (OS_IOS) {
         font : Alloy.Globals.getFontCustom(18, "Bold"),
         color : '#FFF'
     });
-
 }
 
 var topView = Ti.UI.createView({
@@ -1140,24 +1060,24 @@ var tab_friends = Ti.UI.createView({
     width : "50%",
     backgroundColor : "#242424",
     backgroundGradient : {
-                    type : "linear",
-                    startPoint : {
-                        x : "0%",
-                        y : "0%"
-                    },
-                    endPoint : {
-                        x : "0%",
-                        y : "100%"
-                    },
-                    colors : [{
-                        color : "#2E2E2E",
-                        offset : 0.0
-                    }, {
-                        color : "#151515",
-                        offset : 1.0
-                    }]
-                }
-    
+        type : "linear",
+        startPoint : {
+            x : "0%",
+            y : "0%"
+        },
+        endPoint : {
+            x : "0%",
+            y : "100%"
+        },
+        colors : [{
+            color : "#2E2E2E",
+            offset : 0.0
+        }, {
+            color : "#151515",
+            offset : 1.0
+        }]
+    }
+
 });
 
 tab_friends.add(Ti.UI.createLabel({
@@ -1173,60 +1093,93 @@ topView.add(tab_friends);
 $.groupSelect.add(topView);
 
 tab_groups.addEventListener("click", function(e) {
-    tab_groups.setBackgroundColor(Alloy.Globals.themeColor());
-   	tab_groups.backgroundGradient = {};
-   
+    tab_groups.backgroundGradient = {
+        type : "linear",
+        startPoint : {
+            x : "0%",
+            y : "0%"
+        },
+        endPoint : {
+            x : "0%",
+            y : "100%"
+        },
+        colors : [{
+            color : Alloy.Globals.themeColor(),
+            offset : 0.0
+        }, {
+            color : Alloy.Globals.themeColor(),
+            offset : 1.0
+        }]
+    };
+
     tab_friends.setBackgroundColor('#242424');
     tab_friends.backgroundGradient = {
-                    type : "linear",
-                    startPoint : {
-                        x : "0%",
-                        y : "0%"
-                    },
-                    endPoint : {
-                        x : "0%",
-                        y : "100%"
-                    },
-                    colors : [{
-                        color : "#2E2E2E",
-                        offset : 0.0
-                    }, {
-                        color : "#151515",
-                        offset : 1.0
-                    }]
-                };
-                
+        type : "linear",
+        startPoint : {
+            x : "0%",
+            y : "0%"
+        },
+        endPoint : {
+            x : "0%",
+            y : "100%"
+        },
+        colors : [{
+            color : "#2E2E2E",
+            offset : 0.0
+        }, {
+            color : "#151515",
+            offset : 1.0
+        }]
+    };
+
     getGroups();
 });
 
 tab_friends.addEventListener("click", function(e) {
- 
     tab_groups.setBackgroundColor('#242424');
     tab_groups.backgroundGradient = {
-                    type : "linear",
-                    startPoint : {
-                        x : "0%",
-                        y : "0%"
-                    },
-                    endPoint : {
-                        x : "0%",
-                        y : "100%"
-                    },
-                    colors : [{
-                        color : "#2E2E2E",
-                        offset : 0.0
-                    }, {
-                        color : "#151515",
-                        offset : 1.0
-                    }]
-                };
-    tab_friends.setBackgroundColor(Alloy.Globals.themeColor());
-    tab_friends.backgroundGradient = {};
+        type : "linear",
+        startPoint : {
+            x : "0%",
+            y : "0%"
+        },
+        endPoint : {
+            x : "0%",
+            y : "100%"
+        },
+        colors : [{
+            color : "#2E2E2E",
+            offset : 0.0
+        }, {
+            color : "#151515",
+            offset : 1.0
+        }]
+    };
+
+    tab_friends.backgroundGradient = {
+        type : "linear",
+        startPoint : {
+            x : "0%",
+            y : "0%"
+        },
+        endPoint : {
+            x : "0%",
+            y : "100%"
+        },
+        colors : [{
+            color : Alloy.Globals.themeColor(),
+            offset : 0.0
+        }, {
+            color : Alloy.Globals.themeColor(),
+            offset : 1.0
+        }]
+    };
     getFriends();
 });
 
 $.groupSelect.add(tableWrapper);
 $.groupSelect.add(botView);
+
 // check connection
 if (Alloy.Globals.checkConnection()) {
     getGroups();
