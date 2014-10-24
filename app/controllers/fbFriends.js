@@ -12,6 +12,7 @@ var fontawesome = require('lib/IconicFont').IconicFont({
 
 var font = 'FontAwesome';
 var myFbFriends = null;
+var isAndroid = true;
 var table = null;
 var sections = [];
 
@@ -19,15 +20,16 @@ var iOSVersion;
 
 if (OS_IOS) {
     iOSVersion = parseInt(Ti.Platform.version);
+    isAndroid = false;
 
     $.fbFriends.titleControl = Ti.UI.createLabel({
-        text : Alloy.Globals.PHRASES.friends,
+        text : Alloy.Globals.PHRASES.fbFriendsTxt,
         font : Alloy.Globals.getFontCustom(18, "Bold"),
         color : '#FFF'
     });
 }
 
-if (OS_ANDROID) {
+if (isAndroid) {
     font = 'fontawesome-webfont';
 
     $.fbFriends.addEventListener('open', function() {
@@ -38,12 +40,7 @@ if (OS_ANDROID) {
             $.fbFriends = null;
         };
         $.fbFriends.activity.actionBar.displayHomeAsUp = true;
-        $.fbFriends.activity.actionBar.title = Alloy.Globals.PHRASES.friends;
-
-        // sometimes the view remain in memory, then we don't need to show the "loading"
-        if (!myFbFriends) {
-            indicator.openIndicator();
-        }
+        $.fbFriends.activity.actionBar.title = Alloy.Globals.PHRASES.fbFriendsTxt;
     });
 }
 
@@ -76,16 +73,10 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 
     // app id and permission's
     fb.appid = Ti.App.Properties.getString('ti.facebook.appid');
-
-    if (OS_IOS) {
-        fb.permissions = ['email'];
-    } else {
-        fb.permissions = ['email'];
-    }
+    fb.permissions = ['email'];
 
     fb.forceDialogAuth = false;
     Alloy.Globals.connect = false;
-    Ti.API.info(Alloy.Globals.connect);
 
     fb.addEventListener('login', function(e) {
         if (Alloy.Globals.connect == false) {
@@ -97,8 +88,8 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
                     uid : Alloy.Globals.BETKAMPENUID
                 };
                 fbid.send(params);
-                Ti.API.info(params);
-                if (OS_ANDROID) {
+
+                if (isAndroid) {
                     // close
                     Alloy.Globals.MAINWIN.close();
                     Alloy.Globals.LANDINGWIN.close();
@@ -142,40 +133,17 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
         height : 0.1
     });
 
-    var fontawesome = require('lib/IconicFont').IconicFont({
-        font : 'lib/FontAwesome'
-    });
-
-    var font = 'FontAwesome';
-
-    if (OS_ANDROID) {
-        font = 'fontawesome-webfont';
-    }
-
     var tableFooterView = Ti.UI.createView({
         height : 0.1
     });
 
-    if (OS_IOS) {
-        var separatorS;
-        var separatorCol;
-
-        if (iOSVersion < 7) {
-            separatorS = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
-            separatorColor = 'transparent';
-        } else {
-            separatorS = Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE;
-            separatorColor = '#6d6d6d';
-        }
-
+    if (!isAndroid) {
         table = Titanium.UI.createTableView({
-            //width : Ti.UI.FILL,
             left : 0,
             headerView : tableHeaderView,
             footerView : tableFooterView,
             height : '85%',
             width : '100%',
-            //backgroundImage: '/images/profileBG.jpg',
             backgroundColor : 'transparent',
             style : Ti.UI.iPhone.TableViewStyle.GROUPED,
             separatorInsets : {
@@ -183,16 +151,20 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
                 right : 0
             },
             id : 'challengeTable',
-            separatorStyle : separatorS,
-            separatorColor : separatorColor
+            separatorStyle : Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE,
+            separatorColor : '#303030'
         });
+
+        if (iOSVersion < 7) {
+            table.separatorStyle = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
+            table.separatorColor = 'transparent';
+        }
     } else if (OS_ANDROID) {
         table = Titanium.UI.createTableView({
             width : Ti.UI.FILL,
             left : 0,
             headerView : tableHeaderView,
             height : '85%',
-            //backgroundColor : '#303030',
             separatorColor : '#6d6d6d',
             id : 'challengeTable'
         });

@@ -75,13 +75,12 @@ if (!isAndroid) {
         separatorStyle : Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE,
         separatorColor : '#303030'
     });
-    
-    
+
     if (iOSVersion < 7) {
         table.separatorStyle = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
         table.separatorColor = 'transparent';
-    } 
-    
+    }
+
 } else {
     table = Titanium.UI.createTableView({
         width : Ti.UI.FILL,
@@ -90,7 +89,7 @@ if (!isAndroid) {
         separatorColor : '#303030',
         id : 'challengeTable'
     });
-    
+
     table.headerView = Ti.UI.createView({
         height : 0.5,
         backgroundColor : '#303030'
@@ -102,14 +101,20 @@ if (!isAndroid) {
     });
 }
 
-sections[0] = Ti.UI.createTableViewSection({
-    headerView : Ti.UI.createView({
-        height : 0.1,
-    }),
-    footerView : Ti.UI.createView({
-        height : 10,
-    })
-});
+if (!isAndroid) {
+    sections[0] = Ti.UI.createTableViewSection({
+        headerView : Ti.UI.createView({
+            height : 0.1,
+        }),
+        footerView : Ti.UI.createView({
+            height : 10,
+        })
+    });
+} else {
+    sections[0] = Ti.UI.createTableViewSection({
+
+    });
+}
 
 var fbFriendBtn = Titanium.UI.createTableViewRow({
     //title: Alloy.Globals.PHRASES.fbFriendsTxt,
@@ -156,7 +161,6 @@ var fbLabel = Titanium.UI.createLabel({
 fbFriendBtn.add(fbLabel);
 
 sections[0].add(fbFriendBtn);
-
 
 var myFriendBtn = Titanium.UI.createTableViewRow({
     id : 'myFriendBtn',
@@ -245,7 +249,6 @@ myGroupsBtn.add(mGroupLabel);
 
 sections[0].add(myGroupsBtn);
 
-
 var addFriendsBtn = Titanium.UI.createTableViewRow({
     id : 'addFriendsBtn',
     hasChild : child,
@@ -291,7 +294,6 @@ var aFriendLabel = Titanium.UI.createLabel({
 addFriendsBtn.add(aFriendLabel);
 sections[0].add(addFriendsBtn);
 
-
 var createGroupBtn = Titanium.UI.createTableViewRow({
     id : 'createGroupBtn',
     hasChild : child,
@@ -336,7 +338,6 @@ cGroupLabel = Titanium.UI.createLabel({
 createGroupBtn.add(cGroupLabel);
 sections[0].add(createGroupBtn);
 
-
 var shareBtn = Titanium.UI.createTableViewRow({
     id : 'shareBtn',
     hasChild : child,
@@ -345,7 +346,6 @@ var shareBtn = Titanium.UI.createTableViewRow({
     className : 'gameTypeRow',
     height : 75,
 });
-
 
 if (!child) {
     shareBtn.add(Ti.UI.createLabel({

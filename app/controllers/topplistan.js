@@ -270,6 +270,10 @@ function createPopupLayout(win, playerObj, isFriend, isMe, friendIndex) {
             top : 130,
         });
         friend.add(frScore);
+        
+        if(friendObj.wins === "" || friendObj.wins === null || friendObj.wins ===" ") {
+            friendObj.wins = "0";
+        }
 
         var frWins = Ti.UI.createLabel({
             text : Alloy.Globals.PHRASES.winsInfoTxt + ': ' + friendObj.wins,

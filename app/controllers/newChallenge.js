@@ -54,7 +54,7 @@ function createGameListObject(response) {
 function createNoGamesView() {
     $.newChallenge.add(Ti.UI.createLabel({
         width : Ti.UI.FILL,
-        text : Alloy.Globals.PHRASES.noGamesTxt,
+        text : Alloy.Globals.PHRASES.noGamesTxt+ " ",
         left : 60,
         top : 40,
         font : Alloy.Globals.getFontCustom(16, 'Regular'),
@@ -160,7 +160,7 @@ function createTableRow(obj) {
     }
 
     row.add(Ti.UI.createLabel({
-        text : teamOne + " - " + teamTwo,
+        text : teamOne + " - " + teamTwo + " ",
         top : 15,
         left : 20,
         font : Alloy.Globals.getFontCustom(16, 'Regular'),
@@ -178,7 +178,7 @@ function createTableRow(obj) {
     }));
 
     row.add(Ti.UI.createLabel({
-        text : dateString,
+        text : dateString + " ",
         top : 38,
         left : 35,
         font : Alloy.Globals.getFontCustom(12, 'Regular'),
@@ -469,9 +469,9 @@ function appendToRow(array) {
 /* Set text with information about how many games we are displaying */
 function setDisplayText() {
     if (totalNumberOfGames <= numberOfGamesFetched) {
-        footerViewText.setText(Alloy.Globals.PHRASES.showningMatchesTxt + ': ' + totalNumberOfGames + '/' + totalNumberOfGames);
+        footerViewText.setText(Alloy.Globals.PHRASES.showningMatchesTxt + ': ' + totalNumberOfGames + '/' + totalNumberOfGames + " ");
     } else {
-        footerViewText.setText(Alloy.Globals.PHRASES.showningMatchesTxt + ': ' + numberOfGamesFetched + '/' + totalNumberOfGames);
+        footerViewText.setText(Alloy.Globals.PHRASES.showningMatchesTxt + ': ' + numberOfGamesFetched + '/' + totalNumberOfGames + " ");
     }
 }
 

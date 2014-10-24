@@ -219,6 +219,7 @@ function createLayout(resp) {
         color : "#FFF",
         left:20,
     });
+    
 	rowUser.add(usersCountLabel);
 	
     var rowPot = Ti.UI.createTableViewRow({

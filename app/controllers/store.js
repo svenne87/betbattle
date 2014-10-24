@@ -369,6 +369,18 @@ if (OS_IOS) {
     });
 
 } else if (OS_ANDROID) {
+    $.table.headerView = Ti.UI.createView({
+        height : 0.5,
+        width : Ti.UI.FILL,
+        backgroundColor : '#303030'
+    });
+    
+    $.table.footerView = Ti.UI.createView({
+        height : 0.5,
+        width : Ti.UI.FILL,
+        backgroundColor : '#303030'
+    });
+    
     var data = [];
     
     $.store.orientationModes = [Titanium.UI.PORTRAIT];
@@ -471,7 +483,7 @@ if (OS_IOS) {
 
     // Read more about the developer payload in the "Verify the Developer Payload"
     // section of the documentation. It is not necessary to change this to run the example.
-    var developerPayloadRaw = Ti.Utils.base64encode(Alloy.Globals.FACEBOOKOBJECT.id).text;
+    var developerPayloadRaw = Ti.Utils.base64encode(Alloy.Globals.BETKAMPENUID).text;
     var DEVELOPER_PAYLOAD = developerPayloadRaw.replace(/\r/g, '').replace(/\n/g, '');
 
     InAppBilling.addEventListener('setupcomplete', function(e) {

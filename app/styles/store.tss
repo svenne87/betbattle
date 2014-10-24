@@ -22,8 +22,6 @@
 	height : Ti.UI.SIZE,
 	width : Ti.UI.FILL,
 	backgroundColor : '#000',
-    headerView : null,
-    footerView : null,
     scrollable : false,
     separatorColor : '#303030'
 },

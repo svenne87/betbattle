@@ -457,7 +457,7 @@ function createEmptyTableRow(text) {
     });
 
     row.add(Ti.UI.createLabel({
-        text : Alloy.Globals.PHRASES.noneTxt + ' ' + text + ' ' + Alloy.Globals.PHRASES.foundTxt,
+        text : Alloy.Globals.PHRASES.noneTxt + ' ' + text + ' ' + Alloy.Globals.PHRASES.foundTxt + " ",
         left : 10,
         font : Alloy.Globals.getFontCustom(16, 'Regular'),
         color : '#CCC'

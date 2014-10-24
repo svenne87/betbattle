@@ -1,21 +1,34 @@
 var sections = [];
 var table = null;
+var isAndroid = true;
+var child = false;
+
 var fontawesome = require('lib/IconicFont').IconicFont({
     font : 'lib/FontAwesome'
 });
 
-var font = 'FontAwesome';
+var font = 'fontawesome-webfont';
 
-if (OS_ANDROID) {
-    font = 'fontawesome-webfont';
-} else {
+if (OS_IOS) {
     $.myGroups.titleControl = Ti.UI.createLabel({
         text : Alloy.Globals.PHRASES.myGroupsTxt,
         font : Alloy.Globals.getFontCustom(18, "Bold"),
         color : '#FFF'
     });
 
+    child = true;
+    isAndroid = false;
+    font = 'FontAwesome';
 }
+
+if (isAndroid) {
+    var rightPercentage = '5%';
+
+    if (Titanium.Platform.displayCaps.platformWidth < 350) {
+        rightPercentage = '3%';
+    }
+}
+
 var mainView = Ti.UI.createView({
     class : "topView",
     height : "100%",
@@ -28,7 +41,7 @@ var mainView = Ti.UI.createView({
 function getGroups() {
     groupObjects = [];
 
-    if (OS_IOS) {
+    if (!isAndroid) {
         indicator.openIndicator();
     }
 
@@ -125,7 +138,7 @@ function createBtn() {
 
     openCreateGroupBtn.addEventListener('click', function(e) {
         var win = Alloy.createController('createGroup').getView();
-        if (OS_IOS) {
+        if (!isAndroid) {
             Alloy.Globals.NAV.openWindow(win, {
                 animated : true
             });
@@ -148,40 +161,17 @@ function createViews(array) {
         height : 0.1
     });
 
-    var fontawesome = require('lib/IconicFont').IconicFont({
-        font : 'lib/FontAwesome'
-    });
-
-    var font = 'FontAwesome';
-
-    if (OS_ANDROID) {
-        font = 'fontawesome-webfont';
-    }
-
     var tableFooterView = Ti.UI.createView({
         height : 0.1
     });
 
-    if (OS_IOS) {
-        var separatorS;
-        var separatorCol;
-
-        if (iOSVersion < 7) {
-            separatorS = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
-            separatorColor = 'transparent';
-        } else {
-            separatorS = Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE;
-            separatorColor = '#6d6d6d';
-        }
-
+    if (!isAndroid) {
         table = Titanium.UI.createTableView({
-            //width : Ti.UI.FILL,
             left : 0,
             headerView : tableHeaderView,
             footerView : tableFooterView,
             height : '85%',
             width : '100%',
-            //backgroundImage: '/images/profileBG.jpg',
             backgroundColor : 'transparent',
             style : Ti.UI.iPhone.TableViewStyle.GROUPED,
             separatorInsets : {
@@ -189,33 +179,47 @@ function createViews(array) {
                 right : 0
             },
             id : 'challengeTable',
-            separatorStyle : separatorS,
-            separatorColor : separatorColor
+            separatorStyle : Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE,
+            separatorColor : '#303030'
         });
+
+        if (iOSVersion < 7) {
+            table.separatorStyle = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
+            table.separatorColor = 'transparent';
+        }
+
     } else if (OS_ANDROID) {
         table = Titanium.UI.createTableView({
             width : Ti.UI.FILL,
             left : 0,
             headerView : tableHeaderView,
             height : '85%',
-            //backgroundColor : '#303030',
-            separatorColor : '#6d6d6d',
+            separatorColor : '#303030',
             id : 'challengeTable'
+        });
+        
+        table.footerView = Ti.UI.createView({
+           height : 0.5,
+           width : Ti.UI.FILL,
+           backgroundColor : '#303030' 
         });
     }
 
-    sections[0] = Ti.UI.createTableViewSection({
-        headerView : Ti.UI.createView({
-            height : 0.1
-        }),
-        footerView : Ti.UI.createView({
-            height : 0.1
-        }),
-    });
+    if (!isAndroid) {
+        sections[0] = Ti.UI.createTableViewSection({
+            headerView : Ti.UI.createView({
+                height : 0.1
+            }),
+            footerView : Ti.UI.createView({
+                height : 0.1
+            })
+        });
+    } else {
+        sections[0] = Ti.UI.createTableViewSection({});
+    }
 
     // Rows
     for (var i = 0; i < array.length; i++) {
-        var child = true;
         var group = Ti.UI.createTableViewRow({
             classes : ['remove'],
             hasChild : child,
@@ -251,6 +255,20 @@ function createViews(array) {
             color : "#FFF",
         });
         group.add(name);
+
+        if (!child) {
+            group.add(Ti.UI.createLabel({
+                font : {
+                    fontFamily : font
+                },
+                text : fontawesome.icon('icon-chevron-right'),
+                right : rightPercentage,
+                color : '#FFF',
+                fontSize : 80,
+                height : 'auto',
+                width : 'auto'
+            }));
+        }
 
         /*if (array[i].attributes.creator == Alloy.Globals.BETKAMPENUID) {
          var deleteBtn = Ti.UI.createButton({
@@ -391,12 +409,12 @@ function createViews(array) {
 
         group.addEventListener('click', function(e) {
             var args = {
-                row : e.row.children[1], 
+                row : e.row.children[1],
                 gID : e.row.id,
                 gName : e.row.gName,
                 gAdmin : e.row.creator
             };
-     
+
             var win = Alloy.createController('editGroup', args).getView();
             if (OS_IOS) {
                 Alloy.Globals.NAV.openWindow(win, {

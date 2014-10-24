@@ -167,15 +167,18 @@ function createGameType(gameType, game, values, index, sections) {
                     } else if (resultText === "team2") {
                         resultText = game.team_2.team_name;
                     }
+                    
+                    // if the game is in progress and result first goal, winning team etc. is draw
+                    if(game.status === '3') {
+                        if(game.result_values[i].value_1 === '2') {
+                            resultText = "-";
+                        }
+                    }
 
                     // resultText will be undefined if it's gametype "draw"
                     if ( typeof resultText === 'undefined') {
                         // if game is pending and the status is "no score", hide it
-                        if(game.status === "3") {
-                            resultText = "";
-                        } else {
-                            resultText = Alloy.Globals.PHRASES.gameTypes[type].buttonValues[2];
-                        }
+                        resultText = "-";
                     }
 
                     if (resultText.length > 15) {
@@ -212,7 +215,7 @@ function createGameType(gameType, game, values, index, sections) {
         height : Ti.UI.SIZE,
         width : Ti.UI.SIZE,
         font : Alloy.Globals.getFontCustom(18, 'Regular'),
-        color : '#FFF'
+        color : Alloy.Globals.themeColor()
     }));
 
     if (isAndroid) {
@@ -422,9 +425,9 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished)
     var teamNames = game.team_1.team_name + " - " + game.team_2.team_name;
     var fontResponsive = Alloy.Globals.getFontCustom(22, 'Regular');
 
-    if (teamNames.length > 28) {
+    if (teamNames.length > 22) {
         fontResponsive = Alloy.Globals.getFontCustom(18, 'Regular');
-    } else if (teamNames.length > 38) {
+    } else if (teamNames.length > 32) {
         fontResponsive = Alloy.Globals.getFontCustom(16, 'Regular');
     }
 
@@ -709,8 +712,8 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished)
                 row.add(leftImageView);
             }
 
-            if (tmpObj.playerName.length > 25) {
-                tmpObj.playerName = tmpObj.playerName.substring(0, 22) + '...';
+            if (tmpObj.playerName.length > 15) {
+                tmpObj.playerName = tmpObj.playerName.substring(0, 12) + '...';
             }
 
             var nameLabel = Ti.UI.createLabel({
@@ -723,7 +726,6 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished)
             });
 
             if (challengeFinished) {
-
                 var potTextLabel = Ti.UI.createLabel({
                     right : 10,
                     height : Ti.UI.SIZE,
@@ -745,6 +747,17 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished)
                 });
 
                 row.add(potIconLabel);
+                
+                var pointsTextLabel = Ti.UI.createLabel({
+                    right :  potTextLabel.toImage().width + 13 + potIconLabel.toImage().width + 5,
+                    height : Ti.UI.SIZE,
+                    width : Ti.UI.SIZE,
+                    font : Alloy.Globals.getFontCustom(16, 'Regular'),
+                    color : Alloy.Globals.themeColor(),
+                    text : tmpObj.points + "p " + Alloy.Globals.PHRASES.gaveTxt + " " || '0' + "p " + Alloy.Globals.PHRASES.gaveTxt + " "
+                });
+                
+                row.add(pointsTextLabel);
             } else {
                 var potTextLabel = Ti.UI.createLabel({
                     right : 10,

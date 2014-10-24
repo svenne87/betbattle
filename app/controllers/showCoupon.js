@@ -303,7 +303,7 @@ for (var i in games) {
     });
 
     var dateLabel = Ti.UI.createLabel({
-        text : games[i].game_date_string,
+        text : games[i].game_date_string + ' ',
         font : Alloy.Globals.getFontCustom(12, 'Regular'),
         color : Alloy.Globals.themeColor(),
         left : 25,

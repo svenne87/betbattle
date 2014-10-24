@@ -71,12 +71,16 @@ function createGameType(gameType, gameObject, i, gameArray, index) {
 
     //if the json says team1 or team2. get the actual team names
     if (text == "team1") {
-        Ti.API.info("TEAM" + JSON.stringify(gameObject.attributes.team_1.team_name));
         text = gameObject.attributes.team_1.team_name;
     } else if (text == "team2") {
         text = gameObject.attributes.team_2.team_name;
     }
+    
     //if text is too long make text smaller so it fits more.
+    if(text.lenght > 26) {
+        text = text.substring(0, 23) + '...';
+    }
+
 
     var optionLabel = Ti.UI.createLabel({
         text : text,
@@ -967,13 +971,15 @@ function createLayout(gameObject) {
 
     var topMargin = 12;
     var fontSize = Alloy.Globals.getFontSize(2);
+    
     if (teamNames == null) {
         var teamNames = gameObject.attributes.team_1.team_name + " - " + gameObject.attributes.team_2.team_name;
     }
-    if (teamNames.length > 26) {
+    
+    if (teamNames.length > 22) {
         fontSize = 18;
         topMargin = 16;
-    } else if (teamNames.length > 36) {
+    } else if (teamNames.length > 32) {
         fontSize = 16;
         topMargin = 20;
     }
@@ -984,7 +990,7 @@ function createLayout(gameObject) {
         font : Alloy.Globals.getFontCustom(fontSize, "Bold"),
         color : '#FFF',
         left : 20,
-        text : teamNames + '  '
+        text : teamNames + ' '
     }));
 
     image.add(Ti.UI.createLabel({
@@ -1510,7 +1516,6 @@ if (Alloy.Globals.checkConnection()) {
                 }
 
                 // This response contains one or several games for a challenge. And each game contains a  set of game types valid for that game
-                Ti.API.info("GAME OBJECT : " + JSON.stringify(response));
                 for (resp in response) {
                     var res = response[resp];
                     var teamOneName = res.team_1.team_name;

@@ -48,7 +48,7 @@ function Controller() {
         var xhr = Titanium.Network.createHTTPClient();
         xhr.onerror = function(e) {
             indicator.closeIndicator();
-            isAndroid || "undefined" != typeof refresher && refresher.endRefreshing();
+            endRefresher();
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             Ti.API.error("Bad Sever =>" + e.error);
         };
@@ -60,7 +60,7 @@ function Controller() {
             xhr.send();
         } catch (e) {
             indicator.closeIndicator();
-            isAndroid || "undefined" != typeof refresher && refresher.endRefreshing();
+            endRefresher();
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
         }
         xhr.onload = function() {
@@ -81,9 +81,10 @@ function Controller() {
                     } else Ti.API.info("Inga Vänner");
                 } else Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                 indicator.closeIndicator();
+                isAndroid && endRefresher();
             } else {
                 indicator.closeIndicator();
-                isAndroid || "undefined" != typeof refresher && refresher.endRefreshing();
+                endRefresher();
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                 Ti.API.error("Error =>" + this.response);
             }
@@ -161,6 +162,7 @@ function Controller() {
                     }
                 } else Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                 indicator.closeIndicator();
+                isAndroid && endRefresher();
             } else {
                 indicator.closeIndicator();
                 endRefresher();
@@ -168,6 +170,180 @@ function Controller() {
                 Ti.API.error("Error =>" + this.response);
             }
         };
+    }
+    function challengeGroup(array) {
+        if (Alloy.Globals.checkConnection()) {
+            indicator.openIndicator();
+            isSubmitting = true;
+            var xhr = Titanium.Network.createHTTPClient();
+            xhr.onerror = function(e) {
+                indicator.closeIndicator();
+                isSubmitting = false;
+                Ti.API.info("ERROR RESPONSE : " + JSON.stringify(this.responseText));
+                Ti.API.error("Bad Sever =>" + e.error);
+                if (-1 != JSON.parse(this.responseText).indexOf("coins")) {
+                    var alertWindow = Titanium.UI.createAlertDialog({
+                        title: Alloy.Globals.PHRASES.betbattleTxt,
+                        message: JSON.parse(this.responseText),
+                        buttonNames: [ Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.storeTxt ]
+                    });
+                    alertWindow.addEventListener("click", function(e) {
+                        switch (e.index) {
+                          case 0:
+                            alertWindow.hide();
+                            break;
+
+                          case 1:
+                            var win = Alloy.createController("store").getView();
+                            Alloy.Globals.WINDOWS.push(win);
+                            Alloy.Globals.NAV.openWindow(win, {
+                                animated: true
+                            });
+                            alertWindow.hide();
+                        }
+                    });
+                    alertWindow.show();
+                } else Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
+            };
+            try {
+                xhr.open("POST", Alloy.Globals.BETKAMPENCHALLENGEGROUPURL);
+                xhr.setRequestHeader("content-type", "application/json");
+                xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
+                xhr.setTimeout(Alloy.Globals.TIMEOUT);
+                var param = "";
+                param += '{"cid": ' + Alloy.Globals.COUPON.id + ', "lang" : "' + Alloy.Globals.LOCALE + '", "coins": ' + coins + ', "groups": [{';
+                for (var i = 0; i < array.length; i++) for (var x = 0; x < groupObjects.length; x++) if (groupObjects[x].attributes.id === array[i]) {
+                    param += '"' + array[i] + '":"' + groupObjects[x].attributes.name;
+                    param += i != array.length - 1 ? '", ' : '"';
+                }
+                param += "}]}";
+                xhr.send(param);
+            } catch (e) {
+                indicator.closeIndicator();
+                isSubmitting = false;
+                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+            }
+            xhr.onload = function() {
+                if ("200" == this.status) {
+                    indicator.closeIndicator();
+                    if (4 == this.readyState) {
+                        var response = JSON.parse(this.responseText);
+                        response = response.replace(/(<br \/>)+/g, "\n");
+                        Alloy.Globals.showToast(response);
+                        var argu = {
+                            refresh: 1,
+                            sent_challenge: 1
+                        };
+                        var loginSuccessWindow = Alloy.createController("main", argu).getView();
+                        loginSuccessWindow.open(isAndroid ? {
+                            fullScreen: true,
+                            navBarHidden: false,
+                            orientationModes: [ Titanium.UI.PORTRAIT ]
+                        } : {
+                            fullScreen: true,
+                            transition: Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
+                        });
+                        loginSuccessWindow = null;
+                        for (var win in Alloy.Globals.WINDOWS) null !== win && Alloy.Globals.WINDOWS[win].close();
+                    } else {
+                        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+                        isSubmitting = false;
+                    }
+                } else {
+                    Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
+                    indicator.closeIndicator();
+                    isSubmitting = false;
+                    Ti.API.error("Error =>" + this.response);
+                }
+            };
+        } else Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+    }
+    function challengeFriends() {
+        if (Alloy.Globals.checkConnection()) {
+            indicator.openIndicator();
+            isSubmitting = true;
+            var xhr = Titanium.Network.createHTTPClient();
+            xhr.onerror = function(e) {
+                indicator.closeIndicator();
+                isSubmitting = false;
+                Ti.API.info("ERROR PARSE : " + JSON.stringify(this.responseText));
+                if (-1 != JSON.parse(this.responseText).indexOf("coins")) {
+                    var alertWindow = Titanium.UI.createAlertDialog({
+                        title: Alloy.Globals.PHRASES.betbattleTxt,
+                        message: JSON.parse(this.responseText),
+                        buttonNames: [ Alloy.Globals.PHRASES.okConfirmBtnTxt, Alloy.Globals.PHRASES.storeTxt ]
+                    });
+                    alertWindow.addEventListener("click", function(e) {
+                        switch (e.index) {
+                          case 0:
+                            alertWindow.hide();
+                            break;
+
+                          case 1:
+                            var win = Alloy.createController("store").getView();
+                            Alloy.Globals.WINDOWS.push(win);
+                            Alloy.Globals.NAV.openWindow(win, {
+                                animated: true
+                            });
+                            alertWindow.hide();
+                        }
+                    });
+                    alertWindow.show();
+                } else Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
+                Ti.API.error("Bad Sever =>" + e.error);
+            };
+            try {
+                xhr.open("POST", Alloy.Globals.BETKAMPENCHALLENGEFRIENDSURL + "/?lang=" + Alloy.Globals.LOCALE);
+                xhr.setRequestHeader("content-type", "application/json");
+                xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
+                xhr.setTimeout(Alloy.Globals.TIMEOUT);
+                var param = "";
+                param += '{"coins": ' + coins + ', "lang" :"' + Alloy.Globals.LOCALE + '", "cid":"' + Alloy.Globals.COUPON.id + '", "friends":[{';
+                for (var i = 0; i < friendsChallenge.length; i++) {
+                    param += '"' + friendsChallenge[i].id + '":"' + friendsChallenge[i].name;
+                    param += i == friendsChallenge.length - 1 ? '"' : '", ';
+                }
+                param += "}]}";
+                xhr.send(param);
+            } catch (e) {
+                indicator.closeIndicator();
+                isSubmitting = false;
+                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+            }
+            xhr.onload = function() {
+                if ("200" == this.status) {
+                    indicator.closeIndicator();
+                    if (4 == this.readyState) {
+                        var response = JSON.parse(this.responseText);
+                        response = response.replace(/(<br \/>)+/g, "\n");
+                        Alloy.Globals.showToast(response);
+                        var argu = {
+                            refresh: 1,
+                            sent_challenge: 1
+                        };
+                        var loginSuccessWindow = Alloy.createController("main", argu).getView();
+                        loginSuccessWindow.open(isAndroid ? {
+                            fullScreen: true,
+                            navBarHidden: false,
+                            orientationModes: [ Titanium.UI.PORTRAIT ]
+                        } : {
+                            fullScreen: true,
+                            transition: Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
+                        });
+                        loginSuccessWindow = null;
+                        for (win in Alloy.Globals.WINDOWS) 0 !== win && Alloy.Globals.WINDOWS[win].close();
+                    } else {
+                        isSubmitting = false;
+                        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+                    }
+                } else {
+                    indicator.closeIndicator();
+                    isSubmitting = false;
+                    Ti.API.error("Error =>" + this.response);
+                    Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
+                }
+            };
+        } else Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
     }
     function createSubmitButtons(type) {
         submitButton = null;
@@ -193,16 +369,17 @@ function Controller() {
             if (isSubmitting) return;
             if ("1" === type) if (1 === selectedGroupIds.length) {
                 Ti.API.info("challenge : Group");
-                for (var g in selectedGroupIds) Ti.API.log("grupp " + selectedGroupIds[g]);
+                challengeGroup(selectedGroupIds);
             } else Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.groupChallengeErrorTxt);
             if ("2" === type) if (friendsChallenge.length > 0) {
                 Ti.API.info("challenge : Friends");
-                for (var f in friendsChallenge) Ti.API.log("FRIND " + friendsChallenge[f]);
+                challengeFriends();
             } else Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.friendChallengeErrorTxt);
         });
         botView.add(submitButton);
     }
     function createViews(array, type) {
+        globalType = type;
         var children = tableWrapper.children;
         for (var i = 0; i < children.length; i++) {
             "groupsTable" === children[i].id && tableWrapper.remove(children[i]);
@@ -280,7 +457,7 @@ function Controller() {
                 });
                 row.add(Ti.UI.createLabel({
                     text: array[i].attributes.name,
-                    top: 6,
+                    top: 14,
                     left: 60,
                     font: {
                         fontSize: Alloy.Globals.getFontSize(1),
@@ -329,7 +506,7 @@ function Controller() {
             if ("1" === type) {
                 row.add(Ti.UI.createLabel({
                     text: Alloy.Globals.PHRASES.nrOfMembersTxt + ": " + array[i].attributes.members.length,
-                    top: 26,
+                    top: 34,
                     left: 60,
                     font: {
                         fontSize: Alloy.Globals.getFontSize(1),
@@ -516,6 +693,7 @@ function Controller() {
     Ti.App.addEventListener("sliderToggled", function(e) {
         "undefined" != typeof table && (table.touchEnabled = e.hasSlided ? false : true);
     });
+    var globalType = 0;
     var tableWrapper = Ti.UI.createView({
         height: "65%",
         width: Ti.UI.FILL
@@ -689,7 +867,25 @@ function Controller() {
         };
         getFriends();
     });
-    $.groupSelect.add(tableWrapper);
+    if (isAndroid) {
+        var swipeRefreshModule = require("com.rkam.swiperefreshlayout");
+        swipeRefresh = swipeRefreshModule.createSwipeRefresh({
+            view: tableWrapper,
+            height: "65%",
+            width: Ti.UI.FILL,
+            id: "swiper"
+        });
+        swipeRefresh.addEventListener("refreshing", function() {
+            if (Alloy.Globals.checkConnection()) setTimeout(function() {
+                indicator.openIndicator();
+                "1" === globalType ? getGroups() : "2" === globalType && getFriends();
+            }, 800); else {
+                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+                swipeRefresh.setRefreshing(false);
+            }
+        });
+        $.groupSelect.add(swipeRefresh);
+    } else $.groupSelect.add(tableWrapper);
     $.groupSelect.add(botView);
     if (Alloy.Globals.checkConnection()) {
         getGroups();

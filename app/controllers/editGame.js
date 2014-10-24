@@ -505,8 +505,10 @@ function createLayout(gameObject) {
     var fontSize = Alloy.Globals.getFontSize(2);
     var teamNames = gameObject.attributes.team_1.team_name + " - " + gameObject.attributes.team_2.team_name;
 
-    if (teamNames.length > 20) {
-        fontSize = 20;
+    if (teamNames.length > 22) {
+        fontSize = 18;
+    } else if (teamNames.length > 32) {
+        fontSize = 16;
     }
 
     image.add(Ti.UI.createLabel({

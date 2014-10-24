@@ -14,6 +14,8 @@ Ti.App.addEventListener("sliderToggled", function(e) {
     }
 });
 
+var globalType = 0;
+
 var tableWrapper = Ti.UI.createView({
     height : "65%",
     width : Ti.UI.FILL
@@ -76,11 +78,7 @@ function getFriends() {
     var xhr = Titanium.Network.createHTTPClient();
     xhr.onerror = function(e) {
         indicator.closeIndicator();
-        if (!isAndroid) {
-            if ( typeof refresher !== 'undefined') {
-                refresher.endRefreshing();
-            }
-        }
+        endRefresher();
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
         Ti.API.error('Bad Sever =>' + e.error);
     };
@@ -95,11 +93,7 @@ function getFriends() {
         xhr.send();
     } catch(e) {
         indicator.closeIndicator();
-        if (!isAndroid) {
-            if ( typeof refresher !== 'undefined') {
-                refresher.endRefreshing();
-            }
-        }
+        endRefresher();
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
     }
     xhr.onload = function() {
@@ -131,13 +125,12 @@ function getFriends() {
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             }
             indicator.closeIndicator();
+            if(isAndroid) {
+                endRefresher();
+            }
         } else {
             indicator.closeIndicator();
-            if (!isAndroid) {
-                if ( typeof refresher !== 'undefined') {
-                    refresher.endRefreshing();
-                }
-            }
+            endRefresher();
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             Ti.API.error("Error =>" + this.response);
         }
@@ -234,6 +227,9 @@ function getGroups() {
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             }
             indicator.closeIndicator();
+            if(isAndroid) {
+                endRefresher();
+            }
         } else {
             indicator.closeIndicator();
             endRefresher();
@@ -572,6 +568,8 @@ function createSubmitButtons(type) {
 }
 
 function createViews(array, type) {
+    globalType = type;
+    
     // check if table exists, and if it does simply remove it
     var children = tableWrapper.children;
     for (var i = 0; i < children.length; i++) {
@@ -603,8 +601,8 @@ function createViews(array, type) {
                 refresher.endRefreshing();
             }
         });
-    }
-
+    } 
+    
     // Table
     var hasChild = false;
 
@@ -683,7 +681,7 @@ function createViews(array, type) {
 
             row.add(Ti.UI.createLabel({
                 text : array[i].attributes.name,
-                top : 6,
+                top : 14,
                 left : 60,
                 font : {
                     fontSize : Alloy.Globals.getFontSize(1),
@@ -747,7 +745,7 @@ function createViews(array, type) {
         if (type === '1') {
             row.add(Ti.UI.createLabel({
                 text : Alloy.Globals.PHRASES.nrOfMembersTxt + ': ' + array[i].attributes.members.length,
-                top : 26,
+                top : 34,
                 left : 60,
                 font : {
                     fontSize : Alloy.Globals.getFontSize(1),
@@ -1177,7 +1175,36 @@ tab_friends.addEventListener("click", function(e) {
     getFriends();
 });
 
-$.groupSelect.add(tableWrapper);
+if (!isAndroid) {
+    $.groupSelect.add(tableWrapper);
+} else {
+    var swipeRefreshModule = require('com.rkam.swiperefreshlayout');
+
+    swipeRefresh = swipeRefreshModule.createSwipeRefresh({
+        view : tableWrapper,
+        height : '65%',
+        width : Ti.UI.FILL,
+        id : 'swiper'
+    });
+
+    swipeRefresh.addEventListener('refreshing', function(e) {
+        if (Alloy.Globals.checkConnection()) {
+            setTimeout(function() {
+                indicator.openIndicator();
+                if (globalType === '1') {
+                    getGroups();
+                } else if (globalType === '2') {
+                    getFriends();
+                }
+            }, 800);
+        } else {
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+            swipeRefresh.setRefreshing(false);
+        }
+    });
+    $.groupSelect.add(swipeRefresh);
+}
+
 $.groupSelect.add(botView);
 
 // check connection
