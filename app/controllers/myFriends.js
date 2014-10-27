@@ -582,9 +582,10 @@ function createGUI(obj) {
     var profilePic = Titanium.UI.createImageView({
         defaultImage : '/images/no_pic.png',
         image : image,
-        height : 35,
-        width : 35,
-        left : '3%',
+        width : 40,
+        left : 10,
+        height : 40,
+        borderRadius : 20,
         id : obj.id,
         name : obj.name,
         fbid : obj.fbid,
@@ -608,7 +609,7 @@ function createGUI(obj) {
     }
     var name = Ti.UI.createLabel({
         text : boardName,
-        left : '20%',
+        left : 60,
         id : obj.id,
         name : obj.name,
         fbid : obj.fbid,

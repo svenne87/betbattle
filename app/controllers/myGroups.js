@@ -154,9 +154,6 @@ function createBtn() {
 }
 
 function createViews(array) {
-
-    ///*******Create Table View*******///
-
     var tableHeaderView = Ti.UI.createView({
         height : 0.1
     });

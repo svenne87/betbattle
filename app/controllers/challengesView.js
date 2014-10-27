@@ -674,17 +674,6 @@ function constructTableView(array) {
      }));
      */
     if (OS_IOS) {
-        var separatorS;
-        var separatorCol;
-
-        if (iOSVersion < 7) {
-            separatorS = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
-            separatorColor = 'transparent';
-        } else {
-            separatorS = Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE;
-            separatorColor = '#303030';
-        }
-
         table = Titanium.UI.createTableView({
             //width : Ti.UI.FILL,
             left : 0,
@@ -700,9 +689,14 @@ function constructTableView(array) {
             },
             id : 'challengeTable',
             refreshControl : refresher,
-            separatorStyle : separatorS,
-            separatorColor : separatorColor
+            separatorStyle : Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE,
+            separatorColor : '#303030'
         });
+        
+        if (iOSVersion < 7) {
+            table.separatorStyle = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
+            table.separatorColor = 'transparent';
+        } 
 
         sections[0] = Ti.UI.createTableViewSection({
             footerView : Ti.UI.createView({
@@ -719,6 +713,13 @@ function constructTableView(array) {
             separatorColor : '#303030',
             id : 'challengeTable'
         });
+        
+        table.footerView = Ti.UI.createView({
+            height : 0.5,
+            width : Ti.UI.FILL,
+            backgroundColor : '#303030'
+        });
+        
         sections[0] = Ti.UI.createTableViewSection({});
     }
     getDynamicTopImage();

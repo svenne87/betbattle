@@ -254,20 +254,18 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
         }
 
         row.addEventListener('click', function(e) {
-            Ti.API.info("CLICKAT : " + JSON.stringify(e.row));
             if (e.row.isFriend == false) {
                 //add fb friend to friendlist
 
                 addBtn.text = fontawesome.icon('fa-check');
-                e.row.setBackgroundColor(Alloy.Globals.themeColor());
+                addBtn.setColor(Alloy.Globals.themeColor());
                 addFbFriend(e.row.id, obj.name);
                 e.row.isFriend = true;
 
             } else if (e.row.isFriend == true) {
                 //if you clicked on wrong person and click again you remove him from your friendlist
-
                 addBtn.text = fontawesome.icon('fa-plus');
-                e.row.setBackgroundColor("transparent");
+                addBtn.setColor('#FFF');
                 deleteFbFriend(e.row.id, obj.name);
                 e.row.isFriend = false;
             }
@@ -440,9 +438,6 @@ function addFbFriend(fbid, name) {
             table.touchEnabled = true;
         }
     };
-
-    //alert(Alloy.Globals.PHRASES.friendSuccess + ' ' + name);
-
 }
 
 function deleteFbFriend(fbid, name) {

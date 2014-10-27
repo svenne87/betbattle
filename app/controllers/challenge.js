@@ -75,12 +75,11 @@ function createGameType(gameType, gameObject, i, gameArray, index) {
     } else if (text == "team2") {
         text = gameObject.attributes.team_2.team_name;
     }
-    
+
     //if text is too long make text smaller so it fits more.
-    if(text.lenght > 26) {
+    if (text.lenght > 26) {
         text = text.substring(0, 23) + '...';
     }
-
 
     var optionLabel = Ti.UI.createLabel({
         text : text,
@@ -104,9 +103,20 @@ function createGameType(gameType, gameObject, i, gameArray, index) {
             e.source.backgroundColor = "#6d6d6d";
         }
     }
+
 }
 
 function createSelectGameType(gameType, gameObject, i, gameArray, index) {
+    var respHeight = 80;
+    var respOptionsHeight = 40;
+    var respTop = 20;
+
+    if (gameType.options > 1) {
+        respHeight = 140;
+        respOptionsHeight = 70;
+        respTop = 70;
+    }
+
     var type = gameType.type;
     var viewHeight = 70;
     var fontSize = 16;
@@ -117,7 +127,7 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
         width : Ti.UI.FILL,
         left : 0,
         className : 'gameTypeRow',
-        height : 140,
+        height : respHeight,
         value : i + 1,
         touchEnabled : false,
         selectionStyle : 'none',
@@ -129,8 +139,8 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
     }
     var optionsView = Ti.UI.createView({
         width : Ti.UI.FILL,
-        top : 70,
-        height : 70,
+        top : respTop,
+        height : respOptionsHeight,
         layout : layoutType,
 
     });
@@ -193,18 +203,33 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
         var pickerLabels = [];
 
         for (var i = 0; i < gameType.options; i++) {
+            var pickerLabel;
 
-            var pickerLabel = Ti.UI.createLabel({
-                top : 20,
-                left : '14%',
-                backgroundColor : '#FFF',
-                borderRadius : 2,
-                width : 100,
-                height : 40,
-                text : '-',
-                textAlign : 'center',
-                index : i
-            });
+            if (gameType.options > 1) {
+                pickerLabel = Ti.UI.createLabel({
+                    top : 20,
+                    left : '14%',
+                    backgroundColor : '#FFF',
+                    borderRadius : 2,
+                    width : 100,
+                    height : 40,
+                    text : '-',
+                    textAlign : 'center',
+                    index : i
+                });
+            } else {
+                pickerLabel = Ti.UI.createLabel({
+                    top : 0,
+                    left : '35%',
+                    backgroundColor : '#FFF',
+                    borderRadius : 2,
+                    width : 100,
+                    height : 40,
+                    text : '-',
+                    textAlign : 'center',
+                    index : i
+                });
+            }
 
             pickerLabels.push(pickerLabel);
 
@@ -444,10 +469,45 @@ function postMatchOfTheDay() {
         indicator.openIndicator();
         var xhr = Titanium.Network.createHTTPClient();
         xhr.onerror = function(e) {
-            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-            Ti.API.error("FEL : " + JSON.stringify(e));
             Ti.API.error('Bad Sever =>' + e.error);
             indicator.closeIndicator();
+
+            if (JSON.parse(this.responseText).indexOf('coins') != -1) {
+                // not enough coins
+                // show dialog with "link" to the store
+                var alertWindow = Titanium.UI.createAlertDialog({
+                    title : Alloy.Globals.PHRASES.betbattleTxt,
+                    message : JSON.parse(this.responseText),
+                    buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.storeTxt]
+                });
+
+                alertWindow.addEventListener('click', function(e) {
+                    switch (e.index) {
+                    case 0:
+                        alertWindow.hide();
+                        break;
+                    case 1:
+                        var win = Alloy.createController('store').getView();
+
+                        if (OS_IOS) {
+                            Alloy.Globals.NAV.openWindow(win, {
+                                animated : true
+                            });
+                        } else if (OS_ANDROID) {
+                            win.open({
+                                fullScreen : true
+                            });
+                        }
+                        alertWindow.hide();
+                        break;
+                    }
+                });
+                alertWindow.show();
+
+            } else {
+                // any other "bad request error"
+                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+            }
         };
 
         try {
@@ -971,11 +1031,11 @@ function createLayout(gameObject) {
 
     var topMargin = 12;
     var fontSize = Alloy.Globals.getFontSize(2);
-    
+
     if (teamNames == null) {
         var teamNames = gameObject.attributes.team_1.team_name + " - " + gameObject.attributes.team_2.team_name;
     }
-    
+
     if (teamNames.length > 22) {
         fontSize = 18;
         topMargin = 16;
@@ -1185,6 +1245,7 @@ function createLayout(gameObject) {
             if (isIOS) {
                 sections[sectionIndexen] = Ti.UI.createTableViewSection({
                     id : gameObject.attributes.game_id + '' + y,
+                    name : gametypes[y].type,
                     headerView : gameTypeHeaderView,
                     footerView : Ti.UI.createView({
                         height : 0.1
@@ -1193,6 +1254,7 @@ function createLayout(gameObject) {
             } else {
                 sections[sectionIndexen] = Ti.UI.createTableViewSection({
                     id : gameObject.attributes.game_id + '' + y,
+                    name : gametypes[y].type,
                     headerView : gameTypeHeaderView
                 });
             }
@@ -1206,6 +1268,24 @@ function createLayout(gameObject) {
             }
 
         }
+
+        // add name to the section with game type and then custom to make the "final result" end up last in sections
+        var customSection = null;
+
+        // find "final result game type" and place it last in array
+        for (var s in sections) {
+            if (sections[s].name === '3') {
+                customSection = sections[s];
+                sections.splice(s, 1);
+                break;
+            }
+        }
+
+        if (customSection !== null) {
+            sections.push(customSection);
+        }
+
+        customSection = null;
 
         if (gameObjects.indexOf(gameObject) == (gameObjects.length - 1)) {
             // last game

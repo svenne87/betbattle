@@ -633,10 +633,12 @@ function createLayout(gameObject) {
                     footerView : Ti.UI.createView({
                         height : 0.1,
                     }),
+                    name : gametypes[y].type 
                 });
             } else {
                 sections[y] = Ti.UI.createTableViewSection({
-                    headerView : gameTypeHeaderView
+                    headerView : gameTypeHeaderView,
+                    name : gametypes[y].type
                 });
             }
 
@@ -648,6 +650,25 @@ function createLayout(gameObject) {
                 sections[y].add(createSelectGameType(gametypes[y], gameObject, i, gameArray, index));
             }
         }
+        
+        // add name to the section with game type and then custom to make the "final result" end up last in sections
+        var customSection = null;
+        
+        // find "final result game type" and place it last in array
+        for(var s in sections) {
+            if(sections[s].name === '3') {
+                customSection = sections[s];
+                sections.splice(s, 1);
+                break;
+            }
+        }
+        
+        if(customSection !== null) {
+            sections.push(customSection);  
+        }
+
+        customSection = null;
+
         var sectionIndex = sections.length;
 
         if (!isAndroid) {

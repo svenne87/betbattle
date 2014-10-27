@@ -10,31 +10,28 @@ var indicator = uie.createIndicatorWindow({
     text : Alloy.Globals.PHRASES.loadingTxt
 });
 
+var isOpen = false;
+var isAndroid = true;
 var iOSVersion;
 
 if (OS_IOS) {
+    isAndroid = false;
     iOSVersion = parseInt(Ti.Platform.version);
 }
 
- var sections = [];
- var table = null;
- 
+var sections = [];
+var table = null;
+
 function createGameType(type, values, game) {
-   
-	
     var gameValueWrapper = Ti.UI.createTableViewRow({
         width : Ti.UI.FILL,
-        height: 70,
-        backgroundColor:"transparent",
+        height : 70,
+        backgroundColor : "transparent",
         layout : 'absolute',
     });
 
-    
-
     for (var i in values) {
         if (values[i].game_type == type.type) {
-            //Ti.API.info("value : " + JSON.stringify(values[i]));
-            //Ti.API.info("Type : " + type.type);
             var correct = false;
             for (var m in game.result_values) {
                 if (values[i].game_type == game.result_values[m].game_type) {
@@ -50,8 +47,6 @@ function createGameType(type, values, game) {
                 var text = Alloy.Globals.PHRASES.gameTypes[type.type].buttonValues[values[i].value_1];
 
                 if (text == "team1") {
-                    //Ti.API.info("TEAM" + JSON.stringify(gameObject.attributes.team_1.team_name));
-                    //Ti.API.info("ANDRA");
                     text = game.team_1.team_name;
                 } else if (text == "team2") {
                     text = game.team_2.team_name;
@@ -67,232 +62,244 @@ function createGameType(type, values, game) {
 
             var color = "#000000";
             if (correct) {
-                color = "#d6d6d6";
+                color = "#303030";
             } else {
                 color = "#000000";
             }
             gameValueWrapper.setBackgroundColor(color);
-            
+
             var gameValueLabel = Ti.UI.createLabel({
                 text : text,
                 font : Alloy.Globals.getFontCustom(18, "Regular"),
                 color : "#FFF",
-                left: 20,
+                left : 20,
             });
             gameValueWrapper.add(gameValueLabel);
         }
-
     }
-
-   
-  
-
- 
-  	return gameValueWrapper;
-    
+    return gameValueWrapper;
 }
 
 function createLayout(resp) {
-	Ti.API.info("VISA MATCHOTD " + JSON.stringify(resp));
-	Ti.API.info("TEAM 1 " + resp.game.team_1.team_name);
-	
     view = Ti.UI.createView({
         height : 'auto',
         width : 'auto',
-        layout : 'vertical',
-       
+        layout : 'vertical'
     });
-    
-    
-   
 
-	var tableHeaderView = Ti.UI.createView({
-		height : 0.1,
-		width : Ti.UI.FILL,
-		backgroundColor : 'transparent',
-		layout : "absolute",
-	});
+    var tableHeaderView = Ti.UI.createView({
+        height : 0.1,
+        width : Ti.UI.FILL,
+        backgroundColor : 'transparent',
+        layout : "absolute",
+    });
 
-	if (OS_IOS) {
-		var separatorS;
-		var separatorCol;
+    if (!isAndroid) {
+        table = Titanium.UI.createTableView({
+            left : 0,
+            headerView : tableHeaderView,
+            height : '100%',
+            width : '100%',
+            backgroundColor : 'transparent',
+            style : Ti.UI.iPhone.TableViewStyle.GROUPED,
+            separatorInsets : {
+                left : 0,
+                right : 0
+            },
+            id : 'winnersTable',
+            separatorStyle : Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE,
+            separatorColor : '#303030'
+        });
 
-		if (iOSVersion < 7) {
-			separatorS = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
-			separatorColor = 'transparent';
-		} else {
-			separatorS = Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE;
-			separatorColor = '#6d6d6d';
-		}
+        if (iOSVersion < 7) {
+            table.separatorStyle = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
+            table.separatorColor = 'transparent';
+        }
 
-		table = Titanium.UI.createTableView({
-			//width : Ti.UI.FILL,
-			left : 0,
-			headerView : tableHeaderView,
-			height : '100%',
-			width : '100%',
-			//backgroundImage: '/images/profileBG.jpg',
-			backgroundColor : 'transparent',
-			style : Ti.UI.iPhone.TableViewStyle.GROUPED,
-			separatorInsets : {
-				left : 0,
-				right : 0
-			},
-			id : 'winnersTable',
-			separatorStyle : separatorS,
-			separatorColor : separatorColor,
-		});
-		
-		
-		
-		
-		
-	} else if (OS_ANDROID) {
-		table = Titanium.UI.createTableView({
-			width : Ti.UI.FILL,
-			left : 0,
-			headerView : tableHeaderView,
-			height : '100%',
-			backgroundColor : 'transparent',
-			separatorColor : '#6d6d6d',
-			id : 'challengeTable'
-		});
-		
-	}
-    
+    } else {
+        table = Titanium.UI.createTableView({
+            width : Ti.UI.FILL,
+            left : 0,
+            headerView : tableHeaderView,
+            height : '100%',
+            backgroundColor : 'transparent',
+            separatorColor : '#6d6d6d',
+            id : 'challengeTable'
+        });
+        
+        table.footerView = Ti.UI.createView({
+           height : 0.5,
+           width : Ti.UI.FILL,
+           backgroundColor : '#303030' 
+        });
+    }
+
     var matchHeader = Ti.UI.createView({
-    	height: 70,
-    	backgroundColor : '#303030',
-		backgroundGradient : {
-			type : "linear",
-			startPoint : {
-				x : "0%",
-				y : "0%"
-			},
-			endPoint : {
-				x : "0%",
-				y : "100%"
-			},
-			colors : [{
-				color : "#151515",
+        height : 70,
+        backgroundColor : '#303030',
+        backgroundGradient : {
+            type : "linear",
+            startPoint : {
+                x : "0%",
+                y : "0%"
+            },
+            endPoint : {
+                x : "0%",
+                y : "100%"
+            },
+            colors : [{
+                color : "#151515",
 
-			}, {
-				color : "#2E2E2E",
+            }, {
+                color : "#2E2E2E",
 
-			}]
-		}, 
+            }]
+        },
     });
-    
+
     var matchLabel = Ti.UI.createLabel({
-    	text: resp.game.team_1.team_name + " - " + resp.game.team_2.team_name,
-    	font: Alloy.Globals.getFontCustom(20, "Bold"),
-    	color:"#FFF",
-    	left: 20,
-    	top: 15,
+        text : resp.game.team_1.team_name + " - " + resp.game.team_2.team_name,
+        font : Alloy.Globals.getFontCustom(20, "Bold"),
+        color : "#FFF",
+        left : 20,
+        top : 12,
     });
-    
+
     var matchDateLabel = Ti.UI.createLabel({
-    	text: resp.game.game_date_string,
-    	font: Alloy.Globals.getFontCustom(14, "Regular"),
-    	color: Alloy.Globals.themeColor(),
-    	left: 20,
-    	top: 40,
+        text : resp.game.game_date_string,
+        font : Alloy.Globals.getFontCustom(14, "Regular"),
+        color : Alloy.Globals.themeColor(),
+        left : 20,
+        top : 40,
     });
-    
+
     matchHeader.add(matchLabel);
     matchHeader.add(matchDateLabel);
-    
-	sections[0] = Ti.UI.createTableViewSection({
-		headerView: matchHeader,
-		footerView : Ti.UI.createView({
-			height: 0.1
-		})
-	});
-	var rowUser = Ti.UI.createTableViewRow({
-		height: 65,
-		width: Ti.UI.FILL,
-	});
-	
+
+    if (!isAndroid) {
+        sections[0] = Ti.UI.createTableViewSection({
+            headerView : matchHeader,
+            footerView : Ti.UI.createView({
+                height : 0.1
+            })
+        });
+    } else {
+        sections[0] = Ti.UI.createTableViewSection({
+            headerView : matchHeader
+        });
+    }
+
+    var rowUser = Ti.UI.createTableViewRow({
+        height : 65,
+        width : Ti.UI.FILL,
+    });
+
     var usersCountLabel = Ti.UI.createLabel({
         text : Alloy.Globals.PHRASES.showMatchOTDusers + resp.stats.count,
         font : Alloy.Globals.getFontCustom(18, "Regular"),
         color : "#FFF",
-        left:20,
+        left : 20,
     });
-    
-	rowUser.add(usersCountLabel);
-	
+
+    rowUser.add(usersCountLabel);
+
     var rowPot = Ti.UI.createTableViewRow({
-    	height: 65,
-    	width: Ti.UI.FILL,
+        height : 65,
+        width : Ti.UI.FILL,
     });
-    
+
     var potSize = resp.stats.count * resp.stats.bet_amount;
     var potSizeLabel = Ti.UI.createLabel({
         text : Alloy.Globals.PHRASES.showMatchOTDpot + potSize,
         font : Alloy.Globals.getFontCustom(18, "Regular"),
         color : "#FFF",
-        left: 20,
+        left : 20,
     });
-    
+
     rowPot.add(potSizeLabel);
-    
+
     sections[0].add(rowUser);
     sections[0].add(rowPot);
 
-    
-    
-
     for (var i in resp.game.game_types) {
-    	 var gameTypeViewDesc = Ti.UI.createView({
-	        height : 65,
-	        width : Ti.UI.FILL,
-	      	backgroundColor : '#303030',
-			backgroundGradient : {
-				type : "linear",
-				startPoint : {
-					x : "0%",
-					y : "0%"
-				},
-				endPoint : {
-					x : "0%",
-					y : "100%"
-				},
-				colors : [{
-					color : "#151515",
-	
-				}, {
-					color : "#2E2E2E",
-	
-				}]
-			}, 
-	    });
-	
-	    var gameTypeDescription = Ti.UI.createLabel({
-	        text : Alloy.Globals.PHRASES.gameTypes[resp.game.game_types[i].type].description,
-	        left: 20,
-	        font : Alloy.Globals.getFontCustom(18, "Bold"),
-	        color : "#FFF",
-	    });
-	    gameTypeViewDesc.add(gameTypeDescription);
-		var sectionIndex = sections.length;
-		sections[sectionIndex] = Ti.UI.createTableViewSection({
-			headerView: gameTypeViewDesc,
-			footerView: Ti.UI.createView({
-				height: 0.1
-			}),
-		});
+        var gameTypeViewDesc = Ti.UI.createView({
+            height : 65,
+            width : Ti.UI.FILL,
+            backgroundColor : '#303030',
+            backgroundGradient : {
+                type : "linear",
+                startPoint : {
+                    x : "0%",
+                    y : "0%"
+                },
+                endPoint : {
+                    x : "0%",
+                    y : "100%"
+                },
+                colors : [{
+                    color : "#151515",
+
+                }, {
+                    color : "#2E2E2E",
+
+                }]
+            },
+        });
+
+        var gameTypeDescription = Ti.UI.createLabel({
+            text : Alloy.Globals.PHRASES.gameTypes[resp.game.game_types[i].type].description,
+            left : 20,
+            font : Alloy.Globals.getFontCustom(18, "Bold"),
+            color : "#FFF",
+        });
+
+        gameTypeViewDesc.add(gameTypeDescription);
+        var sectionIndex = sections.length;
+
+        if (!isAndroid) {
+            sections[sectionIndex] = Ti.UI.createTableViewSection({
+                headerView : gameTypeViewDesc,
+                footerView : Ti.UI.createView({
+                    height : 0.1
+                }),
+                name : resp.game.game_types[i].type
+            });
+        } else {
+            sections[sectionIndex] = Ti.UI.createTableViewSection({
+                headerView : gameTypeViewDesc,
+                name : resp.game.game_types[i].type
+            });
+        }
+        
         sections[sectionIndex].add(createGameType(resp.game.game_types[i], resp.values, resp.game));
     }
 
-	table.setData(sections);
+    // add name to the section with game type and then custom to make the "final result" end up last in sections
+    var customSection = null;
+
+    // find "final result game type" and place it last in array
+    for (var s in sections) {
+        if (sections[s].name === '3') {
+            customSection = sections[s];
+            sections.splice(s, 1);
+            break;
+        }
+    }
+
+    if (customSection !== null) {
+        sections.push(customSection);
+    }
+
+    customSection = null;
+
+    table.setData(sections);
     view.add(table);
 
     $.showMatchOTD.add(view);
 }
 
 function getChallengeShow() {
-    if (OS_IOS) {
+    if (!isAndroid) {
         indicator.openIndicator();
     }
 
@@ -300,8 +307,6 @@ function getChallengeShow() {
     var xhr = Titanium.Network.createHTTPClient();
     xhr.onerror = function(e) {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-        //alert(JSON.parse(this.responseText));
-        Ti.API.info('FEL : ' + JSON.stringify(this.responseText));
         Ti.API.error('Bad Sever =>' + e.error);
         indicator.closeIndicator();
     };
@@ -314,35 +319,25 @@ function getChallengeShow() {
         xhr.send();
     } catch(e) {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-        //alert(JSON.parse(this.responseText));
         indicator.closeIndicator();
     }
     xhr.onload = function() {
         if (this.status == '200') {
             if (this.readyState == 4) {
-                //Ti.API.info("reeturn : " + JSON.stringify(this.responseText));
                 var response = JSON.parse(this.responseText);
-                // construct array with objects
-
-                //Ti.API.info("MatchOTDShow: " + JSON.stringify(response));
-                //showResults(response);
                 createLayout(response);
             } else {
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-                //$.facebookBtn.enabled = true;
             }
         } else {
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-
-            //$.facebookBtn.enabled = true;
             Ti.API.error("Error =>" + this.response);
         }
         indicator.closeIndicator();
     };
-
 }
 
-if (OS_ANDROID) {
+if (isAndroid) {
     $.showMatchOTD.orientationModes = [Titanium.UI.PORTRAIT];
 
     $.showMatchOTD.addEventListener('open', function() {
@@ -354,7 +349,11 @@ if (OS_ANDROID) {
         };
         $.showMatchOTD.activity.actionBar.displayHomeAsUp = true;
         $.showMatchOTD.activity.actionBar.title = Alloy.Globals.PHRASES.matchTxt;
-        //indicator.openIndicator();
+        Ti.API.log(" status " + isOpen);  // TODO
+        if(!isOpen) {        
+            //indicator.openIndicator();
+            isOpen = true;
+        }
     });
 } else {
     $.showMatchOTD.titleControl = Ti.UI.createLabel({

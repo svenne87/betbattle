@@ -6,9 +6,11 @@ var gID = args.gID;
 var friends = null;
 var iOSVersion;
 var child = true;
+var isAndroid = true;
 
 if (OS_IOS) {
     iOSVersion = parseInt(Ti.Platform.version);
+    isAndroid = false;
 
     $.editGroup.titleControl = Ti.UI.createLabel({
         text : Alloy.Globals.PHRASES.editGroupTxt,
@@ -28,9 +30,16 @@ $.editGroup.addEventListener('close', function() {
     indicator.closeIndicator();
 });
 
-if (OS_ANDROID) {
+var fontawesome = require('lib/IconicFont').IconicFont({
+    font : 'lib/FontAwesome'
+});
+
+var font = 'FontAwesome';
+
+if (isAndroid) {
     child = false;
-    
+    font = 'fontawesome-webfont';
+
     $.editGroup.addEventListener('open', function() {
         Alloy.Globals.setAndroidCouponMenu($.editGroup.activity);
 
@@ -48,15 +57,6 @@ if (OS_ANDROID) {
     });
 }
 
-var fontawesome = require('lib/IconicFont').IconicFont({
-    font : 'lib/FontAwesome'
-});
-
-var font = 'FontAwesome';
-
-if (OS_ANDROID) {
-    font = 'fontawesome-webfont';
-}
 var mainView = Ti.UI.createView({
     class : "topView",
     height : "100%",
@@ -70,9 +70,7 @@ var header = Ti.UI.createView({
     height : 0.1
 });
 
-var buttonView = Alloy.Globals.createButtonView('#d50f25', "#FFF", "Ta Bort Grupp");
 mainView.add(header);
-//mainView.add(buttonView);
 
 // if you are group admin
 if (gAdmin == Alloy.Globals.BETKAMPENUID) {
@@ -101,7 +99,7 @@ if (gAdmin == Alloy.Globals.BETKAMPENUID) {
     });
     mainView.add(groupName);
 
-    if (OS_ANDROID) {
+    if (isAndroid) {
         var first = true;
         groupName.addEventListener('focus', function f(e) {
             if (first) {
@@ -306,13 +304,13 @@ var addMemberClick = function(e) {
                         table.setData(sections);
                         thisRow.removeEventListener('click', addMemberClick);
                         thisRow.addEventListener('click', removeMemberClick);
-                        
-                        for(var child in thisRow.children) {
-                            if(thisRow.children[child].id === 'awesome') {
+
+                        for (var child in thisRow.children) {
+                            if (thisRow.children[child].id === 'awesome') {
                                 thisRow.remove(thisRow.children[child]);
                             }
                         }
-                 
+
                         //table.setData(sections);
                         Alloy.Globals.showToast(e.source.fName + ' ' + Alloy.Globals.PHRASES.groupMemberAddedTxt);
                     }
@@ -512,7 +510,7 @@ function createFriendGUI(friend, members) {
             },
             text : fontawesome.icon('fa-plus'),
             color : '#FFF',
-            id: 'awesome'
+            id : 'awesome'
 
         });
         row.add(addBtn);
@@ -592,12 +590,11 @@ var client = Ti.Network.createHTTPClient({
                 id : 'challengeTable'
             });
         }
-        
+
         if (gAdmin !== Alloy.Globals.BETKAMPENUID) {
             table.height = '100%';
             table.top = 0;
         }
-
 
         var memberHeaderView = Ti.UI.createView({
             height : 75,
@@ -630,15 +627,20 @@ var client = Ti.Network.createHTTPClient({
         });
         memberHeaderView.add(memberLabel);
 
-        sections[0] = Ti.UI.createTableViewSection({
-            headerView : memberHeaderView,
-            footerView : Ti.UI.createView({
-                height : 0.1
-            }),
-        });
+        if (!isAndroid) {
+            sections[0] = Ti.UI.createTableViewSection({
+                headerView : memberHeaderView,
+                footerView : Ti.UI.createView({
+                    height : 0.1
+                }),
+            });
+        } else {
+            sections[0] = Ti.UI.createTableViewSection({
+                headerView : memberHeaderView
+            });
+        }
 
         for (var i = 0; i < members.data.length; i++) {
-            //alert(members.data[i].name);
             sections[0].add(createGUI(members.data[i]));
         }
 
@@ -701,16 +703,20 @@ function getFriends(members) {
             });
             friendHeaderView.add(friendLabel);
 
-            sections[1] = Ti.UI.createTableViewSection({
-                headerView : friendHeaderView,
-                footerView : Ti.UI.createView({
-                    height : 0.1
-                })
-            });
-
+            if (!isAndroid) {
+                sections[1] = Ti.UI.createTableViewSection({
+                    headerView : friendHeaderView,
+                    footerView : Ti.UI.createView({
+                        height : 0.1
+                    })
+                });
+            } else {
+                sections[1] = Ti.UI.createTableViewSection({
+                    headerView : friendHeaderView
+                });
+            }
+            
             for (var i = 0; i < friends.length; i++) {
-                //alert(friends[i].name);
-
                 createFriendGUI(friends[i], members);
             }
 

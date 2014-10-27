@@ -1,5 +1,6 @@
 var args = arguments[0] || {};
 var match = args.match;
+var isAndroid = false;
 
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({
@@ -9,7 +10,6 @@ var indicator = uie.createIndicatorWindow({
 
 if (OS_ANDROID) {
     isAndroid = true;
-
     $.matchDay.orientationModes = [Titanium.UI.PORTRAIT];
 
     $.matchDay.addEventListener('open', function() {
@@ -26,16 +26,14 @@ if (OS_ANDROID) {
         font : Alloy.Globals.getFontCustom(18, "Bold"),
         color : '#FFF'
     });
-
 }
 
 function checkResponded(match) {
-    Ti.API.info("CLIKCADE MACHENS MÄSTARE");
     indicator.openIndicator();
     if (Alloy.Globals.checkConnection()) {
         var xhr = Titanium.Network.createHTTPClient();
         xhr.onerror = function(e) {
-            versusLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             indicator.closeIndicator();
             Ti.API.error('Bad Sever =>' + e.error);
         };
@@ -47,8 +45,8 @@ function checkResponded(match) {
             xhr.setTimeout(Alloy.Globals.TIMEOUT);
             xhr.send();
         } catch(e) {
-            Ti.API.info("FAIL : " + JSON.stringify(e));
             indicator.closeIndicator();
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
         }
 
         xhr.onload = function() {
@@ -57,17 +55,12 @@ function checkResponded(match) {
                     indicator.closeIndicator();
                     var resp = null;
                     try {
-                        Ti.API.info("RESPONSE INNAN PARSENNNN : " + JSON.stringify(this.responseText));
                         resp = JSON.parse(this.responseText);
-
                     } catch (e) {
                         resp = null;
-                        //Ti.API.info("Match NULL");
                     }
 
                     if (resp == 2) {
-                        Ti.API.info("RESPONSE TOP : " + JSON.stringify(resp));
-                        Ti.API.info("MATCH ID TILL MATCHENS MÄSTARE : " + match.game_id);
                         var arg = {
                             round : match.roundID,
                             leagueName : match.leagueName,
@@ -81,11 +74,11 @@ function checkResponded(match) {
                         var win = Alloy.createController('challenge', arg).getView();
                         Alloy.Globals.WINDOWS.push(win);
 
-                        if (OS_IOS) {
+                        if (!isAndroid) {
                             Alloy.Globals.NAV.openWindow(win, {
                                 animated : true
                             });
-                        } else if (OS_ANDROID) {
+                        } else {
                             win.open({
                                 fullScreen : true
                             });
@@ -98,11 +91,11 @@ function checkResponded(match) {
                         var win = Alloy.createController('showMatchOTD', arg).getView();
                         Alloy.Globals.WINDOWS.push(win);
 
-                        if (OS_IOS) {
+                        if (!isAndroid) {
                             Alloy.Globals.NAV.openWindow(win, {
                                 animated : true
                             });
-                        } else if (OS_ANDROID) {
+                        } else {
                             win.open({
                                 fullScreen : true
                             });
@@ -127,13 +120,26 @@ var wrapperView = Ti.UI.createView({
     layout : "vertical",
 });
 
+// add new line chars to info text
+var infoTexts = Alloy.Globals.PHRASES.matchOTDInfo.split('.');
+var infoTextFixed = '';
+for (var text in infoTexts) {
+    if(infoTexts[text] !== '') {
+        if(infoTexts[text].charAt(0) === ' ') {
+            infoTexts[text]= infoTexts[text].substring(1);
+        }
+        infoTextFixed += infoTexts[text] + '.' +'\n';
+    }
+}
+
 var matchOTDinfo = Ti.UI.createLabel({
     top : 20,
-    width: "90%",
-    text : Alloy.Globals.PHRASES.matchOTDInfo,
-    textAlign : "center",
+    left : 10,
+    width: Ti.UI.FILL,
+    text : infoTextFixed,
+    textAlign : "left",
     color : "#FFF",
-    font : Alloy.Globals.FONT,
+    font : Alloy.Globals.getFontCustom(16, "Regular")
 });
 
 var nextMatch = Alloy.Globals.createButtonView("#FFF", "#000", Alloy.Globals.PHRASES.matchOTDNextBtn);
@@ -149,11 +155,11 @@ previousMatch.addEventListener("click", function(e) {
     var win = Alloy.createController('previousMatchOTD').getView();
     Alloy.Globals.WINDOWS.push(win);
 
-    if (OS_IOS) {
+    if (!isAndroid) {
         Alloy.Globals.NAV.openWindow(win, {
             animated : true
         });
-    } else if (OS_ANDROID) {
+    } else {
         win.open({
             fullScreen : true
         });

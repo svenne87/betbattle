@@ -63,8 +63,8 @@ if (!isAndroid) {
         left : 0,
         headerView : tableHeaderView,
         footerView : tableFooterView,
-        height : '85%',
-        width : '100%',
+        height : Ti.UI.FILL,
+        width : Ti.UI.FILL,
         backgroundColor : 'transparent',
         style : Ti.UI.iPhone.TableViewStyle.GROUPED,
         separatorInsets : {
@@ -85,7 +85,7 @@ if (!isAndroid) {
     table = Titanium.UI.createTableView({
         width : Ti.UI.FILL,
         left : 0,
-        height : '85%',
+        height : Ti.UI.FILL,
         separatorColor : '#303030',
         id : 'challengeTable'
     });
