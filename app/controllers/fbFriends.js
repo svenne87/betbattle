@@ -64,7 +64,7 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
         text : Alloy.Globals.PHRASES.notFbUserTxt + '\n' + Alloy.Globals.PHRASES.connectToGetFriendsTxt,
         textAlign : "center",
         top : 10,
-        font : Alloy.Globals.getFontCustom(18, "Regular"),
+        font : Alloy.Globals.getFontCustom(16, "Regular"),
         color : "#FFF"
     });
     mainView.add(connectLabel);

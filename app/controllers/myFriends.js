@@ -776,7 +776,6 @@ var xhr = Ti.Network.createHTTPClient({
     timeout : Alloy.Globals.TIMEOUT // in milliseconds
 });
 // Prepare the connection.
-
 xhr.open('GET', Alloy.Globals.BETKAMPENGETFRIENDSURL + '?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
 
 xhr.setRequestHeader("content-type", "application/json");

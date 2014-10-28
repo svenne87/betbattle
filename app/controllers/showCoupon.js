@@ -230,7 +230,7 @@ var matchesView = Ti.UI.createView({
 });
 
 matchesView.add(Ti.UI.createLabel({
-    text : Alloy.Globals.PHRASES.matchesTxt,
+    text : Alloy.Globals.PHRASES.matchesTxt + " ",
     left : 10,
     top : 25,
     height : Ti.UI.SIZE,
@@ -283,7 +283,7 @@ for (var i in games) {
     }
 
     var teamsLabel = Ti.UI.createLabel({
-        text : teamOne + ' - ' + teamTwo,
+        text : teamOne + ' - ' + teamTwo + " ",
         font : Alloy.Globals.getFontCustom(16, 'Regular'),
         color : "#FFF",
         left : 10,
@@ -363,7 +363,7 @@ var coinsView = Ti.UI.createView({
 });
 
 coinsView.add(Ti.UI.createLabel({
-    text : Alloy.Globals.PHRASES.chooseCoinsBetTxt,
+    text : Alloy.Globals.PHRASES.chooseCoinsBetTxt + " ",
     left : 10,
     top : 25,
     height : Ti.UI.SIZE,

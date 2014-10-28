@@ -863,9 +863,9 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished)
         
         swipeRefresh.addEventListener('refreshing', function(e) {
             if (Alloy.Globals.checkConnection()) {
+                pendingStandingsArray = [];
                 setTimeout(function() {
                     indicator.openIndicator();
-                    pendingStandingsArray = [];
                     androidViews = [];    
                     
                     for(var view in $.showChallenge.getViews()) {

@@ -16,7 +16,7 @@ if (OS_IOS) {
     iOSVersion = parseInt(Ti.Platform.version);
     $.friendZone.titleControl = Ti.UI.createLabel({
         text : Alloy.Globals.PHRASES.friendZoneTxt,
-        font : Alloy.Globals.getFontCustom(18, "Bold"),
+        font : Alloy.Globals.getFontCustom(16, "Bold"),
         color : '#FFF'
     });
 }
@@ -154,7 +154,7 @@ fbFriendBtn.add(fbIconLabel);
 
 var fbLabel = Titanium.UI.createLabel({
     text : Alloy.Globals.PHRASES.fbFriendsTxt,
-    font : Alloy.Globals.getFontCustom(18, "Regular"),
+    font : Alloy.Globals.getFontCustom(16, "Regular"),
     color : "#fff",
     left : 50,
 });
@@ -198,7 +198,7 @@ myFriendBtn.add(mFIconLabel);
 
 var mFriendLabel = Titanium.UI.createLabel({
     text : Alloy.Globals.PHRASES.myFriendsTxt,
-    font : Alloy.Globals.getFontCustom(18, "Regular"),
+    font : Alloy.Globals.getFontCustom(16, "Regular"),
     color : "#FFF",
     left : 50,
 });
@@ -241,7 +241,7 @@ myGroupsBtn.add(mgIconLabel);
 
 var mGroupLabel = Titanium.UI.createLabel({
     text : Alloy.Globals.PHRASES.myGroupsTxt,
-    font : Alloy.Globals.getFontCustom(18, "Regular"),
+    font : Alloy.Globals.getFontCustom(16, "Regular"),
     color : "#FFF",
     left : 50
 });
@@ -286,7 +286,7 @@ addFriendsBtn.add(afIconLabel);
 
 var aFriendLabel = Titanium.UI.createLabel({
     text : Alloy.Globals.PHRASES.addFriendsTxt,
-    font : Alloy.Globals.getFontCustom(18, "Regular"),
+    font : Alloy.Globals.getFontCustom(16, "Regular"),
     color : "#FFF",
     left : 50,
 });
@@ -330,7 +330,7 @@ createGroupBtn.add(cgIconLabel);
 
 cGroupLabel = Titanium.UI.createLabel({
     text : Alloy.Globals.PHRASES.createGroupTxt,
-    font : Alloy.Globals.getFontCustom(18, "Regular"),
+    font : Alloy.Globals.getFontCustom(16, "Regular"),
     color : "#FFF",
     left : 50,
 });
@@ -374,7 +374,7 @@ shareBtn.add(sIconLabel);
 
 shareLabel = Titanium.UI.createLabel({
     text : Alloy.Globals.PHRASES.inviteFriendsTxt,
-    font : Alloy.Globals.getFontCustom(18, "Regular"),
+    font : Alloy.Globals.getFontCustom(16, "Regular"),
     color : "#FFF",
     left : 50,
 });

@@ -167,8 +167,8 @@ function createViews(array) {
             left : 0,
             headerView : tableHeaderView,
             footerView : tableFooterView,
-            height : '85%',
-            width : '100%',
+            height : Ti.UI.FILL,
+            width : Ti.UI.FILL,
             backgroundColor : 'transparent',
             style : Ti.UI.iPhone.TableViewStyle.GROUPED,
             separatorInsets : {
@@ -189,8 +189,7 @@ function createViews(array) {
         table = Titanium.UI.createTableView({
             width : Ti.UI.FILL,
             left : 0,
-            headerView : tableHeaderView,
-            height : '85%',
+            height : Ti.UI.FILL,
             separatorColor : '#303030',
             id : 'challengeTable'
         });
@@ -222,6 +221,7 @@ function createViews(array) {
             hasChild : child,
             width : Ti.UI.FILL,
             left : 0,
+            name : array[i].attributes.id,
             className : 'gameTypeRow',
             height : 75,
             id : array[i].attributes.id,
@@ -267,149 +267,13 @@ function createViews(array) {
             }));
         }
 
-        /*if (array[i].attributes.creator == Alloy.Globals.BETKAMPENUID) {
-         var deleteBtn = Ti.UI.createButton({
-         classes : ['remove'],
-         height : 45,
-         width : '18%',
-         left : '81.2%',
-         id : array[i].attributes.id,
-         admin : '1',
-         font : {
-         fontFamily : font,
-         fontSize : 30
-         },
-         title : fontawesome.icon('fa-trash-o'),
-         backgroundColor : '#fff',
-         color : '#000',
-         opacity : 0.7,
-         borderRadius : 10
-         });
-         } else {
-         var deleteBtn = Ti.UI.createButton({
-         classes : ['remove'],
-         height : 45,
-         width : '18%',
-         left : '81.2%',
-         id : array[i].attributes.id,
-         admin : '0',
-         creator : array[i].attributes.creator,
-         font : {
-         fontFamily : font,
-         fontSize : 30
-         },
-         title : fontawesome.icon('fa-ban'),
-         backgroundColor : '#fff',
-         color : '#000',
-         opacity : 0.7,
-         borderRadius : 10
-         });
-         }*/
-
-        /*.addEventListener('click', function(e) {
-         // delete group
-         if (e.source.admin == '1') {
-         var aD = Titanium.UI.createAlertDialog({
-         title : Alloy.Globals.PHRASES.betbattleTxt,
-         message : Alloy.Globals.PHRASES.deleteGroupTxt,
-         buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtnTxt],
-         cancel : 1,
-         id : e.source.id
-         });
-
-         aD.addEventListener('click', function(e) {
-         switch(e.index) {
-         case 0:
-         var deleteGroup = Ti.Network.createHTTPClient();
-         deleteGroup.onload = function() {
-         Ti.API.info(this.ResponseText);
-         if (this.responseText == 'Erased') {
-         //alert(Alloy.Globals.PHRASES.groupDeletedTxt);
-         } else {
-         alert(Alloy.Globals.PHRASES.commonErrorTxt);
-         }
-         };
-         deleteGroup.open("POST", Alloy.Globals.BETKAMPENDELTEGROUPURL + '/?lang=' + Alloy.Globals.LOCALE);
-         var params = {
-         group_id : e.source.id,
-         id : Alloy.Globals.BETKAMPENUID,
-         };
-         deleteGroup.send(params);
-         var win = Alloy.createController('myGroups').getView();
-         Alloy.Globals.showToast(Alloy.Globals.PHRASES.groupDeletedTxt);
-
-         if (OS_IOS) {
-         Alloy.Globals.NAV.openWindow(win, {
-         animated : false
-         });
-         } else {
-         win.open({
-         fullScreen : true
-         });
-         win = null;
-         }
-         $.myGroups.close();
-         break;
-         case 1:
-         Titanium.API.info('cancel');
-         break;
-         }
-
-         });
-         aD.show();
-         //leave group
-         } else {
-         var aL = Titanium.UI.createAlertDialog({
-         title : Alloy.Globals.PHRASES.betbattleTxt,
-         message : Alloy.Globals.PHRASES.leaveGroupTxt,
-         buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtnTxt],
-         cancel : 1,
-         id : e.source.id
-         });
-
-         aL.addEventListener('click', function(e) {
-         switch(e.index) {
-         case 0:
-         var leaveGroup = Ti.Network.createHTTPClient();
-
-         leaveGroup.open("POST", Alloy.Globals.BETKAMPENREMOVEGROUPMEMBERURL);
-         var params = {
-         group_id : e.source.id,
-         id : Alloy.Globals.BETKAMPENUID,
-         member_to_remove : Alloy.Globals.BETKAMPENUID,
-         };
-         leaveGroup.send(params);
-         var win = Alloy.createController('myGroups').getView();
-         if (OS_IOS) {
-         Alloy.Globals.NAV.openWindow(win, {
-         animated : false
-         });
-         } else {
-         win.open({
-         fullScreen : true
-         });
-         win = null;
-         }
-         $.myGroups.close();
-         break;
-         case 1:
-         Titanium.API.info('cancel');
-         break;
-         }
-
-         });
-         aL.show();
-
-         }
-
-         });*/
-
         group.addEventListener('click', function(e) {
             var args = {
                 row : e.row.children[1],
                 gID : e.row.id,
                 gName : e.row.gName,
-                gAdmin : e.row.creator
+                gAdmin : e.row.creator,
+                table : table
             };
 
             var win = Alloy.createController('editGroup', args).getView();

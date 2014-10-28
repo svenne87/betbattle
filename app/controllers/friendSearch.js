@@ -54,18 +54,17 @@ var mainView = Ti.UI.createView({
 
 var searchView = Ti.UI.createView({
     width : '100%',
-    height : 40,
+    height : 50,
     top : 30
 });
 mainView.add(searchView);
 
 var searchText = Ti.UI.createTextField({
     color : '#336699',
-    backgroundColor : '#707070',
-    borderColor : '#000',
+    backgroundColor : '#CCC',
     left : 18,
     width : '90%',
-    height : 40,
+    height : 50,
     hintText : Alloy.Globals.PHRASES.searchHintTxt,
     tintColor : '#000',
     keyboardType : Titanium.UI.KEYBOARD_DEFAULT,
@@ -98,7 +97,7 @@ var tableFooterView = Ti.UI.createView({
 if (!isAndroid) {
     table = Titanium.UI.createTableView({
         left : 0,
-        top : 30,
+        top : 20,
         headerView : tableHeaderView,
         footerView : tableFooterView,
         height : '85%',
@@ -122,7 +121,7 @@ if (!isAndroid) {
     table = Titanium.UI.createTableView({
         width : Ti.UI.FILL,
         left : 0,
-        top : 30,
+        top : 20,
         headerView : tableHeaderView,
         height : '85%',
         separatorColor : '#303030',
@@ -147,9 +146,9 @@ searchBtn.addEventListener('click', function(e) {
 });
 
 //or when you just click return on the keyboard
-/*searchText.addEventListener('return', function(e) {
- getSearchResult();
- });*/
+searchText.addEventListener('return', function(e) {
+    getSearchResult();
+});
 
 a = 0;
 function createGUI(obj) {

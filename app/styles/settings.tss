@@ -11,7 +11,6 @@
    	backgroundColor : "transparent"
 },
 "#table[platform=ios]": {
-	top : 20,
 	height : '85%',
 	width : Ti.UI.FILL,
 	backgroundColor : '#000',
@@ -25,7 +24,6 @@
     separatorColor : '#303030'
 },
 "#table[platform=android]": {
-	top : 20,
 	height : '85%',
 	width : Ti.UI.FILL,
 	backgroundColor : '#000',

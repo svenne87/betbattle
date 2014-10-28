@@ -1,7 +1,26 @@
 
 ".container" : {
-  width: "100%",
-  height: "100%",
-  layout: "absolute",
-  backgroundImage : "/images/profileBG.jpg"
+  width: Ti.UI.FILL,
+  height: Ti.UI.FILL,
+},
+"#table[platform=ios]": {
+	height : Ti.UI.FILL,
+	width : Ti.UI.FILL,
+	backgroundColor : '#000',
+	separatorInsets : {
+    	left : 0,
+        right : 0
+    },
+    scrollable : true,
+    separatorColor : '#303030',
+    selectionStyle : 'none',
+    separatorStyle : Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE
+},
+"#table[platform=android]": {
+	height : Ti.UI.FILL,
+	width : Ti.UI.FILL,
+	backgroundColor : '#000',
+    scrollable : true,
+    selectionStyle : 'none',
+    separatorColor : '#303030'
 }

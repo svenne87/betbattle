@@ -172,3 +172,14 @@ if (language) {
     getLanguage();
 }
 
+
+
+
+/*
+ http://sportcdn.s3.amazonaws.com/soccer/teams/50x50/ACKwnV3C.png
+
+http://stackoverflow.com/questions/6306935/php-copy-image-to-my-server-direct-from-url
+
+settings i profile?
+ */
+
