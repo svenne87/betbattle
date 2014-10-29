@@ -106,6 +106,10 @@ function createGameType(gameType, gameObject, i, gameArray, index) {
 
 }
 
+function isLowerCase(str) {
+    return str === str.toLowerCase();
+}
+
 function createSelectGameType(gameType, gameObject, i, gameArray, index) {
     var respHeight = 80;
     var respOptionsHeight = 40;
@@ -157,6 +161,8 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
         var logoWrapper = Ti.UI.createView({
             width : 50,
             height : 50,
+            borderRadius : 25,
+            backgroundColor : '#FFF',
             layout : 'absolute',
             left : '21%'
         });
@@ -164,6 +170,8 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
         var logoWrapper2 = Ti.UI.createView({
             width : 50,
             height : 50,
+            borderRadius : 25,
+            backgroundColor : '#FFF',
             layout : 'absolute',
             left : '28%'
         });
@@ -172,17 +180,27 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
             defaultImage : '/images/no_pic.png',
             image : Alloy.Globals.BETKAMPENURL + gameObject.attributes.team_1.team_logo,
             width : 50,
-            height : 50,
-            borderRadius : 25
+            height : 50
         });
+        
+        // fix for images delivered from us/api
+        if(!isLowerCase(gameObject.attributes.team_1.team_logo)) {
+            team_logo.width = 30;
+            team_logo.height = 30;
+        }
 
         var team2_logo = Ti.UI.createImageView({
             defaultImage : '/images/no_pic.png',
             image : Alloy.Globals.BETKAMPENURL + gameObject.attributes.team_2.team_logo,
             width : 50,
-            height : 50,
-            borderRadius : 25
+            height : 50
         });
+        
+        // fix for images delivered from us/api
+        if(!isLowerCase(gameObject.attributes.team_2.team_logo)) {
+            team2_logo.width = 30;
+            team2_logo.height = 30;
+        }
 
         team_logo.addEventListener('error', function(e) {
             team_logo.image = '/images/no_pic.png';

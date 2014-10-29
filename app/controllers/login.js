@@ -571,7 +571,7 @@ function getTutorialImages(){
 							var image = Ti.UI.createImageView({
 								image :imageUrl,
 								text : Ti.UI.FILL,
-								text : Ti.UI.FILL, 
+								text : Ti.UI.FILL
 							});
 							
 							view.add(image);
@@ -710,4 +710,3 @@ $.registerBtn.addEventListener('click', function(e) {
 
 $.registerBtnText.text = Alloy.Globals.PHRASES.registerTxt;
 $.loginBtnText.text = Alloy.Globals.PHRASES.signInTxt;
-// TODO in index getTutorialImages();

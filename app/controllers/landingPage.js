@@ -365,7 +365,7 @@ if (OS_IOS) {
         callback : function(e) {
             // when a gcm notification is received WHEN the app IS IN FOREGROUND
             var type = '';
-            
+
             if (e.message.charAt(0) === '1') {
                 e.message = e.message.substring(1);
                 type = 'accept';
@@ -1012,7 +1012,7 @@ mid_img.add(Ti.UI.createLabel({
     zIndex : "100",
     height : "25%",
     width : "80%",
-    backgroundColor:"red",
+    backgroundColor : "red",
     color : "#FFF",
     left : 10,
     bottom : 1,
@@ -1346,7 +1346,7 @@ function createTopView(resp) {
         color : "#FFF",
         right : 25,
         bottom : 1,
-        font :Alloy.Globals.getFontCustom(12, "Bold")
+        font : Alloy.Globals.getFontCustom(12, "Bold")
     }));
     bot_img.add(Ti.UI.createView({
         width : 8,
@@ -1394,6 +1394,7 @@ function createTopView(resp) {
         width : 50,
         height : 50,
     });
+
     matchWrapperView.add(team1Logo);
 
     var versusLabel = Ti.UI.createLabel({
@@ -1484,7 +1485,7 @@ function createBotView() {
         textAlign : "left",
         bottom : "40%",
         left : "20%",
-        font :Alloy.Globals.getFontCustom(18, "Bold"),
+        font : Alloy.Globals.getFontCustom(18, "Bold"),
         color : "#FFF",
         text : Alloy.Globals.PHRASES.landingPageInviteBtnTop
     }));
@@ -1609,6 +1610,10 @@ function getTopImgView() {
     }
 }
 
+function isLowerCase(str) {
+    return str === str.toLowerCase();
+}
+
 function getMatchOfTheDay() {
     // check connection
     if (!Alloy.Globals.checkConnection()) {
@@ -1652,6 +1657,18 @@ function getMatchOfTheDay() {
                 if (match !== null) {
                     team1Logo.image = Alloy.Globals.BETKAMPENURL + match.team1_image;
                     team2Logo.image = Alloy.Globals.BETKAMPENURL + match.team2_image;
+
+                    // fix for images delivered from us/api
+                    if (!isLowerCase(match.team1_image)) {
+                        team1Logo.width = 30;
+                        team1Logo.height = 30;
+                    }
+
+                    // fix for images delivered from us/api
+                    if (!isLowerCase(match.team2_image)) {
+                        team2Logo.width = 30;
+                        team2Logo.height = 30;
+                    }
 
                     mid_img.addEventListener("click", function(e) {
                         // check connection

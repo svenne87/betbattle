@@ -9,7 +9,7 @@ var indicator = uie.createIndicatorWindow({
     text : Alloy.Globals.PHRASES.loadingTxt
 });
 var name = false;
-var sections = [];
+var data = [];
 var iOSVersion;
 var players = [];
 var friends = [];
@@ -118,15 +118,6 @@ $.scoreBoardTable.addEventListener('scroll', function(_evt) {
         }
     }
 
-});
-
-sections[0] = Ti.UI.createTableViewSection({
-    headerView : Ti.UI.createView({
-        height : 0.1
-    }),
-    footerView : Ti.UI.createView({
-        height : 0.1
-    })
 });
 
 var fontawesome = require('lib/IconicFont').IconicFont({
@@ -270,8 +261,8 @@ function createPopupLayout(win, playerObj, isFriend, isMe, friendIndex) {
             top : 130,
         });
         friend.add(frScore);
-        
-        if(friendObj.wins === "" || friendObj.wins === null || friendObj.wins ===" ") {
+
+        if (friendObj.wins === "" || friendObj.wins === null || friendObj.wins === " ") {
             friendObj.wins = "0";
         }
 
@@ -723,32 +714,22 @@ if (OS_IOS) {
     indicator.openIndicator();
 }
 
+$.scoreBoardTable.setData(data);
 getScore(true, 0, 20);
 
-function runFirstTime(firstTime, players, friends) {
-    if (firstTime) {
-        for (var i = 0; i < players.length; i++) {
-            sections[0].add(createRow(players[i], friends, i));
-        }
-        $.scoreBoardTable.setData(sections);
-    } else {
-        for (var i = 0; i < players.length; i++) {
-            $.scoreBoardTable.appendRow(createRow(players[i], friends, i));
-
-        }
-    }
-}
 
 /* Set text with information about how many games we are displaying */
 function setDisplayText() {
     if (scoreboardCount <= scroreboardFetched) {
-        footerViewLabel.setText(Alloy.Globals.PHRASES.showningPlayersTxt + ': ' + scoreboardCount + '/' + scoreboardCount);
+        footerViewLabel.setText(Alloy.Globals.PHRASES.showningPlayersTxt + ': ' + scoreboardCount + '/' + scoreboardCount + ' ');
     } else {
-        footerViewLabel.setText(Alloy.Globals.PHRASES.showningPlayersTxt + ': ' + scroreboardFetched + '/' + scoreboardCount);
+        footerViewLabel.setText(Alloy.Globals.PHRASES.showningPlayersTxt + ': ' + scroreboardFetched + '/' + scoreboardCount + ' ');
     }
 }
 
 function getScore(firstTime, start, rows) {
+    Ti.API.log(firstTime + " Fetching -> " + start + " - " + rows);
+
     // check connection
     if (Alloy.Globals.checkConnection()) {
         if (isLoading) {
@@ -770,7 +751,7 @@ function getScore(firstTime, start, rows) {
         };
 
         try {
-            xhr.open("GET", Alloy.Globals.SCOREBOARDURL + '?lang=' + Alloy.Globals.LOCALE);
+            xhr.open("GET", Alloy.Globals.SCOREBOARDURL + '?lang=' + Alloy.Globals.LOCALE + '&start=' + start + '&rows=' + rows);
             xhr.setRequestHeader("content-type", "application/json");
             xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
             xhr.setTimeout(Alloy.Globals.TIMEOUT);
@@ -796,10 +777,9 @@ function getScore(firstTime, start, rows) {
                     }
 
                     if (firstTime) {
-                        scroreboardFetched = 20;
-                        setDisplayText();
+                        scroreboardFetched = 0;
+                        footerViewLabel.setText(Alloy.Globals.PHRASES.showningPlayersTxt + ': ' + 20 + '/' + scoreboardCount + ' ');
                     } else {
-
                         // we can't fetch more games
                         if (((scroreboardFetched - 0) + 20) >= scoreboardCount) {
                             // all games are visible. update values
@@ -807,15 +787,16 @@ function getScore(firstTime, start, rows) {
                         }
                         setDisplayText();
                     }
-
-                    for (var player in resp.scoreboard) {
-                        // add each player
-                        players.push(resp.scoreboard[player]);
-                    }
-
+                    
                     // friends will be this array
                     friends = resp.friends;
-                    runFirstTime(firstTime, players, friends);
+                    
+                    // store all in players
+                    for (var player in resp.scoreboard) {
+                        // add each player to total array, and keep track of that index
+                        var index = players.push(resp.scoreboard[player]) -1;
+                        $.scoreBoardTable.appendRow(createRow(resp.scoreboard[player], friends, index));
+                    }                    
                 }
                 indicator.closeIndicator();
                 isLoading = false;
@@ -843,8 +824,8 @@ if (OS_ANDROID) {
         $.scoreView.activity.actionBar.title = Alloy.Globals.PHRASES.scoreboardTxt;
 
         // sometimes the view remain in memory, then we don't need to show the "loading"
-        if (!name) {
-            // indicator.openIndicator(); // TODO
+        if (players.length == 0) {
+            indicator.openIndicator(); // TODO
         }
     });
 }

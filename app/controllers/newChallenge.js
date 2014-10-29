@@ -488,7 +488,7 @@ function endRefresher() {
 }
 
 // will fetch games from API
-function getGames(league, firstTime, start, rows) {
+function getGames(league, firstTime, start, rows) {     
     // check connection
     if (Alloy.Globals.checkConnection()) {
         if (isLoading) {
@@ -544,8 +544,8 @@ function getGames(league, firstTime, start, rows) {
                         if (firstTime) {
                             // if this is the first time we are calling this method or if this is a refresh, then rebuild table
                             createAndShowTableView(league, array);
-                            numberOfGamesFetched = 20;
-                            setDisplayText();
+                            numberOfGamesFetched = 0;
+                            footerViewText.setText(Alloy.Globals.PHRASES.showningMatchesTxt + ': ' + 20 + '/' + totalNumberOfGames + " ");
                         } else {
                             // not first time, then just add rows
                             appendToRow(array);
