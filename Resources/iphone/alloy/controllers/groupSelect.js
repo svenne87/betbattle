@@ -230,21 +230,16 @@ function Controller() {
                         var response = JSON.parse(this.responseText);
                         response = response.replace(/(<br \/>)+/g, "\n");
                         Alloy.Globals.showToast(response);
-                        var argu = {
-                            refresh: 1,
-                            sent_challenge: 1
+                        var arg = {
+                            refresh: true
                         };
-                        var loginSuccessWindow = Alloy.createController("main", argu).getView();
-                        loginSuccessWindow.open(isAndroid ? {
-                            fullScreen: true,
-                            navBarHidden: false,
-                            orientationModes: [ Titanium.UI.PORTRAIT ]
-                        } : {
-                            fullScreen: true,
-                            transition: Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
-                        });
-                        loginSuccessWindow = null;
-                        for (var win in Alloy.Globals.WINDOWS) null !== win && Alloy.Globals.WINDOWS[win].close();
+                        var obj = {
+                            controller: "challengesView",
+                            arg: arg
+                        };
+                        Ti.App.fireEvent("app:updateView", obj);
+                        $.groupSelectWindow.close();
+                        for (var win in Alloy.Globals.WINDOWS) Alloy.Globals.WINDOWS[win].close();
                     } else {
                         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                         isSubmitting = false;
@@ -317,21 +312,16 @@ function Controller() {
                         var response = JSON.parse(this.responseText);
                         response = response.replace(/(<br \/>)+/g, "\n");
                         Alloy.Globals.showToast(response);
-                        var argu = {
-                            refresh: 1,
-                            sent_challenge: 1
+                        var arg = {
+                            refresh: true
                         };
-                        var loginSuccessWindow = Alloy.createController("main", argu).getView();
-                        loginSuccessWindow.open(isAndroid ? {
-                            fullScreen: true,
-                            navBarHidden: false,
-                            orientationModes: [ Titanium.UI.PORTRAIT ]
-                        } : {
-                            fullScreen: true,
-                            transition: Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
-                        });
-                        loginSuccessWindow = null;
-                        for (win in Alloy.Globals.WINDOWS) 0 !== win && Alloy.Globals.WINDOWS[win].close();
+                        var obj = {
+                            controller: "challengesView",
+                            arg: arg
+                        };
+                        Ti.App.fireEvent("app:updateView", obj);
+                        $.groupSelectWindow.close();
+                        for (var win in Alloy.Globals.WINDOWS) Alloy.Globals.WINDOWS[win].close();
                     } else {
                         isSubmitting = false;
                         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);

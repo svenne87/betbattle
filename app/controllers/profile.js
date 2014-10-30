@@ -552,6 +552,12 @@ function getAchievements() {
                                     top : 5,
                                 });
                                 textWrapper.add(achievementTitle);
+                                
+                                var dynamicTop = 40;
+                                
+                                if(Alloy.Globals.PHRASES.achievements[e.source.id].title.length > 13) {
+                                    dynamicTop = 60;
+                                } 
 
                                 var achievementDescription = Ti.UI.createLabel({
                                     text : Alloy.Globals.PHRASES.achievements[e.source.id].description,
@@ -559,7 +565,7 @@ function getAchievements() {
                                     color : "#000",
                                     width : "90%",
                                     zIndex : "2000",
-                                    top : 40,
+                                    top : dynamicTop,
                                 });
                                 textWrapper.add(achievementDescription);
 
@@ -642,13 +648,19 @@ function getAchievements() {
                                     font : Alloy.Globals.getFontCustom(18, 'Bold')
                                 });
                                 w.add(achievementTitle);
+                                
+                                var dynamicTop = 40;
+                                
+                                if(Alloy.Globals.PHRASES.achievements[e.source.id].title.length > 13) {
+                                    dynamicTop = 60;
+                                } 
 
                                 var achievementDescription = Ti.UI.createLabel({
                                     text : Alloy.Globals.PHRASES.achievements[e.source.id].description,
                                     textAlign : "center",
                                     color : "#000",
                                     width : "90%",
-                                    top : 40,
+                                    top : dynamicTop,
                                 });
                                 w.add(achievementDescription);
 

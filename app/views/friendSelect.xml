@@ -1,6 +1,0 @@
-<Alloy>
-	<Window class="container" id="friendSelectWindow">	
-		<View id="friendSelect">
-		</View>
-	</Window>
-</Alloy>

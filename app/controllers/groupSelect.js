@@ -334,29 +334,21 @@ function challengeGroup(array) {
                     // show dialog and if ok close window
 
                     Alloy.Globals.showToast(response);
-                    var argu = {
-                        refresh : 1,
-                        sent_challenge : 1,
+                    
+                       // change view
+                    var arg = {
+                        refresh : true
                     };
-                    var loginSuccessWindow = Alloy.createController('main', argu).getView();
-                    if (!isAndroid) {
-                        loginSuccessWindow.open({
-                            fullScreen : true,
-                            transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
-                        });
-                    } else {
-                        loginSuccessWindow.open({
-                            fullScreen : true,
-                            navBarHidden : false,
-                            orientationModes : [Titanium.UI.PORTRAIT]
-                        });
-                    }
+                    var obj = {
+                        controller : 'challengesView',
+                        arg : arg
+                    };
 
-                    loginSuccessWindow = null;
+                    Ti.App.fireEvent('app:updateView', obj);
+
+                    $.groupSelectWindow.close();
                     for (var win in Alloy.Globals.WINDOWS) {
-                        if (win !== null) {
-                            Alloy.Globals.WINDOWS[win].close();
-                        }
+                        Alloy.Globals.WINDOWS[win].close();
                     }
 
                 } else {
@@ -465,33 +457,25 @@ function challengeFriends() {
                     var response = JSON.parse(this.responseText);
 
                     response = response.replace(/(<br \/>)+/g, "\n");
-                    // show dialog and if ok close window
-
+                    // show dialog and if ok close window              
                     Alloy.Globals.showToast(response);
-                    var argu = {
-                        refresh : 1,
-                        sent_challenge : 1
+   
+                    // change view
+                    var arg = {
+                        refresh : true
                     };
-                    var loginSuccessWindow = Alloy.createController('main', argu).getView();
-                    if (!isAndroid) {
-                        loginSuccessWindow.open({
-                            fullScreen : true,
-                            transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
-                        });
-                    } else {
-                        loginSuccessWindow.open({
-                            fullScreen : true,
-                            navBarHidden : false,
-                            orientationModes : [Titanium.UI.PORTRAIT]
-                        });
-                    }
-                    loginSuccessWindow = null;
+                    var obj = {
+                        controller : 'challengesView',
+                        arg : arg
+                    };
 
-                    for (win in Alloy.Globals.WINDOWS) {
-                        if (win !== 0) {
-                            Alloy.Globals.WINDOWS[win].close();
-                        }
+                    Ti.App.fireEvent('app:updateView', obj);
+                    $.groupSelectWindow.close();
+                    
+                    for (var win in Alloy.Globals.WINDOWS) {
+                        Alloy.Globals.WINDOWS[win].close();
                     }
+
 
                 } else {
                     isSubmitting = false;

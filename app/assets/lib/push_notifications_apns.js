@@ -85,7 +85,6 @@ var apns = function(){
                 } 
           
                 for(var w in Alloy.Globals.WINDOWS) {
-                    Ti.API.log(Alloy.Globals.WINDOWS[w] + " " + win);
                    if(Alloy.Globals.WINDOWS[w] === win) {
                       Alloy.Globals.WINDOWS[w].close();
                    }

@@ -1,8 +1,8 @@
 var args = arguments[0] || {};
 
-if (args.refresh) {
-    getChallenges();
-}
+//if (args.refresh) {
+   // getChallenges();
+//}
 
 var iOSVersion;
 var isAndroid = false;
@@ -213,7 +213,7 @@ function endRefresher() {
 
 
 function buildTableRows() {
-    table.setData([]);
+    //table.setData([]);
     data = [];
 
     var arrayObj = Alloy.Globals.CHALLENGEOBJECTARRAY[1];

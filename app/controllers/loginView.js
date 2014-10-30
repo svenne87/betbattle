@@ -23,7 +23,7 @@ var isAndroid = false;
 
 if (OS_ANDROID) {
     isAndroid = true;
-    
+
     $.loginView.orientationModes = [Titanium.UI.PORTRAIT];
 
     $.loginView.addEventListener('open', function() {
@@ -55,7 +55,7 @@ if (OS_ANDROID) {
 } else {
     $.loginView.titleControl = Ti.UI.createLabel({
         text : Alloy.Globals.PHRASES.signInTxt,
-         font : Alloy.Globals.getFontCustom(18, "Bold"),
+        font : Alloy.Globals.getFontCustom(18, "Bold"),
         color : '#FFF'
     });
 
@@ -80,7 +80,6 @@ $.table.setHeaderView(headerView);
 $.table.setFooterView(footerView);
 $.info_label.text = $.info_label.text + ':';
 
-
 var abortBtn = Alloy.Globals.createButtonView('#d50f25', '#FFF', Alloy.Globals.PHRASES.abortBtnTxt);
 var signInBtn = Alloy.Globals.createButtonView('#FFF', '#000', Alloy.Globals.PHRASES.signInTxt);
 
@@ -94,7 +93,6 @@ $.sign_in_row.add(signInBtn);
 var passChange = false;
 var emailChange = false;
 
-
 if (isAndroid) {
     $.loginPass.enabled = true;
     $.loginPass.addEventListener('focus', function() {
@@ -107,11 +105,11 @@ if (isAndroid) {
 
 $.loginPass.addEventListener('click', function() {
     $.loginPass.passwordMask = true;
-    
-    if(!isAndroid) {
+
+    if (!isAndroid) {
         $.loginPass.enabled = true;
-        $.loginPass.focus();  
-    }   
+        $.loginPass.focus();
+    }
 
     if (!passChange) {
         $.loginPass.setValue('');
@@ -119,24 +117,7 @@ $.loginPass.addEventListener('click', function() {
 });
 
 $.loginPass.addEventListener('blur', function() {
-    if(!isAndroid) {
-         $.loginPass.enabled = false;
-    }
-   
-    if ($.loginPass.value !== '' && $.loginPass.value !== null && $.loginPass.value !== ' ' && $.loginPass.value !== Alloy.Globals.PHRASES.passwordTxt) {
-        passChange = true;
-    } else {
-        passChange = false;
-    }
-
-    if (!passChange) {
-        $.loginPass.setValue(Alloy.Globals.PHRASES.passwordTxt);
-        $.loginPass.passwordMask = false;
-    }
-});
-
-$.loginPass.addEventListener('return', function() {
-    if(!isAndroid) {
+    if (!isAndroid) {
         $.loginPass.enabled = false;
     }
 
@@ -152,6 +133,40 @@ $.loginPass.addEventListener('return', function() {
     }
 });
 
+$.loginPass.addEventListener('return', function() {
+    if (!isAndroid) {
+        $.loginPass.enabled = false;
+    }
+
+    if ($.loginPass.value !== '' && $.loginPass.value !== null && $.loginPass.value !== ' ' && $.loginPass.value !== Alloy.Globals.PHRASES.passwordTxt) {
+        passChange = true;
+    } else {
+        passChange = false;
+    }
+
+    if (!passChange) {
+        $.loginPass.setValue(Alloy.Globals.PHRASES.passwordTxt);
+        $.loginPass.passwordMask = false;
+    } else {
+        if ($.loginPass.value === Alloy.Globals.PHRASES.passwordTxt || $.loginEmail.value === Alloy.Globals.PHRASES.emailTxt) {
+            Alloy.Globals.showFeedbackDialog(error);
+            return;
+        }
+
+        if ($.loginEmail.value != '' && $.loginPass.value != '') {
+            // this is due to a strange titanium bug with the garbage collector
+            indicator = uie.createIndicatorWindow({
+                top : 200,
+                text : Alloy.Globals.PHRASES.loadingTxt
+            });
+
+            indicator.openIndicator();
+            login(false);
+        } else {
+            Alloy.Globals.showFeedbackDialog(error);
+        }
+    }
+});
 
 if (isAndroid) {
     $.loginEmail.enabled = true;
@@ -163,9 +178,9 @@ if (isAndroid) {
 }
 
 $.loginEmail.addEventListener('click', function() {
-    if(!isAndroid) {
+    if (!isAndroid) {
         $.loginEmail.enabled = true;
-        $.loginEmail.focus(); 
+        $.loginEmail.focus();
     }
 
     if (!emailChange) {
@@ -174,9 +189,9 @@ $.loginEmail.addEventListener('click', function() {
 });
 
 $.loginEmail.addEventListener('blur', function() {
-    if(!isAndroid) {
+    if (!isAndroid) {
         $.loginEmail.enabled = false;
-    }  
+    }
 
     if ($.loginEmail.value !== '' && $.loginEmail.value !== null && $.loginEmail.value !== ' ' && $.loginEmail.value !== Alloy.Globals.PHRASES.emailTxt) {
         emailChange = true;
@@ -190,10 +205,10 @@ $.loginEmail.addEventListener('blur', function() {
 });
 
 $.loginEmail.addEventListener('return', function() {
-    if(!isAndroid) {
+    if (!isAndroid) {
         $.loginEmail.enabled = false;
     }
-    
+
     if ($.loginEmail.value !== '' && $.loginEmail.value !== null && $.loginEmail.value !== ' ' && $.loginEmail.value !== Alloy.Globals.PHRASES.emailTxt) {
         emailChange = true;
     } else {
@@ -290,7 +305,7 @@ function getChallengesAndStart() {
 
                         var loginSuccessWindow = Alloy.createController('landingPage', args).getView();
                         Alloy.Globals.CURRENTVIEW = loginSuccessWindow;
-                                
+
                         if (team.data.length > 0) {
                             if (OS_IOS) {
                                 loginSuccessWindow.open({
@@ -311,7 +326,7 @@ function getChallengesAndStart() {
 
                         } else {
                             var loginSuccessWindow = Alloy.createController('pickTeam', args).getView();
-                            
+
                             if (OS_IOS) {
                                 loginSuccessWindow.open({
                                     fullScreen : true,

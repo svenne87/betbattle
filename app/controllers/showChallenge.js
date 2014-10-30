@@ -561,7 +561,7 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished)
 
     var table;
 
-    if (OS_IOS) {
+    if (!isAndroid) {
         var separatorS;
         var separatorCol;
 
@@ -587,7 +587,7 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished)
             selectionStyle : 'none',
             refreshControl : refresher
         });
-    } else if (OS_ANDROID) {
+    } else {
         table = Titanium.UI.createTableView({
             width : Ti.UI.FILL,
             height : '85%',
@@ -889,7 +889,7 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished)
 }
 
 function endRefresher() {
-    if (OS_IOS) {
+    if (!isAndroid) {
         if ( typeof refresher !== 'undefined' && refresher !== null) {
             refresher.endRefreshing();
         }

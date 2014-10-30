@@ -10,9 +10,11 @@ var fontawesome = require('lib/IconicFont').IconicFont({
 });
 
 var font = 'FontAwesome';
+var isAndroid = false;
 
 if(OS_ANDROID){
     font = 'fontawesome-webfont';
+    isAndroid = true;
 }
 checkRatestatus();
 /* Used to update the menu and add a indicator for a new challenge */
@@ -158,7 +160,7 @@ function createMenuHeader() {
 	var heightPos = 15;
 	var borderLeftTop = 30;
 	var borderRightTop = 48;
-	if(OS_ANDROID) {topPos = 5; heightPos = 26; borderLeftTop = 18; borderRightTop = 47;}
+	if(isAndroid) {topPos = 5; heightPos = 26; borderLeftTop = 18; borderRightTop = 47;}
 
 	var coinsView = Ti.UI.createView({
 		height : heightPos,
@@ -215,7 +217,7 @@ function createMenuHeader() {
 	leftViewPart.addEventListener('click', function() {
 		var win = Alloy.createController('profile').getView();
 		Alloy.Globals.CURRENTVIEW =  win;
-		if (OS_IOS) {
+		if (!isAndroid) {
 			Alloy.Globals.NAV.openWindow(win, {
 				animated : true
 			});
@@ -244,7 +246,7 @@ function createMenuHeader() {
 	rightViewPart.addEventListener('click', function() {	        
 		var win = Alloy.createController('settings').getView();
 		Alloy.Globals.CURRENTVIEW =  win;
-		if (OS_IOS) {
+		if (!isAndroid) {
 			Alloy.Globals.NAV.openWindow(win, {
 				animated : true
 			});
@@ -290,7 +292,7 @@ $.mainWin.addEventListener('close', function(){
 
 var iOSVersion;
 
-if(OS_IOS){
+if(!isAndroid){
 	iOSVersion = parseInt(Ti.Platform.version);
 }
 
@@ -332,7 +334,7 @@ function logoutBetbattle(){
 					Alloy.Globals.BETKAMPEN = null;
 					Alloy.Globals.FACEBOOKOBJECT = null;
 					// close
-					if(OS_ANDROID) {
+					if(isAndroid) {
 						$.mainWin.close();
 						var activity = Titanium.Android.currentActivity;
     					activity.finish();
@@ -344,7 +346,7 @@ function logoutBetbattle(){
 						});
 						intent.addCategory(Ti.Android.CATEGORY_LAUNCHER);
 						Ti.Android.currentActivity.startActivity(intent);
-					} else if(OS_IOS) {
+					} else {
 						Alloy.Globals.FBERROR = false;							
 						Alloy.Globals.CURRENTVIEW  = null;
 						Alloy.Globals.NAV.close();
@@ -450,7 +452,7 @@ function createSection() {
 }
 
 function rowSelect(e) {
-	if(OS_IOS && e.row.customView !== 'challengesView' && e.row.customView !== 'logout'  && e.row.customView !== 'landingPage'){	
+	if(!isAndroid && e.row.customView !== 'challengesView' && e.row.customView !== 'logout'  && e.row.customView !== 'landingPage'){	
 		
 		if (Alloy.Globals.checkConnection()) {
 			// open these in window
@@ -470,7 +472,7 @@ function rowSelect(e) {
 			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionError);
 		}
 			
-	} else if(OS_ANDROID && e.row.customView !== 'challengesView' && e.row.customView !== 'logout'  && e.row.customView !== 'landingPage'){
+	} else if(isAndroid && e.row.customView !== 'challengesView' && e.row.customView !== 'logout'  && e.row.customView !== 'landingPage'){
 		if (Alloy.Globals.checkConnection()) {
 			// open these in window
 			var win =  Alloy.createController(e.row.customView).getView();
@@ -491,20 +493,20 @@ function rowSelect(e) {
 	}
 	
 	if(e.row.customView === 'landingPage') {
-		if(OS_IOS){
+		if(!isAndroid){
 			Alloy.Globals.NAV.close();
 			var args = {resume : false};
 			var start = Alloy.createController('landingPage', args).getView();
 			Alloy.Globals.CURRENTVIEW  = start;
 			start.open({modal : false});
 			start = null;
-		} else if (OS_ANDROID){
+		} else {
 			$.mainWin.close();
 		}
 	}
 	
 
-	if(OS_ANDROID && e.row.customView === 'logout'){
+	if(isAndroid && e.row.customView === 'logout'){
 		if (Alloy.Globals.checkConnection()) {	
 			var alertWindow = Titanium.UI.createAlertDialog({
 				title : Alloy.Globals.PHRASES.betbattleTxt,
@@ -553,7 +555,7 @@ function rowSelect(e) {
 		}
 	}
 	
-	if(OS_IOS && e.row.customView === 'logout'){
+	if(!isAndroid && e.row.customView === 'logout'){
 		if (Alloy.Globals.checkConnection()) {
 			var alertWindow = Titanium.UI.createAlertDialog({
 					title : Alloy.Globals.PHRASES.betbattleTxt,
@@ -617,7 +619,7 @@ $.ds.leftTableView.footerView = Ti.UI.createView({
 
 $.ds.leftTableView.headerView = createMenuHeader();
 
-if(OS_IOS){
+if(!isAndroid){
 	$.ds.leftTableView.separatorStyle = Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE;
 	$.ds.leftTableView.separatorInsets = {left:0,right:0};
 }
@@ -664,7 +666,7 @@ Ti.App.addEventListener("sliderToggled", function(e) {
 	}
 });
 
-if (OS_IOS){
+if (!isAndroid){
 	Alloy.Globals.NAV = $.nav;
 
 	var labelsMenu = [{ image : '/images/ButtonMenu.png'}];
@@ -787,7 +789,7 @@ if (OS_IOS){
         				icon: 'images/ikoner_kupong.png',
         				itemId : 1
         			});
-
+        			
        				var couponOpen = false;
        				//Add event listener to ticket button
 					ticket.addEventListener("click", function(){
@@ -811,9 +813,9 @@ if (OS_IOS){
     				var menu = e.menu;
     				
     				if(Alloy.Globals.hasCoupon){
-    					menu.findItem(1).setIcon('images/ticketBtnRed.png');
+    					menu.findItem(1).setIcon('images/ikoner_kupong_red.png');
     				} else {
-    					menu.findItem(1).setIcon('images/ticketBtn.png');
+    					menu.findItem(1).setIcon('images/ikoner_kupong.png');
     				}
 
     			};
@@ -868,9 +870,9 @@ function checkRatestatus() {
 							switch(e.index) {
 							//Google play or app store opens and user gets coins + xp
 							case 0:
-								if (OS_IOS) {
+								if (!isAndroid) {
 									Ti.Platform.openURL("http://itunes.apple.com/app/id884939881");
-								} else if (OS_ANDROID) {
+								} else {
 									Ti.Platform.openURL("market://details?id=apps.topgame.betkampen");
 								}
 								rate_status = 2;

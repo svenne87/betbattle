@@ -17,9 +17,9 @@
 	barColor : '#FFF'
 },
 "#facebookBtn":{
-	top: '70%',
-	height: '7%',
-	width: '68.5%',
+	top: '65%',
+	height: '9%',
+	width: '80%',
 	backgroundColor: '#336699',
 	borderRadius: 3
 },

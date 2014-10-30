@@ -385,7 +385,7 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
                             gameArray[index].gameValue[event.source.index] = e.data[0].value;
 
                             if (gameType.number_of_values == 1) {
-                                gameArray[index].gameValues[1] = 0;
+                                gameArray[index].gameValue[1] = 0;
                             }
 
                         }

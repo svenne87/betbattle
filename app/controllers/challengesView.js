@@ -1,7 +1,45 @@
-// ikoner, annan font, vänster, dela av med gradient, user pengar klocka, öka namn. de andra mindre
+/* Flow */
+var uie = require('lib/IndicatorWindow');
+var indicator = uie.createIndicatorWindow({
+    top : 200,
+    text : Alloy.Globals.PHRASES.loadingTxt
+});
+var refresher;
+var table;
+var swipeRefresh = null;
+var webViewUrl = '';
+var webViewTitle = '';
+
+var args = arguments[0] || {};
+if (args.refresh == 1) {
+    if (Alloy.Globals.checkConnection()) {
+        // refresh table with challenges
+        indicator.openIndicator();
+        getChallenges();
+        getUserInfo();
+        if (args.sent_challenge == 1) {
+            Alloy.Globals.unlockAchievement(11);
+        }
+    } else {
+        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+    }
+}
+
+var iOSVersion;
+var isAndroid = true;
+var sections = [];
+
+if (OS_IOS) {
+    iOSVersion = parseInt(Ti.Platform.version);
+    isAndroid = false;
+}
+
+$.challengesView.addEventListener('close', function() {
+    indicator.closeIndicator();
+});
+
 if (Alloy.Globals.hasCoupon) {
-    if (OS_IOS) {
-        Ti.API.info("challenge succces");
+    if (!isAndroid) {
         var children = Alloy.Globals.NAV.getChildren();
         for (var i in children) {
             if (children[i].id == "ticketView") {
@@ -19,7 +57,7 @@ if (Alloy.Globals.hasCoupon) {
 
             }
         }
-    } else if (OS_ANDROID) {
+    } else {
         // will rebuild action bar menu
         Ti.App.fireEvent('app:rebuildAndroidMenu');
     }
@@ -41,18 +79,6 @@ var mod = require('bencoding.blur');
 Ti.App.addEventListener("challengesViewRefresh", function(e) {
     if (Alloy.Globals.checkConnection()) {
         indicator.openIndicator();
-
-        if (OS_ANDROID) {
-            var children = $.challengesView.children;
-            $.challengesView.removeAllChildren();
-
-            for (var i = 0; i < children.length; i++) {
-                if (children[i].id === 'challengeTable' || children[i].id === 'scrollView') {
-                    $.challengesView.remove(children[i]);
-                    children[i] = null;
-                }
-            }
-        }
         getChallenges();
     } else {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
@@ -84,7 +110,7 @@ function getUserInfo() {
     xhr.onload = function() {
         if (this.status == '200') {
             if (this.readyState == 4) {
-                
+
                 var userInfo = null;
                 try {
                     userInfo = JSON.parse(this.responseText);
@@ -103,21 +129,6 @@ function getUserInfo() {
     };
 }
 
-function checkTournament(obj) {
-    var opponents = obj.attributes.opponents;
-
-    for (opponent in opponents) {
-        if (opponents[opponent].uid === Alloy.Globals.BETKAMPENUID) {
-            // this is me
-            if (opponents[opponent].status == 2) {
-                // I have already posted a answer for this tournament round
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
 // check for users that have status 2 in challenge/tournament
 function checkActiveUsers(array) {
     var activeUserCount = 0;
@@ -130,16 +141,16 @@ function checkActiveUsers(array) {
 }
 
 // show pending and finished challenges and tournaments in a webview
-function showChallengeInWebView(challengeId, roundId, groupName) {
+function showChallenge(challengeId, roundId, groupName) {
     if (Alloy.Globals.checkConnection()) {
 
         var win = Alloy.createController('showChallenge').getView();
 
-        if (OS_IOS) {
+        if (!isAndroid) {
             Alloy.Globals.NAV.openWindow(win, {
                 animated : true
             });
-        } else if (OS_ANDROID) {
+        } else {
             win.open({
                 fullScreen : true
             });
@@ -169,14 +180,14 @@ function createSectionsForTable(sectionText) {
         color : '#FFF'
     }));
 
-    if (OS_IOS) {
+    if (!isAndroid) {
         return Ti.UI.createTableViewSection({
             headerView : sectionView,
             footerView : Ti.UI.createView({
                 height : 0.1
             })
         });
-    } else if (OS_ANDROID) {
+    } else {
         return Ti.UI.createTableViewSection({
             headerView : sectionView
         });
@@ -244,11 +255,11 @@ function createNewChallengeRow() {
         var win = Alloy.createController('newChallengeLeague').getView();
         Alloy.Globals.WINDOWS.push(win);
 
-        if (OS_IOS) {
+        if (!isAndroid) {
             Alloy.Globals.NAV.openWindow(win, {
                 animated : true
             });
-        } else if (OS_ANDROID) {
+        } else {
             win.open({
                 fullScreen : true
             });
@@ -261,7 +272,7 @@ function createNewChallengeRow() {
 // build and return rows that are of the type 'Accept', 'Pending' and 'Finished'
 function constructChallengeRows(obj, index, type) {
     var child = true;
-    if (OS_ANDROID) {
+    if (isAndroid) {
         child = false;
     }
 
@@ -281,7 +292,7 @@ function constructChallengeRows(obj, index, type) {
     var font = 'FontAwesome';
 
     // add custom icon on Android to symbol that the row has child
-    if (child !== true) {
+    if (isAndroid) {
         var rightPercentage = '5%';
 
         font = 'fontawesome-webfont';
@@ -345,42 +356,19 @@ function constructChallengeRows(obj, index, type) {
 
     var betGroupName = Alloy.Globals.PHRASES.unknownGroupTxt;
 
-    if (type !== 'tournament' && type !== 'tournament_finished') {
-        // for normal challenge
-        try {
-            betGroupName = obj.attributes.group[0].name;
-        } catch(e) {
-            // do nothing
-            betGroupName = "";
-        }
-        if (betGroupName <= 0) {
-            betGroupName = obj.attributes.name;
-        }
-        if (betGroupName.length > 15) {
-            betGroupName = betGroupName.substring(0, 12) + '...';
-        }
+    // for normal challenge
+    try {
+        betGroupName = obj.attributes.group[0].name;
+    } catch(e) {
+        // do nothing
+        betGroupName = "";
+    }
 
-    } else {
-        // for tournament's
-        if ((type === 'tournament' && obj.attributes.opponents.length === 1) || (type === 'tournament_finished' && obj.attributes.opponents.length === 1)) {
-            betGroupName = Alloy.Globals.PHRASES.betbattleTxt;
-        } else {
-            betGroupName = Alloy.Globals.PHRASES.tournamentTxt;
-
-            if (obj.attributes.group.name != null) {
-                betGroupName = obj.attributes.group.name;
-            }
-
-            if (betGroupName.length === 0 || betGroupName === '') {
-                betGroupName = 'Turnering';
-            } else if (betGroupName === 'BetKampen Community') {
-                betGroupName = Alloy.Globals.PHRASES.betbattleTxt;
-            }
-
-            if (betGroupName.length > 15) {
-                betGroupName = betGroupName.substring(0, 12) + '...';
-            }
-        }
+    if (betGroupName <= 0) {
+        betGroupName = obj.attributes.name;
+    }
+    if (betGroupName.length > 15) {
+        betGroupName = betGroupName.substring(0, 12) + '...';
     }
 
     firstRowView.add(Ti.UI.createLabel({
@@ -450,17 +438,7 @@ function constructChallengeRows(obj, index, type) {
 
     secondRowView.add(participantsTextLabel);
 
-    var oppCount = 0;
-
-    if (type === 'tournament' && checkTournament(obj) === true && obj.attributes.opponents.length === 1) {
-        oppCount = parseInt(obj.attributes.opponentCount);
-    } else {
-        var oppCount = parseInt(obj.attributes.opponents.length);
-
-        if (oppCount === 1 && obj.attributes.group.name === 'BetKampen Community') {
-            oppCount = parseInt(obj.attributes.opponentCount);
-        }
-    }
+    var oppCount = parseInt(obj.attributes.opponents.length);
 
     var participantsValueLabel = Ti.UI.createLabel({
         left : 175,
@@ -484,25 +462,10 @@ function constructChallengeRows(obj, index, type) {
 
     var currentPot = Alloy.Globals.PHRASES.unknownSmallTxt;
 
-    if ((type === 'tournament' && obj.attributes.opponents.length === 1) || (type === 'tournament_finished' && obj.attributes.opponents.length === 1)) {
-        try {
-            currentPot = obj.attributes.tournamentPot;
-        } catch (e) {
-            currentPot = Alloy.Globals.PHRASES.unknownSmallTxt;
-        }
-    } else if ((type === 'tournament' && obj.attributes.opponents.length > 1) || (type === 'tournament_finished' && obj.attributes.opponents.length > 1)) {
-        try {
-            var activeUsers = checkActiveUsers(obj.attributes.opponents);
-            currentPot = activeUsers * obj.attributes.tournamentPot;
-        } catch (e) {
-            currentPot = Alloy.Globals.PHRASES.unknownSmallTxt;
-        }
-    } else {
-        try {
-            currentPot = obj.attributes.pot;
-        } catch (e) {
-            currentPot = Alloy.Globals.PHRASES.unknownSmallTxt;
-        }
+    try {
+        currentPot = obj.attributes.pot;
+    } catch (e) {
+        currentPot = Alloy.Globals.PHRASES.unknownSmallTxt;
     }
 
     var potValueLabel = Ti.UI.createLabel({
@@ -521,7 +484,6 @@ function constructChallengeRows(obj, index, type) {
     });
 
     if (type === 'accept') {
-
         firstRowView.add(Ti.UI.createLabel({
             left : 40,
             font : {
@@ -622,117 +584,309 @@ function constructChallengeRows(obj, index, type) {
     return row;
 }
 
-// create the hole table view with sections and checks if there are no challenges
-function constructTableView(array) {
-    if (OS_IOS) {
-        refresher = Ti.UI.createRefreshControl({
-            tintColor : Alloy.Globals.themeColor()
-        });
-
-        // will refresh on pull
-        refresher.addEventListener('refreshstart', function(e) {
-            if (Alloy.Globals.checkConnection()) {
-                getChallenges();
-            } else {
-                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
-                refresher.endRefreshing();
-            }
-
-        });
-    }
-
-    // check if table exists, and if it does simply remove it
-    var children = $.challengesView.children;
-    for (var i = 0; i < children.length; i++) {
-        if (children[i].id === 'challengeTable' || children[i].id === 'scrollView') {
-            $.challengesView.remove(children[i]);
-            children[i] = null;
-        }
-    }
-
-    var sections = [];
-
-    var tableHeaderView = Ti.UI.createView({
-        height : 80,
-        width : Ti.UI.FILL,
-        layout : "vertical",
+if (!isAndroid) {
+    refresher = Ti.UI.createRefreshControl({
+        tintColor : Alloy.Globals.themeColor()
     });
 
-    /*tableHeaderView.add(Ti.UI.createView({
-     backgroundImage : '/images/h_image.png', // TODO header
-     height : 80,
-     backgroundColor : 'transparent',
-     id : 'headerImage',
-     width : Ti.UI.FILL
-     }));*/
-    /*
-     tableHeaderView.add(Ti.UI.createView({
-     height : 0.1,
-     width : Ti.UI.FILL,
-     backgroundColor : 'transparent',
-     layout : "absolute",
-     }));
-     */
-    if (OS_IOS) {
-        table = Titanium.UI.createTableView({
-            //width : Ti.UI.FILL,
-            left : 0,
-            top : 0,
-            headerView : tableHeaderView,
-            height : Ti.UI.FILL,
-            width : '100%',
-            backgroundColor : 'transparent',
-            style : Ti.UI.iPhone.TableViewStyle.GROUPED,
-            separatorInsets : {
-                left : 0,
-                right : 0
-            },
-            id : 'challengeTable',
-            refreshControl : refresher,
-            separatorStyle : Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE,
-            separatorColor : '#303030'
-        });
-        
-        if (iOSVersion < 7) {
-            table.separatorStyle = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
-            table.separatorColor = 'transparent';
-        } 
+    // will refresh on pull
+    refresher.addEventListener('refreshstart', function(e) {
+        if (Alloy.Globals.checkConnection()) {
+            indicator.openIndicator();
+            getChallenges();
+        } else {
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+            refresher.endRefreshing();
+        }
 
+    });
+}
+// TODO
+var tableHeaderView = Ti.UI.createView({
+    height : 141,
+    width : Ti.UI.FILL,
+    layout : "vertical",
+});
+
+tableHeaderView.addEventListener('click', function() {
+    if (!Alloy.Globals.checkConnection()) {
+        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+        return;
+    }
+    
+    if (webViewUrl !== '') {
+        // open web view
+        var arg = {
+            url : webViewUrl,
+            title : webViewTitle
+        };
+
+        var win = Alloy.createController('dynamicWebView', arg).getView();
+        Alloy.Globals.WINDOWS.push(win);
+
+        if (!isAndroid) {
+            Alloy.Globals.NAV.openWindow(win, {
+                animated : true
+            });
+        } else {
+            win.open({
+                fullScreen : true
+            });
+        }
+    }
+});
+
+if (!isAndroid) {
+    table = Titanium.UI.createTableView({
+        left : 0,
+        top : 0,
+        headerView : tableHeaderView,
+        height : Ti.UI.FILL,
+        width : '100%',
+        backgroundColor : 'transparent',
+        style : Ti.UI.iPhone.TableViewStyle.GROUPED,
+        separatorInsets : {
+            left : 0,
+            right : 0
+        },
+        id : 'challengeTable',
+        refreshControl : refresher,
+        separatorStyle : Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE,
+        separatorColor : '#303030'
+    });
+
+    if (iOSVersion < 7) {
+        table.separatorStyle = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
+        table.separatorColor = 'transparent';
+    }
+} else {
+    table = Titanium.UI.createTableView({
+        width : Ti.UI.FILL,
+        left : 0,
+        headerView : tableHeaderView,
+        height : '100%',
+        backgroundColor : '#000',
+        separatorColor : '#303030',
+        id : 'challengeTable'
+    });
+
+    table.footerView = Ti.UI.createView({
+        height : 0.5,
+        width : Ti.UI.FILL,
+        backgroundColor : '#303030'
+    });
+}
+
+table.addEventListener('swipe', function(e) {
+    if (e.direction !== 'up' && e.direction !== 'down') {
+        Ti.API.log(e.direction);
+
+        table.touchEnabled = false;
+        Ti.App.fireEvent('app:slide');
+        table.touchEnabled = true;
+    }
+});
+
+// when clicking a row
+table.addEventListener('click', function(e) {
+    if (Alloy.Globals.SLIDERZINDEX == 2) {
+        return;
+    }
+
+    // e.rowData is null in android
+    if (isAndroid) {
+        // fix for android
+        e.rowData = e.row;
+    }
+
+    if (e.rowData === null || typeof e.rowData.id === 'undefined') {
+        return;
+    }
+
+    if (!Alloy.Globals.checkConnection()) {
+        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+        return;
+    }
+
+    if (e.rowData.className === 'accept') {
+        var obj = Alloy.Globals.CHALLENGEOBJECTARRAY[0][e.rowData.id];
+        if (obj.attributes.show !== 0) {
+            // view challenge
+
+            var count = obj.attributes.opponents.length;
+            var bet_amount = obj.attributes.potential_pot / count;
+
+            var args = {
+                answer : 1,
+                bet_amount : bet_amount
+            };
+            Alloy.Globals.CHALLENGEINDEX = e.rowData.id;
+            var win = Alloy.createController('challenge', args).getView();
+
+            if (!isAndroid) {
+                Alloy.Globals.NAV.openWindow(win, {
+                    animated : true
+                });
+            } else {
+                win.open({
+                    fullScreen : true
+                });
+            }
+        } else {
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.roundHasStartedErrorTxt);
+        }
+
+    } else if (e.rowData.id === 'new') {
+        var win = Alloy.createController('challenges_new').getView();
+        Alloy.Globals.WINDOWS.push(win);
+
+        if (!isAndroid) {
+            Alloy.Globals.NAV.openWindow(win, {
+                animated : true,
+            });
+        } else {
+            win.open({
+                fullScreen : true,
+            });
+        }
+
+    } else if (e.rowData.id === 'pending') {
+        var win = Alloy.createController('challenges_pending').getView();
+        Alloy.Globals.WINDOWS.push(win);
+
+        if (!isAndroid) {
+            Alloy.Globals.NAV.openWindow(win, {
+                animated : true,
+            });
+        } else {
+            win.open({
+                fullScreen : true,
+            });
+        }
+    } else if (e.rowData.id === 'finished') {
+        var win = Alloy.createController('challenges_finished').getView();
+        Alloy.Globals.WINDOWS.push(win);
+
+        if (!isAndroid) {
+            Alloy.Globals.NAV.openWindow(win, {
+                animated : true,
+            });
+        } else {
+            win.open({
+                fullScreen : true,
+            });
+        }
+    } else if (e.rowData.className === 'pending') {
+        var obj = Alloy.Globals.CHALLENGEOBJECTARRAY[1][e.rowData.id];
+        if (obj.attributes.show !== 0) {
+            // view challenge
+            var group = null;
+            try {
+                group = obj.attributes.group[0].name;
+            } catch(e) {
+                group = null;
+            }
+
+            if ( typeof group === undefined) {
+                group = null;
+            }
+            var args = {
+                cid : obj.attributes.id,
+                group : group
+            };
+
+            Alloy.Globals.CHALLENGEINDEX = e.rowData.id;
+            var win = Alloy.createController('showChallenge', args).getView();
+            Alloy.Globals.WINDOWS.push(win);
+
+            if (!isAndroid) {
+                Alloy.Globals.NAV.openWindow(win, {
+                    animated : true
+                });
+            } else {
+                win.open({
+                    fullScreen : true
+                });
+            }
+        } else {
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.roundHasStartedErrorTxt);
+        }
+
+    } else if (e.rowData.className === 'finished') {
+        // get correct object, 2 == finished
+        var obj = Alloy.Globals.CHALLENGEOBJECTARRAY[2][e.rowData.id];
+        // open a web view to view the finished challenge
+        var group = null;
+        try {
+            group = obj.attributes.group[0].name;
+        } catch(e) {
+            group = null;
+        }
+
+        if ( typeof group === undefined) {
+            group = null;
+        }
+
+        showChallenge(obj.attributes.id, -1, group);
+        obj = null;
+        group = null;
+
+    }
+});
+
+if (isAndroid) {
+    // https://github.com/raymondkam/Ti.SwipeRefreshLayout
+
+    var swipeRefreshModule = require('com.rkam.swiperefreshlayout');
+
+    swipeRefresh = swipeRefreshModule.createSwipeRefresh({
+        view : table,
+        height : Ti.UI.FILL,
+        width : Ti.UI.FILL,
+        id : 'scrollView'
+    });
+
+    swipeRefresh.addEventListener('refreshing', function() {
+        if (Alloy.Globals.checkConnection()) {
+            indicator.openIndicator();
+            setTimeout(function() {
+                getChallenges();
+            }, 800);
+        } else {
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+            swipeRefresh.setRefreshing(false);
+        }
+    });
+
+    $.challengesView.add(swipeRefresh);
+} else {
+    $.challengesView.add(table);
+}
+
+// create the hole table view with sections and checks if there are no challenges
+function constructTableData(array) {
+    getDynamicTopImage();
+
+    if (!isAndroid) {
         sections[0] = Ti.UI.createTableViewSection({
             footerView : Ti.UI.createView({
                 height : 0.1
             })
         });
-    } else if (OS_ANDROID) {
-        table = Titanium.UI.createTableView({
-            width : Ti.UI.FILL,
-            left : 0,
-            headerView : tableHeaderView,
-            height : '100%',
-            backgroundColor : 'transparent',
-            separatorColor : '#303030',
-            id : 'challengeTable'
-        });
-        
-        table.footerView = Ti.UI.createView({
-            height : 0.5,
-            width : Ti.UI.FILL,
-            backgroundColor : '#303030'
-        });
-        
+    } else {
         sections[0] = Ti.UI.createTableViewSection({});
+
     }
-    getDynamicTopImage();
+
     var fontawesome = require('lib/IconicFont').IconicFont({
         font : 'lib/FontAwesome'
     });
 
     var font = 'FontAwesome';
     var rightPercentage = '5%';
-    var isAndroid = false;
     var child = true;
 
-    if (OS_ANDROID) {
+    if (isAndroid) {
         child = false;
         isAndroid = true;
 
@@ -871,13 +1025,13 @@ function constructTableView(array) {
 
     sections[1] = createSectionsForTable(Alloy.Globals.PHRASES.challengesViewHot);
 
-    // there will be 3 types: 'tournaments'/'accept', 'pending' and finished (in that order)
     var challengesTournamentsCount = 0;
     // set this to 1 if there are no challenges
+
     var rightNowRows = 0;
     var acceptNowCount = 1;
     var pendingNowCount = 1;
-    // looping array backwards to print out tournaments first
+
     for (var x = 0; x < array.length; x++) {
         var arrayObj = array[x];
 
@@ -908,17 +1062,7 @@ function constructTableView(array) {
                 }
             }
 
-        } else if (x === 3) {
-            // create 'accept' / 'pending' tournaments rows
-            if (arrayObj.length > 0) {
-                for (var i = 0; i < arrayObj.length; i++) {
-                    sections[1].add(constructChallengeRows(arrayObj[i], i, 'tournament'));
-                }
-            } else if (arrayObj.length === 0) {
-                challengesTournamentsCount = 1;
-            }
         }
-
     }
 
     if (rightNowRows == 0) {
@@ -927,266 +1071,23 @@ function constructTableView(array) {
     }
     table.setData(sections);
 
-    table.addEventListener('swipe', function(e) {
-        if (e.direction !== 'up' && e.direction !== 'down') {
-            Ti.API.log(e.direction);
+    indicator.closeIndicator();
 
-            table.touchEnabled = false;
-            Ti.App.fireEvent('app:slide');
-            table.touchEnabled = true;
-        }
-    });
-
-    // when clicking a row
-    table.addEventListener('click', function(e) {
-        if (Alloy.Globals.SLIDERZINDEX == 2) {
-            return;
-        }
-
-        // e.rowData is null in android
-        if (OS_ANDROID) {
-            // fix for android
-            e.rowData = e.row;
-        }
-
-        if (e.rowData !== null) {
-            if (Alloy.Globals.checkConnection()) {
-                if ( typeof e.rowData.id !== 'undefined') {
-                    if (e.rowData.className === 'accept') {
-                        var obj = Alloy.Globals.CHALLENGEOBJECTARRAY[0][e.rowData.id];
-                        if (obj.attributes.show !== 0) {
-                            // view challenge
-
-                            var count = obj.attributes.opponents.length;
-                            Ti.API.info("potential_pot " + obj.attributes.potential_pot);
-                            var bet_amount = obj.attributes.potential_pot / count;
-                            Ti.API.info("count : " + count);
-                            Ti.API.info("bet_amount" + bet_amount);
-
-                            var args = {
-                                answer : 1,
-                                bet_amount : bet_amount
-                            };
-                            Alloy.Globals.CHALLENGEINDEX = e.rowData.id;
-                            var win = Alloy.createController('challenge', args).getView();
-
-                            if (OS_IOS) {
-                                Alloy.Globals.NAV.openWindow(win, {
-                                    animated : true
-                                });
-                            } else if (OS_ANDROID) {
-                                win.open({
-                                    fullScreen : true
-                                });
-                            }
-                        } else {
-                            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.roundHasStartedErrorTxt);
-                        }
-
-                    } else if (e.rowData.id === 'new') {
-                        var win = Alloy.createController('challenges_new').getView();
-                        Alloy.Globals.WINDOWS.push(win);
-
-                        if (OS_IOS) {
-                            Alloy.Globals.NAV.openWindow(win, {
-                                animated : true,
-                            });
-                        } else if (OS_ANDROID) {
-                            win.open({
-                                fullScreen : true,
-                            });
-                        }
-
-                    } else if (e.rowData.id === 'pending') {
-                        var win = Alloy.createController('challenges_pending').getView();
-                        Alloy.Globals.WINDOWS.push(win);
-
-                        if (OS_IOS) {
-                            Alloy.Globals.NAV.openWindow(win, {
-                                animated : true,
-                            });
-                        } else if (OS_ANDROID) {
-                            win.open({
-                                fullScreen : true,
-                            });
-                        }
-                    } else if (e.rowData.id === 'finished') {
-                        var win = Alloy.createController('challenges_finished').getView();
-                        Alloy.Globals.WINDOWS.push(win);
-
-                        if (OS_IOS) {
-                            Alloy.Globals.NAV.openWindow(win, {
-                                animated : true,
-                            });
-                        } else if (OS_ANDROID) {
-                            win.open({
-                                fullScreen : true,
-                            });
-                        }
-                    } else if (e.rowData.className === 'tournament') {
-                        // get correct tournament object, 3 will contain all tournaments
-                        var obj = Alloy.Globals.CHALLENGEOBJECTARRAY[3][e.rowData.id];
-                        // check if my status is 2, that mean I already have answered this challenge
-                        if (checkTournament(obj) === true) {
-                            // open in webview
-                            var group = null;
-                            try {
-                                group = obj.attributes.group.name;
-                            } catch(e) {
-                                group = null;
-                            }
-
-                            if ( typeof group === undefined) {
-                                group = null;
-                            }
-
-                            showChallengeInWebView(obj.attributes.id, obj.attributes.round, group);
-                            group = null;
-                        } else {
-                            if (obj.attributes.show !== 0) {
-                                // open to answer tournament round
-                                var arg = {
-                                    tournamentIndex : e.rowData.id,
-                                    tournamentRound : obj.attributes.round
-                                };
-
-                                var win = Alloy.createController('challenge', arg).getView();
-                                Alloy.Globals.WINDOWS.push(win);
-
-                                if (OS_IOS) {
-                                    Alloy.Globals.NAV.openWindow(win, {
-                                        animated : true
-                                    });
-
-                                } else if (OS_ANDROID) {
-                                    win.open({
-                                        fullScreen : true
-                                    });
-                                }
-                            } else {
-                                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.roundHasStartedErrorTxt);
-                            }
-
-                        }
-                    } else if (e.rowData.className === 'pending') {
-                        var obj = Alloy.Globals.CHALLENGEOBJECTARRAY[1][e.rowData.id];
-                        if (obj.attributes.show !== 0) {
-                            // view challenge
-                            var group = null;
-                            try {
-                                group = obj.attributes.group[0].name;
-                            } catch(e) {
-                                group = null;
-                            }
-
-                            if ( typeof group === undefined) {
-                                group = null;
-                            }
-                            var args = {
-                                cid : obj.attributes.id,
-                                group : group
-                            };
-
-                            Alloy.Globals.CHALLENGEINDEX = e.rowData.id;
-                            var win = Alloy.createController('showChallenge', args).getView();
-                            Alloy.Globals.WINDOWS.push(win);
-
-                            if (OS_IOS) {
-                                Alloy.Globals.NAV.openWindow(win, {
-                                    animated : true
-                                });
-                            } else if (OS_ANDROID) {
-                                win.open({
-                                    fullScreen : true
-                                });
-                            }
-                        } else {
-                            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.roundHasStartedErrorTxt);
-                        }
-
-                    } else if (e.rowData.className === 'finished') {
-                        // get correct object, 2 == finished
-                        var obj = Alloy.Globals.CHALLENGEOBJECTARRAY[2][e.rowData.id];
-                        // open a web view to view the finished challenge
-                        var group = null;
-                        try {
-                            group = obj.attributes.group[0].name;
-                        } catch(e) {
-                            group = null;
-                        }
-
-                        if ( typeof group === undefined) {
-                            group = null;
-                        }
-
-                        showChallengeInWebView(obj.attributes.id, -1, group);
-                        obj = null;
-                        group = null;
-
-                    } else if (e.rowData.className === 'tournament_finished') {
-                        // get correct object, 4 == finished_torunament rounds
-                        var obj = Alloy.Globals.CHALLENGEOBJECTARRAY[4][e.rowData.id];
-                        // open web view
-                        var group = null;
-                        try {
-                            group = obj.attributes.group.name;
-                        } catch(e) {
-                            group = null;
-                        }
-
-                        if ( typeof group === undefined) {
-                            group = null;
-                        }
-
-                        showChallengeInWebView(obj.attributes.id, obj.attributes.round, group);
-                        obj = null;
-                        group = null;
-                    }
-
-                }
-            } else {
-                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
-            }
-        }
-    });
-
-    if (OS_ANDROID) {
-        // https://github.com/raymondkam/Ti.SwipeRefreshLayout
-
-        var swipeRefreshModule = require('com.rkam.swiperefreshlayout');
-
-        swipeRefresh = swipeRefreshModule.createSwipeRefresh({
-            view : table,
-            height : Ti.UI.FILL,
-            width : Ti.UI.FILL,
-            id : 'scrollView'
-        });
-
-        swipeRefresh.addEventListener('refreshing', function() {
-            if (Alloy.Globals.checkConnection()) {
-                indicator.openIndicator();
-                setTimeout(function() {
-                    getChallenges();
-                }, 800);
-            } else {
-                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
-                swipeRefresh.setRefreshing(false);
-            }
-        });
-
-        $.challengesView.add(swipeRefresh);
-    } else {
-        $.challengesView.add(table);
+    if (!isAndroid) {
+        endRefresher();
     }
 }
 
 function getDynamicTopImage() {
+    if (!Alloy.Globals.checkConnection()) {
+        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+        return;
+    }
+
     var xhr = Titanium.Network.createHTTPClient();
     xhr.onerror = function(e) {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-        endRefresher();
         Ti.API.error('Bad Sever =>' + e.error);
-        indicator.closeIndicator();
     };
 
     try {
@@ -1197,62 +1098,38 @@ function getDynamicTopImage() {
         xhr.send();
     } catch(e) {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-        endRefresher();
-        indicator.closeIndicator();
     }
     xhr.onload = function() {
         if (this.status == '200') {
             if (this.readyState == 4) {
                 var response = JSON.parse(this.responseText);
-                // construct array with objects
-               
+
                 var header = table.getHeaderView();
+                header.removeAllChildren();
+                webViewUrl = response.url;
+                webViewTitle = response.title;
+
                 var imageView = Ti.UI.createImageView({
                     image : Alloy.Globals.BETKAMPENURL + response.image,
                     width : Ti.UI.SIZE,
-                    height : Ti.UI.SIZE
+                    height : 140
                 });
                 header.add(imageView);
-                //header.backgroundImage = Alloy.Globals.BETKAMPENURL + response.image;
 
-                var views = header.getChildren();
-                /*for (var i in views) {
-                 if (views[i].id == 'headerImage') {
-                 Ti.API.info("headerImage Hittad");
-                 views[i].setBackgroundImage(Alloy.Globals.BETKAMPENURL + response.image);
-                 views[i].addEventListener("click", function(e) {
-                 Ti.API.info("CLICKADE LOSS ");
-                 var params = {
-                 link : response.url
-                 };
-                 var win = Alloy.createController('webview', params).getView();
-                 if (OS_IOS) {
-                 Alloy.Globals.NAV.openWindow(win, {
-                 animated : true
-                 });
-                 } else {
-                 win.open({
-                 fullScreen : true
-                 });
-                 }
-                 });
-                 }
-                 }*/
+                if (isAndroid) {
+                    header.add(Ti.UI.createView({
+                        height : 0.5,
+                        width : Ti.UI.FILL,
+                        backgroundColor : '#303030'
+                    }));
+                }
 
             } else {
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             }
 
-            if (OS_ANDROID) {
-                if ( typeof swipeRefresh !== 'undefined') {
-                    swipeRefresh.setRefreshing(false);
-                }
-            }
-            indicator.closeIndicator();
         } else {
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-            indicator.closeIndicator();
-            endRefresher();
             Ti.API.error("Error =>" + this.response);
         }
     };
@@ -1271,6 +1148,11 @@ function endRefresher() {
 }
 
 function getChallenges() {
+    if (!Alloy.Globals.checkConnection()) {
+        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+        return;
+    }
+    
     // Get challenges
     var xhr = Titanium.Network.createHTTPClient();
     xhr.onerror = function(e) {
@@ -1300,16 +1182,7 @@ function getChallenges() {
 
                 // Update menu with icon if there are new challenges
                 Ti.App.fireEvent('app:updateMenu');
-
-                if (isAndroid) {
-                    $.challengesView.removeAllChildren();
-                    for (child in $.challengesView.children) {
-
-                        $.challengesView.children[child] = null;
-                    }
-                }
-                constructTableView(Alloy.Globals.CHALLENGEOBJECTARRAY);
-                //getDynamicTopImage();
+                constructTableData(Alloy.Globals.CHALLENGEOBJECTARRAY);
                 getUserInfo();
             } else {
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
@@ -1330,48 +1203,6 @@ function getChallenges() {
     };
 }
 
-/* Flow */
-var uie = require('lib/IndicatorWindow');
-var indicator = uie.createIndicatorWindow({
-    top : 200,
-    text : Alloy.Globals.PHRASES.loadingTxt
-});
-var refresher;
-var table;
-var swipeRefresh = null;
-
-var args = arguments[0] || {};
-if (args.refresh == 1) {
-    if (Alloy.Globals.checkConnection()) {
-        // refresh table with challenges
-        indicator.openIndicator();
-        getChallenges();
-        getUserInfo();
-        if (args.sent_challenge == 1) {
-            Alloy.Globals.unlockAchievement(11);
-        }
-    } else {
-        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
-    }
-
-}
-
-var iOSVersion;
-var isAndroid = false;
-;
-
-if (OS_IOS) {
-    iOSVersion = parseInt(Ti.Platform.version);
-} else {
-    isAndroid = true;
-}
-
-$.challengesView.addEventListener('close', function() {
-    indicator.closeIndicator();
-});
-
-constructTableView(Alloy.Globals.CHALLENGEOBJECTARRAY);
+constructTableData(Alloy.Globals.CHALLENGEOBJECTARRAY);
 getUserInfo();
 Alloy.Globals.getCoupon();
-
-// TODO for android we could reset table data... instead of rebuilding the hole table..

@@ -112,10 +112,9 @@ function loginBetkampenAuthenticated(status) {
 
                 if (response !== null) {
                     createLeagueAndUidObj(response);
-
+                    indicator.closeIndicator();
                     if (Alloy.Globals.BETKAMPENUID > 0) {
-                        indicator.closeIndicator();
-                        Ti.App.fireEvent('app:challengesViewRefresh');
+                        Ti.App.fireEvent('challengesViewRefresh');
                     }
                 } else {
                     indicator.closeIndicator();
@@ -303,20 +302,20 @@ if (OS_IOS) {
                 win = Alloy.createController('challenges_finished', args).getView();
             }
 
-            Ti.App.fireEvent('app:updateView', obj);
-
-            if (win !== null) {
-                win.open();
-                win = null;
-            }
+            //Ti.App.fireEvent('app:updateView', obj);
 
             for (var w in Alloy.Globals.WINDOWS) {
-                Ti.API.log(Alloy.Globals.WINDOWS[w] + " " + win);
                 if (Alloy.Globals.WINDOWS[w] === win) {
                     Alloy.Globals.WINDOWS[w].close();
                 }
             }
-
+            
+            Alloy.Globals.WINDOWS.push(win);
+            
+            if (win !== null) {
+                win.open();
+                win = null;
+            }
         } else {
             var winMain = Alloy.createController('main').getView();
             winMain.open({

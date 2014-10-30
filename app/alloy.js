@@ -279,9 +279,9 @@ Alloy.Globals.setAndroidCouponMenu = function(activity) {
         var menu = e.menu;
 
         if (Alloy.Globals.hasCoupon) {
-            menu.findItem(1).setIcon('images/ticketBtnRed.png');
+            menu.findItem(1).setIcon('images/ikoner_kupong_red.png');
         } else {
-            menu.findItem(1).setIcon('images/ticketBtn.png');
+            menu.findItem(1).setIcon('images/ikoner_kupong.png');
         }
     };
 

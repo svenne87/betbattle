@@ -1,6 +1,5 @@
 {
 	"global": {
-		"theme":"lakers",
 		"autoStyle":true
 	}, 
 	"env:development": {}, 

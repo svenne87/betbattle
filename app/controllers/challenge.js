@@ -34,18 +34,14 @@ var clickListener = function(e) {
         }
     }
 
-    Ti.API.info("gameArray : " + JSON.stringify(gameArray));
     if (validate()) {
         if (answer == 1) {
-            Ti.API.info("svara");
             //postAnswer(gameArray);
         } else if (matchOTD == 1) {
             Ti.API.info("Matchens mästare");
         } else if (Alloy.Globals.COUPON != null) {
-            Ti.API.info("update");
             updateChallenge();
         } else {
-            Ti.API.info("save");
             saveChallenge();
         }
     }
@@ -182,9 +178,9 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
             width : 50,
             height : 50
         });
-        
+
         // fix for images delivered from us/api
-        if(!isLowerCase(gameObject.attributes.team_1.team_logo)) {
+        if (!isLowerCase(gameObject.attributes.team_1.team_logo)) {
             team_logo.width = 30;
             team_logo.height = 30;
         }
@@ -195,9 +191,9 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
             width : 50,
             height : 50
         });
-        
+
         // fix for images delivered from us/api
-        if(!isLowerCase(gameObject.attributes.team_2.team_logo)) {
+        if (!isLowerCase(gameObject.attributes.team_2.team_logo)) {
             team2_logo.width = 30;
             team2_logo.height = 30;
         }
@@ -217,7 +213,7 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
         logosView.add(logoWrapper2);
     }
 
-    if (OS_ANDROID) {
+    if (isAndroid) {
         var pickerLabels = [];
 
         for (var i = 0; i < gameType.options; i++) {
@@ -283,8 +279,9 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
                             gameArray[index].gameValue[event.source.index] = e.data[0].value;
 
                             if (gameType.number_of_values == 1) {
-                                gameArray[index].gameValues[1] = 0;
+                                gameArray[index].gameValue[1] = 0;
                             }
+
                             if (validate()) {
                                 if (answer == 1) {
                                     Ti.API.info("svara");
@@ -292,10 +289,8 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
                                 } else if (matchOTD == 1) {
                                     Ti.API.info("MATCHENS MÄSTARE");
                                 } else if (Alloy.Globals.COUPON != null) {
-                                    Ti.API.info("update");
                                     updateChallenge();
                                 } else {
-                                    Ti.API.info("save");
                                     saveChallenge();
                                 }
                             }
@@ -306,7 +301,7 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
             optionsView.add(pickerLabel);
         }
 
-    } else if (OS_IOS) {
+    } else {
 
         var pickers = [];
         // create 1-15 values
@@ -357,7 +352,6 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
             picker.text = '-';
             //picker.text = '-';
 
-            Ti.API.info("Y VÄRDE : " + i);
             picker.self.addEventListener('change', function(e) {
 
                 var id = e.source.id;
@@ -366,15 +360,13 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
                 var d = id.indexOf("-");
                 var gameID = id.substring(d + 1, id.length);
                 var arrayIndex = id.substring(ind + 1, d);
-                Ti.API.info("INDEX : " + arrayIndex);
-                Ti.API.info("ID : " + gameID);
                 picker.value = modalPickersToHide[arrayIndex + gameID].value;
 
                 gameArray[index].gameValue[i] = picker.value;
                 if (gameType.number_of_values == 1) {
                     gameArray[index].gameValue[1] = 0;
                 }
-                Ti.API.info("gameArray : " + JSON.stringify(gameArray));
+
                 if (validate()) {
                     if (answer == 1) {
                         Ti.API.info("svara");
@@ -382,11 +374,8 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
                     } else if (matchOTD == 1) {
                         Ti.API.info("matchens mästare");
                     } else if (Alloy.Globals.COUPON != null) {
-
-                        Ti.API.info("update");
                         updateChallenge();
                     } else {
-                        Ti.API.info("save");
                         saveChallenge();
                     }
 
@@ -419,7 +408,6 @@ function createSubmitButtonAnswer() {
     submitButton = Alloy.Globals.createButtonView(Alloy.Globals.themeColor(), "#FFF", Alloy.Globals.PHRASES.respondTxt);
 
     submitButton.addEventListener("click", function(e) {
-        Ti.API.info("post answer");
         if (validate()) {
             postAnswer(gameArray);
         } else {
@@ -445,7 +433,6 @@ function createSubmitButtonMatchOTD() {
     submitButton = Alloy.Globals.createButtonView(Alloy.Globals.themeColor(), "#FFF", Alloy.Globals.PHRASES.respondTxt);
 
     submitButton.addEventListener("click", function(e) {
-        Ti.API.info("match of the day");
         if (validate()) {
             postMatchOfTheDay();
         } else {
@@ -482,7 +469,6 @@ function createBetAmountView() {
 }
 
 function postMatchOfTheDay() {
-
     if (Alloy.Globals.checkConnection()) {
         indicator.openIndicator();
         var xhr = Titanium.Network.createHTTPClient();
@@ -507,11 +493,11 @@ function postMatchOfTheDay() {
                     case 1:
                         var win = Alloy.createController('store').getView();
 
-                        if (OS_IOS) {
+                        if (!isAndroid) {
                             Alloy.Globals.NAV.openWindow(win, {
                                 animated : true
                             });
-                        } else if (OS_ANDROID) {
+                        } else {
                             win.open({
                                 fullScreen : true
                             });
@@ -538,7 +524,6 @@ function postMatchOfTheDay() {
             var param = '{"lang" : "' + Alloy.Globals.LOCALE + '", "bet_amount": "' + bet_amount + '", "gameID": "' + gameID + '", "gamevalue": {';
 
             for (var i in gameArray) {
-                Ti.API.info("skickar gameArray : " + JSON.stringify(gameArray[i]));
                 // is array
                 param += '"' + gameArray[i].gameType + '": [';
                 for (var x in gameArray[i].gameValue) {
@@ -560,8 +545,6 @@ function postMatchOfTheDay() {
             }
             param += '}}';
 
-            Ti.API.info("JSON STRING : " + param);
-
             xhr.send(param);
         } catch(e) {
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
@@ -573,7 +556,6 @@ function postMatchOfTheDay() {
 
                 if (this.readyState == 4) {
                     indicator.closeIndicator();
-                    Ti.API.info("RESPONSE : " + JSON.stringify(this.responseText));
                     var response = JSON.parse(this.responseText);
                     var answer = false;
 
@@ -598,18 +580,16 @@ function postMatchOfTheDay() {
 
                         var win = Alloy.createController('showMatchOTD', args).getView();
 
-                        if (OS_IOS) {
+                        if (!isAndroid) {
                             Alloy.Globals.NAV.openWindow(win, {
                                 animated : true
                             });
-                        } else if (OS_ANDROID) {
+                        } else {
                             win.open({
                                 fullScreen : true
                             });
                         }
                     }
-
-                    Ti.API.info("response: " + JSON.stringify(response));
 
                 } else {
                     Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
@@ -647,11 +627,11 @@ function showCouponAlert() {
             var window = Alloy.createController('showCoupon').getView();
             Alloy.Globals.CURRENTVIEW = window;
 
-            if (OS_ANDROID) {
+            if (isAndroid) {
                 window.open({
                     fullScreen : true
                 });
-            } else if (OS_IOS) {
+            } else {
                 Alloy.Globals.NAV.openWindow(window, {
                     animated : true
                 });
@@ -662,6 +642,8 @@ function showCouponAlert() {
                     Alloy.Globals.WINDOWS[win].close();
                 }
             }
+            
+            Alloy.Globals.WINDOWS.push(window);
             break;
         }
     });
@@ -689,7 +671,6 @@ function updateChallenge() {
             var param = '{"lang" : "' + Alloy.Globals.LOCALE + '", "cid":"' + Alloy.Globals.COUPON.id + '", "gameID": "' + gameID + '", "gamevalue": {';
 
             for (var i in gameArray) {
-                Ti.API.info("skickar gameArray : " + JSON.stringify(gameArray[i]));
                 // is array
                 param += '"' + gameArray[i].gameType + '": [';
                 for (var x in gameArray[i].gameValue) {
@@ -711,8 +692,6 @@ function updateChallenge() {
             }
             param += '}}';
 
-            Ti.API.info("JSON STRING : " + param);
-
             xhr.send(param);
         } catch(e) {
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
@@ -724,7 +703,6 @@ function updateChallenge() {
 
                 if (this.readyState == 4) {
                     indicator.closeIndicator();
-                    Ti.API.info("RESPONSE UPDATE: " + JSON.stringify(this.responseText));
                     var response = JSON.parse(this.responseText);
                     if (response == 1) {
                         Alloy.Globals.getCoupon();
@@ -733,7 +711,6 @@ function updateChallenge() {
                     } else if (response == 2) {
                         Alloy.Globals.showToast(Alloy.Globals.PHRASES.couponGameExistsMsg);
                     }
-                    Ti.API.info("response: " + JSON.stringify(response));
 
                 } else {
                     Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
@@ -770,7 +747,6 @@ function saveChallenge() {
             var param = '{"lang" : "' + Alloy.Globals.LOCALE + '", "betkampen_id":"' + Alloy.Globals.BETKAMPENUID + '", "gameID": "' + gameID + '", "gamevalue": {';
 
             for (var i in gameArray) {
-                Ti.API.info("skickar gameArray : " + JSON.stringify(gameArray[i]));
                 // is array
                 param += '"' + gameArray[i].gameType + '": [';
                 for (var x in gameArray[i].gameValue) {
@@ -792,8 +768,6 @@ function saveChallenge() {
             }
             param += '}}';
 
-            Ti.API.info("JSON STRING : " + param);
-
             xhr.send(param);
         } catch(e) {
             indicator.closeIndicator();
@@ -805,33 +779,27 @@ function saveChallenge() {
 
                 if (this.readyState == 4) {
                     indicator.closeIndicator();
-                    Ti.API.info("RESPONSE SAVE CHALLENGE: " + JSON.stringify(this.responseText));
                     var response = JSON.parse(this.responseText);
                     if (response == 1) {
                         Alloy.Globals.getCoupon();
-                        //Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.couponSavedMsg);
                         showCouponAlert();
                     } else {
                         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-                        //submitButton.touchEnabled = true;
                     }
 
                     // show dialog and if ok close window
                 } else {
                     Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-                    //submitButton.touchEnabled = true;
                 }
             } else {
                 indicator.closeIndicator();
                 Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
                 Ti.API.error("Error =>" + this.response);
-                //submitButton.touchEnabled = true;
             }
         };
     } else {
         indicator.closeIndicator();
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
-        //submitButton.touchEnabled = true;
     }
 }
 
@@ -863,11 +831,11 @@ function postAnswer(gameArray) {
                     case 1:
                         var win = Alloy.createController('store').getView();
 
-                        if (OS_IOS) {
+                        if (!isAndroid) {
                             Alloy.Globals.NAV.openWindow(win, {
                                 animated : true
                             });
-                        } else if (OS_ANDROID) {
+                        } else {
                             win.open({
                                 fullScreen : true
                             });
@@ -905,16 +873,11 @@ function postAnswer(gameArray) {
             }
             var arr = [];
             var count = 0;
-            Ti.API.info("INNAN ALLT : " + JSON.stringify(gameArray));
             for (var i in gameArray) {
-                Ti.API.info("skickar gameArray : " + JSON.stringify(gameArray[i]));
                 // is array
-
-                Ti.API.info("arraaaay : " + arr.indexOf(gameArray[i].game_id));
                 if (arr.indexOf(gameArray[i].game_id) == -1) {
                     count++;
                     arr.push(gameArray[i].game_id);
-                    Ti.API.info("ANTAL MATCHER : " + count);
                 }
 
                 param += '"' + i + '": {"gameID" : "' + gameArray[i].game_id + '", ';
@@ -939,8 +902,6 @@ function postAnswer(gameArray) {
             }
 
             param += '}}';
-            Ti.API.info("Match ARRAYEN : " + JSON.stringify(arr));
-            Ti.API.log("PARAM : " + param);
 
             xhr.send(param);
         } catch(e) {
@@ -954,9 +915,7 @@ function postAnswer(gameArray) {
                 indicator.closeIndicator();
 
                 if (this.readyState == 4) {
-                    Ti.API.info("POST ANSWER : " + JSON.stringify(this.responseText));
                     var response = JSON.parse(this.responseText);
-
                     Alloy.Globals.showToast(response);
 
                     // change view
@@ -967,6 +926,7 @@ function postAnswer(gameArray) {
                         controller : 'challengesView',
                         arg : arg
                     };
+
                     Ti.App.fireEvent('app:updateView', obj);
 
                     $.challengeWindow.close();
@@ -1089,7 +1049,7 @@ function createLayout(gameObject) {
         text : gameObject.attributes.game_date_string + '  ',
     }));
 
-    if (isIOS) {
+    if (!isAndroid) {
         image.add(Ti.UI.createView({
             top : topMargin,
             height : 0.5,
@@ -1116,7 +1076,7 @@ function createLayout(gameObject) {
             height : 0.1
         });
 
-        if (OS_IOS) {
+        if (!isAndroid) {
             table = Titanium.UI.createTableView({
                 left : 0,
                 headerView : tableHeaderView,
@@ -1139,7 +1099,7 @@ function createLayout(gameObject) {
                 table.separatorColor = 'transparent';
             }
 
-        } else if (OS_ANDROID) {
+        } else {
             table = Titanium.UI.createTableView({
                 width : Ti.UI.FILL,
                 left : 0,
@@ -1157,7 +1117,7 @@ function createLayout(gameObject) {
         var tableFooterView;
         var font = 'FontAwesome';
 
-        if (OS_ANDROID) {
+        if (isAndroid) {
             font = 'fontawesome-webfont';
         }
         if (gameObjects.indexOf(gameObject) == (gameObjects.length - 1)) {
@@ -1199,7 +1159,7 @@ function createLayout(gameObject) {
 
             tableFooterView.add(slide);
 
-            if (!isIOS) {
+            if (isAndroid) {
                 table.footerView = tableFooterView;
             }
 
@@ -1260,7 +1220,7 @@ function createLayout(gameObject) {
 
             var sectionIndexen = sections.length;
 
-            if (isIOS) {
+            if (!isAndroid) {
                 sections[sectionIndexen] = Ti.UI.createTableViewSection({
                     id : gameObject.attributes.game_id + '' + y,
                     name : gametypes[y].type,
@@ -1350,7 +1310,7 @@ function createLayout(gameObject) {
                     gameTypeHeaderView.add(gameTypeLabel);
                     gameTypeHeaderView.add(coinsAmountLabel);
 
-                    if (isIOS) {
+                    if (!isAndroid) {
                         sections[sectionIndex] = Ti.UI.createTableViewSection({
                             headerView : gameTypeHeaderView,
                             footerView : Ti.UI.createView({
@@ -1368,7 +1328,7 @@ function createLayout(gameObject) {
 
                 }
 
-                if (isIOS) {
+                if (!isAndroid) {
                     sections[sectionIndex + 1] = Ti.UI.createTableViewSection({
                         headerView : Ti.UI.createView({
                             height : 0.1
@@ -1419,10 +1379,10 @@ var indicator = uie.createIndicatorWindow({
 var table = null;
 
 var iOSVersion;
-var isIOS = false;
+var isAndroid = true;
 
 if (OS_IOS) {
-    isIOS = true;
+    isAndroid = false;
     iOSVersion = parseInt(Ti.Platform.version);
 }
 
@@ -1432,7 +1392,7 @@ var fontawesome = require('lib/IconicFont').IconicFont({
 
 var fontAwe = 'FontAwesome';
 
-if (!isIOS) {
+if (isAndroid) {
     fontAwe = 'fontawesome-webfont';
 }
 
@@ -1529,7 +1489,7 @@ if (roundId === -1) {
     menuText = Alloy.Globals.PHRASES.answerTxt;
 }
 
-if (!isIOS) {
+if (isAndroid) {
     $.challenge.scrollType = 'vertical';
     $.challengeWindow.orientationModes = [Titanium.UI.PORTRAIT];
 
@@ -1555,7 +1515,7 @@ if (!isIOS) {
 $.challengeWindow.addEventListener('close', function() {
     indicator.closeIndicator();
     // hide modal pickers (ios)
-    if (isIOS) {
+    if (!isAndroid) {
         for (picker in modalPickersToHide) {
             modalPickersToHide[picker].close();
         }
@@ -1565,7 +1525,7 @@ $.challengeWindow.addEventListener('close', function() {
 // check connection
 if (Alloy.Globals.checkConnection()) {
 
-    if (isIOS) {
+    if (!isAndroid) {
         indicator.openIndicator();
     }
 
@@ -1580,15 +1540,12 @@ if (Alloy.Globals.checkConnection()) {
     try {
         if (roundId === -1) {
             if (tournamentIndex === -1) {
-                Ti.API.info("GAMESURL");
                 xhr.open('GET', Alloy.Globals.BETKAMPENGAMESURL + '/?uid=' + Alloy.Globals.BETKAMPENUID + '&cid=' + challengeObject.attributes.id + '&lang=' + Alloy.Globals.LOCALE);
             } else {
-                Ti.API.info("TOURNAMENTURL");
                 xhr.open('GET', Alloy.Globals.BETKAMPENGETGAMESFORTOURNAMENT + '/?uid=' + Alloy.Globals.BETKAMPENUID + '&tid=' + challengeObject.attributes.id + '&round=' + challengeObject.attributes.round + '&lang=' + Alloy.Globals.LOCALE);
             }
 
         } else {
-            Ti.API.info("skiickaar" + gameID);
             xhr.open('GET', Alloy.Globals.BETKAMPENGETGAMESFORCHALLENGEURL + '/?uid=' + Alloy.Globals.BETKAMPENUID + '&gameID=' + gameID + '&lang=' + Alloy.Globals.LOCALE);
         }
 
@@ -1660,7 +1617,7 @@ if (Alloy.Globals.checkConnection()) {
                 // create the layout and check for coins
                 Alloy.Globals.checkCoins();
 
-                if (isIOS) {
+                if (!isAndroid) {
                     // clear old children
                     $.challenge.removeAllChildren();
 

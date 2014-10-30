@@ -6,17 +6,6 @@ function WPATH(s) {
 
 module.exports = [ {
     isId: true,
-    priority: 100000.9001,
-    key: "facebookBtn",
-    style: {
-        top: "65%",
-        height: "9%",
-        width: "80%",
-        backgroundColor: "#336699",
-        borderRadius: 3
-    }
-}, {
-    isId: true,
     priority: 100100.0013,
     key: "pickerView",
     style: {

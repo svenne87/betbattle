@@ -364,7 +364,6 @@ function createPopupLayout(win, playerObj, isFriend, isMe, friendIndex) {
     });
 
     profilePics.addEventListener('error', imageErrorHandler);
-
     friend.add(profilePics);
 }
 
@@ -779,6 +778,9 @@ function getScore(firstTime, start, rows) {
                     if (firstTime) {
                         scroreboardFetched = 0;
                         footerViewLabel.setText(Alloy.Globals.PHRASES.showningPlayersTxt + ': ' + 20 + '/' + scoreboardCount + ' ');
+                        if (((scroreboardFetched - 0) + 20) >= scoreboardCount) {
+                            footerViewLabel.setText(Alloy.Globals.PHRASES.showningPlayersTxt + ': ' + scoreboardCount + '/' + scoreboardCount + ' ');
+                        }
                     } else {
                         // we can't fetch more games
                         if (((scroreboardFetched - 0) + 20) >= scoreboardCount) {

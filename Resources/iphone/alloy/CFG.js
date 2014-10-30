@@ -1,1 +1,1 @@
-module.exports={"dependencies":{"ds.slideMenu":"0.1","danielhanold.pickerWidget":"1.0"},"theme":"lakers","autoStyle":true};
+module.exports={"dependencies":{"ds.slideMenu":"0.1","danielhanold.pickerWidget":"1.0"},"autoStyle":true};
