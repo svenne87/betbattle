@@ -265,7 +265,6 @@ function createMenuHeader() {
 	return userInfoView;
 }
 
-exitOnClose: true;
 Alloy.Globals.MAINWIN = $.mainWin;
 
 if(Alloy.Globals.INDEXWIN !== null){
@@ -757,6 +756,12 @@ if (!isAndroid){
 	}
 	
 } else {
+    /*
+    $.mainWin.activity.onResume = function(e) {
+        Ti.API.log("Android pause aa");    // TODO
+        Ti.App.fireEvent('challengesViewRefresh');
+    };*/
+    
 	Ti.Gesture.addEventListener('orientationchange', function(e) {
  		Ti.Android.currentActivity.setRequestedOrientation(Ti.Android.SCREEN_ORIENTATION_PORTRAIT);
     });

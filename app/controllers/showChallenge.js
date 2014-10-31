@@ -158,38 +158,41 @@ function createGameType(gameType, game, values, index, sections) {
         for (var i = 0; i < game.result_values.length; i++) {
             if (game.result_values[i].game_type === type && game.result_values[i].gid === game.game_id) {
                 if (gameType.number_of_values === '1') {
-                    // check for the gametype "draw"
-                    resultText = Alloy.Globals.PHRASES.gameTypes[type].buttonValues[game.result_values[i].value_1];
+                    if ( typeof Alloy.Globals.PHRASES.gameTypes[type].buttonValues !== 'undefined') {
+                        // check for the gametype "draw"
+                        resultText = Alloy.Globals.PHRASES.gameTypes[type].buttonValues[game.result_values[i].value_1];
 
-                    //if the json says team1 or team2. get the actual team names
-                    if (resultText === "team1") {
-                        resultText = game.team_1.team_name;
-                    } else if (resultText === "team2") {
-                        resultText = game.team_2.team_name;
-                    }
-                    
-                    // if the game is in progress and result first goal, winning team etc. is draw
-                    if(game.status === '3') {
-                        if(game.result_values[i].value_1 === '2') {
+                        //if the json says team1 or team2. get the actual team names
+                        if (resultText === "team1") {
+                            resultText = game.team_1.team_name;
+                        } else if (resultText === "team2") {
+                            resultText = game.team_2.team_name;
+                        }
+
+                        // if the game is in progress and result first goal, winning team etc. is draw
+                        if (game.status === '3') {
+                            if (game.result_values[i].value_1 === '2') {
+                                resultText = "-";
+                            }
+                        }
+
+                        // resultText will be undefined if it's gametype "draw"
+                        if ( typeof resultText === 'undefined') {
+                            // if game is pending and the status is "no score", hide it
                             resultText = "-";
                         }
-                    }
 
-                    // resultText will be undefined if it's gametype "draw"
-                    if ( typeof resultText === 'undefined') {
-                        // if game is pending and the status is "no score", hide it
-                        resultText = "-";
+                        if (resultText.length > 15) {
+                            resultText = resultText.substring(0, 12) + '...';
+                        }
+                    } else {
+                        // Yellow card
+                        resultText = game.result_values[i].value_1;
                     }
-
-                    if (resultText.length > 15) {
-                        resultText = resultText.substring(0, 12) + '...';
-                    }
-                    
                     // check if game typ is 1, winning team. Should be cleared out when the match is "live" and the score is more than 0-0
-                    if(type === '1' && game.status === '3' && game.result_values[1].value_1 === '0' && game.result_values[1].value_1 === "0") {
+                    if (type === '1' && game.status === '3' && game.result_values[1].value_1 === '0' && game.result_values[1].value_1 === "0") {
                         resultText = '';
                     }
-                    
 
                 } else if (gameType.number_of_values === '2') {
                     resultText = game.result_values[i].value_1 + " - " + game.result_values[i].value_2;
@@ -198,7 +201,7 @@ function createGameType(gameType, game, values, index, sections) {
                         if (game.status === '2') {
                             // final score, update header label
                             headerScoreLabel.setText(resultText + " ");
-                        } else if(game.status === '3'){
+                        } else if (game.status === '3') {
                             // current score, update header label
                             headerScoreLabel.setText("(" + resultText + ") ");
                         }
@@ -298,25 +301,29 @@ function createGameType(gameType, game, values, index, sections) {
             // print out all the participants values
             var valueText = '';
             if (gameType.number_of_values === '1') {
-                // check for the gametype "draw"
-                valueText = Alloy.Globals.PHRASES.gameTypes[type].buttonValues[values[i].value_1];
+                if ( typeof Alloy.Globals.PHRASES.gameTypes[type].buttonValues !== 'undefined') {
+                    // check for the gametype "draw"
+                    valueText = Alloy.Globals.PHRASES.gameTypes[type].buttonValues[values[i].value_1];
 
-                //if the json says team1 or team2. get the actual team names
-                if (valueText === "team1") {
-                    valueText = game.team_1.team_name;
-                } else if (valueText === "team2") {
-                    valueText = game.team_2.team_name;
-                }
+                    //if the json says team1 or team2. get the actual team names
+                    if (valueText === "team1") {
+                        valueText = game.team_1.team_name;
+                    } else if (valueText === "team2") {
+                        valueText = game.team_2.team_name;
+                    }
 
-                // valueText will be undefined if it's gametype "draw"
-                if ( typeof valueText === 'undefined') {
+                    // valueText will be undefined if it's gametype "draw"
+                    if ( typeof valueText === 'undefined') {
+                        valueText = values[i].value_1;
+                    }
+
+                    if (valueText.length > 15) {
+                        valueText = valueText.substring(0, 12) + '...';
+                    }
+                } else {
+                    // This will handle yellow cards
                     valueText = values[i].value_1;
                 }
-
-                if (valueText.length > 15) {
-                    valueText = valueText.substring(0, 12) + '...';
-                }
-
             } else if (gameType.number_of_values === '2') {
                 valueText = values[i].value_1 + " - " + values[i].value_2;
             }
@@ -429,8 +436,20 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished)
 
     if (teamNames.length > 22) {
         fontResponsive = Alloy.Globals.getFontCustom(18, 'Regular');
-    } else if (teamNames.length > 32) {
-        fontResponsive = Alloy.Globals.getFontCustom(16, 'Regular');
+    } 
+    if (teamNames.length > 32) {
+        fontResponsive = Alloy.Globals.getFontCustom(18, 'Regular');
+    }
+    if(teamNames.length > 37) {
+        if(game.team_1.team_name.length > 17) {
+            game.team_1.team_name = game.team_1.team_name.substring(0, 14) + '...';
+        }
+        
+        if(game.team_2.team_name.length > 17) {
+            game.team_2.team_name = game.team_2.team_name.substring(0, 14) + '...';
+        }
+        
+        teamNames = game.team_1.team_name + " - " + game.team_2.team_name;
     }
 
     header.add(Ti.UI.createLabel({
@@ -487,7 +506,7 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished)
             });
 
             header.add(headerScoreLabel);
-        } else if(game.status === '3'){
+        } else if (game.status === '3') {
             liveIcon = Ti.UI.createImageView({
                 left : 12,
                 top : 3,
@@ -749,16 +768,16 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished)
                 });
 
                 row.add(potIconLabel);
-                
+
                 var pointsTextLabel = Ti.UI.createLabel({
-                    right :  potTextLabel.toImage().width + 13 + potIconLabel.toImage().width + 5,
+                    right : potTextLabel.toImage().width + 13 + potIconLabel.toImage().width + 5,
                     height : Ti.UI.SIZE,
                     width : Ti.UI.SIZE,
                     font : Alloy.Globals.getFontCustom(16, 'Regular'),
                     color : Alloy.Globals.themeColor(),
                     text : tmpObj.points + "p " + Alloy.Globals.PHRASES.gaveTxt + " " || '0' + "p " + Alloy.Globals.PHRASES.gaveTxt + " "
                 });
-                
+
                 row.add(pointsTextLabel);
             } else {
                 var potTextLabel = Ti.UI.createLabel({
@@ -832,26 +851,26 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished)
 
     // TODO
     // add name to the section with game type and then custom to make the "final result" end up last in sections
-   var customSection = null;
-        
+    var customSection = null;
+
     // find "final result game type" and place it last in array
-    for(var s in sections) {
-        if(sections[s].name === '3') {
+    for (var s in sections) {
+        if (sections[s].name === '3') {
             customSection = sections[s];
             sections.splice(s, 1);
             break;
         }
     }
-        
-    if(customSection !== null) {
-        sections.push(customSection);  
+
+    if (customSection !== null) {
+        sections.push(customSection);
     }
 
     customSection = null;
 
     table.setData(sections);
-    
-     if (isAndroid) {
+
+    if (isAndroid) {
         var swipeRefreshModule = require('com.rkam.swiperefreshlayout');
 
         swipeRefresh = swipeRefreshModule.createSwipeRefresh({
@@ -860,15 +879,15 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished)
             width : Ti.UI.FILL,
             id : 'swiper'
         });
-        
+
         swipeRefresh.addEventListener('refreshing', function(e) {
             if (Alloy.Globals.checkConnection()) {
                 pendingStandingsArray = [];
                 setTimeout(function() {
                     indicator.openIndicator();
-                    androidViews = [];    
-                    
-                    for(var view in $.showChallenge.getViews()) {
+                    androidViews = [];
+
+                    for (var view in $.showChallenge.getViews()) {
                         androidViews.push($.showChallenge.getViews()[view]);
                     }
 
@@ -878,11 +897,11 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished)
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
                 swipeRefresh.setRefreshing(false);
             }
-        }); 
+        });
         view.add(table);
         $.showChallenge.addView(swipeRefresh);
 
-    }  else {
+    } else {
         view.add(table);
         $.showChallenge.addView(view);
     }
@@ -929,12 +948,12 @@ function getChallengeShow() {
             } else {
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             }
-            
+
             // custom to handle pull to refresh on android
-            if(isAndroid && androidViews.length > 0) {
+            if (isAndroid && androidViews.length > 0) {
                 // clear children
                 for (var view in androidViews) {
-                    $.showChallenge.removeView(androidViews[view]); 
+                    $.showChallenge.removeView(androidViews[view]);
                 }
             }
         } else {
@@ -998,7 +1017,7 @@ function showResults(challenge) {
     setTimeout(function() {
         indicator.closeIndicator();
         // show layout
-       $.showChallenge.show();
+        $.showChallenge.show();
     }, 400);
 }
 

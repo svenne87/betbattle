@@ -601,7 +601,7 @@ if (!isAndroid) {
 
     });
 }
-// TODO
+
 var tableHeaderView = Ti.UI.createView({
     height : 141,
     width : Ti.UI.FILL,
@@ -1110,10 +1110,12 @@ function getDynamicTopImage() {
                 webViewTitle = response.title;
 
                 var imageView = Ti.UI.createImageView({
+                    defaultImage : '/images/h_image.png',  // TODO
                     image : Alloy.Globals.BETKAMPENURL + response.image,
                     width : Ti.UI.SIZE,
                     height : 140
                 });
+        
                 header.add(imageView);
 
                 if (isAndroid) {
@@ -1206,3 +1208,6 @@ function getChallenges() {
 constructTableData(Alloy.Globals.CHALLENGEOBJECTARRAY);
 getUserInfo();
 Alloy.Globals.getCoupon();
+
+// check if language or tutorial has been changed, if it has download the new version
+Alloy.Globals.checkVersions(indicator);

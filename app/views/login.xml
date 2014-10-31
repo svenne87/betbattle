@@ -22,7 +22,6 @@
 		<ScrollableView id="scrollableView" showPagingControl="true">
 			<View id="content">
 				<ImageView id="betbattleLogo" />
-				<!-- TEMP -->
 				<View id="facebookBtn">
 					<Label id="facebookBtnText">sign in with Facebook</Label>
 				</View>

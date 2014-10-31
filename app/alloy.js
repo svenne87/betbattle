@@ -41,6 +41,7 @@ Alloy.Globals.AcceptedBeacon1 = false;
 Alloy.Globals.AcceptedBeacon2 = false;
 Alloy.Globals.AcceptedBeacon3 = false;
 Alloy.Globals.connect;
+Alloy.Globals.VERSIONS;
 Alloy.Globals.COUPON = null;
 Alloy.Globals.hasCoupon = false;
 Alloy.Globals.appStatus = 'foreground';
@@ -214,6 +215,265 @@ Alloy.Globals.performTimeout = function(func) {
     } else { func;
     }
 
+};
+
+Alloy.Globals.getLanguage = function(indicator) {
+    // check connection
+    if (Alloy.Globals.checkConnection()) {
+        indicator.openIndicator();
+
+        var xhr = Titanium.Network.createHTTPClient();
+        xhr.onerror = function(e) {
+            Ti.App.Properties.setString("language_version", JSON.stringify("0"));
+            Ti.API.error('Bad Sever =>' + e.error);
+            indicator.closeIndicator();
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+        };
+
+        try {
+            xhr.open('GET', Alloy.Globals.GETLANGUAGE + '?lang=' + Alloy.Globals.LOCALE);
+            xhr.setRequestHeader("content-type", "application/json");
+            xhr.setTimeout(Alloy.Globals.TIMEOUT);
+
+            xhr.send();
+        } catch(e) {
+            Ti.App.Properties.setString("language_version", JSON.stringify("0"));
+            indicator.closeIndicator();
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+        }
+
+        xhr.onload = function() {
+            if (this.status == '200') {
+                if (this.readyState == 4) {
+                    // write it to the file system
+                    var file1 = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory, 'language.json');
+                    file1.write(this.responseText);
+
+                    Alloy.Globals.PHRASES = JSON.parse(file1.read().text);
+
+                    // store language and that we have selected a language
+                    Ti.App.Properties.setString("language", JSON.stringify({
+                        language : Alloy.Globals.LOCALE
+                    }));
+                    Ti.App.Properties.setString("languageSelected", JSON.stringify({
+                        languageSelected : true
+                    }));
+
+                    Alloy.Globals.showAlertWithRestartNote();
+                }
+                indicator.closeIndicator();
+            } else {
+                Ti.App.Properties.setString("language_version", JSON.stringify("0"));
+                indicator.closeIndicator();
+                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+                Ti.API.error("Error =>" + this.response);
+            }
+        };
+    } else {
+        var alertWindow = Titanium.UI.createAlertDialog({
+            title : 'Bet Battle',
+            message : 'No internet connection detected!',
+            buttonNames : ['OK']
+        });
+
+        alertWindow.addEventListener('click', function(e) {
+            switch (e.index) {
+            case 0:
+                alertWindow.hide();
+                break;
+            }
+        });
+        alertWindow.show();
+    }
+};
+
+// function to show alert box to restart app
+Alloy.Globals.showAlertWithRestartNote = function() {
+    var alertWindow = Titanium.UI.createAlertDialog({
+        title : Alloy.Globals.PHRASES.betbattleTxt,
+        message : Alloy.Globals.PHRASES.appRestartTxt,
+        buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtnTxt]
+    });
+
+    alertWindow.addEventListener('click', function(e) {
+        switch (e.index) {
+        case 0:
+            alertWindow.hide();
+            if (OS_ANDROID) {
+                // close
+                Alloy.Globals.MAINWIN.close();
+                Alloy.Globals.LANDINGWIN.close();
+                $.settingsWindow.exitOnClose = true;
+                $.settingsWindow.close();
+
+                var activity = Titanium.Android.currentActivity;
+                activity.finish();
+
+                // start app again
+                var intent = Ti.Android.createIntent({
+                    action : Ti.Android.ACTION_MAIN,
+                    url : 'Betkampen.js'
+                });
+                intent.addCategory(Ti.Android.CATEGORY_LAUNCHER);
+                Ti.Android.currentActivity.startActivity(intent);
+            } else {
+                // restart app
+                Ti.App._restart();
+            }
+            break;
+        case 1:
+            alertWindow.hide();
+            break;
+        }
+    });
+    alertWindow.show();
+};
+
+Alloy.Globals.getTutorial = function(indicator) {
+    var platform = "";
+    if (Alloy.Globals.checkConnection()) {
+        indicator.openIndicator();
+
+        if (OS_IOS) {
+            platform = "iphone";
+        } else if (OS_ANDROID) {
+            platform = "android";
+        }
+        var xhr = Titanium.Network.createHTTPClient();
+        xhr.onerror = function(e) {
+            Ti.API.error('Bad Sever =>' + JSON.stringify(e));
+            Ti.App.Properties.setString("tutorial_version", JSON.stringify("0"));
+            indicator.closeIndicator();
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+        };
+
+        try {
+            xhr.open('POST', Alloy.Globals.BETKAMPENGETTUTORIALURL + "?lang=" + Alloy.Globals.LOCALE + '&platform=' + platform);
+            xhr.setRequestHeader("content-type", "application/json");
+            xhr.setTimeout(Alloy.Globals.TIMEOUT);
+
+            xhr.send();
+        } catch(e) {
+            Ti.App.Properties.setString("tutorial_version", JSON.stringify("0"));
+            indicator.closeIndicator();
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+        }
+
+        xhr.onload = function() {
+            if (this.status == '200') {
+                if (this.readyState == 4) {
+                    var response = JSON.parse(this.responseText);
+                    var imageLocationArray = [];
+                    var doneCount = 0;
+
+                    // download each file
+                    for (var img in response) {
+                        var inline_function = function(img) {
+                            var imageDownloader = Titanium.Network.createHTTPClient();
+                            imageDownloader.setTimeout(Alloy.Globals.TIMEOUT);
+                            
+                            imageDownloader.onload = function(e) {
+                                var f = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, 'tut_' + response[img] + '.png');
+                                f.write(this.responseData);
+                                imageLocationArray.push(f.nativePath);
+                                doneCount++;
+                                
+                                if (doneCount == response.length) {
+                                    // store the array on phone
+                                    Ti.App.Properties.setString("tutorial_images", JSON.stringify(imageLocationArray));
+                                    indicator.closeIndicator();
+                           
+                                    Alloy.Globals.showToast(Alloy.Globals.PHRASES.downloadCompleteTxt);
+                                }
+                            };
+
+                            imageDownloader.open("GET", Alloy.Globals.BETKAMPENURL + '/tutorial/' + platform + '/' + Alloy.Globals.LOCALE + '/tut_' + response[img] + '.png');
+                            imageDownloader.send();
+                        };
+                        inline_function(img);
+                    }
+                }
+            } else {
+                Ti.App.Properties.setString("tutorial_version", JSON.stringify("0"));
+                indicator.closeIndicator();
+                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+            }
+        };
+    }
+};
+
+Alloy.Globals.checkVersions = function(indicator) {
+    // check if any versions are stored (if the app runs for the first time, there will be no versions stored.)
+
+    if (Ti.App.Properties.hasProperty("language_version")) {
+        // stored version found, check if it's out dated
+        var currentLanguageVersion = JSON.parse(Ti.App.Properties.getString('language_version'));
+
+        if ( Alloy.Globals.VERSIONS.language_version !== currentLanguageVersion) {
+            // update needed
+            var alertWindow = Titanium.UI.createAlertDialog({
+                title : Alloy.Globals.PHRASES.betbattleTxt,
+                message : Alloy.Globals.PHRASES.newLanguageTxt,
+                buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtnTxt],
+                persistent : true
+            });
+
+            alertWindow.addEventListener('click', function(e) {
+                switch (e.index) {
+                case 0:
+                    // get new language and store version
+                    alertWindow.hide();
+                    Ti.App.Properties.setString("language_version", JSON.stringify(Alloy.Globals.VERSIONS.language_version));
+                    Alloy.Globals.getLanguage(indicator);
+                    break;
+                case 1:
+                    Ti.App.Properties.setString("language_version", JSON.stringify(Alloy.Globals.VERSIONS.language_version));
+                    alertWindow.hide();
+                    break;
+                }
+            });
+            alertWindow.show();
+        }
+
+    } else {
+        // store current version
+        Ti.App.Properties.setString("language_version", JSON.stringify(Alloy.Globals.VERSIONS.language_version));
+    }
+
+    if (Ti.App.Properties.hasProperty("tutorial_version")) {
+        // stored version found, check if it's out dated
+        var currentTutorialVersion = JSON.parse(Ti.App.Properties.getString('tutorial_version'));
+
+        if (Alloy.Globals.VERSIONS.tutorial_version !== currentTutorialVersion) {
+            // update needed
+            var alertWindow = Titanium.UI.createAlertDialog({
+                title : Alloy.Globals.PHRASES.betbattleTxt,
+                message : Alloy.Globals.PHRASES.newTutorialTxt,
+                buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtnTxt],
+                persistent : true
+            });
+
+            alertWindow.addEventListener('click', function(e) {
+                switch (e.index) {
+                case 0:
+                    // get new tutorial images and store version
+                    alertWindow.hide();
+                    Ti.App.Properties.setString("tutorial_version", JSON.stringify(Alloy.Globals.VERSIONS.tutorial_version));
+                    Alloy.Globals.getTutorial(indicator);
+                    break;
+                case 1:
+                    Ti.App.Properties.setString("tutorial_version", JSON.stringify(Alloy.Globals.VERSIONS.tutorial_version));
+                    alertWindow.hide();
+                    break;
+                }
+            });
+            alertWindow.show();
+        }
+
+    } else {
+        // store current version
+        Ti.App.Properties.setString("tutorial_version", JSON.stringify(Alloy.Globals.VERSIONS.tutorial_version));
+    }
 };
 
 Alloy.Globals.storeToken = function() {
@@ -417,7 +677,7 @@ Alloy.Globals.addExperience = function(uid, xp) {
     if (!Alloy.Globals.checkConnection()) {
         return;
     }
-    
+
     var xhr = Ti.Network.createHTTPClient();
 
     xhr.onerror = function(e) {
@@ -428,13 +688,13 @@ Alloy.Globals.addExperience = function(uid, xp) {
         xhr.open("POST", Alloy.Globals.BETKAMPENADDEXPERIENCE + '/?lang=' + Alloy.Globals.LOCALE);
         xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
         xhr.setTimeout(Alloy.Globals.TIMEOUT);
-        
+
         var params = {
             xp : xp,
         };
         xhr.send(params);
     } catch(e) {
-        // do nothing    
+        // do nothing
     }
 
     xhr.onload = function() {
@@ -452,7 +712,7 @@ Alloy.Globals.addBonusCoins = function(uid, amount) {
     if (!Alloy.Globals.checkConnection()) {
         return;
     }
-    
+
     var xhr = Ti.Network.createHTTPClient();
 
     xhr.onerror = function(e) {
@@ -463,13 +723,13 @@ Alloy.Globals.addBonusCoins = function(uid, amount) {
         xhr.open("POST", Alloy.Globals.BETKAMPENADDBONUSCOINS + '/?lang=' + Alloy.Globals.LOCALE);
         xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
         xhr.setTimeout(Alloy.Globals.TIMEOUT);
-        
+
         var params = {
             amount : amount,
         };
         xhr.send(params);
     } catch(e) {
-        // do nothing    
+        // do nothing
     }
 
     xhr.onload = function() {

@@ -225,6 +225,7 @@ function createLeagueAndUidObj(response) {
     Alloy.Globals.PROFILENAME = response.profile_name;
     Alloy.Globals.LEAGUES = [];
     Alloy.Globals.AVAILABLELANGUAGES = [];
+    Alloy.Globals.VERSIONS = response.versions;
 
     for (var i = 0; i < response.leagues.length; i++) {
         var league = {
@@ -317,6 +318,7 @@ function getChallengesAndStart() {
                             } else if (OS_ANDROID) {
                                 loginSuccessWindow.open({
                                     fullScreen : true,
+                                    exitOnClose: false,
                                     orientationModes : [Titanium.UI.PORTRAIT]
                                 });
                                 loginSuccessWindow = null;

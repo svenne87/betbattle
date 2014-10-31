@@ -5,6 +5,9 @@ function createIndicatorWindow(args) {
     function closeIndicator() {
         activityIndicator.hide();
     }
+    function setText(text) {
+        activityIndicator.setMessage(text);
+    }
     var width = 180, height = 50;
     var args = args || {};
     var top = args.top || 140;
@@ -51,6 +54,7 @@ function createIndicatorWindow(args) {
     win.add(view);
     win.openIndicator = openIndicator;
     win.closeIndicator = closeIndicator;
+    win.setText = setText;
     return win;
 }
 

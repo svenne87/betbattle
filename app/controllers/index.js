@@ -8,7 +8,7 @@ var indicator = uie.createIndicatorWindow({
 
 function doLogin() {
     var login = Alloy.createController('login').getView();
-    
+
     if (OS_IOS) {
         login.open({
             modal : false
@@ -25,40 +25,141 @@ function doLogin() {
         login.orientationModes = [Titanium.UI.PORTRAIT];
         Alloy.Globals.INDEXWIN = login;
         login = null;
-        
+
         $.indexWin.close();
         var activity = Titanium.Android.currentActivity;
         activity.finish();
     }
 }
 
+function doDowloadError() {
+    // display welcome dialog
+    var alertWindow = Titanium.UI.createAlertDialog({
+        title : Alloy.Globals.PHRASES.betbattleTxt,
+        message : "An error occured when downloading app tutorial content, retry?",
+        buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtnTxt]
+    });
+
+    alertWindow.addEventListener('click', function(ev) {
+        switch(ev.index) {
+        case 0:
+            //finally
+            downloadTutorial();
+            break;
+        case 1:
+            Ti.App.Properties.setString("appLaunch", JSON.stringify({
+                opened : true
+            }));
+            doLogin();
+            break;
+        }
+    });
+    alertWindow.show();
+}
+
+function downloadTutorial() {
+    var platform = "";
+    if (Alloy.Globals.checkConnection()) {
+        indicator.setText("Downloading app content...");
+        indicator.openIndicator();
+
+        if (OS_IOS) {
+            platform = "iphone";
+        } else if (OS_ANDROID) {
+            platform = "android";
+        }
+        var xhr = Titanium.Network.createHTTPClient();
+        xhr.onerror = function(e) {
+            Ti.API.error('Bad Sever =>' + JSON.stringify(e));
+            indicator.closeIndicator();
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+            doDowloadError();
+        };
+
+        try {
+            xhr.open('POST', Alloy.Globals.BETKAMPENGETTUTORIALURL + "?lang=" + Alloy.Globals.LOCALE + '&platform=' + platform);
+            xhr.setRequestHeader("content-type", "application/json");
+            xhr.setTimeout(Alloy.Globals.TIMEOUT);
+            xhr.send();
+        } catch(e) {
+            indicator.closeIndicator();
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+            doDowloadError();
+        }
+
+        xhr.onload = function() {
+            if (this.status == '200') {
+                if (this.readyState == 4) {
+                    var response = JSON.parse(this.responseText);
+                    var imageLocationArray = [];
+                    var doneCount = 0;
+
+                    indicator.setText("Downloading app content...");
+                    indicator.openIndicator();
+
+                    // download each file
+                    for (var img in response) {
+                        var inline_function = function(img) {
+                            var imageDownloader = Titanium.Network.createHTTPClient();
+                            imageDownloader.setTimeout(Alloy.Globals.TIMEOUT);
+
+                            imageDownloader.onload = function(e) {
+                                var f = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, 'tut_' + response[img] + '.png');
+                                f.write(this.responseData);
+                                imageLocationArray.push(f.nativePath);
+                                doneCount++;
+
+                                if (doneCount == response.length) {
+                                    // store the array on phone
+                                    Ti.App.Properties.setString("tutorial_images", JSON.stringify(imageLocationArray));
+                                    indicator.closeIndicator();
+
+                                    // display welcome dialog
+                                    var alertWindow = Titanium.UI.createAlertDialog({
+                                        title : Alloy.Globals.PHRASES.betbattleTxt,
+                                        message : Alloy.Globals.PHRASES.welcomePhrase,
+                                        buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt]
+                                    });
+
+                                    alertWindow.addEventListener('click', function(ev) {
+                                        switch(ev.index) {
+                                        case 0:
+                                            //finally
+                                            Ti.App.Properties.setString("appLaunch", JSON.stringify({
+                                                opened : true
+                                            }));
+                                            doLogin();
+                                            break;
+                                        default:
+                                            Ti.App.Properties.setString("appLaunch", JSON.stringify({
+                                                opened : true
+                                            }));
+                                            doLogin();
+                                            break;
+                                        }
+                                    });
+                                    alertWindow.show();
+
+                                }
+                            };
+
+                            imageDownloader.open("GET", Alloy.Globals.BETKAMPENURL + '/tutorial/' + platform + '/' + Alloy.Globals.LOCALE + '/tut_' + response[img] + '.png');
+                            imageDownloader.send();
+                        };
+                        inline_function(img);
+                    }
+                }
+            }
+        };
+    } else {
+        indicator.closeIndicator();
+        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+    }
+}
+
 function openLogin() {
     if (!opened) {
-        // display welcome dialog
-        var alertWindow = Titanium.UI.createAlertDialog({
-            title : Alloy.Globals.PHRASES.betbattleTxt,
-            message : Alloy.Globals.PHRASES.welcomePhrase,
-            buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt]
-        });
-
-        alertWindow.addEventListener('click', function(ev) {
-            switch(ev.index) {
-            case 0:
-                //finally
-                Ti.App.Properties.setString("appLaunch", JSON.stringify({
-                    opened : true
-                }));
-                doLogin();
-                break;
-            default: 
-                Ti.App.Properties.setString("appLaunch", JSON.stringify({
-                    opened : true
-                }));
-                doLogin();
-                break;
-            }
-        });
-        alertWindow.show();
+        downloadTutorial();
     } else {
         doLogin();
     }
@@ -171,15 +272,4 @@ if (language) {
 } else {
     getLanguage();
 }
-
-
-
-
-/*
- http://sportcdn.s3.amazonaws.com/soccer/teams/50x50/ACKwnV3C.png
-
-http://stackoverflow.com/questions/6306935/php-copy-image-to-my-server-direct-from-url
-
-settings i profile?
- */
 

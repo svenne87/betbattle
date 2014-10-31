@@ -40,6 +40,7 @@ function createLeagueAndUidObj(response) {
     Alloy.Globals.PROFILENAME = response.profile_name;
     Alloy.Globals.LEAGUES = [];
     Alloy.Globals.AVAILABLELANGUAGES = [];
+    Alloy.Globals.VERSIONS = response.versions;
 
     for (var i = 0; i < response.leagues.length; i++) {
         var league = {
@@ -61,6 +62,9 @@ function createLeagueAndUidObj(response) {
         };
         Alloy.Globals.AVAILABLELANGUAGES.push(language);
     }
+
+    // check if language or tutorial has been changed, if it has download the new version
+    Alloy.Globals.checkVersions(indicator);
 }
 
 /* Only used for Betkampen token sign in! */
@@ -249,16 +253,39 @@ if (OS_IOS) {
         });
     }
 } else if (OS_ANDROID) {
-    if (Alloy.Globals.checkConnection()) {
-        var activity = Ti.Android.currentActivity;
-        activity.addEventListener('resume', function(e) {
-            //indicator.openIndicator();
-            Alloy.Globals.appStatus = 'foreground';
-            Ti.App.fireEvent('app:challengesViewRefresh');
-        });
-    } else {
-        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionError);
-    }
+    var bc = Ti.Android.createBroadcastReceiver({
+        onReceived : function() {
+            //Ti.App.fireEvent('challengesViewRefresh');
+            
+            if (Alloy.Globals.checkConnection()) {
+                Alloy.Globals.appStatus = 'foreground';
+
+                if (Alloy.Globals.FACEBOOKOBJECT) {
+                    var fb = Alloy.Globals.FACEBOOK;
+                    if (fb) {
+                        if (fb.loggedIn) {
+                            //indicator.openIndicator();
+                            loginBetkampenAuthenticated(2);
+                            // TODO Test, run methods, need to authorize??  Testa /me och se om de svara 401 etc. då visa login...
+                        } else {
+                            // not logged in, show Betkampen login view
+                            showFbLogin();
+                        }
+                    }
+                } else {
+                    // Betkampen check and if needed refresh token
+                    Ti.API.log("resume...");
+                    Alloy.Globals.readToken();
+                    //indicator.openIndicator();
+                    loginBetkampenAuthenticated(1);
+                }
+            } else {
+                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionError);
+            } 
+        }
+    });
+
+    Ti.Android.registerBroadcastReceiver(bc, [Ti.Android.ACTION_SCREEN_OFF]);
 }
 
 var deviceToken;
@@ -309,9 +336,9 @@ if (OS_IOS) {
                     Alloy.Globals.WINDOWS[w].close();
                 }
             }
-            
+
             Alloy.Globals.WINDOWS.push(win);
-            
+
             if (win !== null) {
                 win.open();
                 win = null;

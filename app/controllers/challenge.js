@@ -642,7 +642,7 @@ function showCouponAlert() {
                     Alloy.Globals.WINDOWS[win].close();
                 }
             }
-            
+
             Alloy.Globals.WINDOWS.push(window);
             break;
         }
@@ -1017,10 +1017,23 @@ function createLayout(gameObject) {
     if (teamNames.length > 22) {
         fontSize = 18;
         topMargin = 16;
-    } else if (teamNames.length > 32) {
+    }
+    if (teamNames.length > 32) {
         fontSize = 16;
         topMargin = 20;
     }
+    if(teamNames.length > 37) {
+        if (gameObject.attributes.team_1.team_name.length > 17) {
+            gameObject.attributes.team_1.team_name = gameObject.attributes.team_1.team_name.substring(0, 14) + '...';
+        }
+
+        if (gameObject.attributes.team_2.team_name.length > 17) {
+            gameObject.attributes.team_2.team_name = gameObject.attributes.team_2.team_name.substring(0, 14) + '...';
+        }
+
+        teamNames = gameObject.attributes.team_1.team_name + " - " + gameObject.attributes.team_2.team_name;
+    }
+    
 
     image.add(Ti.UI.createLabel({
         top : 10,

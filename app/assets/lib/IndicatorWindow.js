@@ -94,7 +94,17 @@ function createIndicatorWindow(args) {
 
 
 	win.closeIndicator = closeIndicator;
-
+	
+    function setText(text) {
+        if(OS_IOS) {
+            label.setText(text);
+        } else {
+            activityIndicator.setMessage(text);
+        }       
+    }
+    
+    win.setText = setText;
+    
 	return win;
 }
 
