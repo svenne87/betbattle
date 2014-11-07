@@ -1,6 +1,6 @@
 var args = arguments[0] || {};
-var match = args.match;
 var isAndroid = false;
+var match = null;
 
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({
@@ -26,6 +26,54 @@ if (OS_ANDROID) {
         font : Alloy.Globals.getFontCustom(18, "Bold"),
         color : '#FFF'
     });
+}
+
+getMatchOfTheDay();
+
+function getMatchOfTheDay() {
+    // check connection
+    if (!Alloy.Globals.checkConnection()) {
+        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+        return;
+    }
+
+    indicator.openIndicator();
+
+    var xhr = Titanium.Network.createHTTPClient();
+    xhr.onerror = function(e) {
+        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+        Ti.API.error('Bad Sever =>' + e.error);
+        indicator.closeIndicator();
+    };
+
+    try {
+        xhr.open('GET', Alloy.Globals.BETKAMPENGETMOTDINFO + '?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
+        xhr.setRequestHeader("content-type", "application/json");
+        xhr.setTimeout(Alloy.Globals.TIMEOUT);
+        xhr.send();
+    } catch(e) {
+        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+        indicator.closeIndicator();
+    }
+
+    xhr.onload = function() {
+        if (this.status == '200') {
+            if (this.readyState == 4) {
+                try {
+                    match = JSON.parse(this.responseText);
+
+                } catch (e) {
+                    match = null;
+                }
+                indicator.closeIndicator();
+            }
+
+        } else {
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+            Ti.API.error("Error =>" + this.response);
+            indicator.closeIndicator();
+        }
+    };
 }
 
 function checkResponded(match) {
@@ -147,7 +195,11 @@ var previousMatch = Alloy.Globals.createButtonView("#FFF", "#000", Alloy.Globals
 
 nextMatch.setTop(60);
 nextMatch.addEventListener("click", function(e) {
-    checkResponded(match);
+    if(match !== null) {
+        checkResponded(match);
+    } else {
+       Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt); 
+    }
 });
 
 previousMatch.addEventListener("click", function(e) {

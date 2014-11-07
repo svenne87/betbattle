@@ -18,6 +18,7 @@ function createLeagueAndUidObj(response) {
     Alloy.Globals.LEAGUES = [];
     Alloy.Globals.AVAILABLELANGUAGES = [];
     Alloy.Globals.VERSIONS = response.versions;
+    user_team = response.user_team;
 
     for (var i = 0; i < response.leagues.length; i++) {
         var league = {
@@ -25,7 +26,9 @@ function createLeagueAndUidObj(response) {
             name : response.leagues[i].name,
             sport : response.leagues[i].sport,
             logo : response.leagues[i].logo,
-            actvie : response.leagues[i].active
+            active : response.leagues[i].active,
+            sport_name : response.leagues[i].sport_name,
+            sort_order : response.leagues[i].sort_order
         };
         // store all active leagues
         Alloy.Globals.LEAGUES.push(league);
@@ -85,90 +88,58 @@ function getChallengesAndStart() {
                 var args = {
                     dialog : indicator
                 };
+                
+                if (user_team.data.length > 0) {
+                    var loginSuccessWindow = Alloy.createController('landingPage', args).getView();
+                    Alloy.Globals.CURRENTVIEW = loginSuccessWindow;
+                    if (OS_IOS) {
+                        loginSuccessWindow.open({
+                            fullScreen : true
+                        });
 
-                var teamInfo = Ti.Network.createHTTPClient({
-                    onload : function(e) {
-                        Ti.API.info("Received text: " + this.responseText);
-                        var team = JSON.parse(this.responseText);
-                        if (team.data.length > 0) {
+                        loginSuccessWindow = null;
 
-                            var loginSuccessWindow = Alloy.createController('landingPage', args).getView();
-                            Alloy.Globals.CURRENTVIEW = loginSuccessWindow;
-                            if (OS_IOS) {
-                                loginSuccessWindow.open({
-                                    fullScreen : true,
-                                    transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
-                                });
-                                loginSuccessWindow = null;
+                    } else if (OS_ANDROID) {
+                        loginSuccessWindow.open({
+                            fullScreen : true,
+                            exitOnClose : false,
+                            orientationModes : [Titanium.UI.PORTRAIT]
+                        });
+                        loginSuccessWindow = null;
+                    }
 
-                            } else if (OS_ANDROID) {
-                                loginSuccessWindow.open({
-                                    fullScreen : true,
-                                    exitOnClose: false,
-                                    orientationModes : [Titanium.UI.PORTRAIT]
-                                });
-                                loginSuccessWindow = null;
-                            }
+                    addEvent();
+                    $.login.close();
 
-                            addEvent();
-                            $.login.close();
+                    if (Alloy.Globals.INDEXWIN !== null) {
+                        Alloy.Globals.INDEXWIN.close();
+                    }
 
-                            if (Alloy.Globals.INDEXWIN !== null) {
-                                Alloy.Globals.INDEXWIN.close();
-                            }
+                } else {
+                    var loginSuccessWindow = Alloy.createController('pickTeam', args).getView();
+                    Alloy.Globals.CURRENTVIEW = loginSuccessWindow;
+                    if (OS_IOS) {
+                        loginSuccessWindow.open({
+                            fullScreen : true
+                        });
+                        loginSuccessWindow = null;
 
-                            if (OS_ANDROID) {
-                                //	var activity = Titanium.Android.currentActivity; // TODO
-                                //	activity.finish();
-                            }
-                        } else {
-                            var loginSuccessWindow = Alloy.createController('pickTeam', args).getView();
-                            Alloy.Globals.CURRENTVIEW = loginSuccessWindow;
-                            if (OS_IOS) {
-                                loginSuccessWindow.open({
-                                    fullScreen : true,
-                                    transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
-                                });
-                                loginSuccessWindow = null;
+                    } else if (OS_ANDROID) {
+                        loginSuccessWindow.open({
+                            fullScreen : true,
+                            orientationModes : [Titanium.UI.PORTRAIT]
+                        });
+                        loginSuccessWindow = null;
+                    }
 
-                            } else if (OS_ANDROID) {
-                                loginSuccessWindow.open({
-                                    fullScreen : true,
-                                    orientationModes : [Titanium.UI.PORTRAIT]
-                                });
-                                loginSuccessWindow = null;
-                            }
+                    addEvent();
+                    $.login.close();
 
-                            addEvent();
-                            $.login.close();
+                    if (Alloy.Globals.INDEXWIN !== null) {
+                        Alloy.Globals.INDEXWIN.close();
+                    }
 
-                            if (Alloy.Globals.INDEXWIN !== null) {
-                                Alloy.Globals.INDEXWIN.close();
-                            }
-
-                            if (OS_ANDROID) {
-                                //	var activity = Titanium.Android.currentActivity;  // TODO
-                                //	activity.finish();
-                            }
-                        }
-
-                    },
-                    // function called when an error occurs, including a timeout
-                    onerror : function(e) {
-                        Ti.API.debug(e.error);
-                        //alert('error');
-                    },
-                    timeout : Alloy.Globals.TIMEOUT // in milliseconds
-                });
-                // Prepare the connection.
-                teamInfo.open('GET', Alloy.Globals.BETKAMPENGETUSERTEAM + '?uid=' + Alloy.Globals.BETKAMPENUID + '&sid=1' + '&lang=' + Alloy.Globals.LOCALE);
-
-                teamInfo.setRequestHeader("content-type", "application/json");
-                teamInfo.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
-                teamInfo.setTimeout(Alloy.Globals.TIMEOUT);
-
-                teamInfo.send();
-
+                }
             } else {
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                 indicator.closeIndicator();
@@ -332,7 +303,19 @@ function loginAuthenticated(fb) {
 function login() {
     // check login
     if (Alloy.Globals.checkConnection()) {
-        fb.authorize();
+        if (!args.reauth) {
+            fb.authorize();
+        } else {
+            removeEvent();
+            indicator.openIndicator();
+
+            if (!fb.loggedIn) {
+                fb.authorize();
+            } else {
+                loginAuthenticated(fb);
+            }
+        }
+
     } else {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
         //removeEvent();
@@ -341,7 +324,8 @@ function login() {
 }
 
 /* Initial */
-
+var args = arguments[0] || {};
+var user_team;
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({
     top : 200,
@@ -387,10 +371,17 @@ if (OS_IOS) {
 fb.forceDialogAuth = false;
 
 Alloy.Globals.connect = true;
-Ti.API.info(Alloy.Globals.connect);
+
 if (Alloy.Globals.FBERROR) {
+    Ti.API.log("Försöker iaf 1..." + fb.loggedIn);
+    // Kommer inte in i appen med
+    // funkar inte heller -> exitOnClose="false"
+
     // need to keep track if event was already added, since it is beeing added several times otherwise.
     fb.addEventListener('login', function(e) {
+
+        Ti.API.log("Försöker iaf 11...");
+
         if (Alloy.Globals.connect == true) {
             indicator.openIndicator();
         }
@@ -427,24 +418,26 @@ Alloy.Globals.readToken();
 // check login
 if (Alloy.Globals.checkConnection()) {
     if (fb.loggedIn) {
-
         removeEvent();
         if (OS_ANDROID) {
             $.login.addEventListener('open', function() {
                 indicator.openIndicator();
             });
-
             setTimeout(function() {
                 loginAuthenticated(fb);
-                //fb.authorize();  TODO Issue with fb module?
+                // fb.authorize(); TODO Issue with fb module?
             }, 300);
-
         } else if (OS_IOS) {
-            setTimeout(function() {
-                indicator.openIndicator();
-                fb.authorize();
-                //loginAuthenticated(fb); //TODO Issue with fb module?
-            }, 300);
+            if (!args.reauth) {
+                setTimeout(function() {
+                    indicator.openIndicator();
+                    fb.authorize();
+                    //loginAuthenticated(fb); //TODO Issue with fb module?
+                }, 300);
+            } else {
+                addEvent();
+            }
+
         }
     } else if (Alloy.Globals.BETKAMPEN) {
         Ti.API.log('aooomen!');
@@ -535,9 +528,9 @@ function addTutorialImages() {
                 height : Ti.UI.FILL,
                 width : Ti.UI.FILL,
             });
-    
+
             var imageView;
-            
+
             if (OS_IOS) {
                 imageView = Ti.UI.createImageView({
                     image : images[img],
@@ -650,6 +643,9 @@ if (OS_ANDROID) {
 }
 
 //----------------- email login
+if(OS_IOS) {
+    Alloy.Globals.NAV = $.nav;  
+}  
 
 // opening login view
 $.loginBtn.addEventListener('click', function(e) {

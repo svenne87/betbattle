@@ -142,12 +142,24 @@ mainView.add(table);
 
 //search starting when you click searchbutton
 searchBtn.addEventListener('click', function(e) {
-    getSearchResult();
+    if(searchText.value.toLowerCase() !== Alloy.Globals.PROFILENAME.toLowerCase()) {
+        getSearchResult(); 
+    } else { 
+        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.selfSearchTxt);
+    }
 });
 
 //or when you just click return on the keyboard
 searchText.addEventListener('return', function(e) {
-    getSearchResult();
+    if(typeof searchText.value === 'undefined') {
+        return;
+    }
+    
+    if(searchText.value.toLowerCase() !== Alloy.Globals.PROFILENAME.toLowerCase()) {
+        getSearchResult(); 
+    } else {
+        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.selfSearchTxt);
+    }
 });
 
 a = 0;
@@ -319,8 +331,8 @@ function getSearchResult() {
                 if (response.search.data.length > 0) {
                     friendResp = response.friends;
                     
-                    for (var i = 0; i < response.search.data.length; i++) {
-                        if (i == 10) {
+                    for (var i = 0; i < response.search.data.length; i++) {                     
+                        if (response.search.data[i].fid === Alloy.Globals.BETKAMPENUID || i == 10) {
                             break;
                         } 
                         createGUI(response.search.data[i]);
@@ -402,10 +414,7 @@ function addFriend(frid, name) {
                 var response = JSON.parse(this.responseText);
                 Alloy.Globals.showToast(Alloy.Globals.PHRASES.friendSuccess + ' ' + name);
                 table.touchEnabled = true;
-            } else {
-                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-                table.touchEnabled = true;
-            }
+            } 
         } else {
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             Ti.API.error("Error =>" + this.response);
@@ -449,9 +458,6 @@ function deleteFriend(frid, name) {
             if (this.readyState == 4) {
                 var response = JSON.parse(this.responseText);
                 Alloy.Globals.showToast(name + Alloy.Globals.PHRASES.friendRemovedTxt);
-                table.touchEnabled = true;
-            } else {
-                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                 table.touchEnabled = true;
             }
         } else {

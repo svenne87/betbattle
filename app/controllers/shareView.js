@@ -192,7 +192,7 @@ if (Alloy.Globals.FACEBOOKOBJECT != null) {
             name : Alloy.Globals.PHRASES.fbPostNameTxt,
             caption : Alloy.Globals.PHRASES.fbPostCaptionTxt,
             picture : Alloy.Globals.BETKAMPENURL + '/images/log_bk.png',
-            description : Alloy.Globals.PHRASES.fbPostDescriptionTxt
+            description : Alloy.Globals.PHRASES.fbPostDescriptionTxt + "\n" + Alloy.Globals.PHRASES.appLinkTxt
         };
 
         indicator.openIndicator();
@@ -278,7 +278,7 @@ if (OS_IOS) {
     if (Titanium.Platform.canOpenURL('twitter://')) {
         twitterBtn.addEventListener('click', function(e) {
 
-            Titanium.Platform.openURL('twitter://post?message=' + Alloy.Globals.PHRASES.twitterMsg);
+            Titanium.Platform.openURL('twitter://post?message=' + Alloy.Globals.PHRASES.twitterMsg + "\n" + Alloy.Globals.PHRASES.appLinkTxt);
 
         });
     }
@@ -291,7 +291,7 @@ if (OS_IOS) {
                 flags : Ti.Android.FLAG_ACTIVITY_NEW_TASK,
                 type : 'text/plain'
             });
-            intTwitter.putExtra(Ti.Android.EXTRA_TEXT, Alloy.Globals.PHRASES.twitterMsg);
+            intTwitter.putExtra(Ti.Android.EXTRA_TEXT, Alloy.Globals.PHRASES.twitterMsg + "\n" + Alloy.Globals.PHRASES.appLinkTxt);
             Ti.Android.currentActivity.startActivity(intTwitter);
         } catch(x) {
             alert(Alloy.Globals.PHRASES.notInstalledTxt + ' ' + 'Twitter');
@@ -329,7 +329,7 @@ googleBtn.addEventListener('click', function(e) {
 
 var emailDialog = Titanium.UI.createEmailDialog();
 emailDialog.subject = Alloy.Globals.PHRASES.mailSubject;
-emailDialog.messageBody = Alloy.Globals.PHRASES.mailMsg;
+emailDialog.messageBody = Alloy.Globals.PHRASES.mailMsg + '\n' + Alloy.Globals.PHRASES.appLinkTxt;
 
 mailBtn.addEventListener('click', function(e) {
     emailDialog.open();
@@ -340,7 +340,7 @@ if (OS_IOS) {
     var sms = require('bencoding.sms').createSMSDialog({
         barColor : '#336699'
     });
-    sms.setMessageBody(Alloy.Globals.PHRASES.smsMsg);
+    sms.setMessageBody(Alloy.Globals.PHRASES.smsMsg + '\n' + Alloy.Globals.PHRASES.appLinkTxt);
 
     smsBtn.addEventListener('click', function(e) {
         sms.open();
@@ -352,7 +352,7 @@ if (OS_IOS) {
         action : Ti.Android.ACTION_SENDTO,
         data : 'smsto:'
     });
-    intent.putExtra('sms_body', "'" + Alloy.Globals.PHRASES.smsMsg + "'");
+    intent.putExtra('sms_body', "'" + Alloy.Globals.PHRASES.smsMsg + "\n" + Alloy.Globals.PHRASES.appLinkTxt + "'");
 
     smsBtn.addEventListener('click', function(e) {
         Ti.Android.currentActivity.startActivity(intent);

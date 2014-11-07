@@ -15,9 +15,11 @@
 					<Label class="info_label" id="profile_name_label"></Label>
 					<Label id="profile_name_value_label"></Label>
 				</TableViewRow>
+				<!--
 				<TableViewRow class="settings_row" id="bluetooth_settings_row">
 					<Label class="info_label" id="bluetooth_settings_label"></Label>
 				</TableViewRow>
+				-->
 			</TableView>
 			<ProgressBar id="upload_indicator"></ProgressBar>
 		</View>

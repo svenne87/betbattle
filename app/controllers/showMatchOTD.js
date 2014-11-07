@@ -126,11 +126,11 @@ function createLayout(resp) {
             separatorColor : '#6d6d6d',
             id : 'challengeTable'
         });
-        
+
         table.footerView = Ti.UI.createView({
-           height : 0.5,
-           width : Ti.UI.FILL,
-           backgroundColor : '#303030' 
+            height : 0.5,
+            width : Ti.UI.FILL,
+            backgroundColor : '#303030'
         });
     }
 
@@ -249,11 +249,23 @@ function createLayout(resp) {
         var gameTypeDescription = Ti.UI.createLabel({
             text : Alloy.Globals.PHRASES.gameTypes[resp.game.game_types[i].type].description,
             left : 20,
+            top : 10,
             font : Alloy.Globals.getFontCustom(18, "Bold"),
             color : "#FFF",
         });
 
         gameTypeViewDesc.add(gameTypeDescription);
+
+        var gameTypeScoreLabel = Ti.UI.createLabel({
+            text : Alloy.Globals.PHRASES.giveTxt + " " + resp.game.game_types[i].number_of_values + " " + Alloy.Globals.PHRASES.pointsTxt + '  ',
+            top : 37,
+            left : 20,
+            font : Alloy.Globals.getFontCustom(12, "Regular"),
+            color : Alloy.Globals.themeColor()
+        });
+        
+        gameTypeViewDesc.add(gameTypeScoreLabel);
+
         var sectionIndex = sections.length;
 
         if (!isAndroid) {
@@ -270,7 +282,7 @@ function createLayout(resp) {
                 name : resp.game.game_types[i].type
             });
         }
-        
+
         sections[sectionIndex].add(createGameType(resp.game.game_types[i], resp.values, resp.game));
     }
 
@@ -349,8 +361,9 @@ if (isAndroid) {
         };
         $.showMatchOTD.activity.actionBar.displayHomeAsUp = true;
         $.showMatchOTD.activity.actionBar.title = Alloy.Globals.PHRASES.matchTxt;
-        Ti.API.log(" status " + isOpen);  // TODO
-        if(!isOpen) {        
+        Ti.API.log(" status " + isOpen);
+        // TODO
+        if (!isOpen) {
             //indicator.openIndicator();
             isOpen = true;
         }

@@ -30,26 +30,27 @@ var apns = function(){
         // called when a push notification is received.
       Titanium.Media.vibrate();
       //var data = JSON.parse(e.data);
-      var data = e.data;
-      Ti.API.info("DATA : " + JSON.stringify(data));
-      var badge = data.badge;
+      //var data = e.data;
+                                                        // TODO skicka med data till själva pushen, sitället för 1.2.3, verkar ju inte gå dölja på ios
+      var badge = e.data.badge;
       if(badge > 0){
         Titanium.UI.iPhone.appBadge = badge;
       }
-      var message = data.alert;
-      if(message != ''){
+      e.data.alert = e.data.alert;
+      if(e.data.alert != ''){
          var type = '';
          
-         if(message.charAt(0) === '1') {
-             message = message.substring(1);
+         if(e.data.alert.charAt(0) === '1') {
+             e.data.alert = e.data.alert.substring(1);
              type = 'accept';
-         } else if (message.charAt(0) === '2'){
-             message = message.substring(1);
+         } else if (e.data.alert.charAt(0) === '2'){
+             e.data.alert = e.data.alert.substring(1);
              type = 'pedning';
-         } else if(message.charAt(0) === '3') {
-             message = message.substring(1);
+         } else if(e.data.alert.charAt(0) === '3') {
+             e.data.alert = e.data.alert.substring(1);
              type = 'finished';
          }
+         var message = e.data.alert;
                 
          var my_alert = Ti.UI.createAlertDialog({title:Alloy.Globals.PHRASES.betbattleTxt, message:message});
          my_alert.show();
@@ -81,13 +82,15 @@ var apns = function(){
                
                 if(win !== null) {
                     Alloy.Globals.NAV.openWindow(win);
-                    win = null;  
                 } 
           
                 for(var w in Alloy.Globals.WINDOWS) {
                    if(Alloy.Globals.WINDOWS[w] === win) {
                       Alloy.Globals.WINDOWS[w].close();
                    }
+                }
+                if(win !== null) {
+                    Alloy.Globals.WINDOWS.push(win);
                 }
   
             } else {
@@ -109,8 +112,11 @@ var apns = function(){
                
                 if(win !== null) {
                     Alloy.Globals.NAV.openWindow(win);
-                    win = null;  
                 }      
+                
+                if(win !== null) {
+                    Alloy.Globals.WINDOWS.push(win);
+                }
             }			
 		});
         

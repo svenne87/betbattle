@@ -29,6 +29,35 @@ var mainView = Ti.UI.createView({
     layout : "vertical"
 });
 
+// create sections for the table
+function createSectionsForTable(sectionText) {
+    var sectionView = $.UI.create('View', {
+        classes : ['challengesSection']
+    });
+
+    sectionView.add(Ti.UI.createLabel({
+        top : '25%',
+        width : Ti.UI.FILL,
+        left : 60,
+        text : sectionText,
+        font : Alloy.Globals.getFontCustom(18, 'Bold'),
+        color : '#FFF'
+    }));
+
+    if (!isAndroid) {
+        return Ti.UI.createTableViewSection({
+            headerView : sectionView,
+            footerView : Ti.UI.createView({
+                height : 0.1
+            })
+        });
+    } else {
+        return Ti.UI.createTableViewSection({
+            headerView : sectionView
+        });
+    }
+}
+
 var header = Ti.UI.createView({
     height : 0.1,
 });
@@ -101,20 +130,9 @@ if (!isAndroid) {
     });
 }
 
-if (!isAndroid) {
-    sections[0] = Ti.UI.createTableViewSection({
-        headerView : Ti.UI.createView({
-            height : 0.1,
-        }),
-        footerView : Ti.UI.createView({
-            height : 10,
-        })
-    });
-} else {
-    sections[0] = Ti.UI.createTableViewSection({
-
-    });
-}
+sections[0] = createSectionsForTable(Alloy.Globals.PHRASES.landingPageInviteBtnTop);
+sections[1] = createSectionsForTable(Alloy.Globals.PHRASES.FriendsTxt);
+sections[2] = createSectionsForTable(Alloy.Globals.PHRASES.GroupsTxt);
 
 var fbFriendBtn = Titanium.UI.createTableViewRow({
     //title: Alloy.Globals.PHRASES.fbFriendsTxt,
@@ -160,8 +178,6 @@ var fbLabel = Titanium.UI.createLabel({
 });
 fbFriendBtn.add(fbLabel);
 
-sections[0].add(fbFriendBtn);
-
 var myFriendBtn = Titanium.UI.createTableViewRow({
     id : 'myFriendBtn',
     hasChild : child,
@@ -203,7 +219,6 @@ var mFriendLabel = Titanium.UI.createLabel({
     left : 50,
 });
 myFriendBtn.add(mFriendLabel);
-sections[0].add(myFriendBtn);
 
 var myGroupsBtn = Titanium.UI.createTableViewRow({
     id : 'myGroupsBtn',
@@ -246,8 +261,6 @@ var mGroupLabel = Titanium.UI.createLabel({
     left : 50
 });
 myGroupsBtn.add(mGroupLabel);
-
-sections[0].add(myGroupsBtn);
 
 var addFriendsBtn = Titanium.UI.createTableViewRow({
     id : 'addFriendsBtn',
@@ -292,7 +305,6 @@ var aFriendLabel = Titanium.UI.createLabel({
 });
 
 addFriendsBtn.add(aFriendLabel);
-sections[0].add(addFriendsBtn);
 
 var createGroupBtn = Titanium.UI.createTableViewRow({
     id : 'createGroupBtn',
@@ -336,7 +348,6 @@ cGroupLabel = Titanium.UI.createLabel({
 });
 
 createGroupBtn.add(cGroupLabel);
-sections[0].add(createGroupBtn);
 
 var shareBtn = Titanium.UI.createTableViewRow({
     id : 'shareBtn',
@@ -380,7 +391,6 @@ shareLabel = Titanium.UI.createLabel({
 });
 
 shareBtn.add(shareLabel);
-sections[0].add(shareBtn);
 
 fbFriendBtn.addEventListener('click', function(e) {
     // check connection
@@ -500,6 +510,13 @@ shareBtn.addEventListener('click', function(e) {
         win = null;
     }
 });
+
+sections[0].add(shareBtn);
+sections[0].add(fbFriendBtn);
+sections[1].add(addFriendsBtn);
+sections[1].add(myFriendBtn);
+sections[2].add(createGroupBtn);
+sections[2].add(myGroupsBtn);
 
 table.setData(sections);
 mainView.add(table);

@@ -342,8 +342,8 @@ function createGUI() {
         });
         dialog.show();
     });
-
-    /* Fifth row */
+/*
+    // Fifth row 
     $.bluetooth_settings_row.addEventListener('click', function() {
         if (!isAndroid) {
             Ti.Platform.openURL('prefs:root=Brightness prefs:root=General&path=Bluetooth');
@@ -356,6 +356,7 @@ function createGUI() {
             Ti.Android.currentActivity.startActivity(intent);
         }
     });
+    */
 }
 
 function createPickers() {
@@ -446,8 +447,3 @@ function getLanguage() {
 
 // run it
 createGUI();
-
-// Lås table? if table > Alloy.Globals.deviceHeight = lås upp
-// TODO fix so we can notify clients about a language change in phrases.
-// TODO Bluetooth funkar inte ios
-// TODO use toast and not dialog.

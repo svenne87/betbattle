@@ -337,7 +337,7 @@ function constructTableView(obj) {
         });
 
         emptyRow.add(Ti.UI.createLabel({
-            text : "Det fanns inga vinnare den här matchen ",
+            text : Alloy.Globals.PHRASES.noneTxt + ' ' + Alloy.Globals.PHRASES.matchOTDwinners.toLowerCase() + ' ' + Alloy.Globals.PHRASES.foundTxt + ' ',
             left : 20,
             font : Alloy.Globals.getFontCustom(16, "Regular"),
             color : "#FFF"

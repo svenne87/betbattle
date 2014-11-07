@@ -2,8 +2,11 @@ var error = Alloy.Globals.PHRASES.loginError;
 var uie = require('lib/IndicatorWindow');
 
 var indicator;
-
+var user_team;
 var args = arguments[0] || {};
+
+var abortBtn = Alloy.Globals.createButtonView('#d50f25', '#FFF', Alloy.Globals.PHRASES.abortBtnTxt);
+var signInBtn = Alloy.Globals.createButtonView('#FFF', '#000', Alloy.Globals.PHRASES.signInTxt);
 
 var emailReg = -1;
 if ( typeof args.email !== 'undefined') {
@@ -18,6 +21,7 @@ if ( typeof args.password !== 'undefined') {
 if (emailReg !== -1 && passwordReg !== -1) {
     // auto login
     login(true);
+    // TODO dölja inloggning i bakgrund??
 }
 var isAndroid = false;
 
@@ -79,9 +83,6 @@ if (OS_ANDROID) {
 $.table.setHeaderView(headerView);
 $.table.setFooterView(footerView);
 $.info_label.text = $.info_label.text + ':';
-
-var abortBtn = Alloy.Globals.createButtonView('#d50f25', '#FFF', Alloy.Globals.PHRASES.abortBtnTxt);
-var signInBtn = Alloy.Globals.createButtonView('#FFF', '#000', Alloy.Globals.PHRASES.signInTxt);
 
 abortBtn.top = -2;
 signInBtn.top = 0;
@@ -160,6 +161,8 @@ $.loginPass.addEventListener('return', function() {
                 text : Alloy.Globals.PHRASES.loadingTxt
             });
 
+            $.loginEmail.value = $.loginEmail.value.toLowerCase();
+
             indicator.openIndicator();
             login(false);
         } else {
@@ -226,6 +229,7 @@ function createLeagueAndUidObj(response) {
     Alloy.Globals.LEAGUES = [];
     Alloy.Globals.AVAILABLELANGUAGES = [];
     Alloy.Globals.VERSIONS = response.versions;
+    user_team = response.user_team;
 
     for (var i = 0; i < response.leagues.length; i++) {
         var league = {
@@ -233,7 +237,9 @@ function createLeagueAndUidObj(response) {
             name : response.leagues[i].name,
             sport : response.leagues[i].sport,
             logo : response.leagues[i].logo,
-            actvie : response.leagues[i].active
+            active : response.leagues[i].active,
+            sport_name : response.leagues[i].sport_name,
+            sort_order : response.leagues[i].sort_order
         };
         // store all active leagues
         Alloy.Globals.LEAGUES.push(league);
@@ -295,81 +301,53 @@ function getChallengesAndStart() {
                     dialog : indicator
                 };
 
-                var teamInfo = Ti.Network.createHTTPClient({
-                    onload : function(e) {
-                        Ti.API.info("Received text: " + this.responseText);
-                        var team = JSON.parse(this.responseText);
+                for (var win in Alloy.Globals.WINDOWS) {
+                    Alloy.Globals.WINDOWS[win].close();
+                }
 
-                        for (var win in Alloy.Globals.WINDOWS) {
-                            Alloy.Globals.WINDOWS[win].close();
-                        }
+                var loginSuccessWindow = Alloy.createController('landingPage', args).getView();
+                Alloy.Globals.CURRENTVIEW = loginSuccessWindow;
 
-                        var loginSuccessWindow = Alloy.createController('landingPage', args).getView();
-                        Alloy.Globals.CURRENTVIEW = loginSuccessWindow;
+                if (user_team.data.length > 0) {
+                    if (OS_IOS) {
+                        loginSuccessWindow.open({
+                            fullScreen : true
+                        });
+                        loginSuccessWindow = null;
 
-                        if (team.data.length > 0) {
-                            if (OS_IOS) {
-                                loginSuccessWindow.open({
-                                    fullScreen : true,
-                                    transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
-                                });
-                                loginSuccessWindow = null;
+                    } else if (OS_ANDROID) {
+                        loginSuccessWindow.open({
+                            fullScreen : true,
+                            exitOnClose : false,
+                            orientationModes : [Titanium.UI.PORTRAIT]
+                        });
+                        loginSuccessWindow = null;
+                    }
 
-                            } else if (OS_ANDROID) {
-                                loginSuccessWindow.open({
-                                    fullScreen : true,
-                                    exitOnClose: false,
-                                    orientationModes : [Titanium.UI.PORTRAIT]
-                                });
-                                loginSuccessWindow = null;
-                            }
+                    $.loginView.close();
 
-                            $.loginView.close();
+                } else {
+                    var loginSuccessWindow = Alloy.createController('pickTeam', args).getView();
 
-                        } else {
-                            var loginSuccessWindow = Alloy.createController('pickTeam', args).getView();
+                    if (OS_IOS) {
+                        loginSuccessWindow.open({
+                            fullScreen : true
+                        });
+                        loginSuccessWindow = null;
 
-                            if (OS_IOS) {
-                                loginSuccessWindow.open({
-                                    fullScreen : true,
-                                    transition : Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
-                                });
-                                loginSuccessWindow = null;
+                    } else if (OS_ANDROID) {
+                        loginSuccessWindow.open({
+                            fullScreen : true,
+                            orientationModes : [Titanium.UI.PORTRAIT]
+                        });
+                        loginSuccessWindow = null;
+                    }
 
-                            } else if (OS_ANDROID) {
-                                loginSuccessWindow.open({
-                                    fullScreen : true,
-                                    orientationModes : [Titanium.UI.PORTRAIT]
-                                });
-                                loginSuccessWindow = null;
-                            }
+                    $.loginView.close();
+                }
 
-                            $.loginView.close();
-                        }
-                    },
-                    // function called when an error occurs, including a timeout
-                    onerror : function(e) {
-                        Ti.API.debug(e.error);
-                        //alert('error');
-                    },
-                    timeout : Alloy.Globals.TIMEOUT // in milliseconds
-                });
-                // Prepare the connection.
-                teamInfo.open('GET', Alloy.Globals.BETKAMPENGETUSERTEAM + '?uid=' + Alloy.Globals.BETKAMPENUID + '&sid=1' + '&lang=' + Alloy.Globals.LOCALE);
-
-                teamInfo.setRequestHeader("content-type", "application/json");
-                teamInfo.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
-                teamInfo.setTimeout(Alloy.Globals.TIMEOUT);
-
-                teamInfo.send();
-
-            } else {
-                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-                signInBtn.enabled = true;
-                indicator.closeIndicator();
             }
         } else {
-            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             signInBtn.enabled = true;
             indicator.closeIndicator();
             Ti.API.error("Error =>" + this.response);
@@ -426,10 +404,6 @@ function loginAuthenticated() {
                     signInBtn.enabled = true;
                 }
 
-            } else {
-                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-                indicator.closeIndicator();
-                signInBtn.enabled = true;
             }
         } else {
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
@@ -438,6 +412,35 @@ function loginAuthenticated() {
             signInBtn.enabled = true;
         }
     };
+}
+
+function showBadCredentialsAlert() {
+    var alertDialog = Titanium.UI.createAlertDialog({
+        title : Alloy.Globals.PHRASES.betbattleTxt,
+        message : Alloy.Globals.PHRASES.loginCredentialsError,
+        buttonNames : ['OK', Alloy.Globals.PHRASES.regTxt]
+    });
+
+    alertDialog.addEventListener('click', function(e) {
+        switch(e.index) {
+            case 0:
+                alertDialog.hide();
+                break;
+            case 1:
+                alertDialog.hide();
+                var regWindow = Alloy.createController('registrationView').getView();
+                
+                if(OS_IOS) {
+                    Alloy.Globals.NAV.openWindow(regWindow);
+                } else {
+                    regWindow.open();
+                }
+                
+                $.loginView.close();
+        }
+    });
+
+    alertDialog.show();
 }
 
 function login(auto) {
@@ -500,7 +503,9 @@ function login(auto) {
             indicator.closeIndicator();
             if (e.code === 400) {
                 // OAuth return 400 on credentials error
-                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.loginCredentialsError);
+                // TODO
+                showBadCredentialsAlert();
+               // Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.loginCredentialsError);
             } else {
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             }
@@ -523,6 +528,8 @@ signInBtn.addEventListener('click', function(e) {
             top : 200,
             text : Alloy.Globals.PHRASES.loadingTxt
         });
+
+        $.loginEmail.value = $.loginEmail.value.toLowerCase();
 
         indicator.openIndicator();
         login(false);

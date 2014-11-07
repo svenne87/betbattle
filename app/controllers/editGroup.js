@@ -71,7 +71,7 @@ var mainView = Ti.UI.createView({
 if (gAdmin == Alloy.Globals.BETKAMPENUID) {
 
     var groupNameLabel = Ti.UI.createLabel({
-        text : Alloy.Globals.PHRASES.changeGroupNameTxt,
+        text : Alloy.Globals.PHRASES.changeGroupNameTxt + " ",
         left : 20,
         font : Alloy.Globals.getFontCustom(18, "Regular"),
         color : "#FFF"
@@ -530,7 +530,7 @@ function createGUI(obj) {
             boardName = boardName.substring(0, 19) + '...';
         }
         var name = Ti.UI.createLabel({
-            text : boardName,
+            text : boardName + " ",
             left : 60,
             color : "#FFF",
             font : Alloy.Globals.getFontCustom(16, "Regular")
@@ -579,7 +579,7 @@ function createGUI(obj) {
         row.add(profilePic);
 
         var name = Ti.UI.createLabel({
-            text : obj.username,
+            text : obj.username + " ",
             left : 60,
             color : "#FFF",
             font : Alloy.Globals.getFontCustom(16, "Regular"),
@@ -646,7 +646,7 @@ function createFriendGUI(friend, members) {
             boardName = boardName.substring(0, 19) + '...';
         }
         var name = Ti.UI.createLabel({
-            text : boardName,
+            text : boardName + " ",
             left : 60,
             color : "#FFF",
             font : Alloy.Globals.getFontCustom(16, "Regular"),
@@ -771,7 +771,7 @@ function getGroupMembers() {
             });
 
             var memberLabel = Ti.UI.createLabel({
-                text : Alloy.Globals.PHRASES.membersTxt,
+                text : Alloy.Globals.PHRASES.membersTxt + " ",
                 left : 20,
                 font : Alloy.Globals.getFontCustom(18, "Bold"),
                 color : "#FFF"
@@ -854,7 +854,7 @@ function getFriends(members) {
             });
 
             var friendLabel = Ti.UI.createLabel({
-                text : Alloy.Globals.PHRASES.addMembersTxt,
+                text : Alloy.Globals.PHRASES.addMembersTxt + " ",
                 left : 20,
                 font : Alloy.Globals.getFontCustom(18, "Bold"),
                 color : "#FFF"

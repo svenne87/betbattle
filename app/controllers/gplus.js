@@ -4,7 +4,7 @@ var indicator = uie.createIndicatorWindow({
     text : Alloy.Globals.PHRASES.loadingTxt
 });
 
-var url = 'https://plus.google.com/share?url=http://itunes.apple.com/app/id884939881';
+var url = Alloy.Globals.PHRASES.shareUrlLink;
 var win = $.gplus;
 
 if (OS_ANDROID) {

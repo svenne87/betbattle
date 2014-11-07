@@ -192,7 +192,6 @@ function createSectionsForTable(sectionText) {
             headerView : sectionView
         });
     }
-
 }
 
 // show empty row if no games found
@@ -373,7 +372,7 @@ function constructChallengeRows(obj, index, type) {
 
     firstRowView.add(Ti.UI.createLabel({
         left : 60,
-        text : betGroupName,
+        text : betGroupName + ' ',
         font : Alloy.Globals.getFontCustom(16, 'Regular'),
         color : '#FFF'
     }));
@@ -420,7 +419,7 @@ function constructChallengeRows(obj, index, type) {
 
     var startTextValueLabel = Ti.UI.createLabel({
         left : 75,
-        text : '' + date + ' ' + time,
+        text : '' + date + ' ' + time + ' ',
         font : Alloy.Globals.getFontCustom(12, 'Regular'),
         color : Alloy.Globals.themeColor()
     });
@@ -763,6 +762,21 @@ table.addEventListener('click', function(e) {
                 fullScreen : true,
             });
         }
+    } else if(e.rowData.id === 'matchOTD') {
+                var win = Alloy.createController('matchDay').getView(); 
+        Alloy.Globals.WINDOWS.push(win);
+
+        if (!isAndroid) {
+            Alloy.Globals.NAV.openWindow(win, {
+                animated : true,
+            });
+        } else {
+            win.open({
+                fullScreen : true,
+            });
+        }
+        
+        
     } else if (e.rowData.id === 'finished') {
         var win = Alloy.createController('challenges_finished').getView();
         Alloy.Globals.WINDOWS.push(win);
@@ -928,6 +942,16 @@ function constructTableData(array) {
         hasChild : child
     });
 
+    var matchOtdRow = Ti.UI.createTableViewRow({
+        height : 75,
+        id : "matchOTD",
+        width : Ti.UI.FILL,
+        color : "#FFF",
+        backgroundColor : 'transparent',
+        font : Alloy.Globals.getFont(),
+        hasChild : child
+    });
+
     acceptRow.add(Ti.UI.createImageView({
         left : 10,
         width : 30,
@@ -1018,10 +1042,42 @@ function constructTableData(array) {
             width : 'auto',
         }));
     }
+    
+    matchOtdRow.add(Ti.UI.createImageView({
+        left : 10,
+        width : 30,
+        height : 30,
+        image : '/images/ikoner_utmaning_ny.png',
+    }));
+
+    matchOtdRow.add(Ti.UI.createLabel({
+        font : Alloy.Globals.getFontCustom(16, 'Regular'),
+        text : Alloy.Globals.PHRASES.landingPageMatch,
+        color : '#FFF',
+        left : 60,
+        height : Ti.UI.SIZE,
+        width : Ti.UI.SIZE
+    }));
+
+    if (isAndroid) {
+        matchOtdRow.add(Ti.UI.createLabel({
+            font : {
+
+                fontFamily : font
+            },
+            text : fontawesome.icon('icon-chevron-right'),
+            right : rightPercentage,
+            color : '#c5c5c5',
+            fontSize : 60,
+            height : 'auto',
+            width : 'auto'
+        }));
+    }
 
     sections[0].add(acceptRow);
     sections[0].add(pendingRow);
     sections[0].add(finishedRow);
+    sections[0].add(matchOtdRow);
 
     sections[1] = createSectionsForTable(Alloy.Globals.PHRASES.challengesViewHot);
 

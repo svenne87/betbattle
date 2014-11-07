@@ -124,7 +124,7 @@ function getGroups() {
 function createBtn() {
     var addGroupLabel = Ti.UI.createLabel({
         classes : ['no-remove'],
-        text : Alloy.Globals.PHRASES.noGroupsTxt,
+        text : Alloy.Globals.PHRASES.noGroupsTxt + " ",
         textAlign : "center",
         top : 10,
         font : Alloy.Globals.getFontCustom(18, "Regular"),
@@ -245,7 +245,7 @@ function createViews(array) {
 
         var name = Ti.UI.createLabel({
             classes : ['remove'],
-            text : array[i].attributes.name,
+            text : array[i].attributes.name + " ",
             id : array[i].attributes.id,
             left : 50,
             font : Alloy.Globals.getFontCustom(16, "Regular"),

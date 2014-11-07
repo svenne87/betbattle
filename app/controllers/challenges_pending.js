@@ -317,7 +317,7 @@ function constructChallengeRows(obj, index) {
 
     firstRowView.add(Ti.UI.createLabel({
         left : 60,
-        text : betGroupName,
+        text : betGroupName + ' ',
         font : Alloy.Globals.getFontCustom(16, 'Regular'),
         color : '#FFF'
     }));

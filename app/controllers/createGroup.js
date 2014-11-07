@@ -33,7 +33,7 @@ if (OS_ANDROID) {
             $.createGroup = null;
         };
         $.createGroup.activity.actionBar.displayHomeAsUp = true;
-        $.createGroup.activity.actionBar.title = Alloy.Globals.PHRASES.createGroupTxt;
+        $.createGroup.activity.actionBar.title = Alloy.Globals.PHRASES.createGroupTxt + " ";
     });
     
     if(friends.length === '0') {
@@ -243,7 +243,7 @@ function createEmptyRow() {
     }
 
     var noFriendsLabel = Ti.UI.createLabel({
-        text : noFriendsTxt,
+        text : noFriendsTxt + " ",
         textAlign : "center",
         top : 15,
         font : Alloy.Globals.getFontCustom(16, 'Regular'),
@@ -316,7 +316,7 @@ function createFriendRow(friendObj) {
     }
 
     var nameLabel = Ti.UI.createLabel({
-        text : profileName,
+        text : profileName + " ",
         left : 60,
         height : Ti.UI.SIZE,
         width : Ti.UI.SIZE,
@@ -466,7 +466,7 @@ function getFriends() {
                 }
 
                 var friendsLabel = Ti.UI.createLabel({
-                    text : addFriendTxt,
+                    text : addFriendTxt + " ",
                     textAlign : "center",
                     top : 20,
                     font : Alloy.Globals.getFontCustom(18, 'Bold'),

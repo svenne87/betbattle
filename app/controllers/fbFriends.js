@@ -1,3 +1,4 @@
+
 var args = arguments[0] || {};
 
 var uie = require('lib/IndicatorWindow');
@@ -61,7 +62,7 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
     //USER IS NOT CONNECTED WITH FACEBOOK----------------------------------------------------------------------------------------------------------------------------------
 
     var connectLabel = Ti.UI.createLabel({
-        text : Alloy.Globals.PHRASES.notFbUserTxt + '\n' + Alloy.Globals.PHRASES.connectToGetFriendsTxt,
+        text : Alloy.Globals.PHRASES.notFbUserTxt + '\n' + Alloy.Globals.PHRASES.connectToGetFriendsTxt + " ", 
         textAlign : "center",
         top : 10,
         font : Alloy.Globals.getFontCustom(16, "Regular"),
@@ -165,7 +166,7 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
             left : 0,
             headerView : tableHeaderView,
             height : '85%',
-            separatorColor : '#6d6d6d',
+            separatorColor : '#303030',
             id : 'challengeTable'
         });
     }
@@ -215,7 +216,7 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
             boardName = boardName.substring(0, 22);
         }
         var name = Ti.UI.createLabel({
-            text : boardName,
+            text : boardName + " ",
             left : 50,
             font : Alloy.Globals.getFontCustom(16, "Regular"),
             color : "#FFF",
@@ -231,10 +232,10 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
                     fontSize : 32
                 },
                 text : fontawesome.icon('fa-check'),
-                color : '#FFF',
+                color : Alloy.Globals.themeColor(),
             });
             row.add(addBtn);
-            row.setBackgroundColor(Alloy.Globals.themeColor());
+            //row.setBackgroundColor(Alloy.Globals.themeColor());
             row.isFriend = true;
         } else {
             // add button for adding your new friend

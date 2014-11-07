@@ -181,7 +181,7 @@ function Controller() {
                 isSubmitting = false;
                 Ti.API.info("ERROR RESPONSE : " + JSON.stringify(this.responseText));
                 Ti.API.error("Bad Sever =>" + e.error);
-                if (-1 != JSON.parse(this.responseText).indexOf("coins")) {
+                if (-1 != JSON.parse(this.responseText).indexOf(Alloy.Globals.PHRASES.coinsInfoTxt.toLowerCase())) {
                     var alertWindow = Titanium.UI.createAlertDialog({
                         title: Alloy.Globals.PHRASES.betbattleTxt,
                         message: JSON.parse(this.responseText),
@@ -229,7 +229,7 @@ function Controller() {
                     if (4 == this.readyState) {
                         var response = JSON.parse(this.responseText);
                         response = response.replace(/(<br \/>)+/g, "\n");
-                        Alloy.Globals.showToast(response);
+                        Alloy.Globals.showToast(response, true);
                         var arg = {
                             refresh: true
                         };
@@ -262,11 +262,11 @@ function Controller() {
                 indicator.closeIndicator();
                 isSubmitting = false;
                 Ti.API.info("ERROR PARSE : " + JSON.stringify(this.responseText));
-                if (-1 != JSON.parse(this.responseText).indexOf("coins")) {
+                if (-1 != JSON.parse(this.responseText).indexOf(Alloy.Globals.PHRASES.coinsInfoTxt.toLowerCase())) {
                     var alertWindow = Titanium.UI.createAlertDialog({
                         title: Alloy.Globals.PHRASES.betbattleTxt,
                         message: JSON.parse(this.responseText),
-                        buttonNames: [ Alloy.Globals.PHRASES.okConfirmBtnTxt, Alloy.Globals.PHRASES.storeTxt ]
+                        buttonNames: [ Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.storeTxt ]
                     });
                     alertWindow.addEventListener("click", function(e) {
                         switch (e.index) {
@@ -311,7 +311,7 @@ function Controller() {
                     if (4 == this.readyState) {
                         var response = JSON.parse(this.responseText);
                         response = response.replace(/(<br \/>)+/g, "\n");
-                        Alloy.Globals.showToast(response);
+                        Alloy.Globals.showToast(response, true);
                         var arg = {
                             refresh: true
                         };
@@ -414,7 +414,7 @@ function Controller() {
         }
         table.footerView = Ti.UI.createView({
             height: .5,
-            backgroundColor: "#6d6d6d"
+            backgroundColor: "#303030"
         });
         var data = [];
         for (var i = 0; i < array.length; i++) {
@@ -428,7 +428,7 @@ function Controller() {
                 });
                 subRow.footerView = Ti.UI.createView({
                     height: .5,
-                    backgroundColor: "#6d6d6d"
+                    backgroundColor: "#303030"
                 });
                 for (var x = 0; x < array[i].attributes.members.length; x++) {
                     createMemberRow(array[i].attributes.members[x], subRow);
@@ -449,11 +449,7 @@ function Controller() {
                     text: array[i].attributes.name,
                     top: 14,
                     left: 60,
-                    font: {
-                        fontSize: Alloy.Globals.getFontSize(1),
-                        fontWeight: "normal",
-                        fontFamily: Alloy.Globals.getFont()
-                    },
+                    font: Alloy.Globals.getFontCustom(16, "Regular"),
                     color: "#FFF"
                 }));
             } else {
@@ -485,11 +481,7 @@ function Controller() {
                     text: array[i].attributes.name,
                     textAlign: "center",
                     left: 60,
-                    font: {
-                        fontSize: Alloy.Globals.getFontSize(1),
-                        fontWeight: "normal",
-                        fontFamily: Alloy.Globals.getFont()
-                    },
+                    font: Alloy.Globals.getFontCustom(16, "Regular"),
                     color: "#FFF"
                 }));
             }
@@ -498,11 +490,7 @@ function Controller() {
                     text: Alloy.Globals.PHRASES.nrOfMembersTxt + ": " + array[i].attributes.members.length,
                     top: 34,
                     left: 60,
-                    font: {
-                        fontSize: Alloy.Globals.getFontSize(1),
-                        fontWeight: "normal",
-                        fontFamily: Alloy.Globals.getFont()
-                    },
+                    font: Alloy.Globals.getFontCustom(16, "Regular"),
                     color: "#FFF"
                 }));
                 row.add(Ti.UI.createView({
@@ -736,18 +724,18 @@ function Controller() {
     });
     var tab_groups = Ti.UI.createView({
         height: 70,
-        width: "50%",
+        width: Alloy.Globals.deviceWidth / 2,
         backgroundColor: Alloy.Globals.themeColor()
     });
     tab_groups.add(Ti.UI.createLabel({
         text: Alloy.Globals.PHRASES.GroupsTxt,
         textAlign: "center",
-        color: "#FFFFFF",
+        color: "#FFF",
         font: Alloy.Globals.getFontCustom(16, "Bold")
     }));
     var tab_friends = Ti.UI.createView({
         height: 70,
-        width: "50%",
+        width: Alloy.Globals.deviceWidth / 2,
         backgroundColor: "#242424",
         backgroundGradient: {
             type: "linear",

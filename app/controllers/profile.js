@@ -155,7 +155,7 @@ var favoriteTeamNameLabel = Ti.UI.createLabel({
 
 var levelLabel = Ti.UI.createLabel({
     font : Alloy.Globals.getFontCustom(16, 'Regular'),
-    text : 'Loading...',
+    text : Alloy.Globals.PHRASES.loadingTxt + ' ',
     color : '#FFF',
     right : 20,
     height : 20,
@@ -229,7 +229,7 @@ var coinsLabelText = Ti.UI.createLabel({
 
 var coinsLabelValue = Ti.UI.createLabel({
     font : Alloy.Globals.getFontCustom(16, 'Regular'),
-    text : '...',
+    text : '...                       ',
     color : Alloy.Globals.themeColor(),
     left : 5,
     width : Ti.UI.SIZE
@@ -255,7 +255,7 @@ var pointsLabelText = Ti.UI.createLabel({
 
 var pointsLabelValue = Ti.UI.createLabel({
     font : Alloy.Globals.getFontCustom(16, 'Regular'),
-    text : '...',
+    text : '...                      ',
     color : Alloy.Globals.themeColor(),
     left : 5,
     width : Ti.UI.SIZE
@@ -281,7 +281,7 @@ var winsLabelText = Ti.UI.createLabel({
 
 var winsLabelValue = Ti.UI.createLabel({
     font : Alloy.Globals.getFontCustom(16, 'Regular'),
-    text : '...',
+    text : '...                      ',
     color : Alloy.Globals.themeColor(),
     left : 5,
     width : Ti.UI.SIZE
@@ -307,7 +307,7 @@ var scoreBoardLabelText = Ti.UI.createLabel({
 
 var scoreBoardLabelValue = Ti.UI.createLabel({
     font : Alloy.Globals.getFontCustom(16, 'Regular'),
-    text : '..',
+    text : '...                    ',
     color : Alloy.Globals.themeColor(),
     left : 5,
     width : Ti.UI.SIZE
@@ -414,16 +414,18 @@ function getProfile() {
                 }
 
                 if (userInfo !== null) {
-                    if (userInfo.team.data[0].name.length > 17) {
-                        userInfo.team.data[0].name = userInfo.team.data[0].name.substring(0, 14) + '...';
+                    if (userInfo.team.data[0]) {
+                        if (userInfo.team.data[0].name.length > 17) {
+                            userInfo.team.data[0].name = userInfo.team.data[0].name.substring(0, 14) + '...';
+                        }
+
+                        favoriteTeamNameLabel.setText(userInfo.team.data[0].name + ' ');
+                        favoriteTeamImageView.setImage(Alloy.Globals.BETKAMPENURL + userInfo.team.data[0].team_logo);
+
+                        favoriteTeamImageView.addEventListener('error', function() {
+                            favoriteTeamImageView.image = '/images/no_pic.png';
+                        });
                     }
-
-                    favoriteTeamNameLabel.setText(userInfo.team.data[0].name + ' ');
-                    favoriteTeamImageView.setImage(Alloy.Globals.BETKAMPENURL + userInfo.team.data[0].team_logo);
-
-                    favoriteTeamImageView.addEventListener('error', function() {
-                        favoriteTeamImageView.image = '/images/no_pic.png';
-                    });
 
                     if (userInfo.name.length > 17) {
                         userInfo.name = userInfo.name.substring(0, 15) + '...';
@@ -444,11 +446,10 @@ function getProfile() {
                     }
 
                     levelLabel.setText(Alloy.Globals.PHRASES.levels[level] + ' ');
-
-                    coinsLabelValue.setText(userInfo.totalCoins);
-                    pointsLabelValue.setText(userInfo.totalPoints);
-                    winsLabelValue.setText(userInfo.totalWins);
-                    scoreBoardLabelValue.setText(userInfo.position);
+                    coinsLabelValue.setText(userInfo.totalCoins + ' ');
+                    pointsLabelValue.setText(userInfo.totalPoints + ' ');
+                    winsLabelValue.setText(userInfo.totalWins + ' ');
+                    scoreBoardLabelValue.setText(userInfo.position + ' ');
                 }
             }
 
@@ -552,12 +553,12 @@ function getAchievements() {
                                     top : 5,
                                 });
                                 textWrapper.add(achievementTitle);
-                                
+
                                 var dynamicTop = 40;
-                                
-                                if(Alloy.Globals.PHRASES.achievements[e.source.id].title.length > 13) {
+
+                                if (Alloy.Globals.PHRASES.achievements[e.source.id].title.length > 13) {
                                     dynamicTop = 60;
-                                } 
+                                }
 
                                 var achievementDescription = Ti.UI.createLabel({
                                     text : Alloy.Globals.PHRASES.achievements[e.source.id].description,
@@ -648,12 +649,12 @@ function getAchievements() {
                                     font : Alloy.Globals.getFontCustom(18, 'Bold')
                                 });
                                 w.add(achievementTitle);
-                                
+
                                 var dynamicTop = 40;
-                                
-                                if(Alloy.Globals.PHRASES.achievements[e.source.id].title.length > 13) {
+
+                                if (Alloy.Globals.PHRASES.achievements[e.source.id].title.length > 13) {
                                     dynamicTop = 60;
-                                } 
+                                }
 
                                 var achievementDescription = Ti.UI.createLabel({
                                     text : Alloy.Globals.PHRASES.achievements[e.source.id].description,

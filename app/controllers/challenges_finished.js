@@ -1,12 +1,21 @@
 var args = arguments[0] || {};
-
+                                
 if (args.refresh) {
-    getChallenges();
+    getFinishedChallenges(true, 0, 20);
 }
-
+                                        
 var iOSVersion;
 var isAndroid = false;
+var finishedChallengesArray = [];
+var finishedChallengesCount = 0; 
+var fetchedFinishedChallenges = 0;
+var footerViewLabel = '';
+var isLoading = false;
+var initialTableSize = 0;
+var currentSize = 0;
+var overlap = 62;
 var data = [];
+var table;
 
 if (OS_IOS) {
     iOSVersion = parseInt(Ti.Platform.version);
@@ -32,11 +41,14 @@ if (!isAndroid) {
     // will refresh on pull
     refresher.addEventListener('refreshstart', function(e) {
         if (Alloy.Globals.checkConnection()) {
-            getChallenges();
+            fetchedFinishedChallenges = 0;
+            initialTableSize = 0;
+            currentSize = 0;
+            overlap = 62;
+            getFinishedChallenges(true, 0, 20);
         } else {
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
             refresher.endRefreshing();
-
         }
 
     });
@@ -47,8 +59,41 @@ var tableHeaderView = Ti.UI.createView({
 });
 
 var tableFooterView = Ti.UI.createView({
-    height : 0.1,
+    height : 75,
+    width : Ti.UI.FILL,
+    layout : 'vertical',
+    backgroundColor : '#303030',
+    backgroundGradient : {
+        type : "linear",
+        startPoint : {
+            x : "0%",
+            y : "0%"
+        },
+        endPoint : {
+            x : "0%",
+            y : "100%"
+        },
+        colors : [{
+            color : "#151515",
+
+        }, {
+            color : "#2E2E2E",
+
+        }]
+    }
 });
+
+footerViewLabel = Ti.UI.createLabel({
+    left : 10,
+    top : 25,
+    text : '',
+    height : Ti.UI.SIZE,
+    width : Ti.UI.FILL,
+    font : Alloy.Globals.getFontCustom(12, 'Regular'),
+    color : '#FFF'
+});
+
+tableFooterView.add(footerViewLabel);
 
 var fontawesome = require('lib/IconicFont').IconicFont({
     font : 'lib/FontAwesome'
@@ -64,6 +109,7 @@ if (isAndroid) {
         rightPercentage = '3%';
     }
 }
+
 
 if (!isAndroid) {
     table = Titanium.UI.createTableView({
@@ -88,11 +134,12 @@ if (!isAndroid) {
         table.separatorColor = 'transparent';
     }
 
-} else if (OS_ANDROID) {
+} else {
     table = Titanium.UI.createTableView({
         width : Ti.UI.FILL,
         top : 0,
         left : 0,
+        height : '100%',
         headerView : tableHeaderView,
         footerView : tableFooterView,
         height : Ti.UI.FILL,
@@ -104,12 +151,52 @@ if (!isAndroid) {
         height : 0.5,
         backgroundColor : '#303030'
     });
+}
 
-    table.footerView = Ti.UI.createView({
-        height : 0.5,
-        backgroundColor : '#303030'
+if (!isAndroid) {
+    // get initial table size for iOS
+    table.addEventListener('postlayout', function() {
+        initialTableSize = table.rect.height;
     });
 }
+
+table.addEventListener('scroll', function(_evt) {
+    if (!isAndroid) {
+        // include a timeout for better UE
+        setTimeout(function() {
+            if (currentSize - overlap < _evt.contentOffset.y + initialTableSize) {
+                if (isLoading) {
+                    return;
+                }
+
+                if (finishedChallengesCount <= fetchedFinishedChallenges) {
+                    // can't load more
+                    return;
+                } else {
+                    // try to fetch 20 more challenges each time
+                    getFinishedChallenges(false, ((fetchedFinishedChallenges - 0) + 20), 20);
+                }
+            }
+        }, 500);
+    } else {
+        if (_evt.firstVisibleItem + _evt.visibleItemCount == _evt.totalItemCount) {
+            if (isLoading) {
+                return;
+            }
+
+            if (finishedChallengesCount <= fetchedFinishedChallenges) {
+                // can't load more
+                return;
+            } else {
+                setTimeout(function() {
+                    // try to fetch 20 more challenges each time
+                    getFinishedChallenges(false, ((scroreboardFetched - 0) + 20), 20);
+                }, 200);
+            }
+        }
+    }
+
+});
 
 // when clicking a row
 table.addEventListener('click', function(e) {
@@ -126,7 +213,7 @@ table.addEventListener('click', function(e) {
     if (e.rowData !== null) {
         if (Alloy.Globals.checkConnection()) {
             if ( typeof e.rowData.id !== 'undefined') {
-                var obj = Alloy.Globals.CHALLENGEOBJECTARRAY[2][e.rowData.id];
+                var obj = finishedChallengesArray[e.rowData.id];
                 if (obj.attributes.show !== 0) {
                     // view challenge
                     Alloy.Globals.CHALLENGEINDEX = e.rowData.id;
@@ -161,7 +248,7 @@ function buildTableRows() {
     table.setData([]);
     data = [];
 
-    var arrayObj = Alloy.Globals.CHALLENGEOBJECTARRAY[2];
+    var arrayObj = finishedChallengesArray;
     // create 'accept' rows
     if (arrayObj.length > 0) {
         for (var i = 0; i < arrayObj.length; i++) {
@@ -188,7 +275,7 @@ function constructChallengeRows(obj, index) {
         className : "finished_row",
         height : 75
     });
-    
+
     // add custom icon on Android to symbol that the row has child
     if (child != true) {
         row.add(Ti.UI.createLabel({
@@ -327,7 +414,7 @@ function constructChallengeRows(obj, index) {
 
     secondRowView.add(participantsTextLabel);
 
-   var oppCount = parseInt(obj.attributes.opponents.length);
+    var oppCount = parseInt(obj.attributes.opponents.length);
 
     var participantsValueLabel = Ti.UI.createLabel({
         left : 175,
@@ -383,11 +470,37 @@ function constructChallengeRows(obj, index) {
             width : '120%'
         }));
     }
+    
+    if (!isAndroid) {
+        // keep track of the table total heigth, to decide when to start fetching more
+        currentSize += row.toImage().height;
+    }
 
     return row;
 }
 
-function getChallenges() {
+/* Set text with information about how many games we are displaying */
+function setDisplayText() {
+    if (finishedChallengesCount <= fetchedFinishedChallenges) {
+        footerViewLabel.setText(Alloy.Globals.PHRASES.nrOfGamesTxt + ': ' + finishedChallengesCount + '/' + finishedChallengesCount + ' ');
+    } else {
+        footerViewLabel.setText(Alloy.Globals.PHRASES.nrOfGamesTxt + ': ' + fetchedFinishedChallenges + '/' + finishedChallengesCount + ' ');
+    }
+}
+
+function getFinishedChallenges(firstTime, start, rows) {
+    Ti.API.log(firstTime + " Fetching -> " + start + " - " + rows);
+
+    // check connection
+    if (!Alloy.Globals.checkConnection()) {
+        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+        return;
+    }
+
+    if (isLoading) {
+        return;
+    }
+
     // Get challenges
     var xhr = Titanium.Network.createHTTPClient();
     xhr.onerror = function(e) {
@@ -402,7 +515,9 @@ function getChallenges() {
     };
 
     try {
-        xhr.open('GET', Alloy.Globals.BETKAMPENCHALLENGESURL + '/?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
+        indicator.openIndicator();
+        isLoading = true;
+        xhr.open('GET', Alloy.Globals.FINISHEDCHALLENGESURL + '?start=' + start + '&rows=' + rows + '&lang=' + Alloy.Globals.LOCALE);
         xhr.setRequestHeader("challengesView-type", "application/json");
         xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
         xhr.setTimeout(Alloy.Globals.TIMEOUT);
@@ -414,27 +529,74 @@ function getChallenges() {
                 refresher.endRefreshing();
             }
         }
+        isLoading = false;
         indicator.closeIndicator();
     }
     xhr.onload = function() {
         if (this.status == '200') {
-            if (this.readyState == 4) {
-                var response = JSON.parse(this.responseText);
-                // construct array with objects
-                Alloy.Globals.CHALLENGEOBJECTARRAY = Alloy.Globals.constructChallenge(response);
-                buildTableRows();
-            } else {
-                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-            }
-            if (!isAndroid) {
-                if ( typeof refresher !== 'undefined') {
-                    refresher.endRefreshing();
+            if (this.readyState == '4') {
+                // fake build same structure to use method
+                var res = JSON.parse(this.responseText);
+                finishedChallengesCount = res.count;
+
+                if (finishedChallengesCount <= fetchedFinishedChallenges) {
+                    fetchedFinishedChallenges = finishedChallengesCount;
+                } else {
+                    fetchedFinishedChallenges = start;
                 }
+                  
+                var response = [];
+                response.push([]);
+                response.push([]);
+                response.push(res.challenges);
+                response.push([]);
+                response.push([]);
+
+                var tmpArray = [];
+
+                if (firstTime) {
+                    // rebuild
+                    tmpArray = Alloy.Globals.constructChallenge(response);
+                    finishedChallengesArray = tmpArray[2];
+                    buildTableRows();  
+                    
+                    if(fetchedFinishedChallenges == 0) {
+                        footerViewLabel.setText(Alloy.Globals.PHRASES.nrOfGamesTxt + ': ' + 20 + '/' + finishedChallengesCount + ' ');    
+                    }
+                   
+                } else {
+                    // we can't fetch more games
+                    if (((fetchedFinishedChallenges - 0) + 20) >= finishedChallengesCount) {
+                        // all games are visible. update values
+                        fetchedFinishedChallenges = finishedChallengesCount;
+                    }
+                    
+                    // just append rows
+                    tmpArray = Alloy.Globals.constructChallenge(response);
+                    tmpArray = tmpArray[2];
+
+                    for (var challenge in tmpArray) {
+                        table.appendRow(constructChallengeRows(tmpArray[challenge], challenge));
+                        finishedChallengesArray.push(tmpArray[challenge]);
+                    }
+                    setDisplayText();
+                }  
+
+                
+
+                if (!isAndroid) {
+                    if ( typeof refresher !== 'undefined') {
+                        refresher.endRefreshing();
+                    }
+                }
+
+                isLoading = false;
+                indicator.closeIndicator();
             }
-            indicator.closeIndicator();
         } else {
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             indicator.closeIndicator();
+            isLoading = false;
             if (!isAndroid) {
                 if ( typeof refresher !== 'undefined') {
                     refresher.endRefreshing();
@@ -471,7 +633,7 @@ function createEmptyTableRow(text) {
             width : '120%'
         }));
     }
-
+    fetchedFinishedChallenges = 0;
     return row;
 }
 
@@ -491,4 +653,4 @@ if (OS_ANDROID) {
         $.challenges_finished.activity.actionBar.title = Alloy.Globals.PHRASES.finishedTxt;
     });
 }
-
+getFinishedChallenges(true, 0, 20);

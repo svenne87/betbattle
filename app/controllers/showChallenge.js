@@ -112,7 +112,7 @@ function createGameType(gameType, game, values, index, sections) {
     var type = gameType.type;
 
     var gameTypeView = Ti.UI.createView({
-        height : 75,
+        height : 65,
         width : Ti.UI.FILL,
         layout : 'absolute',
         backgroundColor : '#303030',
@@ -143,13 +143,23 @@ function createGameType(gameType, game, values, index, sections) {
 
     gameTypeView.add(Ti.UI.createLabel({
         text : gameTypeText + ' ',
-        left : 10,
-        top : 24,
+        left : 20,
+        top : 10,
         height : Ti.UI.SIZE,
         width : Ti.UI.SIZE,
         font : Alloy.Globals.getFontCustom(18, 'Regular'),
         color : '#FFF'
     }));
+
+    var gameTypeScoreLabel = Ti.UI.createLabel({
+        text : Alloy.Globals.PHRASES.giveTxt + " " + gameType.number_of_values + " " + Alloy.Globals.PHRASES.pointsTxt + '  ',
+        top : 37,
+        left : 20,
+        font : Alloy.Globals.getFontCustom(12, "Regular"),
+        color : Alloy.Globals.themeColor()
+    });
+    
+    gameTypeView.add(gameTypeScoreLabel);
 
     var resultText = '';
 
@@ -214,7 +224,7 @@ function createGameType(gameType, game, values, index, sections) {
     gameTypeView.add(Ti.UI.createLabel({
         text : resultText + ' ',
         right : 10,
-        top : 24,
+        top : 10,
         height : Ti.UI.SIZE,
         width : Ti.UI.SIZE,
         font : Alloy.Globals.getFontCustom(18, 'Regular'),
@@ -436,19 +446,19 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished)
 
     if (teamNames.length > 22) {
         fontResponsive = Alloy.Globals.getFontCustom(18, 'Regular');
-    } 
+    }
     if (teamNames.length > 32) {
         fontResponsive = Alloy.Globals.getFontCustom(18, 'Regular');
     }
-    if(teamNames.length > 37) {
-        if(game.team_1.team_name.length > 17) {
+    if (teamNames.length > 37) {
+        if (game.team_1.team_name.length > 17) {
             game.team_1.team_name = game.team_1.team_name.substring(0, 14) + '...';
         }
-        
-        if(game.team_2.team_name.length > 17) {
+
+        if (game.team_2.team_name.length > 17) {
             game.team_2.team_name = game.team_2.team_name.substring(0, 14) + '...';
         }
-        
+
         teamNames = game.team_1.team_name + " - " + game.team_2.team_name;
     }
 
@@ -541,15 +551,6 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished)
 
             header.add(headerScoreLabel);
         }
-    }
-
-    if (!isAndroid) {
-        header.add(Ti.UI.createView({
-            top : 12,
-            height : 0.5,
-            backgroundColor : '#303030',
-            width : Ti.UI.FILL
-        }));
     }
 
     view.add(header);

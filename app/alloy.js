@@ -23,7 +23,7 @@ Alloy.Globals.CHALLENGEINDEX;
 Alloy.Globals.LEAGUES;
 Alloy.Globals.AVAILABLELANGUAGES;
 Alloy.Globals.SLIDERZINDEX = 1;
-Alloy.Globals.TIMEOUT = 30000;
+Alloy.Globals.TIMEOUT = 40000;
 Alloy.Globals.CURRENTVIEW;
 Alloy.Globals.PREVIOUSVIEW;
 Alloy.Globals.NAV = null;
@@ -44,6 +44,7 @@ Alloy.Globals.connect;
 Alloy.Globals.VERSIONS;
 Alloy.Globals.COUPON = null;
 Alloy.Globals.hasCoupon = false;
+Alloy.Globals.couponOpen = false;
 Alloy.Globals.appStatus = 'foreground';
 Alloy.Globals.FONT = getFont();
 Alloy.Globals.FONTBOLD = getBoldFont();
@@ -106,13 +107,14 @@ function getBoldFont() {
         };
     }
 }
-
+/*
 //initialize beacons
 if (OS_IOS) {
     Alloy.Globals.TiBeacon = require('org.beuckman.tibeacons');
 } else if (OS_ANDROID) {
     Alloy.Globals.TiBeacon = require('miga.tibeacon');
 }
+*/
 
 // try to get stored language
 var lang = JSON.parse(Ti.App.Properties.getString('language'));
@@ -207,6 +209,7 @@ Alloy.Globals.BETKAMPENSETUSERTEAM = Alloy.Globals.BETKAMPENURL + '/api/add_user
 Alloy.Globals.BETKAMPENPREVIOUSMATCHDAY = Alloy.Globals.BETKAMPENURL + '/api/get_last_match_day.php';
 Alloy.Globals.SCOREBOARDURL = Alloy.Globals.BETKAMPENURL + '/api/get_scoreboard.php';
 Alloy.Globals.BETKAMPENGETTUTORIALURL = Alloy.Globals.BETKAMPENURL + '/api/get_tutorial_images.php';
+Alloy.Globals.FINISHEDCHALLENGESURL = Alloy.Globals.BETKAMPENURL + '/api/get_finished_challenges.php';
 
 Alloy.Globals.performTimeout = function(func) {
     if (OS_ANDROID) {
@@ -560,7 +563,7 @@ Alloy.Globals.themeColor = function() {
     case 1:
         return '#58B101';
     case 2:
-        return '#FF7D40';
+        return '#FF7D40';  // #f43710
     }
 };
 
@@ -742,13 +745,17 @@ Alloy.Globals.addBonusCoins = function(uid, amount) {
 
 };
 
-Alloy.Globals.showToast = function(msg) {
+Alloy.Globals.showToast = function(msg, unlock) {
     if (OS_ANDROID) {
         var delToast = Ti.UI.createNotification({
             duration : Ti.UI.NOTIFICATION_DURATION_LONG,
             message : msg
         });
         delToast.show();
+        
+        if(unlock) {
+            Alloy.Globals.unlockAchievement(11);
+        }
     } else {
         indWin = Titanium.UI.createWindow();
 
@@ -770,10 +777,7 @@ Alloy.Globals.showToast = function(msg) {
             width : 'auto',
             height : 'auto',
             textAlign : 'center',
-            font : {
-                fontSize : 12,
-                fontWeight : 'bold'
-            }
+            font : Alloy.Globals.getFontCustom(12, 'Bold'),
         });
 
         indView.add(message);
@@ -785,6 +789,10 @@ Alloy.Globals.showToast = function(msg) {
                 opacity : 0,
                 duration : 1000
             });
+            if(unlock) {
+                Alloy.Globals.unlockAchievement(11);
+            }
+            
         }, interval);
     }
 };
@@ -823,6 +831,7 @@ Alloy.Globals.unlockAchievement = function(achID) {
                     Ti.API.log(response);
                     if (response == 1) {
                         Ti.API.info("redan låst upp");
+                        
                     } else if (response.image != null) {
                         Ti.API.info("visa toast");
                         var player = Ti.Media.createSound({
@@ -835,9 +844,9 @@ Alloy.Globals.unlockAchievement = function(achID) {
                             top : '80%',
                             height : 50,
                             width : '100%',
-                            backgroundColor : '#000',
+                            backgroundColor : '#FFF',
                             opacity : 0.9,
-                            layout : 'horizontal',
+                            layout : 'horizontal'
                         });
 
                         indWin.add(indView);
@@ -852,14 +861,11 @@ Alloy.Globals.unlockAchievement = function(achID) {
                         var message = Titanium.UI.createLabel({
                             text : Alloy.Globals.PHRASES.achievementUnlocked + Alloy.Globals.PHRASES.achievements[response.id].title,
                             right : 0,
-                            color : '#fff',
+                            color : '#000',
                             width : '75%',
                             height : 'auto',
                             textAlign : 'center',
-                            font : {
-                                fontSize : 12,
-                                fontWeight : 'bold'
-                            }
+                            font : Alloy.Globals.getFontCustom(12, 'Bold'),
                         });
                         indView.add(image);
                         indView.add(message);
@@ -1134,7 +1140,55 @@ Alloy.Globals.constructChallenge = function(responseAPI) {
     return finalArray;
 };
 
-Alloy.Globals.getCoupon = function(uid) {
+/* Used to show alert with info on coupon save/update */
+Alloy.Globals.showCouponAlert = function() {
+    // show dialog with options to add more matches or go to ticket
+    var alertWindow = Titanium.UI.createAlertDialog({
+        title : Alloy.Globals.PHRASES.betbattleTxt,
+        message : Alloy.Globals.PHRASES.couponSavedMsg,
+        buttonNames : [Alloy.Globals.PHRASES.addMoreMatchesTxt, Alloy.Globals.PHRASES.goToTicketTxt]
+    });
+
+    alertWindow.addEventListener('click', function(e) {
+        switch (e.index) {
+        case 0:
+            alertWindow.hide();
+            
+            if(Alloy.Globals.WINDOWS.length > 0) {
+                Alloy.Globals.WINDOWS[Alloy.Globals.WINDOWS.length -1].close();
+            }
+
+            break;
+        case 1:
+            alertWindow.hide();
+
+            var window = Alloy.createController('showCoupon').getView();
+            Alloy.Globals.CURRENTVIEW = window;
+
+            if (OS_ANDROID) {
+                window.open({
+                    fullScreen : true
+                });
+            } else {
+                Alloy.Globals.NAV.openWindow(window, {
+                    animated : true
+                });
+            }
+
+            for (win in Alloy.Globals.WINDOWS) {
+                if (Alloy.Globals.WINDOWS[win].id === 'challengeWindow') {
+                    Alloy.Globals.WINDOWS[win].close();
+                }
+            }
+
+            Alloy.Globals.WINDOWS.push(window);
+            break;
+        }
+    });
+    alertWindow.show();
+};
+
+Alloy.Globals.getCoupon = function(showAlert, indicator) {
     // check connection
     if (Alloy.Globals.checkConnection()) {
         var xhr = Titanium.Network.createHTTPClient();
@@ -1187,6 +1241,11 @@ Alloy.Globals.getCoupon = function(uid) {
                         }
                     } else if (Alloy.Globals.COUPON.games.length > 0) {
                         Alloy.Globals.hasCoupon = true;
+                        
+                        if(showAlert) {
+                            indicator.closeIndicator();
+                            Alloy.Globals.showCouponAlert();
+                        }
 
                         if (OS_IOS) {
                             Ti.API.info("challenge succces");

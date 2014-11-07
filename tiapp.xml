@@ -51,6 +51,7 @@
                     <string>/fonts/OpenSans-Regular.ttf</string>
                     <string>/fonts/OpenSans-Light.ttf</string>
                 </array>
+                <!--
                 <key>UIBackgroundModes</key>
                 <array>
                     <string>location</string>
@@ -59,6 +60,7 @@
                 <array>
                     <string>bluetooth-le</string>
                 </array>
+                -->
             </dict>
         </plist>
     </ios>
@@ -67,8 +69,10 @@
             <uses-sdk android:minSdkVersion="14" android:targetSdkVersion="16"/>
             <supports-screens android:anyDensity="false"
                 android:largeScreens="true" android:normalScreens="true" android:smallScreens="false"/>
+             <!--
             <uses-permission android:name="android.permission.BLUETOOTH"/>
             <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+            -->
             <application android:debuggable="true"
                 android:hardwareAccelerated="true"
                 android:icon="@drawable/appicon"
@@ -108,6 +112,7 @@
                 <service android:exported="false" android:name="org.appcelerator.titanium.analytics.TiAnalyticsService"/>
                 <service android:name="net.iamyellow.gcmjs.GCMIntentService"/>
                 <service android:name="net.iamyellow.gcmjs.GcmjsService"/>
+                <!--
                 <service android:enabled="true" android:exported="true"
                     android:isolatedProcess="false"
                     android:label="iBeacon" android:name="com.radiusnetworks.ibeacon.service.IBeaconService"/>
@@ -118,6 +123,7 @@
                         <action android:name="apps.topgame.betkampen.DID_MONITORING"/>
                     </intent-filter>
                 </service>
+                -->
                 <receiver
                     android:name="net.iamyellow.gcmjs.GCMBroadcastReceiver" android:permission="com.google.android.c2dm.permission.SEND">
                     <intent-filter>
@@ -146,9 +152,13 @@
         <module platform="iphone">com.logicallabs.inappproducts</module>
         <module platform="iphone">bencoding.blur</module>
         <module platform="android">bencoding.blur</module>
+        <!--
         <module platform="iphone">org.beuckman.tibeacons</module>
+        -->
         <module platform="iphone">bencoding.sms</module>
+        <!--
         <module platform="android">miga.tibeacon</module>
+        -->
         <module platform="android">com.yydigital.realswitch</module>
         <module platform="android">com.rkam.swiperefreshlayout</module>
     </modules>

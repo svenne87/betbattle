@@ -19,7 +19,7 @@ if (OS_ANDROID) {
             $.registrationView = null;
         };
         $.registrationView.activity.actionBar.displayHomeAsUp = true;
-        $.registrationView.activity.actionBar.title = Alloy.Globals.PHRASES.Register;
+        $.registrationView.activity.actionBar.title = Alloy.Globals.PHRASES.regTxt;
     });
 
     var headerView = Ti.UI.createView({
@@ -39,7 +39,7 @@ if (OS_ANDROID) {
     });
 } else {
     $.registrationView.titleControl = Ti.UI.createLabel({
-        text : Alloy.Globals.PHRASES.Register,
+        text : Alloy.Globals.PHRASES.regTxt,
         font : Alloy.Globals.FONT,
         color : 'white'
     });
@@ -82,26 +82,34 @@ createReq.onload = function() {
     indicator.closeIndicator();
     var response = JSON.parse(this.responseText);
     if (this.status == '200') {
-        if (this.readyState == 4) {
+        if (this.readyState == 4) { 
             // success
             var alertDialog = Titanium.UI.createAlertDialog({
                 title : Alloy.Globals.PHRASES.betbattleTxt,
                 message : Alloy.Globals.PHRASES.regComplete,
                 buttonNames : ['OK']
             });
-            alertDialog.show();
+            
             alertDialog.addEventListener('click', function(e) {
                 var args = {
                     email : $.regEmail.value,
                     password : $.regPass.value
                 };
                 var loginWindow = Alloy.createController('loginView', args).getView();
-                loginWindow.open();
+                
+                if(OS_IOS)  {
+                    Alloy.Globals.NAV.openWindow(loginWindow);
+                } else {
+                    loginWindow.open();
+                }
+                         
                 $.registrationView.close();
             });
+            
+            alertDialog.show();
         }
     } else {
-        signUpBtn.enabled = true;
+        signUpBtn.touchEnabled = true;
         signUpBtn.opacity = 1;
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
         Ti.API.error("Error =>" + this.response);
@@ -109,7 +117,7 @@ createReq.onload = function() {
 };
 createReq.onerror = function(e) {
     indicator.closeIndicator();
-    signUpBtn.enabled = true;
+    signUpBtn.touchEnabled = true;
     signUpBtn.opacity = 1;
     Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
     Ti.API.error("Error =>" + e.error);
@@ -315,7 +323,8 @@ signUpBtn.addEventListener('click', function(e) {
             if (!checkemail($.regEmail.value)) {
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.validEmail);
             } else {
-                signUpBtn.enabled = false;
+                $.regEmail.value = $.regEmail.value.toLowerCase();
+                signUpBtn.touchEnabled = false;
                 signUpBtn.opacity = 0.3;
 
                 indicator.openIndicator();
@@ -328,7 +337,7 @@ signUpBtn.addEventListener('click', function(e) {
                     createReq.send(params);
                 } catch(e) {
                     indicator.closeIndicator();
-                    signUpBtn.enabled = true;
+                    signUpBtn.touchEnabled = true;
                     signUpBtn.opacity = 1;
                     Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                     Ti.API.error("Error");

@@ -29,9 +29,43 @@ function openChallengesForLeague(league) {
 
 }
 
+// create sections for the table
+function createSectionsForTable(sectionText) {
+    var sectionView = $.UI.create('View', {
+        classes : ['challengesSection']
+    });
+
+    sectionView.add(Ti.UI.createLabel({
+        top : '25%',
+        width : Ti.UI.FILL,
+        left : 60,
+        text : sectionText,
+        font : Alloy.Globals.getFontCustom(18, 'Bold'),
+        color : '#FFF'
+    }));
+
+    if (!isAndroid) {
+        return Ti.UI.createTableViewSection({
+            headerView : sectionView,
+            footerView : Ti.UI.createView({
+                height : 0.1
+            })
+        });
+    } else {
+        return Ti.UI.createTableViewSection({
+            headerView : sectionView
+        });
+    }
+}
+
 var table;
 var leagues = Alloy.Globals.LEAGUES;
+var sections = [];
+var isAndroid = false;
 
+if (OS_ANDROID) {
+    isAndroid = true;
+}
 
 var tableHeaderView = Ti.UI.createView({
     height : 0.1
@@ -48,12 +82,12 @@ table = Titanium.UI.createTableView({
 
 if (OS_IOS) {
     var iOSVersion = parseInt(Ti.Platform.version);
-   
+
     if (iOSVersion < 7) {
         table.separatorStyle = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
         table.separatorColor = 'transparent';
-    } 
-    
+    }
+
     table.separatorInsets = {
         left : 0,
         right : 0
@@ -67,95 +101,130 @@ if (OS_IOS) {
         height : 0.5,
         backgroundColor : '#303030'
     });
-    
+
     table.footerView = Ti.UI.createView({
         height : 0.5,
         backgroundColor : '#303030'
     });
 }
 
+// function to divide array, based on "sport_name"
+function splitByType(arr) {
+    return arr.reduce(function(memo, x) {
+        if (!memo[x.sport_name]) {
+            memo[x.sport_name] = [];
+        }
+        memo[x.sport_name].push(x);
+        return memo;
+    }, {});
+}
+
+// function to sort array, base on "sort_order"
+function compare(a,b) {
+    a.sort_order = (a.sort_order - 0);
+    b.sort_order = (b.sort_order - 0);
+    
+  if (a.sort_order > b.sort_order)
+     return -1;
+  if (a.sort_order < b.sort_order)
+    return 1;
+  return 0;
+}
+
+// devide into different sports
+var sports = splitByType(leagues);
+var count = 0;
+var child;
 // add rows to table
-var data = [];
-for (var i in leagues) {
-    var child;
+for (var z in sports) {
+    sports[z] = sports[z].sort(compare);
+    
+    sections[count] = createSectionsForTable(Alloy.Globals.PHRASES[sports[z][0].sport_name + 'Txt']);
+    
+    for (var x in sports[z]) {
+        var league = sports[z][x];
 
-    if (OS_ANDROID) {
-        child = false;
-    } else {
-        child = true;
-    }
+        Ti.API.log(JSON.stringify(sports[z][x]));
 
-    var tableRow = $.UI.create('TableViewRow', {
-        backgroundColor : '#000',
-        id : leagues[i].id,
-        hasChild : child,
-        height : 75
-    });
+        if (OS_ANDROID) {
+            child = false;
+        } else {
+            child = true;
+        }
 
-    // add custom icon on Android to symbol that the row has child
-    if (child != true) {
-        var fontawesome = require('lib/IconicFont').IconicFont({
-            font : 'lib/FontAwesome'
+        var tableRow = $.UI.create('TableViewRow', {
+            backgroundColor : '#000',
+            id : league.id,
+            hasChild : child,
+            height : 75
         });
 
-        font = 'fontawesome-webfont';
+        // add custom icon on Android to symbol that the row has child
+        if (child != true) {
+            var fontawesome = require('lib/IconicFont').IconicFont({
+                font : 'lib/FontAwesome'
+            });
+
+            font = 'fontawesome-webfont';
+
+            tableRow.add(Ti.UI.createLabel({
+                font : {
+                    fontFamily : font
+                },
+                text : fontawesome.icon('icon-chevron-right'),
+                right : '5%',
+                color : '#FFF',
+                fontSize : 80,
+                height : 'auto',
+                width : 'auto'
+            }));
+        }
+
+        // fix to get mobile images
+        var url = league.logo.replace('logos', 'logos/mobile');
+        var finalUrl = url.replace(' ', '');
+        var finalUrl = finalUrl.toLowerCase();
+        var imageLocation = Alloy.Globals.BETKAMPENURL + finalUrl;
+
+        var leagueImageView = Ti.UI.createImageView({
+            left : 10,
+            height : 40,
+            width : 40,
+            borderRadius : 20,
+            backgroundColor : "white",
+            image : imageLocation,
+            defaultImage : '/images/Liga_Default.png'
+        });
+
+        leagueImageView.addEventListener('error', function(e) {
+            e.source.image = '/images/Liga_Default.png';
+        });
+
+        tableRow.add(leagueImageView);
+
+        var leagueName = league.name;
+
+        if (leagueName.length > 20) {
+            leagueName = leagueName.substring(0, 17);
+            leagueName = leagueName + '...';
+        }
 
         tableRow.add(Ti.UI.createLabel({
-            font : {
-                fontFamily : font
-            },
-            text : fontawesome.icon('icon-chevron-right'),
-            right : '5%',
-            color : '#FFF',
-            fontSize : 80,
-            height : 'auto',
-            width : 'auto'
+            width : Ti.UI.SIZE,
+            height : Ti.UI.SIZE,
+            left : 65,
+            text : leagueName,
+            font : Alloy.Globals.getFontCustom(16, 'Regular'),
+            color : '#FFF'
         }));
+
+        //tableRow.add(leagueImage);
+        tableRow.className = 'league';
+        sections[count].add(tableRow);
     }
-
-    // fix to get mobile images
-    var url = leagues[i].logo.replace('logos', 'logos/mobile');
-    var finalUrl = url.replace(' ', '');
-    var finalUrl = finalUrl.toLowerCase();
-    var imageLocation = Alloy.Globals.BETKAMPENURL + finalUrl;
-
-    var leagueImageView = Ti.UI.createImageView({
-        left : 10,
-        height : 40,
-        width : 40,
-        borderRadius : 20,
-        backgroundColor : "white",
-        image : imageLocation,
-        defaultImage : '/images/Liga_Default.png'
-    });
-
-    leagueImageView.addEventListener('error', function(e) {
-        e.source.image = '/images/Liga_Default.png';
-    });
-
-    tableRow.add(leagueImageView);
-
-    var leagueName = leagues[i].name;
-
-    if (leagueName.length > 20) {
-        leagueName = leagueName.substring(0, 17);
-        leagueName = leagueName + '...';
-    }
-
-    tableRow.add(Ti.UI.createLabel({
-        width : Ti.UI.SIZE,
-        height : Ti.UI.SIZE,
-        left : 65,
-        text : leagueName,
-        font : Alloy.Globals.getFontCustom(16, 'Regular'),
-        color : '#FFF'
-    }));
-
-    //tableRow.add(leagueImage);
-    tableRow.className = 'league';
-    data.push(tableRow);
+    count++;
 }
-table.setData(data);
+table.setData(sections);
 
 // when clicking a table row
 table.addEventListener('click', function(e) {

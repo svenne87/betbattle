@@ -324,47 +324,49 @@ function createPopupLayout(win, playerObj, isFriend, isMe, friendIndex) {
         win.add(addFriendBtn);
 
     }
+    
+    if (playerObj.team.data[0]) {
+        var favTeam = Ti.UI.createLabel({
+            text : Alloy.Globals.PHRASES.favTeamTxt,
+            left : 10,
+            color : "#000",
+            font : Alloy.Globals.getFontCustom(16, 'Regular'),
+            top : 190,
+        });
+        friend.add(favTeam);
 
-    var favTeam = Ti.UI.createLabel({
-        text : Alloy.Globals.PHRASES.favTeamTxt,
-        left : 10,
-        color : "#000",
-        font : Alloy.Globals.getFontCustom(16, 'Regular'),
-        top : 190,
-    });
-    friend.add(favTeam);
+        var teamName = playerObj.team.data[0].name;
+        if (teamName.length > 22) {
+            teamName = teamName.substring(0, 19) + '...';
+        }
 
-    var teamName = playerObj.team.data[0].name;
-    if (teamName.length > 22) {
-        teamName = teamName.substring(0, 19) + '...';
+        var frTeam = Ti.UI.createLabel({
+            text : teamName,
+            font : Alloy.Globals.getFontCustom(16, 'Regular'),
+            left : 10,
+            color : "#000",
+            top : 210,
+        });
+        friend.add(frTeam);
+
+        var url = playerObj.team.data[0].team_logo;
+        var finalUrl = url.replace(' ', '');
+        var finalUrl = finalUrl.toLowerCase();
+        var images = Alloy.Globals.BETKAMPENURL + finalUrl;
+
+        var profilePics = Titanium.UI.createImageView({
+            defaultImage : '/images/no_pic.png',
+            image : images,
+            height : 70,
+            width : 70,
+            right : 5,
+            top : 170,
+            borderRadius : 35
+        });
+
+        profilePics.addEventListener('error', imageErrorHandler);
+        friend.add(profilePics);
     }
-
-    var frTeam = Ti.UI.createLabel({
-        text : teamName,
-        font : Alloy.Globals.getFontCustom(16, 'Regular'),
-        left : 10,
-        color : "#000",
-        top : 210,
-    });
-    friend.add(frTeam);
-
-    var url = playerObj.team.data[0].team_logo;
-    var finalUrl = url.replace(' ', '');
-    var finalUrl = finalUrl.toLowerCase();
-    var images = Alloy.Globals.BETKAMPENURL + finalUrl;
-
-    var profilePics = Titanium.UI.createImageView({
-        defaultImage : '/images/no_pic.png',
-        image : images,
-        height : 70,
-        width : 70,
-        right : 5,
-        top : 170,
-        borderRadius : 35
-    });
-
-    profilePics.addEventListener('error', imageErrorHandler);
-    friend.add(profilePics);
 }
 
 function getFriendIndex(playerId) {
@@ -716,7 +718,6 @@ if (OS_IOS) {
 $.scoreBoardTable.setData(data);
 getScore(true, 0, 20);
 
-
 /* Set text with information about how many games we are displaying */
 function setDisplayText() {
     if (scoreboardCount <= scroreboardFetched) {
@@ -789,16 +790,16 @@ function getScore(firstTime, start, rows) {
                         }
                         setDisplayText();
                     }
-                    
+
                     // friends will be this array
                     friends = resp.friends;
-                    
+
                     // store all in players
                     for (var player in resp.scoreboard) {
                         // add each player to total array, and keep track of that index
-                        var index = players.push(resp.scoreboard[player]) -1;
+                        var index = players.push(resp.scoreboard[player]) - 1;
                         $.scoreBoardTable.appendRow(createRow(resp.scoreboard[player], friends, index));
-                    }                    
+                    }
                 }
                 indicator.closeIndicator();
                 isLoading = false;
@@ -827,7 +828,8 @@ if (OS_ANDROID) {
 
         // sometimes the view remain in memory, then we don't need to show the "loading"
         if (players.length == 0) {
-            indicator.openIndicator(); // TODO
+            indicator.openIndicator();
+            // TODO
         }
     });
 }

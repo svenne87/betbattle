@@ -1,8 +1,4 @@
-<Alloy>						  
-	<Window class="container" id="landingPage" platform="android">
+<Alloy>
+	<Window class="container" id="landingPageWin">
 	</Window>
-	<NavigationWindow id="nav" platform="ios">
-		<Window class="container" id="landingPage">
-		</Window>
-	</NavigationWindow>
 </Alloy>

@@ -8,16 +8,23 @@ var indicator = uie.createIndicatorWindow({
 });
 
 var games = null;
-if (Alloy.Globals.COUPON && Alloy.Globals.COUPON.games.length > 0) {
-    games = Alloy.Globals.COUPON.games;
-} else {
-    Alloy.Globals.showToast("Fel i coupons....");
+var amount_games = 0;
+
+if (Alloy.Globals.COUPON === null || Alloy.Globals.COUPON.games === null) {
+    Alloy.Globals.showToast(Alloy.Globals.PHRASES.commonErrorTxt);
     $.showCoupon.close();
+} else {
+    if (Alloy.Globals.COUPON && Alloy.Globals.COUPON.games.length > 0) {
+        games = Alloy.Globals.COUPON.games;
+        amount_games = games.length;
+    } else {
+        Alloy.Globals.showToast(Alloy.Globals.PHRASES.commonErrorTxt);
+        $.showCoupon.close();
+    }
 }
 
 var modalPickersToHide = [];
 var coinsToJoin = -1;
-var amount_games = games.length;
 var amount_deleted = 0;
 var added = false;
 var betPicker;
@@ -43,6 +50,10 @@ if (OS_IOS) {
         font : Alloy.Globals.getFontCustom(18, "Bold"),
         color : '#FFF'
     });
+    
+    $.showCoupon.addEventListener('open', function() {
+       Alloy.Globals.couponOpen = true; 
+    });
 }
 
 $.showCoupon.addEventListener('close', function() {
@@ -53,6 +64,8 @@ $.showCoupon.addEventListener('close', function() {
             modalPickersToHide[picker].close();
         }
     }
+    
+    Alloy.Globals.couponOpen = false;
 });
 
 function checkFriends() {
@@ -111,7 +124,7 @@ function checkFriends() {
 
                             my_alert.hide();
 
-                            var win = Alloy.createController('friendZone').getView();
+                            var win = Alloy.createController('shareView').getView();
                             if (OS_IOS) {
                                 Alloy.Globals.NAV.openWindow(win, {
                                     animated : true
@@ -185,12 +198,12 @@ if (!isAndroid) {
         separatorStyle : Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE,
         separatorColor : '#303030'
     });
-    
-     if (iOSVersion < 7) {
+
+    if (iOSVersion < 7) {
         table.separatorStyle = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
         table.separatorColor = 'transparent';
-     } 
-    
+    }
+
 } else {
     table = Titanium.UI.createTableView({
         width : Ti.UI.FILL,
@@ -243,7 +256,7 @@ sections[0] = Ti.UI.createTableViewSection({
     headerView : matchesView
 });
 
-if(!isAndroid) {
+if (!isAndroid) {
     sections[0].footerView = Ti.UI.createView({
         height : 0.1
     });
@@ -316,7 +329,7 @@ for (var i in games) {
         if (Titanium.Platform.displayCaps.platformWidth < 350) {
             rightPercentage = '3%';
         }
-        
+
         row.add(Ti.UI.createLabel({
             font : {
                 fontFamily : font
@@ -484,8 +497,8 @@ var footerView = Ti.UI.createView({
 
 var submitButton = Alloy.Globals.createButtonView(Alloy.Globals.themeColor(), '#FFF', Alloy.Globals.PHRASES.challengeBtnTxt);
 
-if(isAndroid) {
-  submitButton.top = 35;  
+if (isAndroid) {
+    submitButton.top = 35;
 } else {
     submitButton.top = 45;
 }
@@ -532,6 +545,7 @@ if (isAndroid) {
     $.showCoupon.orientationModes = [Titanium.UI.PORTRAIT];
 
     $.showCoupon.addEventListener('open', function() {
+        Alloy.Globals.couponOpen = true;
         $.showCoupon.activity.actionBar.onHomeIconItemSelected = function() {
             $.showCoupon.close();
             $.showCoupon = null;
