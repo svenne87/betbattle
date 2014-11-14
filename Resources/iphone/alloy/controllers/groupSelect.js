@@ -158,7 +158,17 @@ function Controller() {
                             } ]
                         };
                         tab_friends.setBackgroundColor(Alloy.Globals.themeColor());
-                        getFriends();
+                        {
+                            Ti.UI.createLabel({
+                                height: 40,
+                                top: 40,
+                                width: Ti.UI.FILL,
+                                font: Alloy.Globals.getFontCustom(16, "Regular"),
+                                color: "#FFF",
+                                left: 20,
+                                text: Alloy.Globals.PHRASES.noGroupsTxt
+                            });
+                        }
                     }
                 } else Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                 indicator.closeIndicator();
@@ -203,7 +213,14 @@ function Controller() {
                         }
                     });
                     alertWindow.show();
-                } else Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
+                } else {
+                    var errorText = "";
+                    try {
+                        errorText = JSON.parse(this.responseText);
+                        Alloy.Globals.showFeedbackDialog(errorText);
+                    } catch (e) {}
+                    "" === errorText && Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+                }
             };
             try {
                 xhr.open("POST", Alloy.Globals.BETKAMPENCHALLENGEGROUPURL);
@@ -238,6 +255,7 @@ function Controller() {
                             arg: arg
                         };
                         Ti.App.fireEvent("app:updateView", obj);
+                        for (var win in Alloy.Globals.WINDOWS) Alloy.Globals.WINDOWS[win].setOpacity(0);
                         $.groupSelectWindow.close();
                         for (var win in Alloy.Globals.WINDOWS) Alloy.Globals.WINDOWS[win].close();
                     } else {
@@ -284,7 +302,14 @@ function Controller() {
                         }
                     });
                     alertWindow.show();
-                } else Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
+                } else {
+                    var errorText = "";
+                    try {
+                        errorText = JSON.parse(this.responseText);
+                        Alloy.Globals.showFeedbackDialog(errorText);
+                    } catch (e) {}
+                    "" === errorText && Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+                }
                 Ti.API.error("Bad Sever =>" + e.error);
             };
             try {
@@ -320,6 +345,7 @@ function Controller() {
                             arg: arg
                         };
                         Ti.App.fireEvent("app:updateView", obj);
+                        for (var win in Alloy.Globals.WINDOWS) Alloy.Globals.WINDOWS[win].setOpacity(0);
                         $.groupSelectWindow.close();
                         for (var win in Alloy.Globals.WINDOWS) Alloy.Globals.WINDOWS[win].close();
                     } else {

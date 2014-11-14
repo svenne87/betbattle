@@ -79,10 +79,10 @@ function compare(a, b) {
     return 0;
 }
 
-function addPointPendingStandings(game_type, uid) {
+function addPointPendingStandings(game_type, nrOfValues, uid) {    
     if (pendingStandingsArray.length > 0) {
         var point = 1;
-        if (game_type === '3') {
+        if (nrOfValues === '2') {
             // this game type gives 2 points
             point = 2;
         }
@@ -162,9 +162,19 @@ function createGameType(gameType, game, values, index, sections) {
     gameTypeView.add(gameTypeScoreLabel);
 
     var resultText = '';
-
+    var endTimeResultText = '';
+    
     // only print for challenges that have started
     if (checkDate(game.game_date)) {
+        
+        // check to find  actuall end result. Check here since this is not a game type that gives points
+        for (var i = 0; i < game.result_values.length; i++) {
+            if(game.result_values[i].gid === game.game_id && game.result_values[i].game_type === '20') {
+                endTimeResultText = game.result_values[i].value_1 + ' - ' + game.result_values[i].value_2;
+                break;
+            }
+        }
+          
         for (var i = 0; i < game.result_values.length; i++) {
             if (game.result_values[i].game_type === type && game.result_values[i].gid === game.game_id) {
                 if (gameType.number_of_values === '1') {
@@ -206,11 +216,17 @@ function createGameType(gameType, game, values, index, sections) {
 
                 } else if (gameType.number_of_values === '2') {
                     resultText = game.result_values[i].value_1 + " - " + game.result_values[i].value_2;
-
+                    
                     if (game.result_values[i].game_type === '3') {
                         if (game.status === '2') {
                             // final score, update header label
-                            headerScoreLabel.setText(resultText + " ");
+                                                                                // TODO
+                            // if there was ot or pn the end result would not be the same as our final result
+                            if(resultText !== endTimeResultText) {
+                                headerScoreLabel.setText(resultText + "    (" + endTimeResultText + ")");
+                            } else {
+                                headerScoreLabel.setText(resultText);
+                            }                           
                         } else if (game.status === '3') {
                             // current score, update header label
                             headerScoreLabel.setText("(" + resultText + ") ");
@@ -354,7 +370,7 @@ function createGameType(gameType, game, values, index, sections) {
             // if the player guessed correct
             if (correct) {
                 // add point to correct user in pending standings array
-                addPointPendingStandings(values[i].game_type, values[i].uid);
+                addPointPendingStandings(values[i].game_type, gameType.number_of_values, values[i].uid);
 
                 var correctValueLabel = Ti.UI.createLabel({
                     font : {
@@ -850,7 +866,7 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished)
         }
     }
 
-    // TODO
+    
     // add name to the section with game type and then custom to make the "final result" end up last in sections
     var customSection = null;
 

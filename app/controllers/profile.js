@@ -96,7 +96,7 @@ var firstMainProfileRowView = Ti.UI.createView({
 });
 
 var favoriteTeamImageView = Ti.UI.createImageView({
-    defaultImage : '/images/no_pic.png',
+    defaultImage : '/images/no_team.png',
     width : 40,
     left : '10%',
     height : 40,
@@ -126,7 +126,7 @@ profileImageView.addEventListener('error', function(e) {
 });
 
 var levelImageView = Ti.UI.createImageView({
-    defaultImage : '/images/no_pic.png',
+    defaultImage : '/images/no_team.png',
     width : 40,
     left : '17%',
     height : 40,
@@ -423,7 +423,7 @@ function getProfile() {
                         favoriteTeamImageView.setImage(Alloy.Globals.BETKAMPENURL + userInfo.team.data[0].team_logo);
 
                         favoriteTeamImageView.addEventListener('error', function() {
-                            favoriteTeamImageView.image = '/images/no_pic.png';
+                            favoriteTeamImageView.image = '/images/no_team.png';
                         });
                     }
 
@@ -438,7 +438,7 @@ function getProfile() {
                     levelImageView.setImage(Alloy.Globals.BETKAMPENURL + "/" + userInfo.level.symbol);
 
                     levelImageView.addEventListener('error', function() {
-                        levelImageView.image = '/images/no_pic.png';
+                        levelImageView.image = '/images/no_team.png';
                     });
 
                     if (Alloy.Globals.PHRASES.levels[level].lenght > 17) {

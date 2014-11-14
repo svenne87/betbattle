@@ -25,7 +25,7 @@
 },
 "#facebookBtnText[platform=ios]":{
 	color: '#FFF',
-	left: '19%',
+	textAlign: 'center',
 	width: 'auto',
 	font: {
 		fontFamily: 'Helvetica Neue',
@@ -35,7 +35,7 @@
 },
 "#facebookBtnText[platform=android]":{
 	color: '#FFF',
-	left: '19%',
+	textAlign: 'center',
 	width: 'auto',
 	font: {
 		fontFamily: 'Roboto-Regular',
@@ -80,7 +80,7 @@
 	borderRadius: 3
 },
 "#loginBtnText[platform=ios]":{
-	color: '#000',
+	color: '#FFF',
 	//left: '19%',
 	width: 'auto',
 	textAlign: 'center',
@@ -91,7 +91,7 @@
 	}
 },
 "#loginBtnText[platform=android]":{
-	color: '#000',
+	color: '#FFF',
 	//left: '19%',
 	width: 'auto',
 	textAlign: 'center',

@@ -120,37 +120,36 @@ function splitByType(arr) {
 }
 
 // function to sort array, base on "sort_order"
-function compare(a,b) {
+function compare(a, b) {
     a.sort_order = (a.sort_order - 0);
     b.sort_order = (b.sort_order - 0);
-    
-  if (a.sort_order > b.sort_order)
-     return -1;
-  if (a.sort_order < b.sort_order)
-    return 1;
-  return 0;
+
+    if (a.sort_order > b.sort_order)
+        return -1;
+    if (a.sort_order < b.sort_order)
+        return 1;
+    return 0;
 }
 
 // devide into different sports
 var sports = splitByType(leagues);
 var count = 0;
 var child;
+
+if (OS_ANDROID) {
+    child = false;
+} else {
+    child = true;
+}
+
 // add rows to table
 for (var z in sports) {
     sports[z] = sports[z].sort(compare);
-    
+
     sections[count] = createSectionsForTable(Alloy.Globals.PHRASES[sports[z][0].sport_name + 'Txt']);
-    
+
     for (var x in sports[z]) {
         var league = sports[z][x];
-
-        Ti.API.log(JSON.stringify(sports[z][x]));
-
-        if (OS_ANDROID) {
-            child = false;
-        } else {
-            child = true;
-        }
 
         var tableRow = $.UI.create('TableViewRow', {
             backgroundColor : '#000',
@@ -259,7 +258,6 @@ if (OS_ANDROID) {
         font : Alloy.Globals.getFontCustom(18, "Bold"),
         color : '#FFF'
     });
-
 }
 
 $.newChallengeLeague.add(table);

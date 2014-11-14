@@ -208,6 +208,119 @@ function createGameType(gameType, gameObject, i, gameArray, index) {
     return gameTypeView;
 }
 
+function createGameTypeWinnerResult(gameType, gameObject, i, gameArray, index) {
+    var type = gameType.type;
+    var viewHeight = 70;
+    var fontSize = 16;
+
+    var gameTypeView = Ti.UI.createTableViewRow({
+        id : index,
+        hasChild : false,
+        width : Ti.UI.FILL,
+        left : 0,
+        className : 'gameTypeRow',
+        height : 80,
+        value : i + 1,
+        layout : 'horizontal',
+        selectionStyle : 'none',
+    });
+
+    var optionOne = Ti.UI.createView({
+        height : 80,
+        width : gameTypeView.toImage().width / 3
+    });
+
+    optionOne.add(Ti.UI.createView({
+        height : 60,
+        width : 60,
+        borderRadius : 30,
+        borderWidth : 3,
+        borderColor : '#FFF'
+    }));
+
+    optionOne.add(Ti.UI.createLabel({
+        text : '1',
+        color : '#FFF',
+        font : Alloy.Globals.getFontCustom(20, 'Bold')
+    }));
+
+    var optionTwo = Ti.UI.createView({
+        height : 80,
+        width : gameTypeView.toImage().width / 3
+    });
+
+    optionTwo.add(Ti.UI.createView({
+        height : 60,
+        width : 60,
+        borderRadius : 30,
+        borderWidth : 3,
+        borderColor : '#FFF'
+    }));
+
+    optionTwo.add(Ti.UI.createLabel({
+        text : 'X',
+        color : '#FFF',
+        font : Alloy.Globals.getFontCustom(20, 'Bold')
+    }));
+
+    var optionThree = Ti.UI.createView({
+        height : 80,
+        width : gameTypeView.toImage().width / 3
+    });
+
+    optionThree.add(Ti.UI.createView({
+        height : 60,
+        width : 60,
+        borderRadius : 30,
+        borderWidth : 3,
+        borderColor : '#FFF'
+    }));
+
+    optionThree.add(Ti.UI.createLabel({
+        text : '2',
+        color : '#FFF',
+        font : Alloy.Globals.getFontCustom(20, 'Bold')
+    }));
+
+    if (gameArray[index].gameValue[0] === '1') {
+        optionOne.children[0].backgroundColor = '#303030';
+    } else if (gameArray[index].gameValue[0] === '2') {
+        optionTwo.children[0].backgroundColor = '#303030';
+    } else if (gameArray[index].gameValue[0] === '3') {
+        optionThree.children[0].backgroundColor = '#303030';
+    }
+
+    optionOne.addEventListener('click', function(e) {
+        gameArray[e.row.id].gameValue[0] = 1;
+        gameArray[e.row.id].gameValue[1] = 0;
+        optionTwo.children[0].backgroundColor = '#000';
+        optionThree.children[0].backgroundColor = '#000';
+        optionOne.children[0].backgroundColor = '#303030';
+    });
+
+    optionTwo.addEventListener('click', function(e) {
+        gameArray[e.row.id].gameValue[0] = 2;
+        gameArray[e.row.id].gameValue[1] = 0;
+        optionTwo.children[0].backgroundColor = '#303030';
+        optionThree.children[0].backgroundColor = '#000';
+        optionOne.children[0].backgroundColor = '#000';
+    });
+
+    optionThree.addEventListener('click', function(e) {
+        gameArray[e.row.id].gameValue[0] = 3;
+        gameArray[e.row.id].gameValue[1] = 0;
+        optionTwo.children[0].backgroundColor = '#000';
+        optionThree.children[0].backgroundColor = '#303030';
+        optionOne.children[0].backgroundColor = '#000';
+    });
+
+    gameTypeView.add(optionOne);
+    gameTypeView.add(optionTwo);
+    gameTypeView.add(optionThree);
+
+    return gameTypeView;
+}
+
 function isLowerCase(str) {
     return str === str.toLowerCase();
 }
@@ -265,8 +378,13 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
             borderRadius : 25,
             backgroundColor : '#FFF',
             layout : 'absolute',
-            left : '21%'
+            left : ((Ti.Platform.displayCaps.platformWidth / 4) - 15)
         });
+        
+        var leftPos = 15;
+        if(Ti.Platform.displayCaps.platformWidth > 320) {
+            leftPos = 30;
+        }
 
         var logoWrapper2 = Ti.UI.createView({
             width : 50,
@@ -274,11 +392,11 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
             borderRadius : 25,
             backgroundColor : '#FFF',
             layout : 'absolute',
-            left : '31%'
+            left : ((Ti.Platform.displayCaps.platformWidth / 4 + leftPos))
         });
 
         var team_logo = Ti.UI.createImageView({
-            defaultImage : '/images/no_pic.png',
+            defaultImage : '/images/no_team.png',
             image : Alloy.Globals.BETKAMPENURL + gameObject.attributes.team_1.team_logo,
             width : 50,
             height : 50
@@ -291,7 +409,7 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
         }
 
         var team2_logo = Ti.UI.createImageView({
-            defaultImage : '/images/no_pic.png',
+            defaultImage : '/images/no_team.png',
             image : Alloy.Globals.BETKAMPENURL + gameObject.attributes.team_2.team_logo,
             width : 50,
             height : 50
@@ -304,11 +422,11 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
         }
 
         team_logo.addEventListener('error', function(e) {
-            team_logo.image = '/images/no_pic.png';
+            team_logo.image = '/images/no_team.png';
         });
 
         team2_logo.addEventListener('error', function(e) {
-            team2_logo.image = '/images/no_pic.png';
+            team2_logo.image = '/images/no_team.png';
         });
 
         logoWrapper.add(team_logo);
@@ -476,9 +594,7 @@ function validate() {
                 return false;
             }
         }
-
     }
-
     return true;
 }
 
@@ -658,8 +774,12 @@ function createLayout(gameObject) {
             }
 
             if (gametypes[y].option_type == "button") {
-                for (var i = 0; i < gametypes[y].options; i++) {
-                    sections[y].add(createGameType(gametypes[y], gameObject, i, gameArray, index));
+                if (gametypes[y].type === '1') {
+                    sections[y].add(createGameTypeWinnerResult(gametypes[y], gameObject, i, gameArray, index));
+                } else {
+                    for (var i = 0; i < gametypes[y].options; i++) {
+                        sections[y].add(createGameType(gametypes[y], gameObject, i, gameArray, index));
+                    }
                 }
             } else if (gametypes[y].option_type == "select") {
                 sections[y].add(createSelectGameType(gametypes[y], gameObject, i, gameArray, index));

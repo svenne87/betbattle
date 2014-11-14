@@ -16,7 +16,7 @@ if (OS_IOS) {
 
     $.previousMatchOTD.titleControl = Ti.UI.createLabel({
         text : Alloy.Globals.PHRASES.matchOTDPreviousBtn,
-        font : Alloy.Globals.getFontCustom(18, "Bold"),
+        font : Alloy.Globals.getFontCustom(16, "Bold"),
         color : '#FFF'
     });
 } else {
@@ -40,7 +40,7 @@ function getPreviousMatchDay() {
         xhr.onerror = function(e) {
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             indicator.closeIndicator();
-            Ti.API.error('Bad Sever =>' + e.error);
+            Ti.API.error('Bad Sever =>' + JSON.stringify(e));
         };
 
         try {
@@ -65,7 +65,13 @@ function getPreviousMatchDay() {
                     } catch (e) {
                         resp = null;
                     }
-                    showPreviousMatch(resp);
+                    Ti.API.log(" RESP ->" + resp);
+                    if(resp != 0) {
+                        showPreviousMatch(resp);
+                    } else {
+                        $.previousMatchOTD.close();
+                        Alloy.Globals.showToast(Alloy.Globals.PHRASES.noGamesTxt);
+                    }
                 }
 
             } else {

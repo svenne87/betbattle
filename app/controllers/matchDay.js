@@ -61,7 +61,6 @@ function getMatchOfTheDay() {
             if (this.readyState == 4) {
                 try {
                     match = JSON.parse(this.responseText);
-
                 } catch (e) {
                     match = null;
                 }
@@ -148,7 +147,10 @@ function checkResponded(match) {
                                 fullScreen : true
                             });
                         }
+                    } else if(resp == 0) {
+                       Alloy.Globals.showToast(Alloy.Globals.PHRASES.noGamesTxt); 
                     }
+
                 }
 
             } else {
@@ -182,15 +184,15 @@ for (var text in infoTexts) {
 
 var matchOTDinfo = Ti.UI.createLabel({
     top : 20,
-    left : 10,
-    width: Ti.UI.FILL,
+    left : 20,
+    width: '90%',
     text : infoTextFixed,
     textAlign : "left",
     color : "#FFF",
     font : Alloy.Globals.getFontCustom(16, "Regular")
 });
 
-var nextMatch = Alloy.Globals.createButtonView("#FFF", "#000", Alloy.Globals.PHRASES.matchOTDNextBtn);
+var nextMatch = Alloy.Globals.createButtonView(Alloy.Globals.themeColor(), "#FFF", Alloy.Globals.PHRASES.matchOTDNextBtn);
 var previousMatch = Alloy.Globals.createButtonView("#FFF", "#000", Alloy.Globals.PHRASES.matchOTDPreviousBtn);
 
 nextMatch.setTop(60);

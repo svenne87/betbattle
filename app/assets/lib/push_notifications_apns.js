@@ -29,25 +29,21 @@ var apns = function(){
     {
         // called when a push notification is received.
       Titanium.Media.vibrate();
-      //var data = JSON.parse(e.data);
-      //var data = e.data;
-                                                        // TODO skicka med data till själva pushen, sitället för 1.2.3, verkar ju inte gå dölja på ios
-      var badge = e.data.badge;
+      var data = e.data;
+
+      var badge = data.badge;
       if(badge > 0){
         Titanium.UI.iPhone.appBadge = badge;
       }
-      e.data.alert = e.data.alert;
-      if(e.data.alert != ''){
-         var type = '';
+
+      if(data.alert != ''){
+         var type =  data.challenge_type;
          
-         if(e.data.alert.charAt(0) === '1') {
-             e.data.alert = e.data.alert.substring(1);
+         if(type === '1') {
              type = 'accept';
-         } else if (e.data.alert.charAt(0) === '2'){
-             e.data.alert = e.data.alert.substring(1);
+         } else if (type === '2'){
              type = 'pedning';
-         } else if(e.data.alert.charAt(0) === '3') {
-             e.data.alert = e.data.alert.substring(1);
+         } else if(type === '3') {
              type = 'finished';
          }
          var message = e.data.alert;
@@ -83,6 +79,10 @@ var apns = function(){
                 if(win !== null) {
                     Alloy.Globals.NAV.openWindow(win);
                 } 
+                
+                for (var w in Alloy.Globals.WINDOWS) {
+                    Alloy.Globals.WINDOWS[w].setOpacity(0);
+                }
           
                 for(var w in Alloy.Globals.WINDOWS) {
                    if(Alloy.Globals.WINDOWS[w] === win) {

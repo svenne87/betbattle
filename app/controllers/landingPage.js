@@ -313,6 +313,10 @@ if (!isAndroid) {
             }
 
             //Ti.App.fireEvent('app:updateView', obj);
+            
+            for (var win in Alloy.Globals.WINDOWS) {
+                Alloy.Globals.WINDOWS[win].setOpacity(0);
+            }
 
             for (var w in Alloy.Globals.WINDOWS) {
                 if (Alloy.Globals.WINDOWS[w] === win) {

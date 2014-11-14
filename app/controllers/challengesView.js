@@ -9,6 +9,10 @@ var table;
 var swipeRefresh = null;
 var webViewUrl = '';
 var webViewTitle = '';
+var acceptRow;
+var acceptTextLabel;
+var matchOTDTextLabel;
+var matchOTDRow;
 
 var args = arguments[0] || {};
 if (args.refresh == 1) {
@@ -24,6 +28,31 @@ if (args.refresh == 1) {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
     }
 }
+
+
+Ti.App.addEventListener('matchOTDUpdate', function() {
+    matchOTDRow.remove(matchOTDLabel);
+});
+
+var acceptLabel = Ti.UI.createLabel({
+    backgroundColor : Alloy.Globals.themeColor(),
+    color : '#FFF',
+    textAlign : 'center',
+    borderRadius : 8,
+    width : 30,
+    top : 10,
+    height : 10
+});
+
+var matchOTDLabel = Ti.UI.createLabel({
+    backgroundColor : Alloy.Globals.themeColor(),
+    color : '#FFF',
+    textAlign : 'center',
+    borderRadius : 8,
+    width : 30,
+    top : 10,
+    height : 10
+});
 
 var iOSVersion;
 var isAndroid = true;
@@ -63,6 +92,7 @@ if (Alloy.Globals.hasCoupon) {
     }
 }
 
+
 Ti.App.addEventListener("sliderToggled", function(e) {
     if ( typeof table !== 'undefined') {
         if (e.hasSlided) {
@@ -72,6 +102,7 @@ Ti.App.addEventListener("sliderToggled", function(e) {
         }
     }
 });
+
 
 var mod = require('bencoding.blur');
 
@@ -612,8 +643,8 @@ tableHeaderView.addEventListener('click', function() {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
         return;
     }
-    
-    if (webViewUrl !== '') {
+
+    if (webViewUrl !== '' && webViewUrl !== null) {
         // open web view
         var arg = {
             url : webViewUrl,
@@ -631,6 +662,24 @@ tableHeaderView.addEventListener('click', function() {
             win.open({
                 fullScreen : true
             });
+        }
+    } else {
+        // check connection
+        if (!Alloy.Globals.checkConnection()) {
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+            return;
+        }
+
+        var win = Alloy.createController('shareView').getView();
+        if (OS_IOS) {
+            Alloy.Globals.NAV.openWindow(win, {
+                animated : true
+            });
+        } else {
+            win.open({
+                fullScreen : true
+            });
+            win = null;
         }
     }
 });
@@ -678,11 +727,23 @@ if (!isAndroid) {
 
 table.addEventListener('swipe', function(e) {
     if (e.direction !== 'up' && e.direction !== 'down') {
-        Ti.API.log(e.direction);
-
         table.touchEnabled = false;
-        Ti.App.fireEvent('app:slide');
-        table.touchEnabled = true;
+        Alloy.Globals.SLIDERZINDEX = 2;
+
+        acceptLabel.setBackgroundColor(Alloy.Globals.themeColor());
+        matchOTDLabel.setBackgroundColor(Alloy.Globals.themeColor());
+        e.row.backgroundColor = "#000";    
+        //e.row.setSelectionStyle(Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE);          
+                        
+        var interval = interval ? interval : 100;
+        setTimeout(function() {
+            Ti.App.fireEvent('app:slide');          
+            e.row.backgroundColor = 'transparent';
+            table.backgroundColor = 'transparent';
+            //e.row.setSelectionStyle(Titanium.UI.iPhone.TableViewCellSelectionStyle.BLUE);   
+            acceptLabel.setBackgroundColor(Alloy.Globals.themeColor());
+            matchOTDLabel.setBackgroundColor(Alloy.Globals.themeColor());
+        }, interval);
     }
 });
 
@@ -762,8 +823,8 @@ table.addEventListener('click', function(e) {
                 fullScreen : true,
             });
         }
-    } else if(e.rowData.id === 'matchOTD') {
-                var win = Alloy.createController('matchDay').getView(); 
+    } else if (e.rowData.id === 'matchOTD') {
+        var win = Alloy.createController('matchDay').getView();
         Alloy.Globals.WINDOWS.push(win);
 
         if (!isAndroid) {
@@ -775,8 +836,7 @@ table.addEventListener('click', function(e) {
                 fullScreen : true,
             });
         }
-        
-        
+
     } else if (e.rowData.id === 'finished') {
         var win = Alloy.createController('challenges_finished').getView();
         Alloy.Globals.WINDOWS.push(win);
@@ -911,7 +971,7 @@ function constructTableData(array) {
         }
     }
 
-    var acceptRow = Ti.UI.createTableViewRow({
+    acceptRow = Ti.UI.createTableViewRow({
         top : 0,
         height : 75,
         id : "new",
@@ -942,7 +1002,7 @@ function constructTableData(array) {
         hasChild : child
     });
 
-    var matchOtdRow = Ti.UI.createTableViewRow({
+    matchOTDRow = Ti.UI.createTableViewRow({
         height : 75,
         id : "matchOTD",
         width : Ti.UI.FILL,
@@ -959,14 +1019,16 @@ function constructTableData(array) {
         image : '/images/ikoner_utmaning_ny.png',
     }));
 
-    acceptRow.add(Ti.UI.createLabel({
+    acceptTextLabel = Ti.UI.createLabel({
         font : Alloy.Globals.getFontCustom(16, 'Regular'),
         text : Alloy.Globals.PHRASES.newChallengesTxt,
         color : '#FFF',
         left : 60,
         height : Ti.UI.SIZE,
         width : Ti.UI.SIZE
-    }));
+    });
+
+    acceptRow.add(acceptTextLabel);
 
     if (isAndroid) {
         acceptRow.add(Ti.UI.createLabel({
@@ -981,6 +1043,13 @@ function constructTableData(array) {
             height : 'auto',
             width : 'auto'
         }));
+    }
+
+    if (Alloy.Globals.CHALLENGEOBJECTARRAY[0].length > 0) {
+        // accept challenges, add badge
+        acceptLabel.setLeft(acceptTextLabel.toImage().width + 70);
+        acceptLabel.setText(Alloy.Globals.CHALLENGEOBJECTARRAY[0].length);
+        acceptRow.add(acceptLabel);
     }
 
     pendingRow.add(Ti.UI.createImageView({
@@ -1042,25 +1111,34 @@ function constructTableData(array) {
             width : 'auto',
         }));
     }
-    
-    matchOtdRow.add(Ti.UI.createImageView({
+
+    matchOTDRow.add(Ti.UI.createImageView({
         left : 10,
         width : 30,
         height : 30,
         image : '/images/ikoner_utmaning_ny.png',
     }));
 
-    matchOtdRow.add(Ti.UI.createLabel({
+    matchOTDTextLabel = Ti.UI.createLabel({
         font : Alloy.Globals.getFontCustom(16, 'Regular'),
         text : Alloy.Globals.PHRASES.landingPageMatch,
         color : '#FFF',
         left : 60,
         height : Ti.UI.SIZE,
         width : Ti.UI.SIZE
-    }));
+    });
+
+    matchOTDRow.add(matchOTDTextLabel);
+
+    if (Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_otd_status === 0) {
+        // match otd, add badge
+        matchOTDLabel.setLeft(matchOTDTextLabel.toImage().width + 70);
+        matchOTDLabel.setText('1');
+        matchOTDRow.add(matchOTDLabel);
+    }
 
     if (isAndroid) {
-        matchOtdRow.add(Ti.UI.createLabel({
+        matchOTDRow.add(Ti.UI.createLabel({
             font : {
 
                 fontFamily : font
@@ -1077,7 +1155,7 @@ function constructTableData(array) {
     sections[0].add(acceptRow);
     sections[0].add(pendingRow);
     sections[0].add(finishedRow);
-    sections[0].add(matchOtdRow);
+    sections[0].add(matchOTDRow);
 
     sections[1] = createSectionsForTable(Alloy.Globals.PHRASES.challengesViewHot);
 
@@ -1166,12 +1244,17 @@ function getDynamicTopImage() {
                 webViewTitle = response.title;
 
                 var imageView = Ti.UI.createImageView({
-                    defaultImage : '/images/h_image.png',  // TODO
+                    defaultImage : '/images/h_image.png',
                     image : Alloy.Globals.BETKAMPENURL + response.image,
-                    width : Ti.UI.SIZE,
-                    height : 140
+                    width : Ti.Platform.displayCaps.platformWidth,
+                    height : 140,
+                    backgroundColor : '#000'
                 });
-        
+                
+                imageView.addEventListener('error', function(e) {
+                    e.image = '/images/h_images.png';
+                });
+
                 header.add(imageView);
 
                 if (isAndroid) {
@@ -1210,7 +1293,7 @@ function getChallenges() {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
         return;
     }
-    
+
     // Get challenges
     var xhr = Titanium.Network.createHTTPClient();
     xhr.onerror = function(e) {
@@ -1238,6 +1321,25 @@ function getChallenges() {
                 // construct array with objects
                 Alloy.Globals.CHALLENGEOBJECTARRAY = Alloy.Globals.constructChallenge(response);
 
+                if (Alloy.Globals.CHALLENGEOBJECTARRAY[0].length > 0) {
+                    // accept challenges, add badge
+                    Ti.API.log("test");
+                    acceptLabel.setText(Alloy.Globals.CHALLENGEOBJECTARRAY[0].length);
+                    acceptLabel.setLeft(acceptTextLabel.toImage().width + 70);
+                    acceptRow.add(acceptLabel);
+                } else if (Alloy.Globals.CHALLENGEOBJECTARRAY[0].length == 0) {
+                    acceptRow.remove(acceptLabel);
+                }
+
+                if (Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_otd_status === 0) {
+                    // match otd, add badge
+                    matchOTDLabel.setText('1');
+                    matchOTDLabel.setLeft(matchOTDTextLabel.toImage().width + 70);
+                    matchOTDRow.add(matchOTDLabel);
+                } else if (Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_otd_status === 1) {
+                    matchOTDRow.remove(matchOTDLabel);
+                }
+
                 // Update menu with icon if there are new challenges
                 Ti.App.fireEvent('app:updateMenu');
                 constructTableData(Alloy.Globals.CHALLENGEOBJECTARRAY);
@@ -1264,6 +1366,15 @@ function getChallenges() {
 constructTableData(Alloy.Globals.CHALLENGEOBJECTARRAY);
 getUserInfo();
 Alloy.Globals.getCoupon();
+
+var checkFirstTime = JSON.parse(Ti.App.Properties.getString("firstTimeAchievement"));
+
+if (!checkFirstTime) {
+    if (Alloy.Globals.checkConnection()) {
+        Alloy.Globals.unlockAchievement(13);
+        Ti.App.Properties.setString("firstTimeAchievement", JSON.stringify(false));
+    }
+}
 
 // check if language or tutorial has been changed, if it has download the new version
 Alloy.Globals.checkVersions(indicator);

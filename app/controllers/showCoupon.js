@@ -50,9 +50,9 @@ if (OS_IOS) {
         font : Alloy.Globals.getFontCustom(18, "Bold"),
         color : '#FFF'
     });
-    
+
     $.showCoupon.addEventListener('open', function() {
-       Alloy.Globals.couponOpen = true; 
+        Alloy.Globals.couponOpen = true;
     });
 }
 
@@ -64,9 +64,63 @@ $.showCoupon.addEventListener('close', function() {
             modalPickersToHide[picker].close();
         }
     }
-    
+
     Alloy.Globals.couponOpen = false;
 });
+
+function removeCouponGame(gameID) {
+    if (Alloy.Globals.checkConnection()) {
+        indicator.openIndicator();
+        var xhr = Titanium.Network.createHTTPClient();
+        xhr.onerror = function(e) {
+            indicator.closeIndicator();
+            Ti.API.error('Bad Sever =>' + e.error);
+        };
+
+        try {
+            xhr.open('POST', Alloy.Globals.BETKAMPENDELETECOUPONGAMEURL + '?lang=' + Alloy.Globals.LOCALE + '&gameID=' + gameID + '&cid=' + Alloy.Globals.COUPON.id);
+            xhr.setRequestHeader("content-type", "application/json");
+            xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
+            xhr.setTimeout(Alloy.Globals.TIMEOUT);
+
+            xhr.send();
+        } catch(e) {
+            indicator.closeIndicator();
+        }
+
+        xhr.onload = function() {
+            if (this.status == '200') {
+                if (this.readyState == 4) {
+                    var response = null;
+                    response = JSON.parse(this.responseText);
+                    Alloy.Globals.showToast(Alloy.Globals.PHRASES.couponGameRemoved);
+                    amount_deleted++;
+
+                    // make sure match is removed so that we can check the dates for matches in the array
+                    for (var i in games) {
+                        if (games[i].game_id == gameID) {
+                            var index = Alloy.Globals.COUPON.games.indexOf(games[i]);
+                            Alloy.Globals.COUPON.games.splice(index, 1);
+                        }
+                    }
+
+                    // remove table row
+                    var index = table.getIndexByName(gameID);
+                    table.deleteRow(index);
+
+                    if (amount_deleted == amount_games) {
+                        $.showCoupon.setOpacity(0);
+                        $.showCoupon.close();
+                    }
+                    Alloy.Globals.getCoupon();
+                }
+            } else {
+                Ti.API.error("Error =>" + this.response);
+            }
+            indicator.closeIndicator();
+        };
+    }
+}
 
 function checkFriends() {
     if (Alloy.Globals.checkConnection()) {
@@ -156,6 +210,10 @@ function checkFriends() {
 
 // When clicking the edit icon of a match
 var editEvent = function(e) {
+    if(e.source.name === 'noEdit') {
+        return;
+    }
+    
     var args = {
         gameID : e.row.id,
         table : table,
@@ -274,23 +332,47 @@ for (var i in games) {
         layout : "absolute",
     });
 
+    var removeView = Ti.UI.createView({
+        left : 0,
+        height : 75,
+        width : 50,
+        name : 'noEdit'
+    });
+
+    removeView.add(Ti.UI.createLabel({
+        font : {
+            fontFamily : font,
+            fontSize : 32
+        },
+        text : fontawesome.icon('icon-trash'),
+        name : 'noEdit',
+        left : 10,
+        color : Alloy.Globals.themeColor()
+    }));
+    
+    removeView.addEventListener('click', function(e) {
+        removeCouponGame(e.row.id); 
+    });
+
+    row.add(removeView);
+
     var teamOne = games[i].team_1.team_name;
     var teamTwo = games[i].team_2.team_name;
 
-    if (teamOne.length + teamTwo.length > 35) {
-        teamOne = teamOne.substring(0, 13);
+    if (teamOne.length + teamTwo.length > 26) {
+        teamOne = teamOne.substring(0, 11);
         teamOne = teamOne + '...';
 
-        teamTwo = teamTwo.substring(0, 13);
+        teamTwo = teamTwo.substring(0, 11);
         teamTwo = teamTwo + '...';
     } else {
-        if (teamOne.length > 17) {
-            teamOne = teamOne.substring(0, 14);
+        if (teamOne.length > 15) {
+            teamOne = teamOne.substring(0, 12);
             teamOne = teamOne + '...';
         }
 
-        if (teamTwo.length > 17) {
-            teamTwo = teamTwo.substring(0, 14);
+        if (teamTwo.length > 15) {
+            teamTwo = teamTwo.substring(0, 12);
             teamTwo = teamTwo + '...';
         }
     }
@@ -299,13 +381,13 @@ for (var i in games) {
         text : teamOne + ' - ' + teamTwo + " ",
         font : Alloy.Globals.getFontCustom(16, 'Regular'),
         color : "#FFF",
-        left : 10,
+        left : 50,
         top : 15
     });
 
     var dateIcon = Ti.UI.createLabel({
         top : 42,
-        left : 10,
+        left : 50,
         height : Ti.UI.SIZE,
         width : Ti.UI.SIZE,
         font : {
@@ -319,7 +401,7 @@ for (var i in games) {
         text : games[i].game_date_string + ' ',
         font : Alloy.Globals.getFontCustom(12, 'Regular'),
         color : Alloy.Globals.themeColor(),
-        left : 25,
+        left : 65,
         top : 40
     });
 

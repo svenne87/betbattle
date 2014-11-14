@@ -1,29 +1,29 @@
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({
-	top : 200,
-	text : Alloy.Globals.PHRASES.loadingTxt
+    top : 200,
+    text : Alloy.Globals.PHRASES.loadingTxt
 });
 
 var fontawesome = require('lib/IconicFont').IconicFont({
-	font : 'lib/FontAwesome'
+    font : 'lib/FontAwesome'
 });
 
 var isAndroid = false;
 
 if (OS_ANDROID) {
     isAndroid = true;
-	$.settingsWindow.orientationModes = [Titanium.UI.PORTRAIT];
+    $.settingsWindow.orientationModes = [Titanium.UI.PORTRAIT];
 
-	$.settingsWindow.addEventListener('open', function() {
-		Alloy.Globals.setAndroidCouponMenu($.settingsWindow.activity);
-		
-		$.settingsWindow.activity.actionBar.onHomeIconItemSelected = function() {
-			$.settingsWindow.close();
-			$.settingsWindow = null;
-		};
-		$.settingsWindow.activity.actionBar.displayHomeAsUp = true;
-		$.settingsWindow.activity.actionBar.title = Alloy.Globals.PHRASES.settingsTxt;
-	});
+    $.settingsWindow.addEventListener('open', function() {
+        Alloy.Globals.setAndroidCouponMenu($.settingsWindow.activity);
+
+        $.settingsWindow.activity.actionBar.onHomeIconItemSelected = function() {
+            $.settingsWindow.close();
+            $.settingsWindow = null;
+        };
+        $.settingsWindow.activity.actionBar.displayHomeAsUp = true;
+        $.settingsWindow.activity.actionBar.title = Alloy.Globals.PHRASES.settingsTxt;
+    });
 } else {
     $.settingsWindow.titleControl = Ti.UI.createLabel({
         text : Alloy.Globals.PHRASES.settingsTxt,
@@ -36,92 +36,92 @@ var picker;
 
 // hide modal pickers (ios)
 $.settingsWindow.addEventListener('close', function() {
-	indicator.closeIndicator();
-	if (!isAndroid) {
-		picker.close();
-	}
+    indicator.closeIndicator();
+    if (!isAndroid) {
+        picker.close();
+    }
 });
 
 function changeLanguageConfirm(lang) {
-	var languageDescription = Alloy.Globals.AVAILABLELANGUAGES[lang].description;
+    var languageDescription = Alloy.Globals.AVAILABLELANGUAGES[lang].description;
 
-	var alertWindow = Titanium.UI.createAlertDialog({
-		title : Alloy.Globals.PHRASES.betbattleTxt,
-		message : Alloy.Globals.PHRASES.confirmLanguageChangeTxt + ' "' + languageDescription + '"?',
-		buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtnTxt]
-	});
+    var alertWindow = Titanium.UI.createAlertDialog({
+        title : Alloy.Globals.PHRASES.betbattleTxt,
+        message : Alloy.Globals.PHRASES.confirmLanguageChangeTxt + ' "' + languageDescription + '"?',
+        buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtnTxt]
+    });
 
-	alertWindow.addEventListener('click', function(e) {
-		switch (e.index) {
-		case 0:
-			alertWindow.hide();
-			Alloy.Globals.LOCALE = Alloy.Globals.AVAILABLELANGUAGES[lang].name;
-			getLanguage();
-			break;
-		case 1:
-			alertWindow.hide();
-			break;
-		}
-	});
-	alertWindow.show();
+    alertWindow.addEventListener('click', function(e) {
+        switch (e.index) {
+        case 0:
+            alertWindow.hide();
+            Alloy.Globals.LOCALE = Alloy.Globals.AVAILABLELANGUAGES[lang].name;
+            getLanguage();
+            break;
+        case 1:
+            alertWindow.hide();
+            break;
+        }
+    });
+    alertWindow.show();
 }
 
 function sendSettingsServer(param, type, valueToStore) {
-	// check connection
-	if (Alloy.Globals.checkConnection()) {
-		indicator.openIndicator();
+    // check connection
+    if (Alloy.Globals.checkConnection()) {
+        indicator.openIndicator();
 
-		var xhr = Titanium.Network.createHTTPClient();
-		xhr.onerror = function(e) {
-			indicator.closeIndicator();
-			Ti.API.error('Bad Sever =>' + JSON.stringify(e));
-			if(e.code === 400) {
-				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.nameUnique);
-			}
-		};
+        var xhr = Titanium.Network.createHTTPClient();
+        xhr.onerror = function(e) {
+            indicator.closeIndicator();
+            Ti.API.error('Bad Sever =>' + JSON.stringify(e));
+            if (e.code === 400) {
+                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.nameUnique);
+            }
+        };
 
-		try {
-			xhr.open('POST', Alloy.Globals.BETKAMPENSETTINGURL);
-			xhr.setRequestHeader("content-type", "application/json");
-			xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
-			xhr.setTimeout(Alloy.Globals.TIMEOUT);
-			xhr.send(param);
-		} catch(e) {
-			indicator.closeIndicator();
-			Alloy.Globals.showFeedbackDialog(JSON.stringify(e));
-		}
+        try {
+            xhr.open('POST', Alloy.Globals.BETKAMPENSETTINGURL);
+            xhr.setRequestHeader("content-type", "application/json");
+            xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
+            xhr.setTimeout(Alloy.Globals.TIMEOUT);
+            xhr.send(param);
+        } catch(e) {
+            indicator.closeIndicator();
+            Alloy.Globals.showFeedbackDialog(JSON.stringify(e));
+        }
 
-		xhr.onload = function() {
-			if (this.status == '200') {
-				if (this.readyState == 4) {
-					if (type === 0) {
-						// store value about push
-						Ti.App.Properties.setBool("pushSetting", valueToStore);
-					} else if(type === 1) {
-						// name change
-						Alloy.Globals.PROFILENAME = valueToStore;
-						
-						// set name in view
-						$.profile_name_value_label.text = valueToStore;   
-                        if(Alloy.Globals.PROFILENAME.length > 10) {
+        xhr.onload = function() {
+            if (this.status == '200') {
+                if (this.readyState == 4) {
+                    if (type === 0) {
+                        // store value about push
+                        Ti.App.Properties.setBool("pushSetting", valueToStore);
+                    } else if (type === 1) {
+                        // name change
+                        Alloy.Globals.PROFILENAME = valueToStore;
+
+                        // set name in view
+                        $.profile_name_value_label.text = valueToStore;
+                        if (Alloy.Globals.PROFILENAME.length > 10) {
                             $.profile_name_value_label.text = Alloy.Globals.PROFILENAME.substring(0, 7) + '...';
                         }
-						
-						// update event
-						Ti.App.fireEvent('app:updateMenu');
-					}
-					Alloy.Globals.showToast(JSON.parse(this.responseText));
-				}
-				indicator.closeIndicator();
-			} else {
-				indicator.closeIndicator();
-				Alloy.Globals.showToast(JSON.parse(this.responseText));
-				Ti.API.error("Error =>" + this.response);
-			}
-		};
-	} else {
-		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
-	}
+
+                        // update event
+                        Ti.App.fireEvent('app:updateMenu');
+                    }
+                    Alloy.Globals.showToast(JSON.parse(this.responseText));
+                }
+                indicator.closeIndicator();
+            } else {
+                indicator.closeIndicator();
+                Alloy.Globals.showToast(JSON.parse(this.responseText));
+                Ti.API.error("Error =>" + this.response);
+            }
+        };
+    } else {
+        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+    }
 }
 
 function createGUI() {
@@ -152,20 +152,19 @@ function createGUI() {
             backgroundColor : "transparent",
         });
     }
-   
-    
+
     /* First row */
     $.language_row.add(createPickers());
     $.language_row.addEventListener('click', function() {
-        if(picker.open) {
+        if (picker.open) {
             // the picker is visible, don't do anything
             return;
         }
-        picker.fireEvent('click'); 
+        picker.fireEvent('click');
     });
-    
+
     /* Second row */
-   var pushEnabled;
+    var pushEnabled;
 
     // true will be set if no stored value is found
     if (!Ti.App.Properties.hasProperty("pushSetting")) {
@@ -185,41 +184,41 @@ function createGUI() {
         });
     } else {
         var RealSwitch = require('com.yydigital.realswitch');
-        
+
         basicSwitch = RealSwitch.createRealSwitch({
             right : 20,
             width : 90,
             value : pushEnabled
         });
     }
-    
+
     basicSwitch.addEventListener('change', function(e) {
         var value = 0;
-        if(basicSwitch.value) {
+        if (basicSwitch.value) {
             value = 1;
         }
-        
+
         // build the json string
         var deviceType = Titanium.Platform.osname;
         var param = '{"device_token":"' + Alloy.Globals.DEVICETOKEN + '", "device_type":"' + deviceType + '", "push_status":' + value + ', "app_identifier":"' + Alloy.Globals.APPID + '", "lang":"' + Alloy.Globals.LOCALE + '"}';
         // send to backend
-        if(Alloy.Globals.DEVICETOKEN){
+        if (Alloy.Globals.DEVICETOKEN) {
             // only send if not emulator
             sendSettingsServer(param, 0, basicSwitch.value);
-        } 
+        }
     });
     $.push_notification_row.selectionStyle = 'none';
     $.push_notification_row.add(basicSwitch);
-    
+
     /* Third row */
     $.upload_indicator.message = $.upload_indicator.message + '...';
-   
+
     $.profile_picture_row.addEventListener('click', function() {
-        if(Alloy.Globals.FACEBOOKOBJECT) {
+        if (Alloy.Globals.FACEBOOKOBJECT) {
             Alloy.Globals.showToast(Alloy.Globals.PHRASES.fbImageChangeError);
             return;
         }
-        
+
         Ti.Media.openPhotoGallery({
             success : function(event) {
                 // check connection
@@ -281,13 +280,13 @@ function createGUI() {
 
     });
 
-   /* Fourth row */
-   
-   if(Alloy.Globals.PROFILENAME.length > 10) {
-       $.profile_name_value_label.text = Alloy.Globals.PROFILENAME.substring(0, 7) + '...';
-   }
-   
-   $.profile_name_row.addEventListener('click', function() {
+    /* Fourth row */
+
+    if (Alloy.Globals.PROFILENAME.length > 10) {
+        $.profile_name_value_label.text = Alloy.Globals.PROFILENAME.substring(0, 7) + '...';
+    }
+
+    $.profile_name_row.addEventListener('click', function() {
         var dialog;
         var profileName = Alloy.Globals.PROFILENAME;
         var confirm = Alloy.Globals.PHRASES.okConfirmTxt;
@@ -342,102 +341,117 @@ function createGUI() {
         });
         dialog.show();
     });
-/*
-    // Fifth row 
+    /*
+    // Fifth row
     $.bluetooth_settings_row.addEventListener('click', function() {
-        if (!isAndroid) {
-            Ti.Platform.openURL('prefs:root=Brightness prefs:root=General&path=Bluetooth');
-        } else {
-            var intent = Ti.Android.createIntent({
-                className : 'com.android.settings.bluetooth.BluetoothSettings',
-                packageName : 'com.android.settings',
-                action : Ti.Android.ACTION_MAIN,
-            });
-            Ti.Android.currentActivity.startActivity(intent);
-        }
+    if (!isAndroid) {
+    Ti.Platform.openURL('prefs:root=Brightness prefs:root=General&path=Bluetooth');
+    } else {
+    var intent = Ti.Android.createIntent({
+    className : 'com.android.settings.bluetooth.BluetoothSettings',
+    packageName : 'com.android.settings',
+    action : Ti.Android.ACTION_MAIN,
+    });
+    Ti.Android.currentActivity.startActivity(intent);
+    }
     });
     */
+
+    // sixth row
+    $.favorite_team_settings_row.addEventListener('click', function() {
+        var args = {navOpen : true};
+        var loginSuccessWindow = Alloy.createController('pickTeam', args).getView();
+
+        if (!isAndroid) {
+            Alloy.Globals.NAV.openWindow(loginSuccessWindow);
+            loginSuccessWindow = null;
+        } else {
+            loginSuccessWindow.open();
+            loginSuccessWindow = null;
+        }
+    });
+
 }
 
 function createPickers() {
-	var data = [];
-	var dataAndroid = {};
-	var currentLocale = JSON.parse(Ti.App.Properties.getString('language'));
-	var currentLanguage;
-	var currentLangPosAndroid;
-	var pos = 0;
-	
-	for (var lang in Alloy.Globals.AVAILABLELANGUAGES) {
-		if (currentLocale.language == Alloy.Globals.AVAILABLELANGUAGES[lang].name) {
-			currentLanguage = Alloy.Globals.AVAILABLELANGUAGES[lang].description;
-			
-			// can't keep 0 index on android picker widget
-			currentLangPosAndroid = (lang - 0) + 1;
-		}
+    var data = [];
+    var dataAndroid = {};
+    var currentLocale = JSON.parse(Ti.App.Properties.getString('language'));
+    var currentLanguage;
+    var currentLangPosAndroid;
+    var pos = 0;
 
-		data.push(Titanium.UI.createPickerRow({
-			title : Alloy.Globals.AVAILABLELANGUAGES[lang].description,
-			value : lang
-		}));
-		
-		// for android picker widget
-		pos = (lang - 0) + 1;
-		dataAndroid[pos] = Alloy.Globals.AVAILABLELANGUAGES[lang].description;
-	}
+    for (var lang in Alloy.Globals.AVAILABLELANGUAGES) {
+        if (currentLocale.language == Alloy.Globals.AVAILABLELANGUAGES[lang].name) {
+            currentLanguage = Alloy.Globals.AVAILABLELANGUAGES[lang].description;
 
-	if (isAndroid) {
-		picker = Ti.UI.createLabel({
-		    right : 20,
+            // can't keep 0 index on android picker widget
+            currentLangPosAndroid = (lang - 0) + 1;
+        }
+
+        data.push(Titanium.UI.createPickerRow({
+            title : Alloy.Globals.AVAILABLELANGUAGES[lang].description,
+            value : lang
+        }));
+
+        // for android picker widget
+        pos = (lang - 0) + 1;
+        dataAndroid[pos] = Alloy.Globals.AVAILABLELANGUAGES[lang].description;
+    }
+
+    if (isAndroid) {
+        picker = Ti.UI.createLabel({
+            right : 20,
             backgroundColor : 'transparent',
             width : Ti.UI.SIZE,
             height : Ti.UI.SIZE,
             textAlign : 'left',
             color : '#FFF',
-			text : currentLanguage,
-			font : Alloy.Globals.FONT
-		});
-		
-		picker.addEventListener('click', function() {
-		    picker.open = true;
-			Alloy.createWidget('danielhanold.pickerWidget', {
-				id : 'sColumnLanguage',
-				outerView : $.settingsWindow,
-				hideNavBar : false,
-				type : 'single-column',
-				selectedValues : [currentLangPosAndroid],
-				pickerValues : [dataAndroid],
-				onDone : function(e) {
-					if (e.data) {
-						// change language
-						// key can't be 0, that's why we need to "-1"
-						changeLanguageConfirm(e.data[0].key - 1);
-					}
-					picker.open = false;
-				},
-			});
-		});
-	} else {
-		var ModalPicker = require("lib/ModalPicker");
-		var visualPrefs = {
-			right : 20,
-			backgroundColor : '#000',
-			width : Ti.UI.SIZE,
-			height : Ti.UI.SIZE,
-			textAlign : 'left',
-			color : '#FFF',
-			font : Alloy.Globals.FONT
-		};
+            text : currentLanguage,
+            font : Alloy.Globals.FONT
+        });
 
-		picker = new ModalPicker(visualPrefs, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt, Alloy.Globals.PHRASES.closeBtnTxt);
+        picker.addEventListener('click', function() {
+            picker.open = true;
+            Alloy.createWidget('danielhanold.pickerWidget', {
+                id : 'sColumnLanguage',
+                outerView : $.settingsWindow,
+                hideNavBar : false,
+                type : 'single-column',
+                selectedValues : [currentLangPosAndroid],
+                pickerValues : [dataAndroid],
+                onDone : function(e) {
+                    if (e.data) {
+                        // change language
+                        // key can't be 0, that's why we need to "-1"
+                        changeLanguageConfirm(e.data[0].key - 1);
+                    }
+                    picker.open = false;
+                },
+            });
+        });
+    } else {
+        var ModalPicker = require("lib/ModalPicker");
+        var visualPrefs = {
+            right : 20,
+            backgroundColor : '#000',
+            width : Ti.UI.SIZE,
+            height : Ti.UI.SIZE,
+            textAlign : 'left',
+            color : '#FFF',
+            font : Alloy.Globals.FONT
+        };
 
-		picker.text = currentLanguage;
+        picker = new ModalPicker(visualPrefs, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt, Alloy.Globals.PHRASES.closeBtnTxt);
 
-		picker.self.addEventListener('change', function(e) {
-			changeLanguageConfirm(picker.value);
-		});
+        picker.text = currentLanguage;
 
-	}
-	return picker;
+        picker.self.addEventListener('change', function(e) {
+            changeLanguageConfirm(picker.value);
+        });
+
+    }
+    return picker;
 }
 
 // get correct language file for this device

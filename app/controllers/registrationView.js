@@ -61,6 +61,8 @@ if (OS_ANDROID) {
     });
 }
 
+$.regEmail.autocapitalization = Titanium.UI.TEXT_AUTOCAPITALIZATION_NONE;
+
 $.table.setHeaderView(headerView);
 $.table.setFooterView(footerView);
 $.info_label.text = $.info_label.text + ':';

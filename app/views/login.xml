@@ -7,11 +7,11 @@
 					<View id="facebookBtn">
 						<Label id="facebookBtnText">sign in with Facebook</Label>
 					</View>
-					<View id="registerBtn">
-						<Label id="registerBtnText">Register with Email</Label>
-					</View>
 					<View id="loginBtn">
 						<Label id="loginBtnText">Sign in</Label>
+					</View>
+					<View id="registerBtn">
+						<Label id="registerBtnText">Register with Email</Label>
 					</View>
 				</View>
 				

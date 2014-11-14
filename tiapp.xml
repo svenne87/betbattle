@@ -7,7 +7,7 @@
     <property name="acs-oauth-key-production" type="string">XUDyrlVKb0NfXdL4QdaIU7VyLAPMsir3</property>
     <property name="acs-api-key-production" type="string">D7l0zo29uTpQCn5LktRmgfQKfEM55dlf</property>
     <id>apps.topgame.betkampen</id>
-    <name>Betkampen</name>
+    <name>BetBattle</name>
     <version>1.2.5</version>
     <publisher>Topgame</publisher>
     <url>http://betkampen.se</url>
@@ -24,6 +24,12 @@
     <ios>
         <plist>
             <dict>
+            	<key>CFBundleLocalizations</key>
+                <array>
+                    <string>en</string>
+                    <string>es</string>
+                    <string>sv</string>
+                </array>
                 <key>UISupportedInterfaceOrientations~iphone</key>
                 <array>
                     <string>UIInterfaceOrientationPortrait</string>
@@ -51,6 +57,22 @@
                     <string>/fonts/OpenSans-Regular.ttf</string>
                     <string>/fonts/OpenSans-Light.ttf</string>
                 </array>
+                <key>FacebookAppID</key>
+                <string>1403709019858016</string>
+                <key>FacebookDisplayName</key>
+                <string>BetBattle</string>
+                <key>CFBundleURLTypes</key>
+                <array>
+                    <dict>
+                        <key>CFBundleURLName</key>
+                        <string>apps.topgame.betkampen</string>
+                        <key>CFBundleURLSchemes</key>
+                        <array>
+                            <string>betkampen</string>
+                            <string>fb1403709019858016</string>
+                        </array>
+                    </dict>
+                </array>
                 <!--
                 <key>UIBackgroundModes</key>
                 <array>
@@ -69,7 +91,7 @@
             <uses-sdk android:minSdkVersion="14" android:targetSdkVersion="16"/>
             <supports-screens android:anyDensity="false"
                 android:largeScreens="true" android:normalScreens="true" android:smallScreens="false"/>
-             <!--
+            <!--
             <uses-permission android:name="android.permission.BLUETOOTH"/>
             <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
             -->
@@ -144,23 +166,17 @@
         <theme>default</theme>
     </mobileweb>
     <modules>
-        <module platform="android">facebook</module>
-        <module platform="iphone">facebook</module>
-        <module platform="commonjs">ti.cloud</module>
-        <module platform="android" version="0.2">net.iamyellow.gcmjs</module>
-        <module platform="android">ti.inappbilling</module>
+        <module platform="android">com.yydigital.realswitch</module>
+        <module platform="iphone">com.facebook</module>
         <module platform="iphone">com.logicallabs.inappproducts</module>
+        <module platform="commonjs">ti.cloud</module>
         <module platform="iphone">bencoding.blur</module>
         <module platform="android">bencoding.blur</module>
-        <!--
-        <module platform="iphone">org.beuckman.tibeacons</module>
-        -->
-        <module platform="iphone">bencoding.sms</module>
-        <!--
-        <module platform="android">miga.tibeacon</module>
-        -->
-        <module platform="android">com.yydigital.realswitch</module>
+        <module platform="android" version="0.2">net.iamyellow.gcmjs</module>
         <module platform="android">com.rkam.swiperefreshlayout</module>
+        <module platform="android">ti.inappbilling</module>
+        <module platform="android">facebook</module>
+        <module platform="iphone">bencoding.sms</module>
     </modules>
     <deployment-targets>
         <target device="android">true</target>

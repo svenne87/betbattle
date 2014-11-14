@@ -10,17 +10,36 @@ var indicator = uie.createIndicatorWindow({
     text : Alloy.Globals.PHRASES.loadingTxt
 });
 
+var fontawesome = require('lib/IconicFont').IconicFont({
+    font : 'lib/FontAwesome'
+});
+
+var font = 'fontawesome-webfont';
+
 var isOpen = false;
 var isAndroid = true;
 var iOSVersion;
 
 if (OS_IOS) {
+    font = 'FontAwesome';
     isAndroid = false;
     iOSVersion = parseInt(Ti.Platform.version);
 }
 
 var sections = [];
 var table = null;
+
+function checkDate(date) {
+    // check if match has started
+    var gameDateMilli = date + "000";
+    var gameDate = new Date((gameDateMilli - 0));
+    var now = new Date();
+
+    if (now.getTime() >= gameDate.getTime()) {
+        return true;
+    }
+    return false;
+}
 
 function createGameType(type, values, game) {
     var gameValueWrapper = Ti.UI.createTableViewRow({
@@ -61,11 +80,7 @@ function createGameType(type, values, game) {
             }
 
             var color = "#000000";
-            if (correct) {
-                color = "#303030";
-            } else {
-                color = "#000000";
-            }
+
             gameValueWrapper.setBackgroundColor(color);
 
             var gameValueLabel = Ti.UI.createLabel({
@@ -75,6 +90,23 @@ function createGameType(type, values, game) {
                 left : 20,
             });
             gameValueWrapper.add(gameValueLabel);
+
+            // check if correct answer and if the game has started
+            if (correct && checkDate(game.game_date)) {
+                var correctValueLabel = Ti.UI.createLabel({
+                    font : {
+                        fontFamily : font
+                    },
+                    text : fontawesome.icon('fa-check'),
+                    left : gameValueLabel.toImage().width + 25,
+                    color : '#00FF33',
+                    height : Ti.UI.SIZE,
+                    width : Ti.UI.SIZE
+                });
+
+                gameValueWrapper.add(correctValueLabel);
+            }
+
         }
     }
     return gameValueWrapper;
@@ -263,7 +295,7 @@ function createLayout(resp) {
             font : Alloy.Globals.getFontCustom(12, "Regular"),
             color : Alloy.Globals.themeColor()
         });
-        
+
         gameTypeViewDesc.add(gameTypeScoreLabel);
 
         var sectionIndex = sections.length;
@@ -315,7 +347,6 @@ function getChallengeShow() {
         indicator.openIndicator();
     }
 
-    //Ti.API.info("SKickar: "+ gameID);
     var xhr = Titanium.Network.createHTTPClient();
     xhr.onerror = function(e) {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);

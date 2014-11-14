@@ -26,6 +26,10 @@ var imageErrorHandler = function(e) {
     e.image = '/images/no_pic.png';
 };
 
+var logoImageErrorHandler = function(e) {
+     e.image = '/images/no_team.png';
+};
+
 var footerView = Ti.UI.createView({
     height : 75,
     width : Ti.UI.FILL,
@@ -355,7 +359,7 @@ function createPopupLayout(win, playerObj, isFriend, isMe, friendIndex) {
         var images = Alloy.Globals.BETKAMPENURL + finalUrl;
 
         var profilePics = Titanium.UI.createImageView({
-            defaultImage : '/images/no_pic.png',
+            defaultImage : '/images/no_team.png',
             image : images,
             height : 70,
             width : 70,
@@ -364,7 +368,7 @@ function createPopupLayout(win, playerObj, isFriend, isMe, friendIndex) {
             borderRadius : 35
         });
 
-        profilePics.addEventListener('error', imageErrorHandler);
+        profilePics.addEventListener('error', logoImageErrorHandler);
         friend.add(profilePics);
     }
 }

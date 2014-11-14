@@ -84,6 +84,12 @@
 "#bluetooth_settings_label":{
 	text : Alloy.Globals.PHRASES.settingsBluetoothTxt
 },
+"#favorite_team_settings_row[platform=ios]": {
+	hasChild : true
+},
+"#favorite_team_settings_label":{
+	text : Alloy.Globals.PHRASES.favTeamTxt 
+},
 "#upload_indicator[platform=ios]": {
 	width : Ti.UI.FILL,
 	height : 30,

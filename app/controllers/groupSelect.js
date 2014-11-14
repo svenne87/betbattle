@@ -220,7 +220,19 @@ function getGroups() {
                         }]
                     };
                     tab_friends.setBackgroundColor(Alloy.Globals.themeColor());
-                    getFriends();
+                    
+                    var emptyLabel = Ti.UI.createLabel({
+                       height : 40,
+                       top : 40,
+                       width : Ti.UI.FILL, 
+                       font : Alloy.Globals.getFontCustom(16, "Regular"),
+                       color : '#FFF',
+                       left : 20,
+                       text : Alloy.Globals.PHRASES.noGroupsTxt
+                    });
+                    
+                    //.add(emptyLabel);
+                    //getFriends();  // TODO
                 }
 
             } else {
@@ -288,7 +300,17 @@ function challengeGroup(array) {
 
             } else {
                 // any other "bad request error"
-                Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
+                var errorText = "";
+                try{
+                    errorText = JSON.parse(this.responseText);
+                    Alloy.Globals.showFeedbackDialog(errorText);
+                } catch(e) {
+                    //
+                }
+                
+                if(errorText === "") {
+                    Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+                }
             }
         };
 
@@ -344,6 +366,10 @@ function challengeGroup(array) {
                     };
                    
                     Ti.App.fireEvent('app:updateView', obj);
+                    
+                    for (var win in Alloy.Globals.WINDOWS) {
+                        Alloy.Globals.WINDOWS[win].setOpacity(0);
+                    }
                     
                     $.groupSelectWindow.close();
                     
@@ -416,7 +442,17 @@ function challengeFriends() {
 
             } else {
                 // any other "bad request error"
-                Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
+                var errorText = "";
+                try{
+                    errorText = JSON.parse(this.responseText);
+                    Alloy.Globals.showFeedbackDialog(errorText);
+                } catch(e) {
+                    //
+                }
+                
+                if(errorText === "") {
+                    Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+                }
             }
 
             Ti.API.error('Bad Sever =>' + e.error);
@@ -470,6 +506,10 @@ function challengeFriends() {
                     };
                     
                     Ti.App.fireEvent('app:updateView', obj);
+                    
+                    for (var win in Alloy.Globals.WINDOWS) {
+                        Alloy.Globals.WINDOWS[win].setOpacity(0);
+                    }
                     
                     $.groupSelectWindow.close();
                     

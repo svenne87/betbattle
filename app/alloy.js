@@ -763,7 +763,7 @@ Alloy.Globals.showToast = function(msg, unlock) {
         var indView = Titanium.UI.createView({
             top : '80%',
             height : 30,
-            width : '80%',
+            width :  Ti.UI.FILL,
             backgroundColor : '#FFF',
             opacity : 0.9
         });
@@ -787,7 +787,7 @@ Alloy.Globals.showToast = function(msg, unlock) {
         setTimeout(function() {
             indWin.close({
                 opacity : 0,
-                duration : 1000
+                duration : 2000
             });
             if(unlock) {
                 Alloy.Globals.unlockAchievement(11);
@@ -841,8 +841,8 @@ Alloy.Globals.unlockAchievement = function(achID) {
 
                         //  view
                         var indView = Titanium.UI.createView({
-                            top : '80%',
-                            height : 50,
+                            top : '85%',
+                            height : 80,
                             width : '100%',
                             backgroundColor : '#FFF',
                             opacity : 0.9,
@@ -857,12 +857,14 @@ Alloy.Globals.unlockAchievement = function(achID) {
                             width : "15%",
                             height : Ti.UI.SIZE,
                             left : 0,
+                            top : 10
                         });
                         var message = Titanium.UI.createLabel({
                             text : Alloy.Globals.PHRASES.achievementUnlocked + Alloy.Globals.PHRASES.achievements[response.id].title,
                             right : 0,
                             color : '#000',
                             width : '75%',
+                            top : 25,
                             height : 'auto',
                             textAlign : 'center',
                             font : Alloy.Globals.getFontCustom(12, 'Bold'),
@@ -877,7 +879,7 @@ Alloy.Globals.unlockAchievement = function(achID) {
                         setTimeout(function() {
                             indWin.close({
                                 opacity : 0,
-                                duration : 1000
+                                duration : 2000
                             });
                         }, interval);
                     } else {
@@ -1026,8 +1028,7 @@ Alloy.Globals.constructChallenge = function(responseAPI) {
     // for each challenge object returned create a challenge object and store in array
     var finalArray = [];
 
-    for (var c = 0; c < responseAPI.length; c++) {
-
+    for (var c = 0; c < responseAPI.length; c++) {        
         response = responseAPI[c];
         var array = [];
 
@@ -1136,7 +1137,13 @@ Alloy.Globals.constructChallenge = function(responseAPI) {
         }
         finalArray.push(array);
     }
-
+    
+    if(responseAPI.length > 5) {
+        // last in array store match otd data
+        var tmpObj = {"match_otd_status" : responseAPI[5].match_otd_status};
+        finalArray.push(tmpObj); 
+    }
+    
     return finalArray;
 };
 

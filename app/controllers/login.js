@@ -51,6 +51,7 @@ function getChallengesAndStart() {
         Ti.API.error('Bad Sever =>' + e.error);
         indicator.closeIndicator();
         addEvent();
+        isSubmitting = false;
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
     };
 
@@ -66,6 +67,7 @@ function getChallengesAndStart() {
         Ti.API.error('Bad Sever =>' + e.error);
         indicator.closeIndicator();
         addEvent();
+        isSubmitting = false;
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
     }
     xhr.onload = function() {
@@ -88,7 +90,7 @@ function getChallengesAndStart() {
                 var args = {
                     dialog : indicator
                 };
-                
+
                 if (user_team.data.length > 0) {
                     var loginSuccessWindow = Alloy.createController('landingPage', args).getView();
                     Alloy.Globals.CURRENTVIEW = loginSuccessWindow;
@@ -144,11 +146,13 @@ function getChallengesAndStart() {
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                 indicator.closeIndicator();
                 addEvent();
+                isSubmitting = false;
             }
         } else {
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             indicator.closeIndicator();
             addEvent();
+            isSubmitting = false;
             Ti.API.error("Error =>" + this.response);
         }
     };
@@ -157,6 +161,7 @@ function getChallengesAndStart() {
 function doError() {
     indicator.closeIndicator();
     addEvent();
+    isSubmitting = false;
 
     var alertWindow = Titanium.UI.createAlertDialog({
         title : Alloy.Globals.PHRASES.commonErrorTxt,
@@ -188,121 +193,73 @@ function doError() {
 }
 
 function loginAuthenticated(fb) {
-    params = {
-        access_token : fb.accessToken
+    // Get betkampenID with valid facebook token
+    var xhr = Titanium.Network.createHTTPClient();
+    xhr.onerror = function(e) {
+        Ti.API.error('Bad Sever =>' + e.error);
+        indicator.closeIndicator();
+        addEvent();
+        isSubmitting = false;
+        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
     };
-    fb.requestWithGraphPath('/me', params, 'GET', function(e) {
-        if (e.success) {
-            Alloy.Globals.FACEBOOK = fb;
-            Alloy.Globals.BETKAMPEN = {
-                token : fb.accessToken
-            };
-            var result = null;
 
-            try {
-                result = JSON.parse(e.result);
-            } catch(Exception) {
-                // catch em all here
-                doError();
-            }
+    try {
+        xhr.open('POST', Alloy.Globals.BETKAMPENLOGINURL);
+        xhr.setRequestHeader("content-type", "application/json");
+        xhr.setTimeout(Alloy.Globals.TIMEOUT);
+        var param = '{"access_token" : "' + fb.accessToken + '", "lang":"' + Alloy.Globals.LOCALE + '"}';
+        xhr.send(param);
+    } catch(e) {
+        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.internetMayBeOffErrorTxt);
+        indicator.closeIndicator();
+        addEvent();
+        isSubmitting = false;
+    }
 
-            if (result !== null) {
-
-                // create a model with the needed Facebook information, and store it global
-                for (r in result) {
-                    if ( typeof result.r === 'undefined' || result.r === null) {
-                        if ( typeof result.location === 'undefined') {
-                            result.location = {
-                                name : '',
-                                id : ''
-                            };
-                        } else {
-                            result.r = '';
-                        }
-                    }
-                }
-
-                Alloy.Globals.FACEBOOKOBJECT = Alloy.createModel('facebook', {
-                    id : result.id,
-                    locale : result.locale,
-                    username : result.username,
-                    fullName : result.name,
-                    firstName : result.first_name,
-                    lastName : result.last_name,
-                    email : result.email
-                });
-
-                // Get betkampenID with valid facebook token
-                var xhr = Titanium.Network.createHTTPClient();
-                xhr.onerror = function(e) {
-                    Ti.API.error('Bad Sever =>' + e.error);
-                    indicator.closeIndicator();
-                    addEvent();
-                    Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-                };
+    xhr.onload = function() {
+        if (this.status == '200') {
+            if (this.readyState == 4) {
+                var response = null;
 
                 try {
-                    xhr.open('POST', Alloy.Globals.BETKAMPENLOGINURL);
-                    xhr.setRequestHeader("content-type", "application/json");
-                    xhr.setTimeout(Alloy.Globals.TIMEOUT);
-                    var param = '{"access_token" : "' + fb.accessToken + '", "lang":"' + Alloy.Globals.LOCALE + '"}';
-                    xhr.send(param);
+                    response = JSON.parse(this.responseText);
                 } catch(e) {
-                    Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.internetMayBeOffErrorTxt);
                     indicator.closeIndicator();
                     addEvent();
                 }
 
-                xhr.onload = function() {
-                    if (this.status == '200') {
-                        if (this.readyState == 4) {
-                            var response = null;
+                if (response !== null) {
+                    createLeagueAndUidObj(response);
 
-                            try {
-                                response = JSON.parse(this.responseText);
-                            } catch(e) {
-                                indicator.closeIndicator();
-                                addEvent();
-                            }
-
-                            if (response !== null) {
-                                createLeagueAndUidObj(response);
-
-                                if (Alloy.Globals.BETKAMPENUID > 0) {
-                                    getChallengesAndStart();
-                                }
-                            } else {
-                                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-                                indicator.closeIndicator();
-                                addEvent();
-                            }
-
-                        } else {
-                            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-                            indicator.closeIndicator();
-                            addEvent();
-                        }
-                    } else {
-                        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-                        Ti.API.error("Error =>" + this.response);
-                        indicator.closeIndicator();
-                        addEvent();
+                    if (Alloy.Globals.BETKAMPENUID > 0) {
+                        getChallengesAndStart();
                     }
-                };
-            } else {
-                doError();
+                } else {
+                    Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+                    indicator.closeIndicator();
+                    addEvent();
+                }
+
             }
-
-        } else if (e.error) {
-            doError();
+        } else {
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+            Ti.API.error("Error =>" + this.response);
+            indicator.closeIndicator();
+            addEvent();
+            isSubmitting = false;
         }
-    });
-
+    };
 }
 
 function login() {
+    if(isSubmitting) {
+        return;
+    }
+    
     // check login
     if (Alloy.Globals.checkConnection()) {
+        isSubmitting = true;
+        
         if (!args.reauth) {
             fb.authorize();
         } else {
@@ -331,8 +288,12 @@ var indicator = uie.createIndicatorWindow({
     top : 200,
     text : Alloy.Globals.PHRASES.loadingTxt
 });
-/* Main Flow */
 
+var isSubmitting = false;
+var downloadView = null;
+var isDownloading = false;
+/* Main Flow */
+$.loginBtn.setBackgroundColor(Alloy.Globals.themeColor());
 addTutorialImages();
 
 // add facebook icon to the "login with facebook button"
@@ -356,20 +317,19 @@ $.facebookBtn.add(Ti.UI.createLabel({
     fontSize : 40
 }));
 
-var fb = require('facebook');
+var fb = require('com.facebook');
 
 // app id and permission's
-fb.appid = Ti.App.Properties.getString('ti.facebook.appid');
+//fb.appid = Ti.App.Properties.getString('ti.facebook.appid');
 
 if (OS_IOS) {
     $.login.hideNavBar();
 
-    fb.permissions = ['email'];
+    fb.permissions = ['email', 'public_profile', 'user_friends'];
 } else {
-    fb.permissions = ['email'];
+    fb.permissions = ['email', 'public_profile', 'user_friends'];
 }
 fb.forceDialogAuth = false;
-
 Alloy.Globals.connect = true;
 
 if (Alloy.Globals.FBERROR) {
@@ -379,7 +339,7 @@ if (Alloy.Globals.FBERROR) {
 
     // need to keep track if event was already added, since it is beeing added several times otherwise.
     fb.addEventListener('login', function(e) {
-
+        isSubmitting = true;
         Ti.API.log("Försöker iaf 11...");
 
         if (Alloy.Globals.connect == true) {
@@ -388,15 +348,34 @@ if (Alloy.Globals.FBERROR) {
         Alloy.Globals.FBERROR = false;
         if (Alloy.Globals.connect == true) {
             if (e.success) {
+
+                // set tokens
+                Alloy.Globals.FACEBOOK = fb;
+                Alloy.Globals.BETKAMPEN = {
+                    token : fb.accessToken
+                };
+
+                Alloy.Globals.FACEBOOKOBJECT = Alloy.createModel('facebook', {
+                    id : e.data.id,
+                    locale : e.data.locale,
+                    username : e.data.name,
+                    fullName : e.data.name,
+                    firstName : e.data.first_name,
+                    lastName : e.data.last_name,
+                    email : e.data.email
+                });
+
                 removeEvent();
                 setTimeout(function() {
                     loginAuthenticated(fb);
                 }, 300);
             } else if (e.error) {
+                isSubmitting = false;
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.facebookAbortConnectionTxt);
                 //addEvent();
                 indicator.closeIndicator();
             } else if (e.cancelled) {
+                isSubmitting = false;
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.canceledTxt);
                 indicator.closeIndicator();
                 //addEvent();
@@ -406,9 +385,8 @@ if (Alloy.Globals.FBERROR) {
 }
 
 addEvent();
+
 // Har satt Alloy.Globals.FBERROR till false för att inte öppna flera gånger, sätta till true vid error??
-// TODO gick inte försöka igen efter Timeout vid login försök...
-// TODO går inte att logga in, kan vara fb session som löpt up, sen går de inte försöka igen....
 // set correct language phrase
 $.facebookBtnText.text = Alloy.Globals.PHRASES.loginFacebookButtonTxt;
 
@@ -418,6 +396,7 @@ Alloy.Globals.readToken();
 // check login
 if (Alloy.Globals.checkConnection()) {
     if (fb.loggedIn) {
+        isSubmitting = true;
         removeEvent();
         if (OS_ANDROID) {
             $.login.addEventListener('open', function() {
@@ -440,6 +419,7 @@ if (Alloy.Globals.checkConnection()) {
 
         }
     } else if (Alloy.Globals.BETKAMPEN) {
+        isSubmitting = true;
         Ti.API.log('aooomen!');
         // Betkampen auto sign in
         indicator.openIndicator();
@@ -464,6 +444,7 @@ function loginBetkampenAuthenticated() {
                 authWithRefreshToken();
             }
         } else {
+            isSubmitting = false;
             indicator.closeIndicator();
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
         }
@@ -478,6 +459,7 @@ function loginBetkampenAuthenticated() {
     } catch(e) {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.internetMayBeOffErrorTxt);
         indicator.closeIndicator();
+        isSubmitting = false;
     }
 
     xhr.onload = function() {
@@ -501,28 +483,140 @@ function loginBetkampenAuthenticated() {
                     indicator.closeIndicator();
                     Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.loginCredentialsError);
                 }
-            } else {
-                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-                indicator.closeIndicator();
-                Ti.API.log("3");
             }
         } else {
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             Ti.API.error("Error =>" + this.response);
             indicator.closeIndicator();
+            isSubmitting = false;
             Ti.API.log("4");
         }
     };
 }
 
+function downloadTutorial() {
+    var platform = "";
+    if (Alloy.Globals.checkConnection()) {
+        indicator.setText("Downloading app content...");
+        indicator.openIndicator();
+        isDownloading = true;
+        
+        if (OS_IOS) {
+            platform = "iphone";
+        } else if (OS_ANDROID) {
+            platform = "android";
+        }
+        var xhr = Titanium.Network.createHTTPClient();
+        xhr.onerror = function(e) {
+            Ti.API.error('Bad Sever =>' + JSON.stringify(e));
+            indicator.closeIndicator();
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+            isDownloading = false;
+        };
+
+        try {
+            xhr.open('POST', Alloy.Globals.BETKAMPENGETTUTORIALURL + "?lang=" + Alloy.Globals.LOCALE + '&platform=' + platform);
+            xhr.setRequestHeader("content-type", "application/json");
+            xhr.setTimeout(Alloy.Globals.TIMEOUT);
+            xhr.send();
+        } catch(e) {
+            indicator.closeIndicator();
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+            isDownloading = false;
+        }
+
+        xhr.onload = function() {
+            if (this.status == '200') {
+                if (this.readyState == 4) {
+                    var response = JSON.parse(this.responseText);
+                    var imageLocationArray = [];
+                    var doneCount = 0;
+
+                    indicator.setText("Downloading app content...");
+                    indicator.openIndicator();
+
+                    // download each file
+                    for (var img in response) {
+                        var inline_function = function(img) {
+                            var imageDownloader = Titanium.Network.createHTTPClient();
+                            imageDownloader.setTimeout(Alloy.Globals.TIMEOUT);
+
+                            imageDownloader.onload = function(e) {
+                                var f = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, 'tut_' + response[img] + '.png');
+                                f.write(this.responseData);
+                                imageLocationArray.push(f.nativePath);
+                                doneCount++;
+
+                                if (doneCount == response.length) {
+                                    // store the array on phone
+                                    Ti.App.Properties.setString("tutorial_images", JSON.stringify(imageLocationArray));
+                                    indicator.closeIndicator();
+                                    isDownloading = false;
+                                    addTutorialImages();
+                                }
+                            };
+
+                            imageDownloader.open("GET", Alloy.Globals.BETKAMPENURL + '/tutorial/' + platform + '/' + Alloy.Globals.LOCALE + '/tut_' + response[img] + '.png');
+                            imageDownloader.send();
+                        };
+                        inline_function(img);
+                    }
+                }
+            }
+        };
+    } else {
+        indicator.closeIndicator();
+        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+    }
+
+}
+
 function addTutorialImages() {
+    var addView = false;
+    if (downloadView === null) {
+        addView = true;
+        downloadView = Ti.UI.createView({
+            height : Ti.UI.FILL,
+            width : Ti.UI.FILL,
+            backgroundColor : '#000',
+            id : 'remove'
+        });
+
+        var downloadButton = Alloy.Globals.createButtonView('#FFF', '#000', Alloy.Globals.PHRASES.downloadTutorial);
+        downloadButton.setTop('45%');
+
+        downloadButton.addEventListener('click', function() {
+            if(isDownloading) {
+                return;
+            }
+            
+            // display welcome dialog
+            var alertWindow = Titanium.UI.createAlertDialog({
+                title : Alloy.Globals.PHRASES.betbattleTxt,
+                message : Alloy.Globals.PHRASES.getTutorialTxt,
+                buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtnTxt]
+            });
+
+            alertWindow.addEventListener('click', function(ev) {
+                switch(ev.index) {
+                case 0:
+                    downloadTutorial();
+                    break;
+                case 1:
+                    alertWindow.hide();
+                }
+            });
+            alertWindow.show();
+
+        });
+
+        downloadView.add(downloadButton);
+    }
 
     // get all available images
     var images = JSON.parse(Ti.App.Properties.getString('tutorial_images'));
 
-    // Titanium.Filesystem.applicationDataDirectory
-
-    if (images !== null && images.length > 0) {
+    if (images !== null && images.length > 0) {        
         for (var img in images) {
             var view = Ti.UI.createView({
                 height : Ti.UI.FILL,
@@ -548,6 +642,11 @@ function addTutorialImages() {
 
             view.add(imageView);
             $.scrollableView.addView(view);
+            downloadView = null;
+        }
+    } else {
+        if(addView) {
+           $.scrollableView.addView(downloadView);
         }
     }
 }
@@ -615,6 +714,17 @@ function authWithRefreshToken() {
     }
 }
 
+$.scrollableView.addEventListener('scroll', function(e) {
+    if(downloadView === null) {
+        for(var sV in $.scrollableView.views) {
+            if($.scrollableView.views[sV].id === 'remove') {
+                $.scrollableView.removeView($.scrollableView.views[sV]);
+                break;
+            }
+        }
+    }
+});
+
 $.login.addEventListener('close', function() {
     indicator.closeIndicator();
 
@@ -643,12 +753,16 @@ if (OS_ANDROID) {
 }
 
 //----------------- email login
-if(OS_IOS) {
-    Alloy.Globals.NAV = $.nav;  
-}  
+if (OS_IOS) {
+    Alloy.Globals.NAV = $.nav;
+}
 
 // opening login view
 $.loginBtn.addEventListener('click', function(e) {
+    if(isSubmitting) {
+        return;
+    }
+
     var loginWindow = Alloy.createController('loginView').getView();
     if (OS_IOS) {
         $.nav.openWindow(loginWindow);
@@ -661,6 +775,9 @@ $.loginBtn.addEventListener('click', function(e) {
 
 //open registration view
 $.registerBtn.addEventListener('click', function(e) {
+    if(isSubmitting) {
+        return;
+    }
 
     var regWindow = Alloy.createController('registrationView').getView();
     if (OS_IOS) {

@@ -46,6 +46,10 @@ var imageErrorHandler = function(e) {
     e.image = '/images/no_pic.png';
 };
 
+var logoImageErrorHandler = function(e) {
+    e.image = '/images/no_team.png';
+};
+
 function createGUI(obj) {
     
     if(!obj.team.data[0]) {
@@ -194,7 +198,7 @@ function createGUI(obj) {
                 var images = Alloy.Globals.BETKAMPENURL + finalUrl;
 
                 var profilePics = Titanium.UI.createImageView({
-                    defaultImage : '/images/no_pic.png',
+                    defaultImage : '/images/no_team.png',
                     image : images,
                     height : 70,
                     width : 70,
@@ -202,7 +206,7 @@ function createGUI(obj) {
                     top : 170,
                     borderRadius : 35
                 });
-
+                profilePics.addEventListener('error', logoImageErrorHandler);
                 modal.add(profilePics);
             }
 
@@ -453,7 +457,7 @@ function createGUI(obj) {
                 var images = Alloy.Globals.BETKAMPENURL + finalUrl;
 
                 var profilePics = Titanium.UI.createImageView({
-                    defaultImage : '/images/no_pic.png',
+                    defaultImage : '/images/no_team.png',
                     image : images,
                     height : 70,
                     width : 70,
@@ -462,7 +466,7 @@ function createGUI(obj) {
                     borderRadius : 35
                 });
 
-                profilePics.addEventListener('error', imageErrorHandler);
+                profilePics.addEventListener('error', logoImageErrorHandler);
 
                 friend.add(profilePics);
             }
@@ -542,6 +546,11 @@ function createGUI(obj) {
                                     break;
                                 }
                             }
+                            
+                            if(table.data[0].rows.length === 0) {
+                                $.myFriends.close();
+                            }
+                            
                             indicator.closeIndicator();
                             Alloy.Globals.showToast(e.source.fName + ' ' + Alloy.Globals.PHRASES.groupMemberDeletedTxt);
                         };

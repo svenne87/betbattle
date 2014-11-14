@@ -163,7 +163,7 @@ if (OS_IOS) {
         var alertWindow = Titanium.UI.createAlertDialog({
             title : Alloy.Globals.PHRASES.commonErrorTxt,
             message : msg,
-            buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.retryTxt]
+            buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.retryBtnTxt]
         });
 
         alertWindow.addEventListener('click', function(e) {
@@ -190,6 +190,7 @@ if (OS_IOS) {
             var xhr = Titanium.Network.createHTTPClient();
             xhr.onerror = function(e) {
                 indicator.closeIndicator();
+                Ti.API.log(JSON.stringify(e));
                 retry(identifier, receipt, Alloy.Globals.PHRASES.commonErrorTxt);
             };
 
@@ -212,9 +213,7 @@ if (OS_IOS) {
                     if (this.readyState == 4) {
                         Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
                         Alloy.Globals.unlockAchievement(3);
-                    } else {
-                        retry(identifier, receipt, JSON.parse(this.responseText));
-                    }
+                    } 
                 } else {
                     indicator.closeIndicator();
                     retry(identifier, receipt, JSON.parse(this.responseText));
@@ -308,7 +307,7 @@ if (OS_IOS) {
         var alertWindow = Titanium.UI.createAlertDialog({
             title : Alloy.Globals.PHRASES.commonErrorTxt,
             message : Alloy.Globals.PHRASES.purchaseFetchTxt,
-            buttonNames : [Alloy.Globals.PHRASES.retryTxt, Alloy.Globals.PHRASES.closeBtnTxt]
+            buttonNames : [Alloy.Globals.PHRASES.retryBtnTxt, Alloy.Globals.PHRASES.closeBtnTxt]
         });
 
         alertWindow.addEventListener('click', function(e) {
@@ -430,31 +429,13 @@ if (OS_IOS) {
                     if (this.readyState == 4) {
                         Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
                         Alloy.Globals.unlockAchievement(3);
-                    } else {
-                        var alertWindow = Titanium.UI.createAlertDialog({
-                            title : Alloy.Globals.PHRASES.commonErrorTxt,
-                            message : JSON.parse(this.responseText),
-                            buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.retryTxt]
-                        });
-
-                        alertWindow.addEventListener('click', function(e) {
-                            switch (e.index) {
-                            case 0:
-                                alertWindow.hide();
-                                break;
-                            case 1:
-                                makePurchase(product);
-                                alertWindow.hide();
-                                break;
-                            }
-                        });
                     }
                 } else {
                     indicator.closeIndicator();
                     var alertWindow = Titanium.UI.createAlertDialog({
                         title : Alloy.Globals.PHRASES.commonErrorTxt,
                         message : JSON.parse(this.responseText),
-                        buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.retryTxt]
+                        buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.retryBtnTxt]
                     });
 
                     alertWindow.addEventListener('click', function(e) {

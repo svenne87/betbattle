@@ -44,7 +44,7 @@ function doDowloadError() {
         switch(ev.index) {
         case 0:
             //finally
-            downloadTutorial();
+            startApp();
             break;
         case 1:
             Ti.App.Properties.setString("appLaunch", JSON.stringify({
@@ -57,109 +57,44 @@ function doDowloadError() {
     alertWindow.show();
 }
 
-function downloadTutorial() {
-    var platform = "";
-    if (Alloy.Globals.checkConnection()) {
-        indicator.setText("Downloading app content...");
-        indicator.openIndicator();
+function startApp() {
+    var hasLaunched = JSON.parse(Ti.App.Properties.getString("appLaunch"));
 
-        if (OS_IOS) {
-            platform = "iphone";
-        } else if (OS_ANDROID) {
-            platform = "android";
-        }
-        var xhr = Titanium.Network.createHTTPClient();
-        xhr.onerror = function(e) {
-            Ti.API.error('Bad Sever =>' + JSON.stringify(e));
-            indicator.closeIndicator();
-            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-            doDowloadError();
-        };
-
-        try {
-            xhr.open('POST', Alloy.Globals.BETKAMPENGETTUTORIALURL + "?lang=" + Alloy.Globals.LOCALE + '&platform=' + platform);
-            xhr.setRequestHeader("content-type", "application/json");
-            xhr.setTimeout(Alloy.Globals.TIMEOUT);
-            xhr.send();
-        } catch(e) {
-            indicator.closeIndicator();
-            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-            doDowloadError();
-        }
-
-        xhr.onload = function() {
-            if (this.status == '200') {
-                if (this.readyState == 4) {
-                    var response = JSON.parse(this.responseText);
-                    var imageLocationArray = [];
-                    var doneCount = 0;
-
-                    indicator.setText("Downloading app content...");
-                    indicator.openIndicator();
-
-                    // download each file
-                    for (var img in response) {
-                        var inline_function = function(img) {
-                            var imageDownloader = Titanium.Network.createHTTPClient();
-                            imageDownloader.setTimeout(Alloy.Globals.TIMEOUT);
-
-                            imageDownloader.onload = function(e) {
-                                var f = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, 'tut_' + response[img] + '.png');
-                                f.write(this.responseData);
-                                imageLocationArray.push(f.nativePath);
-                                doneCount++;
-
-                                if (doneCount == response.length) {
-                                    // store the array on phone
-                                    Ti.App.Properties.setString("tutorial_images", JSON.stringify(imageLocationArray));
-                                    indicator.closeIndicator();
-
-                                    // display welcome dialog
-                                    var alertWindow = Titanium.UI.createAlertDialog({
-                                        title : Alloy.Globals.PHRASES.betbattleTxt,
-                                        message : Alloy.Globals.PHRASES.welcomePhrase,
-                                        buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt]
-                                    });
-
-                                    alertWindow.addEventListener('click', function(ev) {
-                                        switch(ev.index) {
-                                        case 0:
-                                            //finally
-                                            Ti.App.Properties.setString("appLaunch", JSON.stringify({
-                                                opened : true
-                                            }));
-                                            doLogin();
-                                            break;
-                                        default:
-                                            Ti.App.Properties.setString("appLaunch", JSON.stringify({
-                                                opened : true
-                                            }));
-                                            doLogin();
-                                            break;
-                                        }
-                                    });
-                                    alertWindow.show();
-
-                                }
-                            };
-
-                            imageDownloader.open("GET", Alloy.Globals.BETKAMPENURL + '/tutorial/' + platform + '/' + Alloy.Globals.LOCALE + '/tut_' + response[img] + '.png');
-                            imageDownloader.send();
-                        };
-                        inline_function(img);
-                    }
-                }
-            }
-        };
+    if (hasLaunched) {
+        doLogin();
     } else {
-        indicator.closeIndicator();
-        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+
+        // display welcome dialog
+        var alertWindow = Titanium.UI.createAlertDialog({
+            title : Alloy.Globals.PHRASES.betbattleTxt,
+            message : Alloy.Globals.PHRASES.welcomePhrase,
+            buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt]
+        });
+
+        alertWindow.addEventListener('click', function(ev) {
+            switch(ev.index) {
+            case 0:
+                //finally
+                Ti.App.Properties.setString("appLaunch", JSON.stringify({
+                    opened : true
+                }));
+                doLogin();
+                break;
+            default:
+                Ti.App.Properties.setString("appLaunch", JSON.stringify({
+                    opened : true
+                }));
+                doLogin();
+                break;
+            }
+        });
+        alertWindow.show();
     }
 }
 
 function openLogin() {
     if (!opened) {
-        downloadTutorial();
+        startApp();
     } else {
         doLogin();
     }
@@ -273,6 +208,5 @@ if (language) {
     getLanguage();
 }
 
-
-// när man stänger fönster, dölj med opacity innan...  
+// när man stänger fönster, dölj med opacity innan...
 // http://developer.appcelerator.com/question/145806/how-to-prevent-duplicate-actions-in-titanium

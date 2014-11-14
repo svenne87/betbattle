@@ -110,6 +110,174 @@ function createGameType(gameType, gameObject, i, gameArray, index) {
 
 }
 
+function createGameTypeWinnerResult(gameType, gameObject, i, gameArray, index) {
+    var type = gameType.type;
+    var viewHeight = 70;
+    var fontSize = 16;
+
+    var gameTypeView = Ti.UI.createTableViewRow({
+        id : index,
+        hasChild : false,
+        width : Ti.UI.FILL,
+        left : 0,
+        className : 'gameTypeRow',
+        height : 80,
+        value : i + 1,
+        layout : 'horizontal',
+        selectionStyle : 'none',
+    });
+    
+    var optionOne = Ti.UI.createView({
+       height : 80,
+       width: gameTypeView.toImage().width / 3
+    });
+    
+    optionOne.add(Ti.UI.createView({
+        height : 60,
+        width : 60,
+        borderRadius : 30,
+        borderWidth : 3,
+        borderColor : '#FFF'
+    }));
+    
+    optionOne.add(Ti.UI.createLabel({
+        text : '1',
+        color : '#FFF',
+        font : Alloy.Globals.getFontCustom(20, 'Bold')
+    }));
+    
+    var optionTwo = Ti.UI.createView({
+       height : 80,
+       width: gameTypeView.toImage().width / 3
+    });
+    
+    optionTwo.add(Ti.UI.createView({
+        height : 60,
+        width : 60,
+        borderRadius : 30,
+        borderWidth : 3,
+        borderColor : '#FFF'
+    }));
+    
+    optionTwo.add(Ti.UI.createLabel({
+        text : 'X',
+        color : '#FFF',
+        font : Alloy.Globals.getFontCustom(20, 'Bold')
+    }));
+    
+    var optionThree = Ti.UI.createView({
+       height : 80,
+       width: gameTypeView.toImage().width / 3
+    });
+    
+    optionThree.add(Ti.UI.createView({
+        height : 60,
+        width : 60,
+        borderRadius : 30,
+        borderWidth : 3,
+        borderColor : '#FFF'
+    }));
+    
+    optionThree.add(Ti.UI.createLabel({
+        text : '2',
+        color : '#FFF',
+        font : Alloy.Globals.getFontCustom(20, 'Bold')
+    }));
+    
+    // add event click listener for these to set option value
+    
+    optionOne.addEventListener('click', function(e) {
+        gameArray[e.row.id].gameValue[0] = 1;
+        gameArray[e.row.id].gameValue[1] = 0;
+        optionTwo.children[0].backgroundColor = '#000'; 
+        optionThree.children[0].backgroundColor = '#000'; 
+        optionOne.children[0].backgroundColor = '#303030'; 
+
+        if (validate()) {
+            if (answer == 1) {
+                //postAnswer(gameArray);
+            } else if (matchOTD == 1) {
+                Ti.API.info("Matchens mästare");
+            } else if (Alloy.Globals.COUPON != null) {
+                for (var p in modalPickersToHide) {
+                    modalPickersToHide[p].touchEnabled = false;
+                }
+
+                updateChallenge();
+            } else {
+                for (var p in modalPickersToHide) {
+                    modalPickersToHide[p].touchEnabled = false;
+                }
+
+                saveChallenge();
+            }
+        }
+    });
+
+    optionTwo.addEventListener('click', function(e) {
+        gameArray[e.row.id].gameValue[0] = 2;
+        gameArray[e.row.id].gameValue[1] = 0;
+        optionTwo.children[0].backgroundColor = '#303030'; 
+        optionThree.children[0].backgroundColor = '#000'; 
+        optionOne.children[0].backgroundColor = '#000'; 
+        
+        if (validate()) {
+            if (answer == 1) {
+                //postAnswer(gameArray);
+            } else if (matchOTD == 1) {
+                Ti.API.info("Matchens mästare");
+            } else if (Alloy.Globals.COUPON != null) {
+                for (var p in modalPickersToHide) {
+                    modalPickersToHide[p].touchEnabled = false;
+                }
+
+                updateChallenge();
+            } else {
+                for (var p in modalPickersToHide) {
+                    modalPickersToHide[p].touchEnabled = false;
+                }
+
+                saveChallenge();
+            }
+        }
+    });
+    
+    optionThree.addEventListener('click', function(e) {
+        gameArray[e.row.id].gameValue[0] = 3;
+        gameArray[e.row.id].gameValue[1] = 0;
+        optionTwo.children[0].backgroundColor = '#000'; 
+        optionThree.children[0].backgroundColor = '#303030'; 
+        optionOne.children[0].backgroundColor = '#000'; 
+        
+        if (validate()) {
+            if (answer == 1) {
+                //postAnswer(gameArray);
+            } else if (matchOTD == 1) {
+                Ti.API.info("Matchens mästare");
+            } else if (Alloy.Globals.COUPON != null) {
+                for (var p in modalPickersToHide) {
+                    modalPickersToHide[p].touchEnabled = false;
+                }
+
+                updateChallenge();
+            } else {
+                for (var p in modalPickersToHide) {
+                    modalPickersToHide[p].touchEnabled = false;
+                }
+
+                saveChallenge();
+            }
+        }
+    });
+    
+    gameTypeView.add(optionOne);
+    gameTypeView.add(optionTwo);
+    gameTypeView.add(optionThree);
+
+    return gameTypeView;
+}
+
+
 function isLowerCase(str) {
     return str === str.toLowerCase();
 }
@@ -167,20 +335,25 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
             borderRadius : 25,
             backgroundColor : '#FFF',
             layout : 'absolute',
-            left : '21%'
+            left : ((Ti.Platform.displayCaps.platformWidth / 4) - 15)
         });
-
+        
+        var leftPos = 15;
+        if(Ti.Platform.displayCaps.platformWidth > 320) {
+            leftPos = 30;
+        }
+        
         var logoWrapper2 = Ti.UI.createView({
             width : 50,
             height : 50,
             borderRadius : 25,
             backgroundColor : '#FFF',
             layout : 'absolute',
-            left : '31%'
+            left : ((Ti.Platform.displayCaps.platformWidth / 4 + leftPos))
         });
-
+                   
         var team_logo = Ti.UI.createImageView({
-            defaultImage : '/images/no_pic.png',
+            defaultImage : '/images/no_team.png',
             image : Alloy.Globals.BETKAMPENURL + gameObject.attributes.team_1.team_logo,
             width : 50,
             height : 50
@@ -193,7 +366,7 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
         }
 
         var team2_logo = Ti.UI.createImageView({
-            defaultImage : '/images/no_pic.png',
+            defaultImage : '/images/no_team.png',
             image : Alloy.Globals.BETKAMPENURL + gameObject.attributes.team_2.team_logo,
             width : 50,
             height : 50
@@ -206,11 +379,11 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
         }
 
         team_logo.addEventListener('error', function(e) {
-            team_logo.image = '/images/no_pic.png';
+            team_logo.image = '/images/no_team.png';
         });
 
         team2_logo.addEventListener('error', function(e) {
-            team2_logo.image = '/images/no_pic.png';
+            team2_logo.image = '/images/no_team.png';
         });
 
         logoWrapper.add(team_logo);
@@ -546,7 +719,17 @@ function postMatchOfTheDay() {
 
             } else {
                 // any other "bad request error"
-                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+                var errorText = "";
+                try{
+                    errorText = JSON.parse(this.responseText);
+                    Alloy.Globals.showFeedbackDialog(errorText);
+                } catch(e) {
+                    //
+                }
+                
+                if(errorText === "") {
+                    Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+                }
             }
         };
 
@@ -613,7 +796,9 @@ function postMatchOfTheDay() {
                         var args = {
                             gameID : gameID,
                         };
-
+                        
+                        // set status as answered
+                        Ti.App.fireEvent('matchOTDUpdate');
                         var win = Alloy.createController('showMatchOTD', args).getView();
 
                         if (!isAndroid) {
@@ -759,7 +944,7 @@ function saveChallenge() {
 
             }
             param += '}}';
-
+      
             xhr.send(param);
         } catch(e) {
             indicator.closeIndicator();
@@ -804,8 +989,8 @@ function postAnswer(gameArray) {
         submitButton.touchEnabled = false;
         var xhr = Titanium.Network.createHTTPClient();
         xhr.onerror = function(e) {
-            indicator.closeIndicator();
-            submitButton.touchEnabled = true;
+        indicator.closeIndicator();
+        submitButton.touchEnabled = true;
 
             if (JSON.parse(this.responseText).indexOf(Alloy.Globals.PHRASES.coinsInfoTxt.toLowerCase()) != -1) {
                 // not enough coins
@@ -841,11 +1026,18 @@ function postAnswer(gameArray) {
 
             } else {
                 // any other "bad request error"
-                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-
+                var errorText = "";
+                try{
+                    errorText = JSON.parse(this.responseText);
+                    Alloy.Globals.showFeedbackDialog(errorText);
+                } catch(e) {
+                    //
+                }
+                
+                if(errorText === "") {
+                    Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+                }
             }
-
-            Ti.API.error('Bad Sever =>' + e.error);
         };
 
         try {
@@ -895,7 +1087,7 @@ function postAnswer(gameArray) {
             }
 
             param += '}}';
-
+            
             xhr.send(param);
         } catch(e) {
             indicator.closeIndicator();
@@ -922,7 +1114,12 @@ function postAnswer(gameArray) {
 
                     Ti.App.fireEvent('app:updateView', obj);
 
+                    for (var win in Alloy.Globals.WINDOWS) {
+                        Alloy.Globals.WINDOWS[win].setOpacity(0);
+                    }
+
                     $.challengeWindow.close();
+                    
                     for (var win in Alloy.Globals.WINDOWS) {
                         Alloy.Globals.WINDOWS[win].close();
                     }
@@ -1234,8 +1431,12 @@ function createLayout(gameObject) {
             }
 
             if (gametypes[y].option_type == "button") {
-                for (var i = 0; i < gametypes[y].options; i++) {
-                    sections[sectionIndexen].add(createGameType(gametypes[y], gameObject, i, gameArray, index));
+                if(gametypes[y].type === '1') {
+                    sections[sectionIndexen].add(createGameTypeWinnerResult(gametypes[y], gameObject, i, gameArray, index));
+                } else {
+                    for (var i = 0; i < gametypes[y].options; i++) {
+                        sections[sectionIndexen].add(createGameType(gametypes[y], gameObject, i, gameArray, index));   
+                    }
                 }
             } else if (gametypes[y].option_type == "select") {
                 sections[sectionIndexen].add(createSelectGameType(gametypes[y], gameObject, i, gameArray, index));

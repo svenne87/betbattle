@@ -57,6 +57,8 @@ if (OS_ANDROID) {
         backgroundColor : "#303030",
     });
 } else {
+    $.loginEmail.autocapitalization = Titanium.UI.TEXT_AUTOCAPITALIZATION_NONE;
+    
     $.loginView.titleControl = Ti.UI.createLabel({
         text : Alloy.Globals.PHRASES.signInTxt,
         font : Alloy.Globals.getFontCustom(18, "Bold"),
@@ -305,10 +307,10 @@ function getChallengesAndStart() {
                     Alloy.Globals.WINDOWS[win].close();
                 }
 
-                var loginSuccessWindow = Alloy.createController('landingPage', args).getView();
-                Alloy.Globals.CURRENTVIEW = loginSuccessWindow;
-
                 if (user_team.data.length > 0) {
+                    var loginSuccessWindow = Alloy.createController('landingPage', args).getView();
+                    Alloy.Globals.CURRENTVIEW = loginSuccessWindow;
+                    
                     if (OS_IOS) {
                         loginSuccessWindow.open({
                             fullScreen : true
@@ -342,7 +344,6 @@ function getChallengesAndStart() {
                         });
                         loginSuccessWindow = null;
                     }
-
                     $.loginView.close();
                 }
 

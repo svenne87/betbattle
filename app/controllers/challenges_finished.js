@@ -482,9 +482,9 @@ function constructChallengeRows(obj, index) {
 /* Set text with information about how many games we are displaying */
 function setDisplayText() {
     if (finishedChallengesCount <= fetchedFinishedChallenges) {
-        footerViewLabel.setText(Alloy.Globals.PHRASES.nrOfGamesTxt + ': ' + finishedChallengesCount + '/' + finishedChallengesCount + ' ');
+        footerViewLabel.setText(Alloy.Globals.PHRASES.nrOfGamesTxt + ' ' + finishedChallengesCount + '/' + finishedChallengesCount + ' ');
     } else {
-        footerViewLabel.setText(Alloy.Globals.PHRASES.nrOfGamesTxt + ': ' + fetchedFinishedChallenges + '/' + finishedChallengesCount + ' ');
+        footerViewLabel.setText(Alloy.Globals.PHRASES.nrOfGamesTxt + ' ' + fetchedFinishedChallenges + '/' + finishedChallengesCount + ' ');
     }
 }
 
@@ -561,7 +561,15 @@ function getFinishedChallenges(firstTime, start, rows) {
                     buildTableRows();  
                     
                     if(fetchedFinishedChallenges == 0) {
-                        footerViewLabel.setText(Alloy.Globals.PHRASES.nrOfGamesTxt + ': ' + 20 + '/' + finishedChallengesCount + ' ');    
+                        footerViewLabel.setText(Alloy.Globals.PHRASES.nrOfGamesTxt + ' ' + 20 + '/' + finishedChallengesCount + ' ');    
+                        
+                        if(finishedChallengesCount == 0) {
+                            footerViewLabel.setText(Alloy.Globals.PHRASES.nrOfGamesTxt + ' 0' + '/' + finishedChallengesCount + ' ');     
+                        }
+                        
+                        if(finishedChallengesCount < 20) {
+                            footerViewLabel.setText(Alloy.Globals.PHRASES.nrOfGamesTxt + ' ' + finishedChallengesCount + '/' + finishedChallengesCount + ' ');    
+                        }
                     }
                    
                 } else {
