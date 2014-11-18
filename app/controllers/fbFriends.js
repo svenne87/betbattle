@@ -73,7 +73,7 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 
     // app id and permission's
 
-    fb.permissions = ['email', 'public_profile', 'user_friends'];
+    fb.permissions = ['email', 'public_profile'];
 
     fb.forceDialogAuth = false;
     Alloy.Globals.connect = false;
@@ -244,72 +244,43 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
         });
 
         row.add(profileImageView);
-        Ti.API.log(row.id);
-        /*
-        Facebook.dialog( 'feed',
-    {
-        message : postText,
-        link    : facebookPostUrl,
-        name    : $.video.get('title'),
-        caption : $.video.get('title'),
-        picture : $.video.get('thumbnail')
-    },
-    function() { ... }
-);  // OPS id kan vara undefined.....
-        * */
-        
-        
-        
-//fb.logCustomEvent('share');
 
-
-      //  row.addEventListener('click', function(e) {
-            /*
-            var fb = Alloy.Globals.FACEBOOK;
-            // try to invite
-            Ti.API.log('Clickade -> ' + e.source.id);
-            var data = {
-                url : 'say what'
-            };
-            fb.share({url: 'http://example.com' });
-            Ti.API.log("-> " + fb.getCanPresentShareDialog());
-            
-            fb.share(data, function(ev) {
-                Ti.API.log(JSON.stringify(ev));
-                if (ev.success && ev.result) {
-                    Alloy.Globals.addExperience(Alloy.Globals.BETKAMPENUID, 5);
-                    Alloy.Globals.showToast(Alloy.Globals.PHRASES.inviteSentTxt);
-                } else {
-                    if (e.error) {
-                        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.facebookConnectionErrorTxt);
-                    } else {
-                        Alloy.Globals.showToast(Alloy.Globals.PHRASES.abortInviteTxt);
-                    }
-                }
-            });
-        });
- */
         return row;
     }
 
-            var fb = Alloy.Globals.FACEBOOK;
-            // try to invite
-
-  
-            fb.share({url: 'http://example.com' });
-            Ti.API.log("-> CAN I SHARE " + fb.getCanPresentShareDialog());
+    
+    var fb = Alloy.Globals.FACEBOOK;
 
     function sortByName(a, b) {
         var x = a.name.toLowerCase().replace(' ', '');
         var y = b.name.toLowerCase().replace(' ', '');
         return ((x < y) ? -1 : ((x > y) ? 1 : 0));
     }
+    
+    function performFacebookPost(id) {
+// göra som vanlig share här, skicka med namn och förklarande text mä...
+
+        var data = {
+            url : Alloy.Globals.PHRASES.appLinkTxt,
+            namespaceObject : 'betbattle:bet',
+            objectName : 'bet',
+            imageUrl : Alloy.Globals.BETKAMPENURL + '/images/betbattle.png',
+            title : Alloy.Globals.PHRASES.fbPostCaptionTxt,
+            description : Alloy.Globals.PHRASES.fbPostDescriptionTxt,
+            namespaceAction : 'betbattle:place',
+            friendsId : [id]
+        }; 
+
+        Alloy.Globals.unlockAchievement(5);
+        fb.share(data);
+    }
+    
 
     // gets friends that can be invited
     function getFbFriendsWithApp() {
         indicator.openIndicator();
 
-        fb.requestWithGraphPath('/me/invitable_friends', {
+        fb.requestWithGraphPath('/me/taggable_friends', {
             fields : 'name, picture, id'
         }, 'GET', function(e) {
 
@@ -335,9 +306,7 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
                         height : 0.1
                     }),
                 });
-Ti.API.log("-> CAN I SHARE " + fb.getCanPresentShareDialog());
-                                                                  
-                                                                  
+                                                                                                                 
                 for (var i = 0; i < myFbFriends.length; i++) {
                     sections[0].add(createGUI(myFbFriends[i]));
                 }

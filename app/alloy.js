@@ -762,7 +762,7 @@ Alloy.Globals.showToast = function(msg, unlock) {
         //  view
         var indView = Titanium.UI.createView({
             top : '80%',
-            height : 30,
+            height : 40,
             width :  Ti.UI.FILL,
             backgroundColor : '#FFF',
             opacity : 0.9
@@ -783,7 +783,7 @@ Alloy.Globals.showToast = function(msg, unlock) {
         indView.add(message);
         indWin.open();
 
-        var interval = interval ? interval : 1500;
+        var interval = interval ? interval : 2500;
         setTimeout(function() {
             indWin.close({
                 opacity : 0,
@@ -1140,7 +1140,14 @@ Alloy.Globals.constructChallenge = function(responseAPI) {
     
     if(responseAPI.length > 5) {
         // last in array store match otd data
-        var tmpObj = {"match_otd_status" : responseAPI[5].match_otd_status};
+        var tmpObj;
+        
+        if(typeof responseAPI[5].match_data !== 'undefined' && responseAPI[5].match_data !== null) {
+            tmpObj = {"match_otd_status" : responseAPI[5].match_otd_status, "match_data" : responseAPI[5].match_data};
+        } else {
+            tmpObj = {"match_otd_status" : responseAPI[5].match_otd_status};
+        }
+  
         finalArray.push(tmpObj); 
     }
     

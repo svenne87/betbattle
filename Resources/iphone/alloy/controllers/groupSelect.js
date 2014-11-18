@@ -138,37 +138,23 @@ function Controller() {
                         }
                         createViews(groupObjects, "1");
                     } else {
-                        tab_groups.setBackgroundColor("#242424");
-                        tab_groups.backgroundGradient = {
-                            type: "linear",
-                            startPoint: {
-                                x: "0%",
-                                y: "0%"
-                            },
-                            endPoint: {
-                                x: "0%",
-                                y: "100%"
-                            },
-                            colors: [ {
-                                color: "#2E2E2E",
-                                offset: 0
-                            }, {
-                                color: "#151515",
-                                offset: 1
-                            } ]
-                        };
-                        tab_friends.setBackgroundColor(Alloy.Globals.themeColor());
-                        {
-                            Ti.UI.createLabel({
-                                height: 40,
-                                top: 40,
-                                width: Ti.UI.FILL,
-                                font: Alloy.Globals.getFontCustom(16, "Regular"),
-                                color: "#FFF",
-                                left: 20,
-                                text: Alloy.Globals.PHRASES.noGroupsTxt
-                            });
-                        }
+                        globalType = "1";
+                        data = [];
+                        var emptyRow = Ti.UI.createTableViewRow({
+                            height: 75,
+                            hasChild: false,
+                            width: Ti.UI.FILL
+                        });
+                        emptyRow.add(Ti.UI.createLabel({
+                            text: Alloy.Globals.PHRASES.noGroupsTxt + " ",
+                            left: 60,
+                            font: Alloy.Globals.getFontCustom(16, "Regular"),
+                            color: "#FFF"
+                        }));
+                        data.push(emptyRow);
+                        table.setData(data);
+                        tableWrapper.removeAllChildren();
+                        tableWrapper.add(table);
                     }
                 } else Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                 indicator.closeIndicator();
@@ -407,7 +393,7 @@ function Controller() {
                 tintColor: Alloy.Globals.themeColor()
             });
             refresher.addEventListener("refreshstart", function() {
-                if (Alloy.Globals.checkConnection()) "1" === type ? getGroups() : "2" === type && getFriends(); else {
+                if (Alloy.Globals.checkConnection()) "1" === globalType ? getGroups() : "2" === globalType && getFriends(); else {
                     Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
                     refresher.endRefreshing();
                 }
@@ -751,17 +737,6 @@ function Controller() {
     var tab_groups = Ti.UI.createView({
         height: 70,
         width: Alloy.Globals.deviceWidth / 2,
-        backgroundColor: Alloy.Globals.themeColor()
-    });
-    tab_groups.add(Ti.UI.createLabel({
-        text: Alloy.Globals.PHRASES.GroupsTxt,
-        textAlign: "center",
-        color: "#FFF",
-        font: Alloy.Globals.getFontCustom(16, "Bold")
-    }));
-    var tab_friends = Ti.UI.createView({
-        height: 70,
-        width: Alloy.Globals.deviceWidth / 2,
         backgroundColor: "#242424",
         backgroundGradient: {
             type: "linear",
@@ -782,10 +757,21 @@ function Controller() {
             } ]
         }
     });
+    tab_groups.add(Ti.UI.createLabel({
+        text: Alloy.Globals.PHRASES.GroupsTxt,
+        textAlign: "center",
+        color: "#FFF",
+        font: Alloy.Globals.getFontCustom(16, "Bold")
+    }));
+    var tab_friends = Ti.UI.createView({
+        height: 70,
+        width: Alloy.Globals.deviceWidth / 2,
+        backgroundColor: Alloy.Globals.themeColor()
+    });
     tab_friends.add(Ti.UI.createLabel({
         text: Alloy.Globals.PHRASES.FriendsTxt,
         textAlign: "center",
-        color: "#c5c5c5",
+        color: "#FFF",
         font: Alloy.Globals.getFontCustom(16, "Bold")
     }));
     topView.add(tab_groups);
@@ -892,7 +878,7 @@ function Controller() {
     } else $.groupSelect.add(tableWrapper);
     $.groupSelect.add(botView);
     if (Alloy.Globals.checkConnection()) {
-        getGroups();
+        getFriends();
         notFirstRun = true;
     } else Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
     _.extend($, exports);

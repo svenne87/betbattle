@@ -283,35 +283,47 @@ function createGameTypeWinnerResult(gameType, gameObject, i, gameArray, index) {
     }));
 
     if (gameArray[index].gameValue[0] === '1') {
-        optionOne.children[0].backgroundColor = '#303030';
+        optionOne.children[0].backgroundColor = '#D8D8D8';
+        optionOne.children[1].color = '#000'; 
     } else if (gameArray[index].gameValue[0] === '2') {
-        optionTwo.children[0].backgroundColor = '#303030';
+        optionTwo.children[0].backgroundColor = '#D8D8D8';
+        optionTwo.children[1].color = '#000'; 
     } else if (gameArray[index].gameValue[0] === '3') {
-        optionThree.children[0].backgroundColor = '#303030';
+        optionThree.children[0].backgroundColor = '#D8D8D8';
+        optionThree.children[1].color = '#000'; 
     }
 
     optionOne.addEventListener('click', function(e) {
         gameArray[e.row.id].gameValue[0] = 1;
         gameArray[e.row.id].gameValue[1] = 0;
-        optionTwo.children[0].backgroundColor = '#000';
-        optionThree.children[0].backgroundColor = '#000';
-        optionOne.children[0].backgroundColor = '#303030';
+        optionTwo.children[0].backgroundColor = '#000'; 
+        optionTwo.children[1].color = '#FFF';
+        optionThree.children[0].backgroundColor = '#000'; 
+        optionThree.children[1].color = '#FFF';
+        optionOne.children[0].backgroundColor = '#D8D8D8'; 
+        optionOne.children[1].color = '#000'; 
     });
 
     optionTwo.addEventListener('click', function(e) {
         gameArray[e.row.id].gameValue[0] = 2;
         gameArray[e.row.id].gameValue[1] = 0;
-        optionTwo.children[0].backgroundColor = '#303030';
-        optionThree.children[0].backgroundColor = '#000';
-        optionOne.children[0].backgroundColor = '#000';
+        optionTwo.children[0].backgroundColor = '#D8D8D8';
+        optionTwo.children[1].color = '#000';
+        optionThree.children[0].backgroundColor = '#000'; 
+        optionThree.children[1].color = '#FFF'; 
+        optionOne.children[0].backgroundColor = '#000'; 
+        optionOne.children[1].color = '#FFF';
     });
 
     optionThree.addEventListener('click', function(e) {
         gameArray[e.row.id].gameValue[0] = 3;
         gameArray[e.row.id].gameValue[1] = 0;
-        optionTwo.children[0].backgroundColor = '#000';
-        optionThree.children[0].backgroundColor = '#303030';
-        optionOne.children[0].backgroundColor = '#000';
+        optionTwo.children[0].backgroundColor = '#000'; 
+        optionTwo.children[1].color = '#FFF';
+        optionThree.children[0].backgroundColor = '#D8D8D8';
+        optionThree.children[1].color = '#000'; 
+        optionOne.children[0].backgroundColor = '#000'; 
+        optionOne.children[1].color = '#FFF'; 
     });
 
     gameTypeView.add(optionOne);

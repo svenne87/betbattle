@@ -522,7 +522,7 @@ function getAchievements() {
 
                                 var blur = mod.createBasicBlurView({
                                     width : 200,
-                                    height : 200,
+                                    height : 150,
                                     image : ach_img,
                                     borderRadius : 10,
                                     blurRadius : 35,
@@ -530,7 +530,7 @@ function getAchievements() {
                                 w.add(blur);
 
                                 var modal = Ti.UI.createView({
-                                    height : 200,
+                                    height : 150,
                                     width : 200,
                                     backgroundColor : '#FFF',
                                     borderRadius : 10,
@@ -600,7 +600,7 @@ function getAchievements() {
 
                                 var w = Titanium.UI.createWindow({
                                     backgroundColor : 'transparent',
-                                    height : 200,
+                                    height : 150,
                                     width : 200,
                                     borderRadius : 10,
                                     opacity : 1,
@@ -626,7 +626,7 @@ function getAchievements() {
 
                                 var blur = mod.createBasicBlurView({
                                     width : 200,
-                                    height : 200,
+                                    height : 150,
                                     image : e.source.image,
                                     blurRadius : 15,
                                 });
@@ -635,7 +635,7 @@ function getAchievements() {
 
                                 var greyGlass = Ti.UI.createView({
                                     width : 200,
-                                    height : 200,
+                                    height : 150,
                                     backgroundColor : "#FFF"
                                 });
 

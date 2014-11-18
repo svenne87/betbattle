@@ -386,7 +386,7 @@ if (!isAndroid) {
                 type = 'accept';
             } else if (e.message.charAt(0) === '2') {
                 e.message = e.message.substring(1);
-                type = 'pedning';
+                type = 'pending';
             } else if (e.message.charAt(0) === '3') {
                 e.message = e.message.substring(1);
                 type = 'finished';
@@ -423,7 +423,7 @@ if (!isAndroid) {
                 type = 'accept';
             } else if (data.message.charAt(0) === '2') {
                 data.message = data.message.substring(1);
-                type = 'pedning';
+                type = 'pending';
             } else if (data.message.charAt(0) === '3') {
                 data.message = data.message.substring(1);
                 type = 'finished';

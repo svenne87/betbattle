@@ -147,8 +147,8 @@ function checkResponded(match) {
                                 fullScreen : true
                             });
                         }
-                    } else if(resp == 0) {
-                       Alloy.Globals.showToast(Alloy.Globals.PHRASES.noGamesTxt); 
+                    } else if (resp == 0) {
+                        Alloy.Globals.showToast(Alloy.Globals.PHRASES.noGamesTxt);
                     }
 
                 }
@@ -174,37 +174,152 @@ var wrapperView = Ti.UI.createView({
 var infoTexts = Alloy.Globals.PHRASES.matchOTDInfo.split('.');
 var infoTextFixed = '';
 for (var text in infoTexts) {
-    if(infoTexts[text] !== '') {
-        if(infoTexts[text].charAt(0) === ' ') {
-            infoTexts[text]= infoTexts[text].substring(1);
+    if (infoTexts[text] !== '') {
+        if (infoTexts[text].charAt(0) === ' ') {
+            infoTexts[text] = infoTexts[text].substring(1);
         }
-        infoTextFixed += infoTexts[text] + '.' +'\n';
+        infoTextFixed += infoTexts[text] + '.' + '\n';
     }
 }
 
 var matchOTDinfo = Ti.UI.createLabel({
     top : 20,
     left : 20,
-    width: '90%',
+    width : '90%',
     text : infoTextFixed,
     textAlign : "left",
     color : "#FFF",
     font : Alloy.Globals.getFontCustom(16, "Regular")
 });
 
-var nextMatch = Alloy.Globals.createButtonView(Alloy.Globals.themeColor(), "#FFF", Alloy.Globals.PHRASES.matchOTDNextBtn);
-var previousMatch = Alloy.Globals.createButtonView("#FFF", "#000", Alloy.Globals.PHRASES.matchOTDPreviousBtn);
+var table;
+var data = [];
 
-nextMatch.setTop(60);
-nextMatch.addEventListener("click", function(e) {
-    if(match !== null) {
+var tableHeaderView = Ti.UI.createView({
+    height : Ti.UI.SIZE
+});
+
+tableHeaderView.add(matchOTDinfo);
+tableHeaderView.add(Ti.UI.createView({
+    height : 0.5,
+    bottom : 0,
+    width : Ti.UI.FILL,
+    backgroundColor : '#303030'
+}));
+
+table = Titanium.UI.createTableView({
+    width : Ti.UI.FILL,
+    left : 0,
+    headerView : tableHeaderView,
+    height : '90%',
+    backgroundColor : '#000',
+    separatorColor : '#303030'
+});
+
+if (!isAndroid) {
+    var iOSVersion = parseInt(Ti.Platform.version);
+
+    if (iOSVersion < 7) {
+        table.separatorStyle = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
+        table.separatorColor = 'transparent';
+    }
+
+    table.separatorInsets = {
+        left : 0,
+        right : 0
+    };
+    table.footerView = Ti.UI.createView({
+        height : 0.5,
+        backgroundColor : '#303030'
+    });
+} else {
+    table.footerView = Ti.UI.createView({
+        height : 0.5,
+        backgroundColor : '#303030'
+    });
+}
+
+var child = true;
+
+if (isAndroid) {
+    child = false;
+}
+
+var nextMatchRow = Ti.UI.createTableViewRow({
+    height : 75,
+    width : Ti.UI.FILL,
+    color : "#FFF",
+    backgroundColor : 'transparent',
+    font : Alloy.Globals.getFont(),
+    hasChild : child,
+    selectionStyle : 'none'
+});
+
+nextMatchRow.add(Ti.UI.createLabel({
+    font : Alloy.Globals.getFontCustom(16, 'Regular'),
+    text : Alloy.Globals.PHRASES.matchOTDNextBtn,
+    color : '#FFF',
+    left : 20,
+    height : 'auto',
+    width : 'auto'
+}));
+
+if (isAndroid) {
+    nextMatchRow.add(Ti.UI.createLabel({
+        font : {
+            fontFamily : font
+        },
+        text : fontawesome.icon('icon-chevron-right'),
+        right : rightPercentage,
+        color : '#c5c5c5',
+        fontSize : 80,
+        height : 'auto',
+        width : 'auto',
+    }));
+}
+
+nextMatchRow.addEventListener("click", function(e) {
+    if (match !== null) {
         checkResponded(match);
     } else {
-       Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt); 
+        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
     }
 });
 
-previousMatch.addEventListener("click", function(e) {
+var previousMatchRow = Ti.UI.createTableViewRow({
+    height : 75,
+    width : Ti.UI.FILL,
+    color : "#FFF",
+    backgroundColor : 'transparent',
+    font : Alloy.Globals.getFont(),
+    hasChild : child,
+    selectionStyle : 'none'
+});
+
+previousMatchRow.add(Ti.UI.createLabel({
+    font : Alloy.Globals.getFontCustom(16, 'Regular'),
+    text : Alloy.Globals.PHRASES.matchOTDPreviousBtn,
+    color : '#FFF',
+    left : 20,
+    height : 'auto',
+    width : 'auto'
+}));
+
+if (isAndroid) {
+    previousMatchRow.add(Ti.UI.createLabel({
+        font : {
+            fontFamily : font
+        },
+        text : fontawesome.icon('icon-chevron-right'),
+        right : rightPercentage,
+        color : '#c5c5c5',
+        fontSize : 80,
+        height : 'auto',
+        width : 'auto',
+    }));
+}
+
+previousMatchRow.addEventListener("click", function(e) {
 
     var win = Alloy.createController('previousMatchOTD').getView();
     Alloy.Globals.WINDOWS.push(win);
@@ -220,8 +335,44 @@ previousMatch.addEventListener("click", function(e) {
     }
 });
 
-wrapperView.add(matchOTDinfo);
-wrapperView.add(nextMatch);
-wrapperView.add(previousMatch);
+data.push(nextMatchRow);
+data.push(previousMatchRow);
 
+table.setData(data);
+
+/*
+ var nextMatch = Alloy.Globals.createButtonView(Alloy.Globals.themeColor(), "#FFF", Alloy.Globals.PHRASES.matchOTDNextBtn);
+ var previousMatch = Alloy.Globals.createButtonView("#FFF", "#000", Alloy.Globals.PHRASES.matchOTDPreviousBtn);
+
+ nextMatch.setTop(60);
+ nextMatch.addEventListener("click", function(e) {
+ if(match !== null) {
+ checkResponded(match);
+ } else {
+ Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+ }
+ });
+
+ previousMatch.addEventListener("click", function(e) {
+
+ var win = Alloy.createController('previousMatchOTD').getView();
+ Alloy.Globals.WINDOWS.push(win);
+
+ if (!isAndroid) {
+ Alloy.Globals.NAV.openWindow(win, {
+ animated : true
+ });
+ } else {
+ win.open({
+ fullScreen : true
+ });
+ }
+ });
+
+ wrapperView.add(matchOTDinfo);
+ wrapperView.add(nextMatch);
+ wrapperView.add(previousMatch);
+ */
+
+wrapperView.add(table);
 $.matchDay.add(wrapperView);

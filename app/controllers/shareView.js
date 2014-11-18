@@ -173,7 +173,7 @@ googleBtn.add(gplusIconLabel);
             objectName : 'bet',
             imageUrl : Alloy.Globals.BETKAMPENURL + '/images/betbattle.png',
             title : Alloy.Globals.PHRASES.fbPostCaptionTxt,
-            description : Alloy.Globals.PHRASES.fbPostDescriptionTxt,
+            description : Alloy.Globals.PHRASES.fbPostDescriptionTxt + "." + "\n" + Alloy.Globals.PHRASES.myNameIsTxt + ": " + Alloy.Globals.PROFILENAME,
             namespaceAction : 'betbattle:place'
         }; 
 
@@ -186,7 +186,7 @@ if (OS_IOS) {
     if (Titanium.Platform.canOpenURL('twitter://')) {
         twitterBtn.addEventListener('click', function(e) {
             Alloy.Globals.unlockAchievement(5);
-            Titanium.Platform.openURL('twitter://post?message=' + Alloy.Globals.PHRASES.twitterMsg + "\n" + Alloy.Globals.PHRASES.appLinkTxt);
+            Titanium.Platform.openURL('twitter://post?message=' + Alloy.Globals.PHRASES.twitterMsg + "." + "\n" + Alloy.Globals.PHRASES.myNameIsTxt + ": " + Alloy.Globals.PROFILENAME + "\n" + Alloy.Globals.PHRASES.appLinkTxt);
         });
     }
 } else if (OS_ANDROID) {
@@ -198,7 +198,7 @@ if (OS_IOS) {
                 flags : Ti.Android.FLAG_ACTIVITY_NEW_TASK,
                 type : 'text/plain'
             });
-            intTwitter.putExtra(Ti.Android.EXTRA_TEXT, Alloy.Globals.PHRASES.twitterMsg + "\n" + Alloy.Globals.PHRASES.appLinkTxt);
+            intTwitter.putExtra(Ti.Android.EXTRA_TEXT, Alloy.Globals.PHRASES.twitterMsg + "." + "\n" + Alloy.Globals.PHRASES.myNameIsTxt + ": " + Alloy.Globals.PROFILENAME + "\n" + Alloy.Globals.PHRASES.appLinkTxt);
             Alloy.Globals.unlockAchievement(5);
             Ti.Android.currentActivity.startActivity(intTwitter);
         } catch(x) {
@@ -236,7 +236,7 @@ googleBtn.addEventListener('click', function(e) {
 
 var emailDialog = Titanium.UI.createEmailDialog();
 emailDialog.subject = Alloy.Globals.PHRASES.mailSubject;
-emailDialog.messageBody = Alloy.Globals.PHRASES.mailMsg + '\n' + Alloy.Globals.PHRASES.appLinkTxt;
+emailDialog.messageBody = Alloy.Globals.PHRASES.mailMsg + "." +'\n' + Alloy.Globals.PHRASES.myNameIsTxt + ": " + Alloy.Globals.PROFILENAME + "\n" + Alloy.Globals.PHRASES.appLinkTxt;
 
 mailBtn.addEventListener('click', function(e) {
     Alloy.Globals.unlockAchievement(5);
@@ -248,7 +248,7 @@ if (OS_IOS) {
     var sms = require('bencoding.sms').createSMSDialog({
         barColor : '#336699'
     });
-    sms.setMessageBody(Alloy.Globals.PHRASES.smsMsg + '\n' + Alloy.Globals.PHRASES.appLinkTxt);
+    sms.setMessageBody(Alloy.Globals.PHRASES.smsMsg + '.' + '\n' + Alloy.Globals.PHRASES.myNameIsTxt + ": " + Alloy.Globals.PROFILENAME + "\n" + Alloy.Globals.PHRASES.appLinkTxt);
 
     smsBtn.addEventListener('click', function(e) {
         Alloy.Globals.unlockAchievement(5);
@@ -261,7 +261,7 @@ if (OS_IOS) {
         action : Ti.Android.ACTION_SENDTO,
         data : 'smsto:'
     });
-    intent.putExtra('sms_body', "'" + Alloy.Globals.PHRASES.smsMsg + "\n" + Alloy.Globals.PHRASES.appLinkTxt + "'");
+    intent.putExtra('sms_body', "'" + Alloy.Globals.PHRASES.smsMsg + "." + "\n" + Alloy.Globals.PHRASES.myNameIsTxt + ": " + Alloy.Globals.PROFILENAME + "\n" + Alloy.Globals.PHRASES.appLinkTxt + "'");
 
     smsBtn.addEventListener('click', function(e) {
         Alloy.Globals.unlockAchievement(5);
@@ -269,5 +269,14 @@ if (OS_IOS) {
     });
 
 }
+
+mainView.add(Ti.UI.createLabel({
+    text : Alloy.Globals.PHRASES.shareDescription + ".",
+    top : 20,
+    width : '90%',
+    left : 20,
+    font : Alloy.Globals.getFontCustom(16, 'Regular'),
+    color : '#FFF'
+}));
 
 $.share.add(mainView);

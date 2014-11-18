@@ -27,13 +27,13 @@ if (OS_ANDROID) {
             $.friendSearch = null;
         };
         $.friendSearch.activity.actionBar.displayHomeAsUp = true;
-        $.friendSearch.activity.actionBar.title = Alloy.Globals.PHRASES.addFriendsTxt;
+        $.friendSearch.activity.actionBar.title = Alloy.Globals.PHRASES.searchBtnTxt;
     });
 } else {
     isAndroid = false;
     iOSVersion = parseInt(Ti.Platform.version);
     $.friendSearch.titleControl = Ti.UI.createLabel({
-        text : Alloy.Globals.PHRASES.addFriendsTxt,
+        text : Alloy.Globals.PHRASES.searchBtnTxt,
         font : Alloy.Globals.getFontCustom(18, "Bold"),
         color : '#FFF'
     });

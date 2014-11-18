@@ -22,7 +22,7 @@ var font = 'fontawesome-webfont';
 
 if (OS_IOS) {
     $.myFriends.titleControl = Ti.UI.createLabel({
-        text : Alloy.Globals.PHRASES.FriendsTxt,
+        text : Alloy.Globals.PHRASES.friendsHeaderTxt,
         font : Alloy.Globals.getFontCustom(18, "Bold"),
         color : '#FFF'
     });
@@ -823,7 +823,7 @@ if (isAndroid) {
             $.myFriends = null;
         };
         $.myFriends.activity.actionBar.displayHomeAsUp = true;
-        $.myFriends.activity.actionBar.title = Alloy.Globals.PHRASES.FriendsTxt;
+        $.myFriends.activity.actionBar.title = Alloy.Globals.PHRASES.friendsHeaderTxt;
 
         // sometimes the view remain in memory, then we don't need to show the "loading"
         if (!friends) {

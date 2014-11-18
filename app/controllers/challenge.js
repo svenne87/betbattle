@@ -190,8 +190,11 @@ function createGameTypeWinnerResult(gameType, gameObject, i, gameArray, index) {
         gameArray[e.row.id].gameValue[0] = 1;
         gameArray[e.row.id].gameValue[1] = 0;
         optionTwo.children[0].backgroundColor = '#000'; 
+        optionTwo.children[1].color = '#FFF';
         optionThree.children[0].backgroundColor = '#000'; 
-        optionOne.children[0].backgroundColor = '#303030'; 
+        optionThree.children[1].color = '#FFF';
+        optionOne.children[0].backgroundColor = '#D8D8D8'; 
+        optionOne.children[1].color = '#000'; 
 
         if (validate()) {
             if (answer == 1) {
@@ -217,9 +220,12 @@ function createGameTypeWinnerResult(gameType, gameObject, i, gameArray, index) {
     optionTwo.addEventListener('click', function(e) {
         gameArray[e.row.id].gameValue[0] = 2;
         gameArray[e.row.id].gameValue[1] = 0;
-        optionTwo.children[0].backgroundColor = '#303030'; 
+        optionTwo.children[0].backgroundColor = '#D8D8D8';
+        optionTwo.children[1].color = '#000';
         optionThree.children[0].backgroundColor = '#000'; 
+        optionThree.children[1].color = '#FFF'; 
         optionOne.children[0].backgroundColor = '#000'; 
+        optionOne.children[1].color = '#FFF';
         
         if (validate()) {
             if (answer == 1) {
@@ -246,8 +252,11 @@ function createGameTypeWinnerResult(gameType, gameObject, i, gameArray, index) {
         gameArray[e.row.id].gameValue[0] = 3;
         gameArray[e.row.id].gameValue[1] = 0;
         optionTwo.children[0].backgroundColor = '#000'; 
-        optionThree.children[0].backgroundColor = '#303030'; 
+        optionTwo.children[1].color = '#FFF';
+        optionThree.children[0].backgroundColor = '#D8D8D8';
+        optionThree.children[1].color = '#000'; 
         optionOne.children[0].backgroundColor = '#000'; 
+        optionOne.children[1].color = '#FFF'; 
         
         if (validate()) {
             if (answer == 1) {
@@ -1258,10 +1267,12 @@ function createLayout(gameObject) {
         if (roundId === -1) {
             // tournament fix
             coinsToJoin = gameObjects[0].attributes.pot;
-
-            if ( typeof coinsToJoin === 'undefined') {
+            
+            if ( typeof args.push_cid !== 'undefined' && typeof bet_amount !== 'undefined') {
+                coinsToJoin = bet_amount;
+            } else if ( typeof coinsToJoin === 'undefined') {
                 coinsToJoin = parseInt(challengeObject.attributes.potential_pot) / challengeObject.attributes.opponents.length;
-            }
+            } 
         }
 
         ///*******Create Table View*******///
@@ -1666,8 +1677,12 @@ if (roundId === -1) {
         // for tournaments, get correct tournament object from the correct array
         challengeObject = Alloy.Globals.CHALLENGEOBJECTARRAY[3][tournamentIndex];
     }
-
 }
+
+if ( typeof args.push_cid !== 'undefined') {
+    challengeObject = Alloy.createModel('challenge', {id :args.push_cid});
+}
+
 
 // array to store game object
 var gameObjects = [];
@@ -1742,7 +1757,7 @@ if (Alloy.Globals.checkConnection()) {
     try {
         if (roundId === -1) {
             if (tournamentIndex === -1) {
-                xhr.open('GET', Alloy.Globals.BETKAMPENGAMESURL + '/?uid=' + Alloy.Globals.BETKAMPENUID + '&cid=' + challengeObject.attributes.id + '&lang=' + Alloy.Globals.LOCALE);
+                xhr.open('GET', Alloy.Globals.BETKAMPENGAMESURL + '/?uid=' + Alloy.Globals.BETKAMPENUID + '&cid=' + challengeObject.attributes.id + '&lang=' + Alloy.Globals.LOCALE);                          
             } else {
                 xhr.open('GET', Alloy.Globals.BETKAMPENGETGAMESFORTOURNAMENT + '/?uid=' + Alloy.Globals.BETKAMPENUID + '&tid=' + challengeObject.attributes.id + '&round=' + challengeObject.attributes.round + '&lang=' + Alloy.Globals.LOCALE);
             }
@@ -1848,3 +1863,4 @@ if (Alloy.Globals.checkConnection()) {
 } else {
     Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 }
+

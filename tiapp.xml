@@ -24,7 +24,7 @@
     <ios>
         <plist>
             <dict>
-            	<key>CFBundleLocalizations</key>
+                <key>CFBundleLocalizations</key>
                 <array>
                     <string>en</string>
                     <string>es</string>
@@ -175,7 +175,6 @@
         <module platform="android" version="0.2">net.iamyellow.gcmjs</module>
         <module platform="android">com.rkam.swiperefreshlayout</module>
         <module platform="android">ti.inappbilling</module>
-        <module platform="android">facebook</module>
         <module platform="iphone">bencoding.sms</module>
     </modules>
     <deployment-targets>

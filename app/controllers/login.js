@@ -3,6 +3,12 @@ var listener = function() {
     login();
 };
 
+function setButtonOpacity(value) {
+    $.loginBtn.setOpacity(value);
+    $.facebookBtn.setOpacity(value);
+    $.registerBtn.setOpacity(value);
+}
+
 function removeEvent() {
     $.facebookBtn.removeEventListener('click', listener);
 }
@@ -68,6 +74,7 @@ function getChallengesAndStart() {
         indicator.closeIndicator();
         addEvent();
         isSubmitting = false;
+        setButtonOpacity(1);
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
     }
     xhr.onload = function() {
@@ -80,6 +87,8 @@ function getChallengesAndStart() {
                 } catch(e) {
                     indicator.closeIndicator();
                     addEvent();
+                    setButtonOpacity(1);
+                    isSubmitting = false;
                     Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                 }
 
@@ -146,6 +155,7 @@ function getChallengesAndStart() {
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                 indicator.closeIndicator();
                 addEvent();
+                setButtonOpacity(1);
                 isSubmitting = false;
             }
         } else {
@@ -153,6 +163,7 @@ function getChallengesAndStart() {
             indicator.closeIndicator();
             addEvent();
             isSubmitting = false;
+            setButtonOpacity(1);
             Ti.API.error("Error =>" + this.response);
         }
     };
@@ -162,6 +173,7 @@ function doError() {
     indicator.closeIndicator();
     addEvent();
     isSubmitting = false;
+    setButtonOpacity(1);
 
     var alertWindow = Titanium.UI.createAlertDialog({
         title : Alloy.Globals.PHRASES.commonErrorTxt,
@@ -200,6 +212,7 @@ function loginAuthenticated(fb) {
         indicator.closeIndicator();
         addEvent();
         isSubmitting = false;
+        setButtonOpacity(1);
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
     };
 
@@ -214,6 +227,7 @@ function loginAuthenticated(fb) {
         indicator.closeIndicator();
         addEvent();
         isSubmitting = false;
+        setButtonOpacity(1);
     }
 
     xhr.onload = function() {
@@ -247,6 +261,7 @@ function loginAuthenticated(fb) {
             indicator.closeIndicator();
             addEvent();
             isSubmitting = false;
+            setButtonOpacity(1);
         }
     };
 }
@@ -259,6 +274,7 @@ function login() {
     // check login
     if (Alloy.Globals.checkConnection()) {
         isSubmitting = true;
+        setButtonOpacity(0);
         
         if (!args.reauth) {
             fb.authorize();
@@ -325,9 +341,9 @@ var fb = require('com.facebook');
 if (OS_IOS) {
     $.login.hideNavBar();
 
-    fb.permissions = ['email', 'public_profile', 'user_friends'];
+    fb.permissions = ['email', 'public_profile'];
 } else {
-    fb.permissions = ['email', 'public_profile', 'user_friends'];
+    fb.permissions = ['email', 'public_profile'];
 }
 fb.forceDialogAuth = false;
 Alloy.Globals.connect = true;
@@ -340,6 +356,7 @@ if (Alloy.Globals.FBERROR) {
     // need to keep track if event was already added, since it is beeing added several times otherwise.
     fb.addEventListener('login', function(e) {
         isSubmitting = true;
+        setButtonOpacity(0);
         Ti.API.log("Försöker iaf 11...");
 
         if (Alloy.Globals.connect == true) {
@@ -371,11 +388,13 @@ if (Alloy.Globals.FBERROR) {
                 }, 300);
             } else if (e.error) {
                 isSubmitting = false;
+                setButtonOpacity(1);
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.facebookAbortConnectionTxt);
                 //addEvent();
                 indicator.closeIndicator();
             } else if (e.cancelled) {
                 isSubmitting = false;
+                setButtonOpacity(1);
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.canceledTxt);
                 indicator.closeIndicator();
                 //addEvent();
@@ -397,6 +416,7 @@ Alloy.Globals.readToken();
 if (Alloy.Globals.checkConnection()) {
     if (fb.loggedIn) {
         isSubmitting = true;
+        setButtonOpacity(0);
         removeEvent();
         if (OS_ANDROID) {
             $.login.addEventListener('open', function() {
@@ -419,8 +439,8 @@ if (Alloy.Globals.checkConnection()) {
 
         }
     } else if (Alloy.Globals.BETKAMPEN) {
+        setButtonOpacity(0);      
         isSubmitting = true;
-        Ti.API.log('aooomen!');
         // Betkampen auto sign in
         indicator.openIndicator();
         loginBetkampenAuthenticated();
@@ -445,6 +465,7 @@ function loginBetkampenAuthenticated() {
             }
         } else {
             isSubmitting = false;
+            setButtonOpacity(1);
             indicator.closeIndicator();
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
         }
@@ -460,6 +481,7 @@ function loginBetkampenAuthenticated() {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.internetMayBeOffErrorTxt);
         indicator.closeIndicator();
         isSubmitting = false;
+        setButtonOpacity(1);
     }
 
     xhr.onload = function() {
@@ -470,6 +492,8 @@ function loginBetkampenAuthenticated() {
                     response = JSON.parse(this.responseText);
                 } catch(e) {
                     indicator.closeIndicator();
+                    setButtonOpacity(1);
+                    isSubmitting = false;
                     Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                 }
 
@@ -489,7 +513,7 @@ function loginBetkampenAuthenticated() {
             Ti.API.error("Error =>" + this.response);
             indicator.closeIndicator();
             isSubmitting = false;
-            Ti.API.log("4");
+            setButtonOpacity(1);
         }
     };
 }
@@ -659,6 +683,8 @@ function authWithRefreshToken() {
             Ti.API.error('Bad Sever reAuth =>' + JSON.stringify(e));
             indicator.closeIndicator();
             refreshTry = 0;
+            isSubmitting = false;
+            setButtonOpacity(1);
             // reAuth failed. Need to login again. 400 = invalid token
             Alloy.Globals.BETKAMPEN = null;
             if (e.code != 400) {
@@ -679,6 +705,8 @@ function authWithRefreshToken() {
         } catch(e) {
             indicator.closeIndicator();
             refreshTry = 0;
+            isSubmitting = false;
+            setButtonOpacity(1);
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
         }
         xhr.onload = function() {
@@ -699,13 +727,13 @@ function authWithRefreshToken() {
                     Alloy.Globals.storeToken();
                     // brand new token, try to authenticate
                     loginBetkampenAuthenticated();
-                } else {
-                    Ti.API.log(this.response);
                 }
             } else {
                 Ti.API.error("Error =>" + this.response);
                 indicator.closeIndicator();
                 refreshTry = 0;
+                isSubmitting = false;
+                setButtonOpacity(1);
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             }
         };

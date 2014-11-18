@@ -163,6 +163,8 @@ function createGameType(gameType, game, values, index, sections) {
 
     var resultText = '';
     var endTimeResultText = '';
+    var ot = false;
+    var pt = false;
     
     // only print for challenges that have started
     if (checkDate(game.game_date)) {
@@ -171,8 +173,26 @@ function createGameType(gameType, game, values, index, sections) {
         for (var i = 0; i < game.result_values.length; i++) {
             if(game.result_values[i].gid === game.game_id && game.result_values[i].game_type === '20') {
                 endTimeResultText = game.result_values[i].value_1 + ' - ' + game.result_values[i].value_2;
-                break;
             }
+            
+            // over time
+            if(game.result_values[i].gid === game.game_id && game.result_values[i].game_type === '21') {
+                var otResult = game.result_values[i].value_1 + ' - ' + game.result_values[i].value_2;
+
+                if(otResult !== '0 - 0') {
+                    ot = true;
+                }
+            }
+            
+            // penalty
+            if(game.result_values[i].gid === game.game_id && game.result_values[i].game_type === '22') {
+                var ptResult = game.result_values[i].value_1 + ' - ' + game.result_values[i].value_2;
+                
+                if(ptResult !== '0 - 0') {
+                    pt = true;
+                }
+            }
+            
         }
           
         for (var i = 0; i < game.result_values.length; i++) {
@@ -220,10 +240,26 @@ function createGameType(gameType, game, values, index, sections) {
                     if (game.result_values[i].game_type === '3') {
                         if (game.status === '2') {
                             // final score, update header label
-                                                                                // TODO
+                            
                             // if there was ot or pn the end result would not be the same as our final result
                             if(resultText !== endTimeResultText) {
-                                headerScoreLabel.setText(resultText + "    (" + endTimeResultText + ")");
+                                var desc = '';
+                                
+                                if(ot) {
+                                    desc = Alloy.Globals.PHRASES.overTimeTxt;
+                                } else if(pt) {
+                                    desc = Alloy.Globals.PHRASES.penaltyTxt;
+                                }
+                                 
+                                if(ot && pt) {
+                                    desc = Alloy.Globals.PHRASES.penaltyAndOverTimeTxt;
+                                }
+                                
+                                if(desc !== '') {
+                                    headerScoreLabel.setText(resultText + "    (" + endTimeResultText + " " + desc + ")");
+                                } else {
+                                    headerScoreLabel.setText(resultText + "    (" + endTimeResultText + ")");
+                                }
                             } else {
                                 headerScoreLabel.setText(resultText);
                             }                           

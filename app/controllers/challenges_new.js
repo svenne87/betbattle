@@ -231,8 +231,8 @@ function buildTableRows() {
     }
 
     data.push(createNewChallengeRow());
-    data.push(createInviteFriendsRow());
     data.push(createInviteFriendsTxtRow());
+    data.push(createInviteFriendsRow());
     
     table.setData(data);
 }
@@ -653,7 +653,9 @@ function createInviteFriendsTxtRow() {
         text : Alloy.Globals.PHRASES.playDescriptionTxt + ' ',
         font : Alloy.Globals.getFontCustom(16, "Regular"),
         color : "#FFF",
-        textAlign : 'left'
+        textAlign : 'left',
+        left : 10,
+        width : '90%',
         //left : 65,
     }));
 
