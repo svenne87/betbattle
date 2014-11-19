@@ -230,7 +230,7 @@ function createGUI() {
                     xhr.onerror = function(e) {
                         Ti.API.error('Bad Sever =>' + JSON.stringify(e));
                         $.upload_indicator.hide();
-                        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.imageUploadError);
+                        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                     };
 
                     xhr.onsendstream = function(e) {
@@ -256,6 +256,9 @@ function createGUI() {
                             var response = JSON.parse(this.responseText);
                             Alloy.Globals.showToast(response);
                             $.upload_indicator.hide();
+                            
+                            // update event
+                            Ti.App.fireEvent('app:updateMenu');
                         } else {
                             $.upload_indicator.hide();
                             Ti.API.error("Error =>" + this.response);

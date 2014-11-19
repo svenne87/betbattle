@@ -333,16 +333,18 @@ $.facebookBtn.add(Ti.UI.createLabel({
     fontSize : 40
 }));
 
-var fb = require('com.facebook');
+var fb; 
 
 // app id and permission's
 //fb.appid = Ti.App.Properties.getString('ti.facebook.appid');
 
 if (OS_IOS) {
     $.login.hideNavBar();
-
+    fb = require('com.facebook');
     fb.permissions = ['email', 'public_profile'];
 } else {
+    fb = require('facebook');
+    fb.appid = "1403709019858016";
     fb.permissions = ['email', 'public_profile'];
 }
 fb.forceDialogAuth = false;
@@ -389,13 +391,18 @@ if (Alloy.Globals.FBERROR) {
             } else if (e.error) {
                 isSubmitting = false;
                 setButtonOpacity(1);
-                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.facebookAbortConnectionTxt);
+                
+                if (e.error.indexOf('OTHER:') !== 0){
+                    Alloy.Globals.showFeedbackDialog(e.error); 
+                } else {
+                   Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.facebookAbortConnectionTxt); 
+                }
+                
                 //addEvent();
                 indicator.closeIndicator();
             } else if (e.cancelled) {
                 isSubmitting = false;
                 setButtonOpacity(1);
-                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.canceledTxt);
                 indicator.closeIndicator();
                 //addEvent();
             }
@@ -521,8 +528,6 @@ function loginBetkampenAuthenticated() {
 function downloadTutorial() {
     var platform = "";
     if (Alloy.Globals.checkConnection()) {
-        indicator.setText("Downloading app content...");
-        indicator.openIndicator();
         isDownloading = true;
         
         if (OS_IOS) {
@@ -556,7 +561,7 @@ function downloadTutorial() {
                     var imageLocationArray = [];
                     var doneCount = 0;
 
-                    indicator.setText("Downloading app content...");
+                    indicator.setText("Downloading tutorial...");
                     indicator.openIndicator();
 
                     // download each file
@@ -568,13 +573,14 @@ function downloadTutorial() {
                             imageDownloader.onload = function(e) {
                                 var f = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, 'tut_' + response[img] + '.png');
                                 f.write(this.responseData);
-                                imageLocationArray.push(f.nativePath);
+                                imageLocationArray.push({path: f.nativePath, name : img});
                                 doneCount++;
 
                                 if (doneCount == response.length) {
                                     // store the array on phone
                                     Ti.App.Properties.setString("tutorial_images", JSON.stringify(imageLocationArray));
                                     indicator.closeIndicator();
+                                    indicator.setText(Alloy.Globals.PHRASES.loadingTxt);
                                     isDownloading = false;
                                     addTutorialImages();
                                 }
@@ -593,6 +599,18 @@ function downloadTutorial() {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
     }
 
+}
+
+// function to sort array, base on "name"
+function compare(a, b) {
+    a.name = (a.name - 0);
+    b.name = (b.name - 0);
+
+    if (a.name < b.name)
+        return -1;
+    if (a.name > b.name)
+        return 1;
+    return 0;
 }
 
 function addTutorialImages() {
@@ -640,7 +658,10 @@ function addTutorialImages() {
     // get all available images
     var images = JSON.parse(Ti.App.Properties.getString('tutorial_images'));
 
-    if (images !== null && images.length > 0) {        
+    if (images !== null && images.length > 0) {  
+             
+        images = images.sort(compare);
+              
         for (var img in images) {
             var view = Ti.UI.createView({
                 height : Ti.UI.FILL,
@@ -651,14 +672,14 @@ function addTutorialImages() {
 
             if (OS_IOS) {
                 imageView = Ti.UI.createImageView({
-                    image : images[img],
+                    image : images[img].path,
                     top : '5%',
                     height : '95%',
                     width : Ti.UI.FILL
                 });
             } else {
                 imageView = Ti.UI.createImageView({
-                    image : images[img],
+                    image : images[img].path,
                     height : Ti.UI.FILL,
                     width : Ti.UI.FILL
                 });

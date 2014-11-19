@@ -183,10 +183,10 @@ for (var text in infoTexts) {
 }
 
 var matchOTDinfo = Ti.UI.createLabel({
-    top : 20,
+    top : 10,
     left : 20,
     width : '90%',
-    text : infoTextFixed,
+    text : infoTextFixed + "\n",
     textAlign : "left",
     color : "#FFF",
     font : Alloy.Globals.getFontCustom(16, "Regular")
@@ -339,40 +339,6 @@ data.push(nextMatchRow);
 data.push(previousMatchRow);
 
 table.setData(data);
-
-/*
- var nextMatch = Alloy.Globals.createButtonView(Alloy.Globals.themeColor(), "#FFF", Alloy.Globals.PHRASES.matchOTDNextBtn);
- var previousMatch = Alloy.Globals.createButtonView("#FFF", "#000", Alloy.Globals.PHRASES.matchOTDPreviousBtn);
-
- nextMatch.setTop(60);
- nextMatch.addEventListener("click", function(e) {
- if(match !== null) {
- checkResponded(match);
- } else {
- Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
- }
- });
-
- previousMatch.addEventListener("click", function(e) {
-
- var win = Alloy.createController('previousMatchOTD').getView();
- Alloy.Globals.WINDOWS.push(win);
-
- if (!isAndroid) {
- Alloy.Globals.NAV.openWindow(win, {
- animated : true
- });
- } else {
- win.open({
- fullScreen : true
- });
- }
- });
-
- wrapperView.add(matchOTDinfo);
- wrapperView.add(nextMatch);
- wrapperView.add(previousMatch);
- */
 
 wrapperView.add(table);
 $.matchDay.add(wrapperView);

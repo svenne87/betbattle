@@ -468,7 +468,7 @@ if (Alloy.Globals.checkConnection()) {
             orientationModes : [Titanium.UI.PORTRAIT]
         });
     }
-    loginSuccessWindow = null;
+   // loginSuccessWindow = null;
     $.landingPageWin.close();
 }
 

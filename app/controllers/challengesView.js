@@ -1522,11 +1522,10 @@ function getDynamicTopImage() {
                 var imageView = Ti.UI.createImageView({
                     defaultImage : '/images/h_image.jpg',
                     image : Alloy.Globals.BETKAMPENURL + response.image,
-                    width : Ti.UI.SIZE,
+                    width : Ti.UI.FILL,
                     height : 140,
                     backgroundColor : '#000'
                 });
-                // Ti.Platform.displayCaps.platformWidth
 
                 imageView.addEventListener('error', function(e) {
                     e.image = '/images/h_images.jpg';

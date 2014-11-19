@@ -162,7 +162,7 @@ function createGameType(gameType, game, values, index, sections) {
         color : '#FFF'
     }));
 
-    var gameTypeScoreLabel = Ti.UI.createLabel({
+    headerScoreLabel = Ti.UI.createLabel({
         text : Alloy.Globals.PHRASES.giveTxt + " " + gameType.number_of_values + " " + Alloy.Globals.PHRASES.pointsTxt + '  ',
         top : 37,
         left : 20,
@@ -170,7 +170,7 @@ function createGameType(gameType, game, values, index, sections) {
         color : Alloy.Globals.themeColor()
     });
 
-    gameTypeView.add(gameTypeScoreLabel);
+    gameTypeView.add(headerScoreLabel);
 
     var resultText = '';
     var endTimeResultText = '';

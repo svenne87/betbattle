@@ -16,7 +16,7 @@ if (OS_IOS) {
     iOSVersion = parseInt(Ti.Platform.version);
     $.friendZone.titleControl = Ti.UI.createLabel({
         text : Alloy.Globals.PHRASES.friendZoneTxt,
-        font : Alloy.Globals.getFontCustom(16, "Bold"),
+        font : Alloy.Globals.getFontCustom(18, "Bold"),
         color : '#FFF'
     });
 }
@@ -392,24 +392,55 @@ shareLabel = Titanium.UI.createLabel({
 
 shareBtn.add(shareLabel);
 
+var fb;
+
+if (Alloy.Globals.FACEBOOKOBJECT != null) {
+    fb = Alloy.Globals.FACEBOOK;
+} else {
+    fb = require("com.facebook");
+}
+
 fbFriendBtn.addEventListener('click', function(e) {
-    // check connection
-    if (!Alloy.Globals.checkConnection()) {
+
+    if (Alloy.Globals.checkConnection()) {
+        if (fb.getCanPresentShareDialog()) {
+            performFacebookPost(fb);
+        } else {
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.fbShareErrorTxt);
+        }
+    } else {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
-        return;
     }
 
-    var win = Alloy.createController('fbFriends').getView();
-    if (OS_IOS) {
-        Alloy.Globals.NAV.openWindow(win, {
-            animated : true
-        });
-    } else {
-        win.open({
-            fullScreen : true
-        });
-        win = null;
+    function performFacebookPost(fb) {
+
+        var data = {
+            url : Alloy.Globals.PHRASES.appLinkTxt,
+            namespaceObject : 'betbattle:bet',
+            objectName : 'bet',
+            imageUrl : Alloy.Globals.BETKAMPENURL + '/images/betbattle.png',
+            title : Alloy.Globals.PHRASES.fbPostCaptionTxt,
+            description : Alloy.Globals.PHRASES.fbPostDescriptionTxt + "." + "\n" + Alloy.Globals.PHRASES.myNameIsTxt + ": " + Alloy.Globals.PROFILENAME,
+            namespaceAction : 'betbattle:place'
+        };
+
+        Alloy.Globals.unlockAchievement(5);
+        fb.share(data);
     }
+
+    /*
+     var win = Alloy.createController('fbFriends').getView();
+     if (OS_IOS) {
+     Alloy.Globals.NAV.openWindow(win, {
+     animated : true
+     });
+     } else {
+     win.open({
+     fullScreen : true
+     });
+     win = null;
+     }
+     */
 });
 myFriendBtn.addEventListener('click', function(e) {
     // check connection

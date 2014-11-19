@@ -36,7 +36,7 @@ var mainView = Ti.UI.createScrollView({
 });
 
 //----------------------------------------------------------------------EMAIL-----------------------------------------------------------------------------
-var mailBtn = Alloy.Globals.createButtonView("#FFF", "#000", Alloy.Globals.PHRASES.sendMailTxt);
+var mailBtn = Alloy.Globals.createButtonView(Alloy.Globals.themeColor(), "#FFF", Alloy.Globals.PHRASES.sendMailTxt);
 mainView.add(mailBtn);
 
 var mailIconLabel = Titanium.UI.createLabel({
@@ -46,12 +46,12 @@ var mailIconLabel = Titanium.UI.createLabel({
     },
     text : fontawesome.icon('fa-file-text-o'),
     left : '5%',
-    color : '#000',
+    color : '#FFF',
 });
 mailBtn.add(mailIconLabel);
 
 //----------------------------------------------------------------------SMS-----------------------------------------------------------------------------
-var smsBtn = Alloy.Globals.createButtonView("#FFF", "#000", Alloy.Globals.PHRASES.sendSMSTxt);
+var smsBtn = Alloy.Globals.createButtonView(Alloy.Globals.themeColor(), "#FFF", Alloy.Globals.PHRASES.sendSMSTxt);
 mainView.add(smsBtn);
 
 var smsIconLabel = Titanium.UI.createLabel({
@@ -61,7 +61,7 @@ var smsIconLabel = Titanium.UI.createLabel({
     },
     text : fontawesome.icon('fa-mobile'),
     left : '5%',
-    color : '#000',
+    color : '#FFF',
 });
 smsBtn.add(smsIconLabel);
 
@@ -157,12 +157,6 @@ googleBtn.add(gplusIconLabel);
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
         }
 
-    });
-    
-    var uie = require('lib/IndicatorWindow');
-    var indicator = uie.createIndicatorWindow({
-        top : 200,
-        text : Alloy.Globals.PHRASES.loadingTxt
     });
 
     function performFacebookPost(fb) {

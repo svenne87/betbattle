@@ -117,7 +117,7 @@ if (Alloy.Globals.FACEBOOKOBJECT) {
     profileImageView.image = "https://graph.facebook.com/" + Alloy.Globals.FACEBOOKOBJECT.id + "/picture?type=large";
 } else {
     // get betkampen image
-    profileImageView.image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + Alloy.Globals.BETKAMPENUID + '.png';
+    profileImageView.image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + Alloy.Globals.BETKAMPENUID + '.png' + "?t=" + new Date().getTime();
 }
 
 profileImageView.addEventListener('error', function(e) {
@@ -717,4 +717,3 @@ $.profileWin.addEventListener('close', function() {
         }
     }
 });
-

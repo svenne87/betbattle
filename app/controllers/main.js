@@ -3,6 +3,7 @@ var refreshItem;
 var winsLabel;
 var coinsLabel;
 var nameLabel;
+var centerImageView;
 
 var fontawesome = require('lib/IconicFont').IconicFont({
     font : 'lib/FontAwesome'
@@ -22,9 +23,16 @@ Ti.App.addEventListener('app:updateMenu', function() {
     // Pass data to widget leftTableView
     leftData[0] = createSection();
     $.ds.leftTableView.data = leftData;
+    // TODO could just update the challenges row and profile image here...
 
     // set new profile name
     nameLabel.setText(Alloy.Globals.PROFILENAME);
+    
+    if (Alloy.Globals.FACEBOOKOBJECT) {
+        centerImageView.setImage('https://graph.facebook.com/' + Alloy.Globals.FACEBOOKOBJECT.id + '/picture');
+    } else {
+        centerImageView.setImage(Alloy.Globals.BETKAMPENURL + '/profile_images/' + Alloy.Globals.BETKAMPENUID + '.png' + "?t=" + new Date().getTime());
+    }
 });
 
 /* Used to rebuild the android action bar menu, to indicate that a ticket is available */
@@ -104,15 +112,16 @@ function createMenuHeader() {
         width : 50,
         layout : 'horizontal'
     });
-
+    
     var image;
+    
     if (Alloy.Globals.FACEBOOKOBJECT) {
         image = 'https://graph.facebook.com/' + Alloy.Globals.FACEBOOKOBJECT.id + '/picture';
     } else {
-        image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + Alloy.Globals.BETKAMPENUID + '.png';
+        image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + Alloy.Globals.BETKAMPENUID + '.png' + "?t=" + new Date().getTime();
     }
 
-    var centerImageView = Ti.UI.createImageView({
+    centerImageView = Ti.UI.createImageView({
         left : 10,
         top : 30,
         height : 40,
