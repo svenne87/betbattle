@@ -190,7 +190,7 @@ table.addEventListener('scroll', function(_evt) {
             } else {
                 setTimeout(function() {
                     // try to fetch 20 more challenges each time
-                    getFinishedChallenges(false, ((scroreboardFetched - 0) + 20), 20);
+                    getFinishedChallenges(false, ((fetchedFinishedChallenges - 0) + 20), 20);
                 }, 200);
             }
         }
@@ -559,7 +559,7 @@ function getFinishedChallenges(firstTime, start, rows) {
                     tmpArray = Alloy.Globals.constructChallenge(response);
                     finishedChallengesArray = tmpArray[2];
                     buildTableRows();  
-                    
+   // TODO visar fel på Android, laddar 20 två ggr
                     if(fetchedFinishedChallenges == 0) {
                         footerViewLabel.setText(Alloy.Globals.PHRASES.nrOfGamesTxt + ' ' + 20 + '/' + finishedChallengesCount + ' ');    
                         

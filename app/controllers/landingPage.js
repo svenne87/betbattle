@@ -466,7 +466,7 @@ if (Alloy.Globals.checkConnection()) {
             fullScreen : true,
             navBarHidden : false,
             orientationModes : [Titanium.UI.PORTRAIT]
-        });
+        }); 
     }
    // loginSuccessWindow = null;
     $.landingPageWin.close();

@@ -6,7 +6,7 @@ var user_team;
 var args = arguments[0] || {};
 
 var abortBtn = Alloy.Globals.createButtonView('#d50f25', '#FFF', Alloy.Globals.PHRASES.abortBtnTxt);
-var signInBtn = Alloy.Globals.createButtonView('#FFF', '#000', Alloy.Globals.PHRASES.signInTxt);
+var signInBtn = Alloy.Globals.createButtonView(Alloy.Globals.themeColor(), '#FFF', Alloy.Globals.PHRASES.signInTxt);
 
 var emailReg = -1;
 if ( typeof args.email !== 'undefined') {

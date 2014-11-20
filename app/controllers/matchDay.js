@@ -8,9 +8,24 @@ var indicator = uie.createIndicatorWindow({
     text : Alloy.Globals.PHRASES.loadingTxt
 });
 
+var fontawesome = require('lib/IconicFont').IconicFont({
+    font : 'lib/FontAwesome'
+});
+
+var font = 'FontAwesome';
+var rightPercentage;
+
 if (OS_ANDROID) {
     isAndroid = true;
     $.matchDay.orientationModes = [Titanium.UI.PORTRAIT];
+
+    rightPercentage = '5%';
+
+    font = 'fontawesome-webfont';
+
+    if (Titanium.Platform.displayCaps.platformWidth < 350) {
+        rightPercentage = '3%';
+    }
 
     $.matchDay.addEventListener('open', function() {
         $.matchDay.activity.actionBar.onHomeIconItemSelected = function() {

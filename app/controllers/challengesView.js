@@ -4,6 +4,7 @@ var indicator = uie.createIndicatorWindow({
     top : 200,
     text : Alloy.Globals.PHRASES.loadingTxt
 });
+
 var refresher;
 var table;
 var swipeRefresh = null;
@@ -62,10 +63,6 @@ if (OS_IOS) {
     isAndroid = false;
 }
 
-$.challengesView.addEventListener('close', function() {
-    indicator.closeIndicator();
-});
-
 if (Alloy.Globals.hasCoupon) {
     if (!isAndroid) {
         var children = Alloy.Globals.NAV.getChildren();
@@ -115,7 +112,6 @@ Ti.App.addEventListener("challengesViewRefresh", function(e) {
 
 // get coins for user
 function getUserInfo() {
-
     var xhr = Titanium.Network.createHTTPClient();
     xhr.onerror = function(e) {
         Ti.API.error('Bad Sever =>' + e.error);
@@ -224,7 +220,6 @@ function createSectionsForTable(sectionText) {
 
 // show empty row if no games found
 function createEmptyTableRow(text) {
-
     var row = Ti.UI.createTableViewRow({
         hasChild : false,
         width : Ti.UI.FILL,

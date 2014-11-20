@@ -1,5 +1,4 @@
 var refreshItem;
-
 var winsLabel;
 var coinsLabel;
 var nameLabel;
@@ -16,8 +15,10 @@ if (OS_ANDROID) {
     font = 'fontawesome-webfont';
     isAndroid = true;
 }
+
 checkRatestatus();
-/* Used to update the menu and add a indicator for a new challenge */
+
+// Used to update the menu and add a indicator for a new challenge 
 Ti.App.addEventListener('app:updateMenu', function() {
     // rebuild table rows
     // Pass data to widget leftTableView
@@ -35,7 +36,7 @@ Ti.App.addEventListener('app:updateMenu', function() {
     }
 });
 
-/* Used to rebuild the android action bar menu, to indicate that a ticket is available */
+// Used to rebuild the android action bar menu, to indicate that a ticket is available 
 Ti.App.addEventListener('app:rebuildAndroidMenu', function() {
     try {
         $.mainWin.activity.invalidateOptionsMenu();
@@ -50,7 +51,7 @@ Ti.App.addEventListener('app:slide', function() {
     $.ds.toggleLeftSlider();
 });
 
-/* Used to update coins information */
+// Used to update coins information
 Ti.App.addEventListener('app:coinsMenuInfo', function(data) {
     winsLabel.setText(data.totalPoints);
     coinsLabel.setText(data.totalCoins);
@@ -92,7 +93,8 @@ Ti.App.addEventListener('app:updateView', function(obj) {
     Alloy.Globals.CURRENTVIEW = currentView;
 });
 
-/* Used to create the header view in menu */
+
+// Used to create the header view in menu
 function createMenuHeader() {
     var userInfoView = Ti.UI.createView({
         top : 0,
@@ -277,11 +279,14 @@ function createMenuHeader() {
     return userInfoView;
 }
 
+
 Alloy.Globals.MAINWIN = $.mainWin;
 
-if (Alloy.Globals.INDEXWIN !== null) {
-    Alloy.Globals.INDEXWIN.close();
-    Alloy.Globals.INDEXWIN = null;
+if(!isAndroid){
+    if (Alloy.Globals.INDEXWIN !== null) {
+        Alloy.Globals.INDEXWIN.close();
+        Alloy.Globals.INDEXWIN = null;
+    }  
 }
 
 var args = arguments[0] || {};
@@ -380,9 +385,6 @@ function logoutBetbattle() {
 }
 
 function createSection() {
-
-    // TODO KOmmer in här iaf?????
-
     var section = Ti.UI.createTableViewSection();
     /*
      var args = {
@@ -429,6 +431,8 @@ function createSection() {
      };
      section.add(Alloy.createController('menurow', args3).getView());
      */
+
+    
     var args4 = {
         title : Alloy.Globals.PHRASES.friendZoneTxt,
         customView : 'friendZone',
@@ -464,6 +468,7 @@ function createSection() {
      };
      section.add(Alloy.createController('menurow', args8).getView());
      */
+  
     var args9 = {
         title : Alloy.Globals.PHRASES.signOutTxt,
         customView : 'logout',
@@ -662,7 +667,7 @@ var argu = {
     refresh : refresher,
     sent_challenge : sent_challenge
 };
-
+  
 // Swap views on menu item click
 $.ds.leftTableView.addEventListener('click', function selectRow(e) {
     rowSelect(e);
@@ -803,6 +808,7 @@ if (!isAndroid) {
         });
         $.ds.contentview.add(loadingLabel);
 
+
         if (!$.mainWin.activity) {
             Ti.API.error("Can't access action bar on a lightweight window.");
         } else {
@@ -865,11 +871,11 @@ if (!isAndroid) {
             oldIndicator.closeIndicator();
             oldIndicator = null;
         }
-
-        var currentView = Alloy.createController('challengesView', argu).getView();
-        $.ds.contentview.add(currentView);
+// TODO beter sig underligt här... och fixa challenges_finished
+        Alloy.Globals.CURRENTVIEW.close();
+        $.ds.contentview.add(Alloy.createController('challengesView', argu).getView());
         Alloy.Globals.CURRENTVIEW = currentView;
-        $.ds.contentview.remove(loadingLabel);
+        $.ds.contentview.remove(loadingLabel);        
     });
 }
 

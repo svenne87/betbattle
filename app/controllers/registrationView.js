@@ -126,7 +126,7 @@ createReq.onerror = function(e) {
 };
 
 var abortBtn = Alloy.Globals.createButtonView('#d50f25', '#FFF', Alloy.Globals.PHRASES.abortBtnTxt);
-var signUpBtn = Alloy.Globals.createButtonView('#FFF', '#000', Alloy.Globals.PHRASES.regTxt);
+var signUpBtn = Alloy.Globals.createButtonView(Alloy.Globals.themeColor(), '#FFF', Alloy.Globals.PHRASES.regTxt);
 
 abortBtn.top = -2;
 signUpBtn.top = 0;

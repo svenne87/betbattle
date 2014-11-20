@@ -310,6 +310,7 @@ var downloadView = null;
 var isDownloading = false;
 /* Main Flow */
 $.loginBtn.setBackgroundColor(Alloy.Globals.themeColor());
+$.registerBtn.setBackgroundColor(Alloy.Globals.themeColor());
 addTutorialImages();
 
 // add facebook icon to the "login with facebook button"
@@ -620,12 +621,16 @@ function addTutorialImages() {
         downloadView = Ti.UI.createView({
             height : Ti.UI.FILL,
             width : Ti.UI.FILL,
-            backgroundColor : '#000',
+            backgroundImage: '/images/Default-Portrait.png',
             id : 'remove'
         });
 
-        var downloadButton = Alloy.Globals.createButtonView('#FFF', '#000', Alloy.Globals.PHRASES.downloadTutorial);
-        downloadButton.setTop('45%');
+        var downloadButton = Alloy.Globals.createButtonView(Alloy.Globals.themeColor(), '#FFF', Alloy.Globals.PHRASES.downloadTutorial);
+        downloadButton.setTop('75%');
+        downloadButton.setHeight('9%');
+        downloadButton.setWidth('80%');
+        downloadButton.setBorderRadius(3);
+        downloadButton.children[0].font.fontSize = 16;
 
         downloadButton.addEventListener('click', function() {
             if(isDownloading) {

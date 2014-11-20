@@ -11,10 +11,10 @@
 	layout: 'vertical'
 },
 "#nav[platform=ios]":{
-	backgroundImage : 'none',
-	backgroundColor : '#000',
-	tintColor : '#FFF',
-	barColor : '#FFF'
+	backgroundImage: 'none',
+	backgroundColor: '#000',
+	tintColor: '#FFF',
+	barColor: '#FFF'
 },
 "#facebookBtn":{
 	top: '65%',
@@ -28,9 +28,9 @@
 	textAlign: 'center',
 	width: 'auto',
 	font: {
-		fontFamily: 'Helvetica Neue',
-		fontSize: 14,
-		fontWeight: 'normal'
+		fontSize: 16,
+		fontFamily: 'OpenSans',
+		fontWeight: 'Regular'
 	}
 },
 "#facebookBtnText[platform=android]":{
@@ -38,9 +38,9 @@
 	textAlign: 'center',
 	width: 'auto',
 	font: {
-		fontFamily: 'Roboto-Regular',
 		fontSize: 16,
-		fontWeight: 'normal'
+		fontFamily: 'OpenSans-Regular',
+		fontWeight: 'Regular'
 	}
 },
 "#registerBtn":{
@@ -51,25 +51,25 @@
 	borderRadius: 3
 },
 "#registerBtnText[platform=ios]":{
-	color: '#000',
+	color: '#FFF',
 	//left: '19%',
 	width: 'auto',
 	textAlign: 'center',
 	font: {
-		fontFamily: 'Helvetica Neue',
-		fontSize: 14,
-		fontWeight: 'normal'
+		fontSize: 16,
+		fontFamily: 'OpenSans',
+		fontWeight: 'Regular'
 	}
 },
 "#registerBtnText[platform=android]":{
-	color: '#000',
+	color: '#FFF',
 	//left: '19%',
 	width: 'auto',
 	textAlign: 'center',
 	font: {
-		fontFamily: 'Roboto-Regular',
 		fontSize: 16,
-		fontWeight: 'normal'
+		fontFamily: 'OpenSans-Regular',
+		fontWeight: 'Regular'
 	}
 },
 "#loginBtn":{
@@ -85,9 +85,9 @@
 	width: 'auto',
 	textAlign: 'center',
 	font: {
-		fontFamily: 'Helvetica Neue',
-		fontSize: 14,
-		fontWeight: 'normal'
+		fontSize: 16,
+		fontFamily: 'OpenSans',
+		fontWeight: 'Regular'
 	}
 },
 "#loginBtnText[platform=android]":{
@@ -96,9 +96,9 @@
 	width: 'auto',
 	textAlign: 'center',
 	font: {
-		fontFamily: 'Roboto-Regular',
 		fontSize: 16,
-		fontWeight: 'normal'
+		fontFamily: 'OpenSans-Regular',
+		fontWeight: 'Regular'
 	}
 }
 
@@ -157,11 +157,11 @@
 	left: '16.5%',
 	height: '65%',
 	width: '70%',
-	opacity:0.5,
-	backgroundColor : '#303030'
+	opacity: 0.5,
+	backgroundColor: '#303030'
 },
 ".tutorialImage":{
-	top : '30%',
-	height : '65%',
-	width : '70%'
+	top: '30%',
+	height: '65%',
+	width: '70%'
 }
