@@ -210,7 +210,8 @@ function endRefresher() {
             refresher.endRefreshing();
         }
     } else {
-        if ( typeof swipeRefresh !== 'undefined' && swipeRefresh !== null) {
+        if (swipeRefresh !== null && typeof swipeRefresh !== 'undefined') {
+            Ti.API.log(JSON.stringify(swipeRefresh)); // dummy fix
             swipeRefresh.setRefreshing(false);
         }
     }

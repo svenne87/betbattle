@@ -10,12 +10,9 @@ var indicator = uie.createIndicatorWindow({
     text : Alloy.Globals.PHRASES.loadingTxt
 });
 
-$.landingPageWin.setOpacity(0);
-
 if (OS_ANDROID) {
     isAndroid = true;
 }
-
 
 function showFbLogin() {
     Alloy.Globals.CURRENTVIEW = null;
@@ -450,12 +447,17 @@ if (!isAndroid) {
     // require('net.iamyellow.gcmjs').unregister();
 }
 
+// TODO med push, ladda upp på server och prova ta emot datan på samma sätt som för iphone
 
+
+/*
 // General App
-if (Alloy.Globals.checkConnection()) {
+if (Alloy.Globals.checkConnection()) {  
     indicator.openIndicator();
     args.dialog = indicator;
-
+    
+    Ti.API.log(Alloy.Globals.CURRENTVIEW);
+    
     var loginSuccessWindow = Alloy.createController('main', args).getView();
     if (!isAndroid) {
         loginSuccessWindow.open({
@@ -469,6 +471,5 @@ if (Alloy.Globals.checkConnection()) {
         }); 
     }
    // loginSuccessWindow = null;
-    $.landingPageWin.close();
 }
-
+*/

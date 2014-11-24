@@ -333,6 +333,7 @@ for (var i in games) {
     });
 
     var removeView = Ti.UI.createView({
+        id : games[i].game_id,
         left : 0,
         height : 75,
         width : 50,
@@ -340,6 +341,7 @@ for (var i in games) {
     });
 
     removeView.add(Ti.UI.createLabel({
+        id : games[i].game_id,
         font : {
             fontFamily : font,
             fontSize : 32
@@ -351,7 +353,7 @@ for (var i in games) {
     }));
     
     removeView.addEventListener('click', function(e) {
-        removeCouponGame(e.row.id); 
+        removeCouponGame(e.source.id); 
     });
 
     row.add(removeView);

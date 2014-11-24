@@ -3,8 +3,10 @@ var fontawesome = require('lib/IconicFont').IconicFont({
 });
 
 var font = 'FontAwesome';
+var isAndroid = false;
 
 if (OS_ANDROID) {
+    isAndroid = true;
     font = 'fontawesome-webfont';
     $.share.orientationModes = [Titanium.UI.PORTRAIT];
 
@@ -65,23 +67,21 @@ var smsIconLabel = Titanium.UI.createLabel({
 });
 smsBtn.add(smsIconLabel);
 
-
 //----------------------------------------------------------------------FACEBOOK-----------------------------------------------------------------------------
 
-    var fbUserBtn = Alloy.Globals.createButtonView('#3B5998', '#FFF', Alloy.Globals.PHRASES.shareFBTxt);
-    mainView.add(fbUserBtn);
+var fbUserBtn = Alloy.Globals.createButtonView('#3B5998', '#FFF', Alloy.Globals.PHRASES.shareFBTxt);
+mainView.add(fbUserBtn);
 
-    var fbIconLabel = Titanium.UI.createLabel({
-        font : {
-            fontFamily : font,
-            fontSize : 22
-        },
-        text : fontawesome.icon('fa-facebook'),
-        left : '5%',
-        color : '#fff',
-    });
-    fbUserBtn.add(fbIconLabel);
-
+var fbIconLabel = Titanium.UI.createLabel({
+    font : {
+        fontFamily : font,
+        fontSize : 22
+    },
+    text : fontawesome.icon('fa-facebook'),
+    left : '5%',
+    color : '#fff',
+});
+fbUserBtn.add(fbIconLabel);
 
 //-------------------------------------------------------------------TWITTER--------------------------------------------------------------------------------
 if (OS_IOS) {
@@ -138,42 +138,62 @@ googleBtn.add(gplusIconLabel);
 // --------------------------------------------------------------- Share to FACEBOOK  ------------------------------------------------------------------------------
 // if user login with facebook
 
-    var fb;
-    
-    if (Alloy.Globals.FACEBOOKOBJECT != null) {
+var fb;
+
+if (Alloy.Globals.FACEBOOKOBJECT != null) {
+    if (isAndroid) {
+        fb = Alloy.Globals.FACEBOOK.createActivityWorker({
+            lifecycleContainer : $.share
+        });
+    } else {
         fb = Alloy.Globals.FACEBOOK;
+    }
+} else {
+    if (isAndroid) {
+        var fbModule = require('com.ti.facebook');
+        fb = fbModule.createActivityWorker({
+            lifecycleContainer : $.share
+        });
     } else {
         fb = require("com.facebook");
     }
+}
+
+if (Alloy.Globals.checkConnection()) {
+    if (isAndroid) {
+        if (fb.canPresentOpenGraphActionDialog) {
+            performFacebookPost(fb);
+        } else {
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.fbShareErrorTxt);
+        }
+    } else {
+        if (fb.getCanPresentShareDialog()) {
+            performFacebookPost(fb);
+        } else {
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.fbShareErrorTxt);
+        }
+    }
+} else {
+    Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+}
+
+function performFacebookPost(fb) {
+
+    var data = {
+        url : Alloy.Globals.PHRASES.appLinkTxt,
+        namespaceObject : 'betbattle:bet',
+        objectName : 'bet',
+        imageUrl : Alloy.Globals.BETKAMPENURL + '/images/betbattle.png',
+        title : Alloy.Globals.PHRASES.fbPostCaptionTxt,
+        description : Alloy.Globals.PHRASES.fbPostDescriptionTxt + "." + "\n" + Alloy.Globals.PHRASES.myNameIsTxt + ": " + Alloy.Globals.PROFILENAME,
+        namespaceAction : 'betbattle:place'
+    };
 
     fbUserBtn.addEventListener('click', function(e) {
-        if (Alloy.Globals.checkConnection()) {
-            if(fb.getCanPresentShareDialog()) {
-                performFacebookPost(fb); 
-            } else {
-                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.fbShareErrorTxt);   
-            }
-        } else {
-            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
-        }
-
-    });
-
-    function performFacebookPost(fb) {
-
-        var data = {
-            url : Alloy.Globals.PHRASES.appLinkTxt,
-            namespaceObject : 'betbattle:bet',
-            objectName : 'bet',
-            imageUrl : Alloy.Globals.BETKAMPENURL + '/images/betbattle.png',
-            title : Alloy.Globals.PHRASES.fbPostCaptionTxt,
-            description : Alloy.Globals.PHRASES.fbPostDescriptionTxt + "." + "\n" + Alloy.Globals.PHRASES.myNameIsTxt + ": " + Alloy.Globals.PROFILENAME,
-            namespaceAction : 'betbattle:place'
-        }; 
-
         Alloy.Globals.unlockAchievement(5);
         fb.share(data);
-    }
+    });
+}
 
 // --------------------------------------------------------------- Share to TWITTER  -------------------------------------------------------------------------------
 if (OS_IOS) {
@@ -230,7 +250,7 @@ googleBtn.addEventListener('click', function(e) {
 
 var emailDialog = Titanium.UI.createEmailDialog();
 emailDialog.subject = Alloy.Globals.PHRASES.mailSubject;
-emailDialog.messageBody = Alloy.Globals.PHRASES.mailMsg + "." +'\n' + Alloy.Globals.PHRASES.myNameIsTxt + ": " + Alloy.Globals.PROFILENAME + "\n" + Alloy.Globals.PHRASES.appLinkTxt;
+emailDialog.messageBody = Alloy.Globals.PHRASES.mailMsg + "." + '\n' + Alloy.Globals.PHRASES.myNameIsTxt + ": " + Alloy.Globals.PROFILENAME + "\n" + Alloy.Globals.PHRASES.appLinkTxt;
 
 mailBtn.addEventListener('click', function(e) {
     Alloy.Globals.unlockAchievement(5);

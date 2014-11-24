@@ -101,6 +101,9 @@
                 android:largeHeap="true"
                 android:name="BetbattleApplication"
                 android:screenOrientation="portrait" android:theme="@style/Theme.Betkampen">
+                <activity android:label="BetBattle"
+                    android:name="com.facebook.LoginActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+                <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/app_id"/>
                 <activity
                     android:configChanges="keyboardHidden|screenSize"
                     android:label="@string/app_name"
@@ -176,7 +179,7 @@
         <module platform="android">ti.inappbilling</module>
         <module platform="iphone">bencoding.sms</module>
         <module platform="android">com.rkam.swiperefreshlayout</module>
-        <module platform="android">facebook</module>
+        <module platform="android">com.ti.facebook</module>
     </modules>
     <deployment-targets>
         <target device="android">true</target>
@@ -186,7 +189,7 @@
         <target device="mobileweb">false</target>
         <target device="tizen">false</target>
     </deployment-targets>
-    <sdk-version>3.4.1.GA</sdk-version>
+    <sdk-version>3.4.2</sdk-version>
     <plugins>
         <plugin version="1.0">ti.alloy</plugin>
     </plugins>

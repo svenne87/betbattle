@@ -395,18 +395,38 @@ shareBtn.add(shareLabel);
 var fb;
 
 if (Alloy.Globals.FACEBOOKOBJECT != null) {
-    fb = Alloy.Globals.FACEBOOK;
+    if (isAndroid) {
+        fb = Alloy.Globals.FACEBOOK.createActivityWorker({
+            lifecycleContainer : $.friendZone
+        });
+    } else {
+        fb = Alloy.Globals.FACEBOOK;
+    }
+
 } else {
-    fb = require("com.facebook");
+    if(isAndroid) {
+        var fbModule = require('com.ti.facebook');
+        fb = fbModule.createActivityWorker({lifecycleContainer: $.friendZone});
+    } else {
+        fb = require("com.facebook");
+    }
 }
 
 fbFriendBtn.addEventListener('click', function(e) {
 
     if (Alloy.Globals.checkConnection()) {
-        if (fb.getCanPresentShareDialog()) {
-            performFacebookPost(fb);
+        if (isAndroid) {
+            if (fb.canPresentOpenGraphActionDialog) {
+                performFacebookPost(fb);
+            } else {
+                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.fbShareErrorTxt);
+            }
         } else {
-            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.fbShareErrorTxt);
+            if (fb.getCanPresentShareDialog()) {
+                performFacebookPost(fb);
+            } else {
+                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.fbShareErrorTxt);
+            }
         }
     } else {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);

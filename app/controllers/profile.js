@@ -153,12 +153,20 @@ var favoriteTeamNameLabel = Ti.UI.createLabel({
     width : Ti.UI.SIZE
 });
 
+var dynHeight;
+
+if(isAndroid) {
+    dynHeight = Ti.UI.SIZE;
+} else {
+    dynHeight = 22;
+}
+
 var levelLabel = Ti.UI.createLabel({
     font : Alloy.Globals.getFontCustom(16, 'Regular'),
     text : Alloy.Globals.PHRASES.loadingTxt + ' ',
     color : '#FFF',
     right : 20,
-    height : 20,
+    height : dynHeight,
     width : Ti.UI.SIZE
 });
 

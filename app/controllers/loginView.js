@@ -285,7 +285,6 @@ function getChallengesAndStart() {
                 var response = null;
 
                 try {
-                    Ti.API.info("LOG TEST : " + JSON.stringify(this.responseText));
                     response = JSON.parse(this.responseText);
                 } catch(e) {
                     indicator.closeIndicator();
@@ -303,18 +302,20 @@ function getChallengesAndStart() {
                     dialog : indicator
                 };
 
-                for (var win in Alloy.Globals.WINDOWS) {
-                    Alloy.Globals.WINDOWS[win].close();
-                }
-
                 if (user_team.data.length > 0) {
-                    var loginSuccessWindow = Alloy.createController('landingPage', args).getView();
-                    Alloy.Globals.CURRENTVIEW = loginSuccessWindow;
+                    // keep landing page in memory
+                    var tmp = Alloy.createController('landingPage', args).getView();
+                    
+                    // open main
+                    var loginSuccessWindow = Alloy.createController('main', args).getView();
+                    // Alloy.Globals.CURRENTVIEW = loginSuccessWindow;
+                    // Alloy.Globals.CURRENTVIEW.hide();
                     
                     if (OS_IOS) {
                         loginSuccessWindow.open({
                             fullScreen : true
                         });
+
                         loginSuccessWindow = null;
 
                     } else if (OS_ANDROID) {
@@ -325,7 +326,6 @@ function getChallengesAndStart() {
                         });
                         loginSuccessWindow = null;
                     }
-
                     $.loginView.close();
 
                 } else {
@@ -346,7 +346,10 @@ function getChallengesAndStart() {
                     }
                     $.loginView.close();
                 }
-
+                
+                for (var win in Alloy.Globals.WINDOWS) {
+                    Alloy.Globals.WINDOWS[win].close(); 
+                } 
             }
         } else {
             signInBtn.enabled = true;
@@ -384,10 +387,8 @@ function loginAuthenticated() {
             if (this.readyState == 4) {
                 var response = null;
                 try {
-                    Ti.API.info("LOG TEST 2 :" + JSON.stringify(this.responseText));
                     response = JSON.parse(this.responseText);
                 } catch(e) {
-                    Ti.API.info("LOG TEST 22 : " + JSON.stringify(this.responseText));
                     indicator.closeIndicator();
                     Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                 }
@@ -481,7 +482,6 @@ function login(auto) {
             if (this.status == '200') {
                 if (this.readyState == 4) {
                     var json = this.responseText;
-                    Ti.API.info("LOG TEST 3 :" + JSON.stringify(json));
                     var response = JSON.parse(json);
                     // token received, store it for API requests
                     Alloy.Globals.BETKAMPEN = {

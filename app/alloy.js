@@ -107,12 +107,13 @@ function getBoldFont() {
         };
     }
 }
+
 /*
 //initialize beacons
 if (OS_IOS) {
-    Alloy.Globals.TiBeacon = require('org.beuckman.tibeacons');
+Alloy.Globals.TiBeacon = require('org.beuckman.tibeacons');
 } else if (OS_ANDROID) {
-    Alloy.Globals.TiBeacon = require('miga.tibeacon');
+Alloy.Globals.TiBeacon = require('miga.tibeacon');
 }
 */
 
@@ -305,9 +306,7 @@ Alloy.Globals.showAlertWithRestartNote = function() {
             if (OS_ANDROID) {
                 // close
                 Alloy.Globals.MAINWIN.close();
-                Alloy.Globals.LANDINGWIN.close();
-                $.settingsWindow.exitOnClose = true;
-                $.settingsWindow.close();
+                Alloy.Globals.CURRENTVIEW.close();
 
                 var activity = Titanium.Android.currentActivity;
                 activity.finish();
@@ -315,7 +314,7 @@ Alloy.Globals.showAlertWithRestartNote = function() {
                 // start app again
                 var intent = Ti.Android.createIntent({
                     action : Ti.Android.ACTION_MAIN,
-                    url : 'Betkampen.js'
+                    url : 'Betbattle.js'
                 });
                 intent.addCategory(Ti.Android.CATEGORY_LAUNCHER);
                 Ti.Android.currentActivity.startActivity(intent);
@@ -374,18 +373,18 @@ Alloy.Globals.getTutorial = function(indicator) {
                         var inline_function = function(img) {
                             var imageDownloader = Titanium.Network.createHTTPClient();
                             imageDownloader.setTimeout(Alloy.Globals.TIMEOUT);
-                            
+
                             imageDownloader.onload = function(e) {
                                 var f = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, 'tut_' + response[img] + '.png');
                                 f.write(this.responseData);
                                 imageLocationArray.push(f.nativePath);
                                 doneCount++;
-                                
+
                                 if (doneCount == response.length) {
                                     // store the array on phone
                                     Ti.App.Properties.setString("tutorial_images", JSON.stringify(imageLocationArray));
                                     indicator.closeIndicator();
-                           
+
                                     Alloy.Globals.showToast(Alloy.Globals.PHRASES.downloadCompleteTxt);
                                 }
                             };
@@ -412,7 +411,7 @@ Alloy.Globals.checkVersions = function(indicator) {
         // stored version found, check if it's out dated
         var currentLanguageVersion = JSON.parse(Ti.App.Properties.getString('language_version'));
 
-        if ( Alloy.Globals.VERSIONS.language_version !== currentLanguageVersion) {
+        if (Alloy.Globals.VERSIONS.language_version !== currentLanguageVersion) {
             // update needed
             var alertWindow = Titanium.UI.createAlertDialog({
                 title : Alloy.Globals.PHRASES.betbattleTxt,
@@ -563,7 +562,8 @@ Alloy.Globals.themeColor = function() {
     case 1:
         return '#58B101';
     case 2:
-        return '#FF7D40';  // #f43710
+        return '#FF7D40';
+    // #f43710
     }
 };
 
@@ -752,8 +752,8 @@ Alloy.Globals.showToast = function(msg, unlock) {
             message : msg
         });
         delToast.show();
-        
-        if(unlock) {
+
+        if (unlock) {
             Alloy.Globals.unlockAchievement(11);
         }
     } else {
@@ -763,7 +763,7 @@ Alloy.Globals.showToast = function(msg, unlock) {
         var indView = Titanium.UI.createView({
             top : '80%',
             height : 40,
-            width :  Ti.UI.FILL,
+            width : Ti.UI.FILL,
             backgroundColor : '#FFF',
             opacity : 0.9
         });
@@ -789,10 +789,10 @@ Alloy.Globals.showToast = function(msg, unlock) {
                 opacity : 0,
                 duration : 2000
             });
-            if(unlock) {
+            if (unlock) {
                 Alloy.Globals.unlockAchievement(11);
             }
-            
+
         }, interval);
     }
 };
@@ -831,7 +831,7 @@ Alloy.Globals.unlockAchievement = function(achID) {
                     Ti.API.log(response);
                     if (response == 1) {
                         Ti.API.info("redan låst upp");
-                        
+
                     } else if (response.image != null) {
                         Ti.API.info("visa toast");
                         var player = Ti.Media.createSound({
@@ -1028,7 +1028,7 @@ Alloy.Globals.constructChallenge = function(responseAPI) {
     // for each challenge object returned create a challenge object and store in array
     var finalArray = [];
 
-    for (var c = 0; c < responseAPI.length; c++) {        
+    for (var c = 0; c < responseAPI.length; c++) {
         response = responseAPI[c];
         var array = [];
 
@@ -1137,20 +1137,25 @@ Alloy.Globals.constructChallenge = function(responseAPI) {
         }
         finalArray.push(array);
     }
-    
-    if(responseAPI.length > 5) {
+
+    if (responseAPI.length > 5) {
         // last in array store match otd data
         var tmpObj;
-        
-        if(typeof responseAPI[5].match_data !== 'undefined' && responseAPI[5].match_data !== null) {
-            tmpObj = {"match_otd_status" : responseAPI[5].match_otd_status, "match_data" : responseAPI[5].match_data};
+
+        if ( typeof responseAPI[5].match_data !== 'undefined' && responseAPI[5].match_data !== null) {
+            tmpObj = {
+                "match_otd_status" : responseAPI[5].match_otd_status,
+                "match_data" : responseAPI[5].match_data
+            };
         } else {
-            tmpObj = {"match_otd_status" : responseAPI[5].match_otd_status};
+            tmpObj = {
+                "match_otd_status" : responseAPI[5].match_otd_status
+            };
         }
-  
-        finalArray.push(tmpObj); 
+
+        finalArray.push(tmpObj);
     }
-    
+
     return finalArray;
 };
 
@@ -1167,9 +1172,9 @@ Alloy.Globals.showCouponAlert = function() {
         switch (e.index) {
         case 0:
             alertWindow.hide();
-            
-            if(Alloy.Globals.WINDOWS.length > 0) {
-                Alloy.Globals.WINDOWS[Alloy.Globals.WINDOWS.length -1].close();
+
+            if (Alloy.Globals.WINDOWS.length > 0) {
+                Alloy.Globals.WINDOWS[Alloy.Globals.WINDOWS.length - 1].close();
             }
 
             break;
@@ -1255,8 +1260,8 @@ Alloy.Globals.getCoupon = function(showAlert, indicator) {
                         }
                     } else if (Alloy.Globals.COUPON.games.length > 0) {
                         Alloy.Globals.hasCoupon = true;
-                        
-                        if(showAlert) {
+
+                        if (showAlert) {
                             indicator.closeIndicator();
                             Alloy.Globals.showCouponAlert();
                         }

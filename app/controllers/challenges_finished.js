@@ -484,13 +484,11 @@ function setDisplayText() {
     if (finishedChallengesCount <= fetchedFinishedChallenges) {
         footerViewLabel.setText(Alloy.Globals.PHRASES.nrOfGamesTxt + ' ' + finishedChallengesCount + '/' + finishedChallengesCount + ' ');
     } else {
-        footerViewLabel.setText(Alloy.Globals.PHRASES.nrOfGamesTxt + ' ' + fetchedFinishedChallenges + '/' + finishedChallengesCount + ' ');
+        footerViewLabel.setText(Alloy.Globals.PHRASES.nrOfGamesTxt + ' ' + ((fetchedFinishedChallenges - 0) + 20) + '/' + finishedChallengesCount + ' ');
     }
 }
 
 function getFinishedChallenges(firstTime, start, rows) {
-    Ti.API.log(firstTime + " Fetching -> " + start + " - " + rows);
-
     // check connection
     if (!Alloy.Globals.checkConnection()) {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
@@ -500,6 +498,8 @@ function getFinishedChallenges(firstTime, start, rows) {
     if (isLoading) {
         return;
     }
+    
+    Ti.API.log(firstTime + " Fetching -> " + start + " - " + rows);
 
     // Get challenges
     var xhr = Titanium.Network.createHTTPClient();
@@ -559,7 +559,7 @@ function getFinishedChallenges(firstTime, start, rows) {
                     tmpArray = Alloy.Globals.constructChallenge(response);
                     finishedChallengesArray = tmpArray[2];
                     buildTableRows();  
-   // TODO visar fel på Android, laddar 20 två ggr
+
                     if(fetchedFinishedChallenges == 0) {
                         footerViewLabel.setText(Alloy.Globals.PHRASES.nrOfGamesTxt + ' ' + 20 + '/' + finishedChallengesCount + ' ');    
                         
@@ -588,9 +588,7 @@ function getFinishedChallenges(firstTime, start, rows) {
                         finishedChallengesArray.push(tmpArray[challenge]);
                     }
                     setDisplayText();
-                }  
-
-                
+                }             
 
                 if (!isAndroid) {
                     if ( typeof refresher !== 'undefined') {

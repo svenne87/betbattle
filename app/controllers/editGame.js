@@ -126,7 +126,7 @@ function createGameType(gameType, gameObject, i, gameArray, index) {
         hasChild : false,
         width : Ti.UI.FILL,
         left : 0,
-        className : 'gameTypeRow',
+        className : 'gameTypeRow' + i,
         height : 75,
         value : i + 1
     });
@@ -218,19 +218,29 @@ function createGameTypeWinnerResult(gameType, gameObject, i, gameArray, index) {
         hasChild : false,
         width : Ti.UI.FILL,
         left : 0,
-        className : 'gameTypeRow',
+        className : 'gameTypeRow' + i,
         height : 80,
         value : i + 1,
         layout : 'horizontal',
         selectionStyle : 'none',
     });
+    
+    var width;
+    
+    if(isAndroid) {
+        width = Ti.Platform.displayCaps.platformWidth / 3;
+    } else {
+        width = gameTypeView.toImage().width / 3;
+    }
 
     var optionOne = Ti.UI.createView({
+        id : index,
         height : 80,
-        width : gameTypeView.toImage().width / 3
+        width : width
     });
 
     optionOne.add(Ti.UI.createView({
+        id : index,
         height : 60,
         width : 60,
         borderRadius : 30,
@@ -239,17 +249,20 @@ function createGameTypeWinnerResult(gameType, gameObject, i, gameArray, index) {
     }));
 
     optionOne.add(Ti.UI.createLabel({
+        id : index,
         text : '1',
         color : '#FFF',
         font : Alloy.Globals.getFontCustom(20, 'Bold')
     }));
 
     var optionTwo = Ti.UI.createView({
+        id : index,
         height : 80,
-        width : gameTypeView.toImage().width / 3
+        width : width
     });
 
     optionTwo.add(Ti.UI.createView({
+        id : index,
         height : 60,
         width : 60,
         borderRadius : 30,
@@ -258,17 +271,20 @@ function createGameTypeWinnerResult(gameType, gameObject, i, gameArray, index) {
     }));
 
     optionTwo.add(Ti.UI.createLabel({
+        id : index,
         text : 'X',
         color : '#FFF',
         font : Alloy.Globals.getFontCustom(20, 'Bold')
     }));
 
     var optionThree = Ti.UI.createView({
+        id : index,
         height : 80,
-        width : gameTypeView.toImage().width / 3
+        width : width
     });
 
     optionThree.add(Ti.UI.createView({
+        id : index,
         height : 60,
         width : 60,
         borderRadius : 30,
@@ -277,6 +293,7 @@ function createGameTypeWinnerResult(gameType, gameObject, i, gameArray, index) {
     }));
 
     optionThree.add(Ti.UI.createLabel({
+        id : index,
         text : '2',
         color : '#FFF',
         font : Alloy.Globals.getFontCustom(20, 'Bold')
@@ -294,6 +311,10 @@ function createGameTypeWinnerResult(gameType, gameObject, i, gameArray, index) {
     }
 
     optionOne.addEventListener('click', function(e) {
+        if(isAndroid) {
+            e.row = e.source;
+        }
+        
         gameArray[e.row.id].gameValue[0] = 1;
         gameArray[e.row.id].gameValue[1] = 0;
         optionTwo.children[0].backgroundColor = '#000'; 
@@ -305,6 +326,10 @@ function createGameTypeWinnerResult(gameType, gameObject, i, gameArray, index) {
     });
 
     optionTwo.addEventListener('click', function(e) {
+        if(isAndroid) {
+            e.row = e.source;
+        }
+        
         gameArray[e.row.id].gameValue[0] = 2;
         gameArray[e.row.id].gameValue[1] = 0;
         optionTwo.children[0].backgroundColor = '#D8D8D8';
@@ -316,6 +341,10 @@ function createGameTypeWinnerResult(gameType, gameObject, i, gameArray, index) {
     });
 
     optionThree.addEventListener('click', function(e) {
+        if(isAndroid) {
+            e.row = e.source;
+        }
+        
         gameArray[e.row.id].gameValue[0] = 3;
         gameArray[e.row.id].gameValue[1] = 0;
         optionTwo.children[0].backgroundColor = '#000'; 
@@ -357,11 +386,11 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
         hasChild : false,
         width : Ti.UI.FILL,
         left : 0,
-        className : 'gameTypeRow',
+        className : 'gameTypeRow' + i + gameType,
         height : respHeight,
         value : i + 1,
         touchEnabled : false,
-        selectionStyle : 'none',
+        selectionStyle : 'none'
     });
 
     var layoutType = 'horizontal';
@@ -394,7 +423,7 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
         });
         
         var leftPos = 15;
-        if(Ti.Platform.displayCaps.platformWidth > 320) {
+        if(Ti.Platform.displayCaps.platformWidth > 320 && !isAndroid) {
             leftPos = 30;
         }
 
@@ -463,7 +492,7 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
                     borderRadius : 2,
                     width : 100,
                     height : 40,
-                    text : '-',
+                    text : '' + pre_val,
                     textAlign : 'center',
                     index : i
                 });
@@ -475,7 +504,7 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
                     borderRadius : 2,
                     width : 100,
                     height : 40,
-                    text : '-',
+                    text : '' + pre_val,
                     textAlign : 'center',
                     index : i
                 });

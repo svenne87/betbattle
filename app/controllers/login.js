@@ -101,8 +101,14 @@ function getChallengesAndStart() {
                 };
 
                 if (user_team.data.length > 0) {
-                    var loginSuccessWindow = Alloy.createController('landingPage', args).getView();
-                    Alloy.Globals.CURRENTVIEW = loginSuccessWindow;
+                    // keep landing page in memory
+                    var tmp = Alloy.createController('landingPage', args).getView();
+                    
+                    // open main
+                    var loginSuccessWindow = Alloy.createController('main', args).getView();
+                    // Alloy.Globals.CURRENTVIEW = loginSuccessWindow;
+                    // Alloy.Globals.CURRENTVIEW.hide();
+                    
                     if (OS_IOS) {
                         loginSuccessWindow.open({
                             fullScreen : true
@@ -275,13 +281,13 @@ function login() {
     if (Alloy.Globals.checkConnection()) {
         isSubmitting = true;
         setButtonOpacity(0);
-        
         if (!args.reauth) {
             fb.authorize();
+ 
         } else {
             removeEvent();
             indicator.openIndicator();
-
+            
             if (!fb.loggedIn) {
                 fb.authorize();
             } else {
@@ -335,19 +341,21 @@ $.facebookBtn.add(Ti.UI.createLabel({
 }));
 
 var fb; 
-
-// app id and permission's
-//fb.appid = Ti.App.Properties.getString('ti.facebook.appid');
+var fbModule;
+var isAndroid;
 
 if (OS_IOS) {
+    isAndroid = false;
     $.login.hideNavBar();
     fb = require('com.facebook');
     fb.permissions = ['email', 'public_profile'];
 } else {
-    fb = require('facebook');
-    fb.appid = "1403709019858016";
+    isAndroid = true;
+    fbModule = require('com.ti.facebook');
+    fb = fbModule.createActivityWorker({lifecycleContainer: $.login});
     fb.permissions = ['email', 'public_profile'];
 }
+
 fb.forceDialogAuth = false;
 Alloy.Globals.connect = true;
 
@@ -368,9 +376,14 @@ if (Alloy.Globals.FBERROR) {
         Alloy.Globals.FBERROR = false;
         if (Alloy.Globals.connect == true) {
             if (e.success) {
-
-                // set tokens
-                Alloy.Globals.FACEBOOK = fb;
+                
+                if(isAndroid) {
+                    e.data = JSON.parse(e.data);
+                    Alloy.Globals.FACEBOOK = fbModule;
+                } else {
+                   Alloy.Globals.FACEBOOK = fb; 
+                }
+                
                 Alloy.Globals.BETKAMPEN = {
                     token : fb.accessToken
                 };
@@ -384,7 +397,7 @@ if (Alloy.Globals.FBERROR) {
                     lastName : e.data.last_name,
                     email : e.data.email
                 });
-
+                
                 removeEvent();
                 setTimeout(function() {
                     loginAuthenticated(fb);
@@ -392,15 +405,19 @@ if (Alloy.Globals.FBERROR) {
             } else if (e.error) {
                 isSubmitting = false;
                 setButtonOpacity(1);
+                indicator.closeIndicator();
                 
-                if (e.error.indexOf('OTHER:') !== 0){
-                    Alloy.Globals.showFeedbackDialog(e.error); 
+                if(!isAndroid) {
+                    if (e.error.indexOf('OTHER:') !== 0){
+                        Alloy.Globals.showFeedbackDialog(e.error); 
+                    } else {
+                        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.facebookAbortConnectionTxt); 
+                    }
                 } else {
-                   Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.facebookAbortConnectionTxt); 
+                    Alloy.Globals.showFeedbackDialog(e.error);
                 }
                 
                 //addEvent();
-                indicator.closeIndicator();
             } else if (e.cancelled) {
                 isSubmitting = false;
                 setButtonOpacity(1);
@@ -412,6 +429,7 @@ if (Alloy.Globals.FBERROR) {
 }
 
 addEvent();
+fb.initialize();  // TODO
 
 // Har satt Alloy.Globals.FBERROR till false för att inte öppna flera gånger, sätta till true vid error??
 // set correct language phrase
@@ -430,15 +448,16 @@ if (Alloy.Globals.checkConnection()) {
             $.login.addEventListener('open', function() {
                 indicator.openIndicator();
             });
+            
             setTimeout(function() {
-                loginAuthenticated(fb);
+              //  loginAuthenticated(fb);
                 // fb.authorize(); TODO Issue with fb module?
             }, 300);
         } else if (OS_IOS) {
             if (!args.reauth) {
                 setTimeout(function() {
                     indicator.openIndicator();
-                    fb.authorize();
+                  //  fb.authorize();
                     //loginAuthenticated(fb); //TODO Issue with fb module?
                 }, 300);
             } else {

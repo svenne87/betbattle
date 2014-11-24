@@ -195,7 +195,7 @@ function createPopupLayout(win, playerObj, isFriend, isMe, friendIndex) {
     }
 
     var friendStats = Ti.UI.createLabel({
-        text : name,
+        text : name + " ",
         left : 100,
         color : "#000",
         top : 45,
@@ -249,7 +249,7 @@ function createPopupLayout(win, playerObj, isFriend, isMe, friendIndex) {
         }
 
         var frLvl = Ti.UI.createLabel({
-            text : Alloy.Globals.PHRASES.levelTxt + ': ' + friendObj.level,
+            text : Alloy.Globals.PHRASES.levelTxt + ': ' + friendObj.level + " ",
             left : 10,
             color : "#000",
             font : Alloy.Globals.getFontCustom(16, 'Regular'),
@@ -258,7 +258,7 @@ function createPopupLayout(win, playerObj, isFriend, isMe, friendIndex) {
         friend.add(frLvl);
 
         var frScore = Ti.UI.createLabel({
-            text : Alloy.Globals.PHRASES.scoreInfoTxt + ': ' + friendObj.score,
+            text : Alloy.Globals.PHRASES.scoreInfoTxt + ': ' + friendObj.score + " ",
             left : 10,
             color : "#000",
             font : Alloy.Globals.getFontCustom(16, 'Regular'),
@@ -271,7 +271,7 @@ function createPopupLayout(win, playerObj, isFriend, isMe, friendIndex) {
         }
 
         var frWins = Ti.UI.createLabel({
-            text : Alloy.Globals.PHRASES.winsInfoTxt + ': ' + friendObj.wins,
+            text : Alloy.Globals.PHRASES.winsInfoTxt + ': ' + friendObj.wins + " ",
             left : 10,
             font : Alloy.Globals.getFontCustom(16, 'Regular'),
             color : "#000",
@@ -310,7 +310,7 @@ function createPopupLayout(win, playerObj, isFriend, isMe, friendIndex) {
             height : Ti.UI.SIZE,
             top : 8,
             left : 6,
-            text : Alloy.Globals.PHRASES.addFriendTxt,
+            text : Alloy.Globals.PHRASES.addFriendTxt + " ",
             font : Alloy.Globals.getFontCustom(16, 'Regular'),
             color : "#000",
             id : playerObj.id,
@@ -331,7 +331,7 @@ function createPopupLayout(win, playerObj, isFriend, isMe, friendIndex) {
     
     if (playerObj.team.data[0]) {
         var favTeam = Ti.UI.createLabel({
-            text : Alloy.Globals.PHRASES.favTeamTxt,
+            text : Alloy.Globals.PHRASES.favTeamTxt + " ",
             left : 10,
             color : "#000",
             font : Alloy.Globals.getFontCustom(16, 'Regular'),
@@ -345,7 +345,7 @@ function createPopupLayout(win, playerObj, isFriend, isMe, friendIndex) {
         }
 
         var frTeam = Ti.UI.createLabel({
-            text : teamName,
+            text : teamName + " ",
             font : Alloy.Globals.getFontCustom(16, 'Regular'),
             left : 10,
             color : "#000",
@@ -596,7 +596,7 @@ function createRow(obj, friends, index) {
     }
 
     var nameLabel = Ti.UI.createLabel({
-        text : profileName,
+        text : profileName + " ",
         left : 60,
         top : 16,
         height : Ti.UI.SIZE,
@@ -628,7 +628,7 @@ function createRow(obj, friends, index) {
     row.add(statusIcon);
 
     var scoreLabel = Ti.UI.createLabel({
-        text : obj.score,
+        text : obj.score + " ",
         left : 60 + statusIcon.toImage().width + 2,
         top : customTopPos,
         height : Ti.UI.SIZE,

@@ -290,7 +290,6 @@ if(!isAndroid){
 }
 
 var args = arguments[0] || {};
-
 var oldIndicator = args.dialog || null;
 var refresher = args.refresh || null;
 var sent_challenge = args.sent_challenge || null;
@@ -356,7 +355,7 @@ function logoutBetbattle() {
                         // start app again
                         var intent = Ti.Android.createIntent({
                             action : Ti.Android.ACTION_MAIN,
-                            url : 'Betkampen.js'
+                            url : 'Betbattle.js'
                         });
                         intent.addCategory(Ti.Android.CATEGORY_LAUNCHER);
                         Ti.Android.currentActivity.startActivity(intent);
@@ -547,9 +546,10 @@ function rowSelect(e) {
 
             alertWindow.addEventListener('click', function(e) {
                 switch (e.index) {
-                case 0:
-                    var fb = Alloy.Globals.FACEBOOK;
-                    if (fb) {
+                case 0:         
+                    if (Alloy.Globals.FACEBOOKOBJECT) {
+                         var fb = Alloy.Globals.FACEBOOK.createActivityWorker({lifecycleContainer: $.mainWin});
+                         
                         fb.addEventListener('logout', function(e) {
                             Ti.API.log('steg 3');
                             // this never get's called, might be a bug
@@ -566,7 +566,7 @@ function rowSelect(e) {
                         // start app again
                         var intent = Ti.Android.createIntent({
                             action : Ti.Android.ACTION_MAIN,
-                            url : 'Betkampen.js'
+                            url : 'Betbattle.js'
                         });
                         intent.addCategory(Ti.Android.CATEGORY_LAUNCHER);
                         Ti.Android.currentActivity.startActivity(intent);
@@ -667,7 +667,7 @@ var argu = {
     refresh : refresher,
     sent_challenge : sent_challenge
 };
-  
+
 // Swap views on menu item click
 $.ds.leftTableView.addEventListener('click', function selectRow(e) {
     rowSelect(e);
@@ -784,7 +784,7 @@ if (!isAndroid) {
 
     var currentView = Alloy.createController('challengesView', argu).getView();
     $.ds.contentview.add(currentView);
-    Alloy.Globals.CURRENTVIEW = currentView;
+   // Alloy.Globals.CURRENTVIEW = currentView;
 
     if (oldIndicator !== null) {
         oldIndicator.closeIndicator();
@@ -871,10 +871,8 @@ if (!isAndroid) {
             oldIndicator.closeIndicator();
             oldIndicator = null;
         }
-// TODO beter sig underligt här... och fixa challenges_finished
-        Alloy.Globals.CURRENTVIEW.close();
+        
         $.ds.contentview.add(Alloy.createController('challengesView', argu).getView());
-        Alloy.Globals.CURRENTVIEW = currentView;
         $.ds.contentview.remove(loadingLabel);        
     });
 }

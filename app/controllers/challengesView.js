@@ -41,7 +41,7 @@ var acceptLabel = Ti.UI.createLabel({
     borderRadius : 8,
     width : 30,
     top : 10,
-    height : 10
+    height : Ti.UI.SIZE
 });
 
 var matchOTDLabel = Ti.UI.createLabel({
@@ -51,7 +51,7 @@ var matchOTDLabel = Ti.UI.createLabel({
     borderRadius : 8,
     width : 30,
     top : 10,
-    height : 10
+    height : Ti.UI.SIZE
 });
 
 var iOSVersion;
@@ -1620,7 +1620,7 @@ function getChallenges() {
             }
 
             if (isAndroid) {
-                if ( typeof swipeRefresh !== 'undefined') {
+                if ( swipeRefresh !== null && typeof swipeRefresh !== 'undefined') {
                     swipeRefresh.setRefreshing(false);
                 }
             }

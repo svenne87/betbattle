@@ -2,7 +2,7 @@ var args = arguments[0] || {};
 
 var showNav = false;
 showNav = args.navOpen;
-Ti.API.log(showNav);
+
 var uie = require('lib/IndicatorWindow');
 var submitting;
 var indicator = uie.createIndicatorWindow({
@@ -16,7 +16,20 @@ var isSending;
 
 if (OS_ANDROID) {
     isAndroid = true;
-    $.pickTeam.activity.actionBar.title = Alloy.Globals.PHRASES.leagueChooseTxt;
+
+    $.pickTeam.orientationModes = [Titanium.UI.PORTRAIT];
+
+    $.pickTeam.addEventListener('open', function() {
+        Alloy.Globals.setAndroidCouponMenu($.pickTeam.activity);
+
+        $.pickTeam.activity.actionBar.onHomeIconItemSelected = function() {
+            $.pickTeam.close();
+            $.pickTeam = null;
+        };
+        $.pickTeam.activity.actionBar.displayHomeAsUp = true;
+        $.pickTeam.activity.actionBar.title = Alloy.Globals.PHRASES.leagueChooseTxt;
+    });
+
 } else {
     $.pickTeam.titleControl = Ti.UI.createLabel({
         text : Alloy.Globals.PHRASES.leagueChooseTxt,
@@ -86,7 +99,7 @@ table = Titanium.UI.createTableView({
     width : Ti.UI.FILL,
     left : 0,
     headerView : tableHeaderView,
-    height : '90%',
+    height : '100%',
     backgroundColor : '#000',
     separatorColor : '#303030'
 });
@@ -227,7 +240,7 @@ function displaySports() {
                 width : Ti.UI.SIZE,
                 height : Ti.UI.SIZE,
                 left : 65,
-                text : leagueName,
+                text : leagueName + " ",
                 font : Alloy.Globals.getFontCustom(16, 'Regular'),
                 color : '#FFF'
             }));
@@ -266,7 +279,7 @@ function createTeamUI(teams) {
         width : Ti.UI.SIZE,
         height : Ti.UI.SIZE,
         left : 65,
-        text : Alloy.Globals.PHRASES.backToLeagues,
+        text : Alloy.Globals.PHRASES.backToLeagues + " ",
         font : Alloy.Globals.getFontCustom(16, 'Regular'),
         color : '#FFF'
     }));
@@ -364,7 +377,7 @@ function createTeamUI(teams) {
             width : Ti.UI.SIZE,
             height : Ti.UI.SIZE,
             left : 65,
-            text : teamName,
+            text : teamName + " ",
             font : Alloy.Globals.getFontCustom(16, 'Regular'),
             color : '#FFF'
         }));
@@ -445,34 +458,39 @@ function teamPicked(tid, name) {
 
             //show toast of your favorite team
             Alloy.Globals.showToast(Alloy.Globals.PHRASES.youTeamTxt + ' ' + name);
-            // send you to landingpage
-            if (OS_IOS) {
-                var loginSuccessWindow = Alloy.createController('landingPage').getView();
-                loginSuccessWindow.open({
-                    fullScreen : true
-                });
-                loginSuccessWindow = null;
 
-            } else if (OS_ANDROID) {
-                var loginSuccessWindow = Alloy.createController('landingPage').getView();
-                loginSuccessWindow.open({
-                    fullScreen : true,
-                    orientationModes : [Titanium.UI.PORTRAIT]
-                });
-                loginSuccessWindow = null;
+            if (!showNav) {
+                // send you to landingpage
+                if (OS_IOS) {
+                    var loginSuccessWindow = Alloy.createController('landingPage').getView();
+                    loginSuccessWindow.open({
+                        fullScreen : true
+                    });
+                    loginSuccessWindow = null;
+
+                } else if (OS_ANDROID) {
+                    var loginSuccessWindow = Alloy.createController('landingPage').getView();
+                    loginSuccessWindow.open({
+                        fullScreen : true,
+                        orientationModes : [Titanium.UI.PORTRAIT]
+                    });
+                    loginSuccessWindow = null;
+                }
             }
 
             isSending = false;
             $.pickTeam.close();
 
-            if (Alloy.Globals.INDEXWIN !== null) {
-                Alloy.Globals.INDEXWIN.close();
-            }
+            if (!showNav) {
+                if (Alloy.Globals.INDEXWIN !== null) {
+                    Alloy.Globals.INDEXWIN.close();
+                }
 
-            // TODO, ta bort?
-            if (OS_ANDROID) {
-                var activity = Titanium.Android.currentActivity;
-                activity.finish();
+                // TODO, ta bort?
+                if (OS_ANDROID) {
+                    var activity = Titanium.Android.currentActivity;
+                    activity.finish();
+                }
             }
         },
         // function called when an error occurs, including a timeout
@@ -489,7 +507,7 @@ function teamPicked(tid, name) {
     xhr.setRequestHeader("content-type", "application/json");
     xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
     xhr.setTimeout(Alloy.Globals.TIMEOUT);
-    
+
     var update = 0;
     if (showNav) {
         update = 1;

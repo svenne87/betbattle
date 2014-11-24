@@ -451,6 +451,7 @@ function createPickers() {
 
         picker.self.addEventListener('change', function(e) {
             changeLanguageConfirm(picker.value);
+            Alloy.Globals.CURRENTVIEW = $.settingsWindow;
         });
 
     }

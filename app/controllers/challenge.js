@@ -65,7 +65,7 @@ function createGameType(gameType, gameObject, i, gameArray, index) {
         hasChild : false,
         width : Ti.UI.FILL,
         left : 0,
-        className : 'gameTypeRow',
+        className : 'gameTypeRow' + i,
         height : 65,
         value : i + 1,
         selectionStyle : 'none',
@@ -120,19 +120,29 @@ function createGameTypeWinnerResult(gameType, gameObject, i, gameArray, index) {
         hasChild : false,
         width : Ti.UI.FILL,
         left : 0,
-        className : 'gameTypeRow',
+        className : 'gameTypeRow' + i,
         height : 80,
         value : i + 1,
         layout : 'horizontal',
         selectionStyle : 'none',
     });
     
+    var width;
+    
+    if(isAndroid) {
+        width = Ti.Platform.displayCaps.platformWidth / 3;
+    } else {
+        width = gameTypeView.toImage().width / 3;
+    }
+    
     var optionOne = Ti.UI.createView({
+       id : index,
        height : 80,
-       width: gameTypeView.toImage().width / 3
+       width: width
     });
     
     optionOne.add(Ti.UI.createView({
+        id : index,
         height : 60,
         width : 60,
         borderRadius : 30,
@@ -142,16 +152,19 @@ function createGameTypeWinnerResult(gameType, gameObject, i, gameArray, index) {
     
     optionOne.add(Ti.UI.createLabel({
         text : '1',
+        id : index,
         color : '#FFF',
         font : Alloy.Globals.getFontCustom(20, 'Bold')
     }));
     
     var optionTwo = Ti.UI.createView({
+       id : index,
        height : 80,
-       width: gameTypeView.toImage().width / 3
+       width: width
     });
     
     optionTwo.add(Ti.UI.createView({
+        id : index,
         height : 60,
         width : 60,
         borderRadius : 30,
@@ -160,17 +173,20 @@ function createGameTypeWinnerResult(gameType, gameObject, i, gameArray, index) {
     }));
     
     optionTwo.add(Ti.UI.createLabel({
+        id : index,
         text : 'X',
         color : '#FFF',
         font : Alloy.Globals.getFontCustom(20, 'Bold')
     }));
     
     var optionThree = Ti.UI.createView({
+       id : index,
        height : 80,
-       width: gameTypeView.toImage().width / 3
+       width: width
     });
     
     optionThree.add(Ti.UI.createView({
+        id : index,
         height : 60,
         width : 60,
         borderRadius : 30,
@@ -179,6 +195,7 @@ function createGameTypeWinnerResult(gameType, gameObject, i, gameArray, index) {
     }));
     
     optionThree.add(Ti.UI.createLabel({
+        id : index,
         text : '2',
         color : '#FFF',
         font : Alloy.Globals.getFontCustom(20, 'Bold')
@@ -187,6 +204,10 @@ function createGameTypeWinnerResult(gameType, gameObject, i, gameArray, index) {
     // add event click listener for these to set option value
     
     optionOne.addEventListener('click', function(e) {
+        if(isAndroid) {
+            e.row = e.source;
+        }
+        
         gameArray[e.row.id].gameValue[0] = 1;
         gameArray[e.row.id].gameValue[1] = 0;
         optionTwo.children[0].backgroundColor = '#000'; 
@@ -218,6 +239,10 @@ function createGameTypeWinnerResult(gameType, gameObject, i, gameArray, index) {
     });
 
     optionTwo.addEventListener('click', function(e) {
+        if(isAndroid) {
+            e.row = e.source;
+        }
+        
         gameArray[e.row.id].gameValue[0] = 2;
         gameArray[e.row.id].gameValue[1] = 0;
         optionTwo.children[0].backgroundColor = '#D8D8D8';
@@ -249,6 +274,10 @@ function createGameTypeWinnerResult(gameType, gameObject, i, gameArray, index) {
     });
     
     optionThree.addEventListener('click', function(e) {
+        if(isAndroid) {
+            e.row = e.source;
+        }
+        
         gameArray[e.row.id].gameValue[0] = 3;
         gameArray[e.row.id].gameValue[1] = 0;
         optionTwo.children[0].backgroundColor = '#000'; 
@@ -311,7 +340,7 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
         hasChild : false,
         width : Ti.UI.FILL,
         left : 0,
-        className : 'gameTypeRow',
+        className : 'gameTypeRow' + i,
         height : respHeight,
         value : i + 1,
         touchEnabled : false,
@@ -348,7 +377,7 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
         });
         
         var leftPos = 15;
-        if(Ti.Platform.displayCaps.platformWidth > 320) {
+        if(Ti.Platform.displayCaps.platformWidth > 320 && !isAndroid) {
             leftPos = 30;
         }
         
@@ -407,7 +436,7 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
 
         for (var i = 0; i < gameType.options; i++) {
             var pickerLabel;
-
+            
             if (gameType.options > 1) {
                 pickerLabel = Ti.UI.createLabel({
                     top : 20,
@@ -433,7 +462,9 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
                     index : i
                 });
             }
-
+            
+            Ti.API.log("OPTION "+ gameType.options);
+    
             pickerLabels.push(pickerLabel);
 
             pickerLabel.addEventListener('click', function(event) {
@@ -1450,9 +1481,8 @@ function createLayout(gameObject) {
                     }
                 }
             } else if (gametypes[y].option_type == "select") {
-                sections[sectionIndexen].add(createSelectGameType(gametypes[y], gameObject, i, gameArray, index));
+                sections[sectionIndexen].add(createSelectGameType(gametypes[y], gameObject, i, gameArray, index));    
             }
-
         }
 
         // add name to the section with game type and then custom to make the "final result" end up last in sections
