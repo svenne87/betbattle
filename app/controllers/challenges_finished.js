@@ -489,6 +489,10 @@ function setDisplayText() {
 }
 
 function getFinishedChallenges(firstTime, start, rows) {
+    if(firstTime && isAndroid) {
+        indicator.openIndicator();
+    }
+    
     // check connection
     if (!Alloy.Globals.checkConnection()) {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);

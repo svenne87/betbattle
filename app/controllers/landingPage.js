@@ -243,7 +243,9 @@ if (!isAndroid) {
                 Alloy.Globals.appStatus = 'foreground';
 
                 if (Alloy.Globals.FACEBOOKOBJECT) {
-                    var fb = Alloy.Globals.FACEBOOK;
+                    var fb = Alloy.Globals.FACEBOOK.createActivityWorker({
+                        lifecycleContainer : $.landingPageWin
+                    });
                     //        Alloy.Globals.BETKAMPEN.token = Alloy.Globals.BETKAMPEN.token + 'aa';  // TODO
                     if (fb) {
                         if (fb.loggedIn) {
@@ -287,7 +289,7 @@ if (!isAndroid) {
         });
 
 } else {
-    function doPush(type) {
+    function doPush(type, push_data) {
         if (Alloy.Globals.MAINWIN !== null) {
             var obj = {
                 controller : 'challengesView',
@@ -296,23 +298,41 @@ if (!isAndroid) {
                 }
             };
 
+            if ( typeof push_data.extra_data !== 'undefined') {
+                push_data.extra_data = JSON.parse(push_data.extra_data);
+            }
+
             var args = {
                 refresh : true
             };
             var win = null;
 
             if (type === 'accept') {
-                win = Alloy.createController('challenges_new', args).getView();
+                args = {
+                    answer : 1,
+                    group : push_data.extra_data.group,
+                    bet_amount : push_data.extra_data.bet_amount,
+                    push_cid : push_data.extra_data.cid
+                };
+
+                win = Alloy.createController('challenge', args).getView();
             } else if (type === 'pending') {
-                win = Alloy.createController('challenges_pending', args).getView();
+                args = {
+                    cid : push_data.extra_data.cid
+                };
+                win = Alloy.createController('showChallenge', args).getView();
             } else if (type === 'finished') {
                 win = Alloy.createController('challenges_finished', args).getView();
             }
 
-            //Ti.App.fireEvent('app:updateView', obj);
-            
-            for (var win in Alloy.Globals.WINDOWS) {
-                Alloy.Globals.WINDOWS[win].setOpacity(0);
+            Ti.App.fireEvent('app:updateView', obj);
+
+            if (win !== null) {
+                win.open();
+            }
+
+            for (var w in Alloy.Globals.WINDOWS) {
+                Alloy.Globals.WINDOWS[w].setOpacity(0);
             }
 
             for (var w in Alloy.Globals.WINDOWS) {
@@ -320,36 +340,45 @@ if (!isAndroid) {
                     Alloy.Globals.WINDOWS[w].close();
                 }
             }
-
-            Alloy.Globals.WINDOWS.push(win);
-
             if (win !== null) {
-                win.open();
-                //win = null;
+                Alloy.Globals.WINDOWS.push(win);
             }
+
         } else {
-            var winMain = Alloy.createController('main').getView();
-            winMain.open({
+            var loginSuccessWindow = Alloy.createController('main').getView();
+            loginSuccessWindow.open({
                 fullScreen : true
             });
-            winMain = null;
+            loginSuccessWindow = null;
 
             var win = null;
 
             if (type === 'accept') {
-                win = Alloy.createController('challenges_new').getView();
-            } else if (type === 'pending') {
-                win = Alloy.createController('challenges_pending').getView();
-            } else if (type === 'finished') {
-                win = Alloy.createController('challenges_finished').getView();
-            }
+                args = {
+                    answer : 1,
+                    group : push_data.extra_data.group,
+                    bet_amount : push_data.extra_data.bet_amount
+                };
 
+                Alloy.Globals.CHALLENGEINDEX = push_data.extra_data.cid;
+                win = Alloy.createController('challenge', args).getView();
+
+            } else if (type === 'pending') {
+                args = {
+                    cid : push_data.extra_data.cid
+                };
+                win = Alloy.createController('showChallenge', args).getView();
+            } else if (type === 'finished') {
+                win = Alloy.createController('challenges_finished', args).getView();
+            }
             if (win !== null) {
                 win.open();
                 //win = null;
             }
 
-            Alloy.Globals.WINDOWS.push(win);
+            if (win !== null) {
+                Alloy.Globals.WINDOWS.push(win);
+            }
         }
     }
 
@@ -360,7 +389,26 @@ if (!isAndroid) {
         // and we set extras for the intent
         // and the app WAS NOT running
         // (don't worry, we'll see more of this later)
-        Ti.API.info('******* data (started) ' + JSON.stringify(pendingData));
+
+        var type = pendingData.challenge_type;
+
+        if (type === '1') {
+            type = 'accept';
+        } else if (type === '2') {
+            type = 'pending';
+        } else if (type === '3') {
+            type = 'finished';
+        }
+
+        try {
+           setTimeout(function() { 
+               doPush(type, pendingData);
+           }, 2000);
+        
+        } catch(e) {
+            // something went wrong
+        }
+
     }
 
     gcm.registerForPushNotifications({
@@ -376,18 +424,16 @@ if (!isAndroid) {
         },
         callback : function(e) {
             // when a gcm notification is received WHEN the app IS IN FOREGROUND
-            var type = '';
+            var type = e.challenge_type;
 
-            if (e.message.charAt(0) === '1') {
-                e.message = e.message.substring(1);
+            if (type === '1') {
                 type = 'accept';
-            } else if (e.message.charAt(0) === '2') {
-                e.message = e.message.substring(1);
+            } else if (type === '2') {
                 type = 'pending';
-            } else if (e.message.charAt(0) === '3') {
-                e.message = e.message.substring(1);
+            } else if (type === '3') {
                 type = 'finished';
             }
+
             try {
                 var alertWindow = Titanium.UI.createAlertDialog({
                     title : e.title,
@@ -395,8 +441,8 @@ if (!isAndroid) {
                     buttonNames : ['OK']
                 });
 
-                alertWindow.addEventListener('click', function(e) {
-                    doPush(type);
+                alertWindow.addEventListener('click', function(eve) {
+                    doPush(type, e);
                     alertWindow.hide();
                 });
                 alertWindow.show();
@@ -413,16 +459,14 @@ if (!isAndroid) {
             // and we set extras in the intent
             // and the app WAS RUNNING (=> RESUMED)
             // (again don't worry, we'll see more of this later)
-            var type = '';
 
-            if (data.message.charAt(0) === '1') {
-                data.message = data.message.substring(1);
+            var type = data.challenge_type;
+
+            if (type === '1') {
                 type = 'accept';
-            } else if (data.message.charAt(0) === '2') {
-                data.message = data.message.substring(1);
+            } else if (type === '2') {
                 type = 'pending';
-            } else if (data.message.charAt(0) === '3') {
-                data.message = data.message.substring(1);
+            } else if (type === '3') {
                 type = 'finished';
             }
 
@@ -435,7 +479,7 @@ if (!isAndroid) {
 
                 alertWindow.addEventListener('click', function(e) {
                     alertWindow.hide();
-                    doPush(type);
+                    doPush(type, data);
                 });
                 alertWindow.show();
             } catch(e) {
@@ -447,29 +491,26 @@ if (!isAndroid) {
     // require('net.iamyellow.gcmjs').unregister();
 }
 
-// TODO med push, ladda upp på server och prova ta emot datan på samma sätt som för iphone
-
-
 /*
-// General App
-if (Alloy.Globals.checkConnection()) {  
-    indicator.openIndicator();
-    args.dialog = indicator;
-    
-    Ti.API.log(Alloy.Globals.CURRENTVIEW);
-    
-    var loginSuccessWindow = Alloy.createController('main', args).getView();
-    if (!isAndroid) {
-        loginSuccessWindow.open({
-            fullScreen : true,
-        });
-    } else {
-        loginSuccessWindow.open({
-            fullScreen : true,
-            navBarHidden : false,
-            orientationModes : [Titanium.UI.PORTRAIT]
-        }); 
-    }
-   // loginSuccessWindow = null;
-}
-*/
+ // General App
+ if (Alloy.Globals.checkConnection()) {
+ indicator.openIndicator();
+ args.dialog = indicator;
+
+ Ti.API.log(Alloy.Globals.CURRENTVIEW);
+
+ var loginSuccessWindow = Alloy.createController('main', args).getView();
+ if (!isAndroid) {
+ loginSuccessWindow.open({
+ fullScreen : true,
+ });
+ } else {
+ loginSuccessWindow.open({
+ fullScreen : true,
+ navBarHidden : false,
+ orientationModes : [Titanium.UI.PORTRAIT]
+ });
+ }
+ // loginSuccessWindow = null;
+ }
+ */

@@ -1618,12 +1618,13 @@ function getChallenges() {
             } else {
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             }
-
+/*
             if (isAndroid) {
                 if ( swipeRefresh !== null && typeof swipeRefresh !== 'undefined') {
                     swipeRefresh.setRefreshing(false);
                 }
             }
+*/
             indicator.closeIndicator();
         } else {
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);

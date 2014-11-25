@@ -351,7 +351,7 @@ function createSaveBtn() {
         layout : 'vertical'
     });
 
-    var saveBtn = Alloy.Globals.createButtonView('#FFF', '#000', Alloy.Globals.PHRASES.saveTxt);
+    var saveBtn = Alloy.Globals.createButtonView(Alloy.Globals.themeColor(), '#FFF', Alloy.Globals.PHRASES.saveTxt);
     saveBtn.top = 5;
 
     saveBtn.addEventListener('click', function(e) {
@@ -432,13 +432,13 @@ function createGroup() {
 
                 }
 
-                Alloy.Globals.showFeedbackDialog(response);
+                Alloy.Globals.showToast(response);
                 // unlock achievement create group
                 Alloy.Globals.unlockAchievement(10);
                 $.createGroup.close();
             }
         } else {
-            Alloy.Globals.showFeedbackDialog(this.response);
+            Alloy.Globals.showToast(this.response);
         }
         isSubmitting = false;
         indicator.closeIndicator();

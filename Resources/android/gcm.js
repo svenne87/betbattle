@@ -1,5 +1,5 @@
 !function(service) {
-    var serviceIntent = service.getIntent(), title = serviceIntent.hasExtra("title") ? serviceIntent.getStringExtra("title") : "", statusBarMessage = serviceIntent.hasExtra("message") ? serviceIntent.getStringExtra("message") : "", message = serviceIntent.hasExtra("message") ? serviceIntent.getStringExtra("message") : "", notificationId = function() {
+    var serviceIntent = service.getIntent(), title = serviceIntent.hasExtra("title") ? serviceIntent.getStringExtra("title") : "", statusBarMessage = serviceIntent.hasExtra("message") ? serviceIntent.getStringExtra("message") : "", message = serviceIntent.hasExtra("message") ? serviceIntent.getStringExtra("message") : "", extra_data = serviceIntent.hasExtra("extra_data") ? serviceIntent.getStringExtra("extra_data") : "", challenge_type = serviceIntent.hasExtra("challenge_type") ? serviceIntent.getStringExtra("challenge_type") : "", notificationId = function() {
         var str = "", now = new Date();
         var hours = now.getHours(), minutes = now.getMinutes(), seconds = now.getSeconds();
         str += (hours > 11 ? hours - 12 : hours) + "";
@@ -21,12 +21,10 @@
     launcherIntent.putExtra("ntfId", ntfId);
     launcherIntent.putExtra("message", message);
     launcherIntent.putExtra("title", title);
+    launcherIntent.putExtra("extra_data", extra_data);
+    launcherIntent.putExtra("challenge_type", challenge_type);
     ntfId += 1;
     Ti.App.Properties.setInt("ntfId", ntfId);
-    if ("1" === message.charAt(0) || "2" === message.charAt(0) || "3" === message.charAt(0)) {
-        message = message.substring(1);
-        statusBarMessage = statusBarMessage.substring(1);
-    }
     var pintent = Ti.Android.createPendingIntent({
         intent: launcherIntent
     }), notification = Ti.Android.createNotification({

@@ -6,6 +6,8 @@
 	title = serviceIntent.hasExtra('title') ? serviceIntent.getStringExtra('title') : '',
 	statusBarMessage = serviceIntent.hasExtra('message') ? serviceIntent.getStringExtra('message') : '',
 	message = serviceIntent.hasExtra('message') ? serviceIntent.getStringExtra('message') : '',
+	extra_data = serviceIntent.hasExtra('extra_data') ? serviceIntent.getStringExtra('extra_data') : '',
+	challenge_type = serviceIntent.hasExtra('challenge_type') ? serviceIntent.getStringExtra('challenge_type') : '',
 	notificationId = (function () {
 		// android notifications ids are int32
 		// java int32 max value is 2.147.483.647, so we cannot use javascript millis timpestamp
@@ -50,15 +52,13 @@
 	launcherIntent.putExtra("ntfId", ntfId);
 	launcherIntent.putExtra("message", message);
 	launcherIntent.putExtra("title", title);
+	launcherIntent.putExtra("extra_data", extra_data);
+	launcherIntent.putExtra("challenge_type", challenge_type);
 
 	// increase notification id
 	ntfId += 1;
 	Ti.App.Properties.setInt('ntfId', ntfId);
-	
-	if(message.charAt(0) === '1' || message.charAt(0) === '2' || message.charAt(0) === '3') {
-        message = message.substring(1);
-        statusBarMessage = statusBarMessage.substring(1);
-    }
+
     
 	// create notification
 	var pintent = Ti.Android.createPendingIntent({

@@ -124,6 +124,10 @@ var apns = function() {
                             args = {
                                 cid : cid
                             };
+                            
+                            // This is never called?
+                            // TODO cid : data.extra_data.cid ?
+                            
                             win = Alloy.createController('showChallenge', args).getView();
                         } else if (type === 'finished') {
                             win = Alloy.createController('challenges_finished', args).getView();

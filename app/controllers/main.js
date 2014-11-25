@@ -16,6 +16,171 @@ if (OS_ANDROID) {
     isAndroid = true;
 }
 
+
+if (!isAndroid) {
+    Alloy.Globals.NAV = $.nav;
+
+    var labelsMenu = [{
+        image : '/images/ButtonMenu.png'
+    }];
+
+    var buttonBarMenu = Titanium.UI.createButtonBar({
+        labels : labelsMenu,
+        top : 50,
+        style : Titanium.UI.iPhone.SystemButtonStyle.BAR,
+        height : 25,
+        width : Ti.UI.SIZE,
+        borderColor : 'transparent',
+        backgroundColor : 'transparent'
+    });
+
+    buttonBarMenu.addEventListener('click', function() {
+        // show / hide slide menu
+        $.ds.toggleLeftSlider();
+    });
+
+    $.mainWin.titleControl = Ti.UI.createLabel({
+        text : Alloy.Globals.PHRASES.betbattleTxt,
+        font : Alloy.Globals.getFontCustom(18, "Bold"),
+        color : '#FFF'
+    });
+
+    var btn = Ti.UI.createView({
+        width : 50,
+        height : 50,
+        right : 15,
+        top : 5,
+        id : "ticketView"
+    });
+
+    var ticketBtn = Ti.UI.createImageView({
+        image : "images/ikoner_kupong.png",
+        width : 30,
+        height : 30,
+        id : "label",
+        right : 15,
+        top : 15,
+    });
+
+    btn.add(ticketBtn);
+    var badge = Ti.UI.createLabel({
+        width : 15,
+        height : 15,
+        borderRadius : 7,
+        right : 5,
+        id : "badge",
+        textAlign : "center",
+        color : '#FFF',
+        font : Alloy.Globals.getFontCustom(10, "Regular"),
+        backgroundColor : "transparent",
+        borderColor : "transparent",
+        borderWidth : 1,
+    });
+    btn.add(badge);
+
+    //Add event listener to ticket button
+    btn.addEventListener("click", function() {
+        if (Alloy.Globals.couponOpen)
+            return;
+        if (Alloy.Globals.hasCoupon) {
+            var win = Alloy.createController('showCoupon').getView();
+
+            Alloy.Globals.NAV.openWindow(win, {
+                animated : true
+            });
+            Alloy.Globals.WINDOWS.push(win);
+        }
+    });
+
+    $.mainWin.setLeftNavButton(buttonBarMenu);
+
+    $.nav.add(btn);
+
+    var currentView = Alloy.createController('challengesView', argu).getView();
+    $.ds.contentview.add(currentView);
+   // Alloy.Globals.CURRENTVIEW = currentView;
+
+    if (oldIndicator !== null) {
+        oldIndicator.closeIndicator();
+        oldIndicator = null;
+    }
+
+} else {
+    Ti.Gesture.addEventListener('orientationchange', function(e) {
+        Ti.Android.currentActivity.setRequestedOrientation(Ti.Android.SCREEN_ORIENTATION_PORTRAIT);
+    });
+
+    $.mainWin.orientationModes = [Titanium.UI.PORTRAIT];
+    $.mainWin.addEventListener('open', function() {
+
+        if (!$.mainWin.activity) {
+            Ti.API.error("Can't access action bar on a lightweight window.");
+        } else {
+            actionBar = $.mainWin.activity.actionBar;
+
+            if (actionBar) {
+                actionBar.icon = "images/ButtonMenu.png";
+                actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
+
+                $.mainWin.activity.onCreateOptionsMenu = function(e) {
+
+                    ticket = e.menu.add( ticketIcon = {
+                        showAsAction : Ti.Android.SHOW_AS_ACTION_ALWAYS,
+                        icon : 'images/ikoner_kupong.png',
+                        itemId : 1
+                    });
+
+                    //Add event listener to ticket button
+                    ticket.addEventListener("click", function() {
+                        if (Alloy.Globals.couponOpen)
+                            return;
+                        if (Alloy.Globals.hasCoupon) {
+                            couponOpen = true;
+                            var win = Alloy.createController('showCoupon').getView();
+
+                            win.open();
+
+                            Alloy.Globals.WINDOWS.push(win);
+                        }
+                    });
+                };
+
+                $.mainWin.activity.onPrepareOptionsMenu = function(e) {
+                    var menu = e.menu;
+
+                    if (Alloy.Globals.hasCoupon) {
+                        menu.findItem(1).setIcon('images/ikoner_kupong_red.png');
+                    } else {
+                        menu.findItem(1).setIcon('images/ikoner_kupong.png');
+                    }
+
+                };
+
+                $.mainWin.activity.invalidateOptionsMenu();
+
+                // set onResume for each activity in order to keep them updated with correct coupon
+                $.mainWin.activity.addEventListener("resume", function() {
+                    // will rebuild menu and keep coupon up to date
+                    $.mainWin.activity.invalidateOptionsMenu();
+                });
+
+                actionBar.onHomeIconItemSelected = function() {
+                    // show / hide slide menu
+                    $.ds.toggleLeftSlider();
+                };
+            }
+        }
+
+        if (oldIndicator !== null) {
+            oldIndicator.closeIndicator();
+            oldIndicator = null;
+        }
+ 
+        $.ds.contentview.add(Alloy.createController('challengesView', argu).getView());      
+    });
+    
+}
+
 checkRatestatus();
 
 // Used to update the menu and add a indicator for a new challenge 
@@ -703,179 +868,6 @@ Ti.App.addEventListener("sliderToggled", function(e) {
     }
 });
 
-if (!isAndroid) {
-    Alloy.Globals.NAV = $.nav;
-
-    var labelsMenu = [{
-        image : '/images/ButtonMenu.png'
-    }];
-
-    var buttonBarMenu = Titanium.UI.createButtonBar({
-        labels : labelsMenu,
-        top : 50,
-        style : Titanium.UI.iPhone.SystemButtonStyle.BAR,
-        height : 25,
-        width : Ti.UI.SIZE,
-        borderColor : 'transparent',
-        backgroundColor : 'transparent'
-    });
-
-    buttonBarMenu.addEventListener('click', function() {
-        // show / hide slide menu
-        $.ds.toggleLeftSlider();
-    });
-
-    $.mainWin.titleControl = Ti.UI.createLabel({
-        text : Alloy.Globals.PHRASES.betbattleTxt,
-        font : Alloy.Globals.getFontCustom(18, "Bold"),
-        color : '#FFF'
-    });
-
-    var btn = Ti.UI.createView({
-        width : 50,
-        height : 50,
-        right : 15,
-        top : 5,
-        id : "ticketView"
-    });
-
-    var ticketBtn = Ti.UI.createImageView({
-        image : "images/ikoner_kupong.png",
-        width : 30,
-        height : 30,
-        id : "label",
-        right : 15,
-        top : 15,
-    });
-
-    btn.add(ticketBtn);
-    var badge = Ti.UI.createLabel({
-        width : 15,
-        height : 15,
-        borderRadius : 7,
-        right : 5,
-        id : "badge",
-        textAlign : "center",
-        color : '#FFF',
-        font : Alloy.Globals.getFontCustom(10, "Regular"),
-        backgroundColor : "transparent",
-        borderColor : "transparent",
-        borderWidth : 1,
-    });
-    btn.add(badge);
-
-    //Add event listener to ticket button
-    btn.addEventListener("click", function() {
-        if (Alloy.Globals.couponOpen)
-            return;
-        if (Alloy.Globals.hasCoupon) {
-            var win = Alloy.createController('showCoupon').getView();
-
-            Alloy.Globals.NAV.openWindow(win, {
-                animated : true
-            });
-            Alloy.Globals.WINDOWS.push(win);
-        }
-    });
-
-    $.mainWin.setLeftNavButton(buttonBarMenu);
-
-    $.nav.add(btn);
-
-    var currentView = Alloy.createController('challengesView', argu).getView();
-    $.ds.contentview.add(currentView);
-   // Alloy.Globals.CURRENTVIEW = currentView;
-
-    if (oldIndicator !== null) {
-        oldIndicator.closeIndicator();
-        oldIndicator = null;
-    }
-
-} else {
-    Ti.Gesture.addEventListener('orientationchange', function(e) {
-        Ti.Android.currentActivity.setRequestedOrientation(Ti.Android.SCREEN_ORIENTATION_PORTRAIT);
-    });
-
-    $.mainWin.orientationModes = [Titanium.UI.PORTRAIT];
-    $.mainWin.addEventListener('open', function() {
-        var loadingLabel = Ti.UI.createLabel({
-            top : 50,
-            height : Ti.UI.SIZE,
-            width : Ti.UI.SIZE,
-            color : '#FFF',
-            font : Alloy.Globals.getFontCustom(19, "Regular"),
-            text : Alloy.Globals.PHRASES.loadingTxt
-        });
-        $.ds.contentview.add(loadingLabel);
-
-
-        if (!$.mainWin.activity) {
-            Ti.API.error("Can't access action bar on a lightweight window.");
-        } else {
-            actionBar = $.mainWin.activity.actionBar;
-
-            if (actionBar) {
-                actionBar.icon = "images/ButtonMenu.png";
-                actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
-
-                $.mainWin.activity.onCreateOptionsMenu = function(e) {
-
-                    ticket = e.menu.add( ticketIcon = {
-                        showAsAction : Ti.Android.SHOW_AS_ACTION_ALWAYS,
-                        icon : 'images/ikoner_kupong.png',
-                        itemId : 1
-                    });
-
-                    //Add event listener to ticket button
-                    ticket.addEventListener("click", function() {
-                        if (Alloy.Globals.couponOpen)
-                            return;
-                        if (Alloy.Globals.hasCoupon) {
-                            couponOpen = true;
-                            var win = Alloy.createController('showCoupon').getView();
-
-                            win.open();
-
-                            Alloy.Globals.WINDOWS.push(win);
-                        }
-                    });
-                };
-
-                $.mainWin.activity.onPrepareOptionsMenu = function(e) {
-                    var menu = e.menu;
-
-                    if (Alloy.Globals.hasCoupon) {
-                        menu.findItem(1).setIcon('images/ikoner_kupong_red.png');
-                    } else {
-                        menu.findItem(1).setIcon('images/ikoner_kupong.png');
-                    }
-
-                };
-
-                $.mainWin.activity.invalidateOptionsMenu();
-
-                // set onResume for each activity in order to keep them updated with correct coupon
-                $.mainWin.activity.addEventListener("resume", function() {
-                    // will rebuild menu and keep coupon up to date
-                    $.mainWin.activity.invalidateOptionsMenu();
-                });
-
-                actionBar.onHomeIconItemSelected = function() {
-                    // show / hide slide menu
-                    $.ds.toggleLeftSlider();
-                };
-            }
-        }
-
-        if (oldIndicator !== null) {
-            oldIndicator.closeIndicator();
-            oldIndicator = null;
-        }
-        
-        $.ds.contentview.add(Alloy.createController('challengesView', argu).getView());
-        $.ds.contentview.remove(loadingLabel);        
-    });
-}
 
 //check if user has rated app if not dialog shows up
 function checkRatestatus() {

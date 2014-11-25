@@ -1151,7 +1151,9 @@ function postAnswer(gameArray) {
                         controller : 'challengesView',
                         arg : arg
                     };
-
+                    
+                    Ti.API.log("svaraaaa");
+                    
                     Ti.App.fireEvent('app:updateView', obj);
 
                     for (var win in Alloy.Globals.WINDOWS) {
