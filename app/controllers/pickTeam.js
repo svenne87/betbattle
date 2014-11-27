@@ -83,8 +83,9 @@ var pickView = Ti.UI.createView({
 
 var pickLabel = Ti.UI.createLabel({
     width : Ti.UI.FILL,
+    height : Ti.UI.SIZE,
     textAlign : 'center',
-    top : 30,
+    top : 20,
     text : Alloy.Globals.PHRASES.leagueChooseTxt + ' ',
     font : Alloy.Globals.getFontCustom(18, 'Bold'),
     color : '#FFF'
@@ -460,16 +461,19 @@ function teamPicked(tid, name) {
             Alloy.Globals.showToast(Alloy.Globals.PHRASES.youTeamTxt + ' ' + name);
 
             if (!showNav) {
-                // send you to landingpage
+                // kepp in memory
+                var tmp = Alloy.createController('landingPage', args).getView();
+                    
+                // open main
+                 var loginSuccessWindow = Alloy.createController('main', args).getView();
+                 
                 if (OS_IOS) {
-                    var loginSuccessWindow = Alloy.createController('landingPage').getView();
                     loginSuccessWindow.open({
                         fullScreen : true
                     });
                     loginSuccessWindow = null;
 
                 } else if (OS_ANDROID) {
-                    var loginSuccessWindow = Alloy.createController('landingPage').getView();
                     loginSuccessWindow.open({
                         fullScreen : true,
                         orientationModes : [Titanium.UI.PORTRAIT]
@@ -484,12 +488,6 @@ function teamPicked(tid, name) {
             if (!showNav) {
                 if (Alloy.Globals.INDEXWIN !== null) {
                     Alloy.Globals.INDEXWIN.close();
-                }
-
-                // TODO, ta bort?
-                if (OS_ANDROID) {
-                    var activity = Titanium.Android.currentActivity;
-                    activity.finish();
                 }
             }
         },

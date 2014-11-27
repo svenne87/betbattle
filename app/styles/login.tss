@@ -11,10 +11,12 @@
 	layout: 'vertical'
 },
 "#nav[platform=ios]":{
-	backgroundImage: 'none',
-	backgroundColor: '#000',
-	tintColor: '#FFF',
-	barColor: '#FFF'
+	tintColor : '#FFF',
+	barColor : '#000',
+	height : Ti.UI.FILL,
+	backgroundImage : 'none',
+	backgroundColor : 'transparent',
+	opacity : 0.9
 },
 "#facebookBtn":{
 	top: '65%',

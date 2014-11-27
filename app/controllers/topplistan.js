@@ -145,6 +145,10 @@ if (OS_IOS) {
     }
 }
 
+function isLowerCase(str) {
+    return str === str.toLowerCase();
+}
+
 function addNewFriend(id, name, playerObj) {
     if (Alloy.Globals.checkConnection()) {
         indicator.openIndicator();
@@ -204,7 +208,8 @@ function createPopupLayout(win, playerObj, isFriend, isMe, friendIndex) {
     win.add(friendStats);
 
     var friend;
-
+    
+    /*  Old work around
     if (OS_IOS) {
         friend = Ti.UI.createView({
             top : 2,
@@ -214,8 +219,10 @@ function createPopupLayout(win, playerObj, isFriend, isMe, friendIndex) {
         win.add(friend);
     } else {
         friend = win;
-    }
-
+    } */
+   
+    friend = win;
+    
     var image;
 
     if (playerObj.fbid !== null) {
@@ -288,6 +295,7 @@ function createPopupLayout(win, playerObj, isFriend, isMe, friendIndex) {
             top : 115,
             height : 40,
             id : playerObj.id,
+            zIndex : 9999,
             fName : playerObj.name
         });
 
@@ -326,7 +334,6 @@ function createPopupLayout(win, playerObj, isFriend, isMe, friendIndex) {
         });
 
         win.add(addFriendBtn);
-
     }
     
     if (playerObj.team.data[0]) {
@@ -353,10 +360,7 @@ function createPopupLayout(win, playerObj, isFriend, isMe, friendIndex) {
         });
         friend.add(frTeam);
 
-        var url = playerObj.team.data[0].team_logo;
-        var finalUrl = url.replace(' ', '');
-        var finalUrl = finalUrl.toLowerCase();
-        var images = Alloy.Globals.BETKAMPENURL + finalUrl;
+        var images = Alloy.Globals.BETKAMPENURL + playerObj.team.data[0].team_logo;
 
         var profilePics = Titanium.UI.createImageView({
             defaultImage : '/images/no_team.png',
@@ -364,11 +368,18 @@ function createPopupLayout(win, playerObj, isFriend, isMe, friendIndex) {
             height : 70,
             width : 70,
             right : 5,
-            top : 170,
-            borderRadius : 35
+            top : 170
         });
 
         profilePics.addEventListener('error', logoImageErrorHandler);
+        
+        // fix for images delivered from us/api
+        if (!isLowerCase(playerObj.team.data[0].team_logo)) {
+            profilePics.width = 50;
+            profilePics.height = 50;
+            profilePics.top = 190;
+        }
+       
         friend.add(profilePics);
     }
 }
@@ -405,14 +416,15 @@ function popupAndroid(objId, playerIndex) {
     });
 
     w.add(modal);
-
+/*
     var textWrapper = Ti.UI.createView({
+        id : 'wrapper',
         height : 250,
         width : "85%"
     });
 
     w.add(textWrapper);
-
+*/
     var friendIndex = getFriendIndex(objId);
 
     if (objId === Alloy.Globals.BETKAMPENUID) {
@@ -425,16 +437,18 @@ function popupAndroid(objId, playerIndex) {
         // some one else
         createPopupLayout(modal, players[playerIndex], false, false, -1);
     }
-
+/*
     // When clicking on the modal
     textWrapper.addEventListener("click", function(e) {
+        Ti.API.log(JSON.stringify(e.source.id));
+
         winOpen = false;
         modal.hide();
         modal = null;
     });
-
+*/   
     // When clicking outside of the modal
-    w.addEventListener('click', function() {
+    w.addEventListener('click', function(e) { 
         winOpen = false;
         w.hide();
     });
@@ -468,7 +482,7 @@ function popupWinIOS(objId, playerIndex) {
         zIndex : 100,
     });
 
-    $.scoreBoardTable.add(transparent_overlay);
+   $.scoreBoardTable.add(transparent_overlay);
 
     var w = Titanium.UI.createWindow({
         backgroundColor : '#fff',

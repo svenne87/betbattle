@@ -79,7 +79,7 @@ var searchIcon = Ti.UI.createLabel({
     left : 20,
     text : fontawesome.icon('fa-search'),
     font : font,
-    color : "#000",
+    color : "#FFF",
 });
 
 searchBtn.add(searchIcon);

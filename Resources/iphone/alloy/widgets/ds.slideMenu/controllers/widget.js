@@ -127,8 +127,9 @@ function Controller() {
         left: "0dp",
         width: Ti.Platform.displayCaps.platformWidth,
         height: Ti.UI.Fill,
+        fullScreen: true,
         top: "0dp",
-        backgroundColor: "#303030",
+        backgroundImage: "/images/Default-Portrait.png",
         apiName: "Ti.UI.View",
         id: "contentview",
         classes: []

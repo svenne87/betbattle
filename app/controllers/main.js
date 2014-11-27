@@ -8,6 +8,8 @@ var fontawesome = require('lib/IconicFont').IconicFont({
     font : 'lib/FontAwesome'
 });
 
+ $.ds.contentview.add(Alloy.createController('challengesView', argu).getView());
+
 var font = 'FontAwesome';
 var isAndroid = false;
 
@@ -27,11 +29,10 @@ if (!isAndroid) {
     var buttonBarMenu = Titanium.UI.createButtonBar({
         labels : labelsMenu,
         top : 50,
-        style : Titanium.UI.iPhone.SystemButtonStyle.BAR,
         height : 25,
         width : Ti.UI.SIZE,
         borderColor : 'transparent',
-        backgroundColor : 'transparent'
+        backgroundColor : 'transparent'  // TODO
     });
 
     buttonBarMenu.addEventListener('click', function() {
@@ -91,16 +92,16 @@ if (!isAndroid) {
             Alloy.Globals.WINDOWS.push(win);
         }
     });
-
+    
     $.mainWin.setLeftNavButton(buttonBarMenu);
 
     $.nav.add(btn);
 
-    var currentView = Alloy.createController('challengesView', argu).getView();
-    $.ds.contentview.add(currentView);
+   // var currentView = Alloy.createController('challengesView', argu).getView();
+   // $.ds.contentview.add(currentView);
    // Alloy.Globals.CURRENTVIEW = currentView;
 
-    if (oldIndicator !== null) {
+    if (oldIndicator !== null && typeof oldIndicator !== 'undefined') {
         oldIndicator.closeIndicator();
         oldIndicator = null;
     }
@@ -111,7 +112,7 @@ if (!isAndroid) {
     });
 
     $.mainWin.orientationModes = [Titanium.UI.PORTRAIT];
-    $.mainWin.addEventListener('open', function() {
+    $.mainWin.addEventListener('open', function() {  
 
         if (!$.mainWin.activity) {
             Ti.API.error("Can't access action bar on a lightweight window.");
@@ -175,8 +176,7 @@ if (!isAndroid) {
             oldIndicator.closeIndicator();
             oldIndicator = null;
         }
- 
-        $.ds.contentview.add(Alloy.createController('challengesView', argu).getView());      
+   
     });
     
 }
@@ -330,15 +330,13 @@ function createMenuHeader() {
 
     leftViewPart.add(profileViewRow);
 
-    var topPos = -15;
-    var heightPos = 15;
-    var borderLeftTop = 30;
-    var borderRightTop = 48;
+    var topPos = -15; 
+    var heightPos = 26;
+    var borderLeftTop = 18;
+    var borderRightTop = 47;
+    
     if (isAndroid) {
         topPos = 5;
-        heightPos = 26;
-        borderLeftTop = 18;
-        borderRightTop = 47;
     }
 
     var coinsView = Ti.UI.createView({
@@ -944,6 +942,7 @@ function setRateStatus(rate_status) {
     Ti.API.info(rate_status);
     var rateStatus = Ti.Network.createHTTPClient();
     rateStatus.open("POST", Alloy.Globals.BETKAMPENSETRATESTATUS);
+    rateStatus.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
     var params = {
         uid : Alloy.Globals.BETKAMPENUID,
         rate_status : rate_status

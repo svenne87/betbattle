@@ -31,6 +31,8 @@ if (OS_IOS) {
     font = 'FontAwesome';
     isAndroid = false;
     iOSVersion = parseInt(Ti.Platform.version);
+} else {
+    var swipeRefreshModule = require('com.rkam.swiperefreshlayout');
 }
 
 var sections = [];
@@ -500,7 +502,7 @@ function createLayout(resp) {
             headerView : tableHeaderView,
             height : '100%',
             backgroundColor : 'transparent',
-            separatorColor : '#6d6d6d',
+            separatorColor : '#303030',
             id : 'challengeTable'
         });
 
@@ -645,12 +647,11 @@ function createLayout(resp) {
     customSection = null;
 
     table.setData(sections);
+    view.add(table);
 
     if (isAndroid) {
-        var swipeRefreshModule = require('com.rkam.swiperefreshlayout');
-
         swipeRefresh = swipeRefreshModule.createSwipeRefresh({
-            view : table,
+            view : view,
             height : Ti.UI.FILL,
             width : Ti.UI.FILL,
             id : 'swiper'
@@ -660,8 +661,8 @@ function createLayout(resp) {
             if (Alloy.Globals.checkConnection()) {
                 setTimeout(function() {
                     indicator.openIndicator();
-                    view.remove(table);
-
+                    //view.remove(table);
+                    $.showMatchOTD.remove(swipeRefresh);
                     getChallengeShow();
                 }, 800);
             } else {
@@ -669,13 +670,11 @@ function createLayout(resp) {
                 swipeRefresh.setRefreshing(false);
             }
         });
-        view.add(swipeRefresh);
+        $.showMatchOTD.add(swipeRefresh);
 
     } else {
-        view.add(table);
+        $.showMatchOTD.add(view); 
     }
-
-    $.showMatchOTD.add(view);
 }
 
 function endRefresher() {
@@ -684,7 +683,7 @@ function endRefresher() {
             refresher.endRefreshing();
         }
     } else {
-        if ( typeof swipeRefresh !== 'undefined' && swipeRefresh !== null) {
+        if (swipeRefresh !== null && typeof swipeRefresh !== 'undefined') {
             swipeRefresh.setRefreshing(false);
         }
     }
@@ -700,7 +699,7 @@ function getChallengeShow() {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
         Ti.API.error('Bad Sever =>' + e.error);
         indicator.closeIndicator();
-         endRefresher();
+        endRefresher();
     };
 
     try {
@@ -718,6 +717,14 @@ function getChallengeShow() {
         if (this.status == '200') {
             if (this.readyState == 4) {
                 var response = JSON.parse(this.responseText);
+                
+                if(isAndroid) {
+                    if(typeof view !== 'undefined') {
+                       // view.remove(swipeRefresh);
+                        endRefresher();    
+                    }
+                }
+                
                 createLayout(response);
             } else {
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);

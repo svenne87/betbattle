@@ -50,14 +50,18 @@ var logoImageErrorHandler = function(e) {
     e.image = '/images/no_team.png';
 };
 
+function isLowerCase(str) {
+    return str === str.toLowerCase();
+}
+
 function createGUI(obj) {
-    
-    if(!obj.team.data[0]) {
+
+    if (!obj.team.data[0]) {
         obj.team.data[0] = {};
         obj.team.data[0].name = '';
         obj.team.data[0].team_logo = '';
     }
-    
+
     var friend = Ti.UI.createTableViewRow({
         hasChild : child,
         width : Ti.UI.FILL,
@@ -86,10 +90,7 @@ function createGUI(obj) {
                 zIndex : "1000"
             });
 
-            var url = e.source.teamLogo.replace('logos', 'logos');
-            var finalUrl = url.replace(' ', '');
-            var finalUrl = finalUrl.toLowerCase();
-            var images = Alloy.Globals.BETKAMPENURL + finalUrl;
+            var images = Alloy.Globals.BETKAMPENURL + e.source.teamLogo;
 
             var modal = Ti.UI.createView({
                 height : 300,
@@ -192,10 +193,7 @@ function createGUI(obj) {
                 });
                 modal.add(frTeam);
 
-                var url = e.source.teamLogo.replace('logos', 'logos');
-                var finalUrl = url.replace(' ', '');
-                var finalUrl = finalUrl.toLowerCase();
-                var images = Alloy.Globals.BETKAMPENURL + finalUrl;
+                var images = Alloy.Globals.BETKAMPENURL + e.source.teamLogo;
 
                 var profilePics = Titanium.UI.createImageView({
                     defaultImage : '/images/no_team.png',
@@ -203,10 +201,17 @@ function createGUI(obj) {
                     height : 70,
                     width : 70,
                     right : '2%',
-                    top : 170,
-                    borderRadius : 35
+                    top : 170
                 });
                 profilePics.addEventListener('error', logoImageErrorHandler);
+
+                // fix for images delivered from us/api
+                if (!isLowerCase(e.source.teamLogo)) {
+                    profilePics.top = 190;
+                    profilePics.width = 50;
+                    profilePics.height = 50;
+                }
+
                 modal.add(profilePics);
             }
 
@@ -372,13 +377,18 @@ function createGUI(obj) {
                 font : Alloy.Globals.getFontCustom(16, "Regular")
             });
             w.add(friendStats);
-
+            
+            /* Old work around
             var friend = Ti.UI.createView({
                 top : 2,
                 width : "100%",
                 height : 45,
             });
             w.add(friend);
+            */
+            
+            var friend = w;
+           
             var image;
             if (obj.fbid !== null) {
                 image = "https://graph.facebook.com/" + obj.fbid + "/picture?type=large";
@@ -451,10 +461,7 @@ function createGUI(obj) {
                 });
                 friend.add(frTeam);
 
-                var url = e.source.teamLogo.replace('logos', 'logos');
-                var finalUrl = url.replace(' ', '');
-                var finalUrl = finalUrl.toLowerCase();
-                var images = Alloy.Globals.BETKAMPENURL + finalUrl;
+                var images = Alloy.Globals.BETKAMPENURL + e.source.teamLogo;
 
                 var profilePics = Titanium.UI.createImageView({
                     defaultImage : '/images/no_team.png',
@@ -467,6 +474,13 @@ function createGUI(obj) {
                 });
 
                 profilePics.addEventListener('error', logoImageErrorHandler);
+                
+                // fix for images delivered from us/api
+                if (!isLowerCase(e.source.teamLogo)) {
+                    profilePics.top = 190;
+                    profilePics.width = 50;
+                    profilePics.height = 50;
+                }
 
                 friend.add(profilePics);
             }
@@ -546,11 +560,11 @@ function createGUI(obj) {
                                     break;
                                 }
                             }
-                            
-                            if(table.data[0].rows.length === 0) {
+
+                            if (table.data[0].rows.length === 0) {
                                 $.myFriends.close();
                             }
-                            
+
                             indicator.closeIndicator();
                             Alloy.Globals.showToast(e.source.fName + ' ' + Alloy.Globals.PHRASES.groupMemberDeletedTxt);
                         };
@@ -598,10 +612,10 @@ function createGUI(obj) {
         // get betkampen image
         image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + obj.id + '.png';
     }
-    
-    if(!obj.team.data[0]) {
+
+    if (!obj.team.data[0]) {
         obj.team.data[0] = {};
-        obj.team.data[0].name = ''; 
+        obj.team.data[0].name = '';
         obj.team.data[0].team_logo = '';
     }
 

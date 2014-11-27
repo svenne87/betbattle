@@ -230,7 +230,7 @@ function createEmptyTableRow(text) {
     });
 
     row.add(Ti.UI.createLabel({
-        text : Alloy.Globals.PHRASES.noneTxt + ' ' + text + ' ' + Alloy.Globals.PHRASES.foundTxt,
+        text : Alloy.Globals.PHRASES.noneTxt + ' ' + text + ' ' + Alloy.Globals.PHRASES.foundTxt + ' ',
         left : 60,
         font : Alloy.Globals.getFontCustom(16, 'Regular'),
         color : '#CCC'
@@ -269,7 +269,7 @@ function createNewChallengeRow() {
     }));
 
     tableFooterView.add(Ti.UI.createLabel({
-        text : Alloy.Globals.PHRASES.createChallengeTxt,
+        text : Alloy.Globals.PHRASES.createChallengeTxt + ' ',
         font : Alloy.Globals.getFontCustom(16, "Regular"),
         color : "#FFF",
         left : 65,
@@ -521,7 +521,7 @@ function constructChallengeRows(obj, index, type) {
 
         thirdRowView.add(Ti.UI.createLabel({
             left : 60,
-            text : Alloy.Globals.PHRASES.newTxt,
+            text : Alloy.Globals.PHRASES.newTxt + ' ',
             font : Alloy.Globals.getFontCustom(12, 'Regular'),
             color : Alloy.Globals.themeColor()
         }));
@@ -529,7 +529,7 @@ function constructChallengeRows(obj, index, type) {
     } else if (type === 'pending') {
         var pendingLabel = Ti.UI.createLabel({
             left : 60,
-            text : Alloy.Globals.PHRASES.pendingTxt,
+            text : Alloy.Globals.PHRASES.pendingTxt + ' ',
             font : Alloy.Globals.getFontCustom(12, 'Regular'),
             color : Alloy.Globals.themeColor()
         });
@@ -952,6 +952,7 @@ function createMatchOTDRow() {
 
     if (isAndroid) {
         child = false;
+        font = 'fontawesome-webfont';
     }
 
     var row = Ti.UI.createTableViewRow({
@@ -981,7 +982,7 @@ function createMatchOTDRow() {
 
     firstRowView.add(Ti.UI.createLabel({
         font : Alloy.Globals.getFontCustom(16, 'Regular'),
-        text : Alloy.Globals.PHRASES.landingPageMatch,
+        text : Alloy.Globals.PHRASES.landingPageMatch + ' ',
         color : '#FFF',
         left : 60,
         height : Ti.UI.SIZE,
@@ -1120,7 +1121,7 @@ function createMatchOTDRow() {
 
     var pendingLabel = Ti.UI.createLabel({
         left : 60,
-        text : Alloy.Globals.PHRASES.pendingTxt,
+        text : Alloy.Globals.PHRASES.pendingTxt + ' ',
         font : Alloy.Globals.getFontCustom(12, 'Regular'),
         color : Alloy.Globals.themeColor()
     });
@@ -1285,7 +1286,7 @@ function constructTableData(array) {
 
     acceptTextLabel = Ti.UI.createLabel({
         font : Alloy.Globals.getFontCustom(16, 'Regular'),
-        text : Alloy.Globals.PHRASES.newChallengesTxt,
+        text : Alloy.Globals.PHRASES.newChallengesTxt + ' ',
         color : '#FFF',
         left : 60,
         height : Ti.UI.SIZE,
@@ -1325,7 +1326,7 @@ function constructTableData(array) {
 
     pendingRow.add(Ti.UI.createLabel({
         font : Alloy.Globals.getFontCustom(16, 'Regular'),
-        text : Alloy.Globals.PHRASES.pendingChallengesTxt,
+        text : Alloy.Globals.PHRASES.pendingChallengesTxt + ' ',
         color : '#FFF',
         left : 60,
         height : 'auto',
@@ -1355,7 +1356,7 @@ function constructTableData(array) {
 
     finishedRow.add(Ti.UI.createLabel({
         font : Alloy.Globals.getFontCustom(16, 'Regular'),
-        text : Alloy.Globals.PHRASES.finishedChallengesTxt,
+        text : Alloy.Globals.PHRASES.finishedChallengesTxt + ' ',
         color : '#FFF',
         left : 60,
         height : 'auto',
@@ -1385,7 +1386,7 @@ function constructTableData(array) {
 
     matchOTDTextLabel = Ti.UI.createLabel({
         font : Alloy.Globals.getFontCustom(16, 'Regular'),
-        text : Alloy.Globals.PHRASES.landingPageMatch,
+        text : Alloy.Globals.PHRASES.landingPageMatch + ' ',
         color : '#FFF',
         left : 60,
         height : Ti.UI.SIZE,
@@ -1618,13 +1619,13 @@ function getChallenges() {
             } else {
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             }
-/*
+
             if (isAndroid) {
                 if ( swipeRefresh !== null && typeof swipeRefresh !== 'undefined') {
                     swipeRefresh.setRefreshing(false);
                 }
             }
-*/
+
             indicator.closeIndicator();
         } else {
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);

@@ -836,9 +836,16 @@ Alloy.Globals.unlockAchievement = function(achID) {
                         Ti.API.info("visa toast");
                         var player = Ti.Media.createSound({
                             url : "sound/unlocked.wav"
-                        });
-                        indWin = Titanium.UI.createWindow();
-
+                        });                      
+                        
+                        var indWin;
+                        
+                        if(OS_IOS) {
+                            indWin = Titanium.UI.createWindow();
+                        } else {
+                             indWin = Titanium.UI.createWindow({backgroundColor : 'transparent'});
+                        }
+                        
                         //  view
                         var indView = Titanium.UI.createView({
                             top : '85%',
@@ -881,6 +888,7 @@ Alloy.Globals.unlockAchievement = function(achID) {
                                 opacity : 0,
                                 duration : 2000
                             });
+                            player.stop();
                         }, interval);
                     } else {
                         Ti.API.info("nått fel");

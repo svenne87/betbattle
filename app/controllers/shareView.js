@@ -159,23 +159,25 @@ if (Alloy.Globals.FACEBOOKOBJECT != null) {
     }
 }
 
-if (Alloy.Globals.checkConnection()) {
-    if (isAndroid) {
-        if (fb.canPresentOpenGraphActionDialog) {
-            performFacebookPost(fb);
+fbUserBtn.addEventListener('click', function(e) {
+    if (Alloy.Globals.checkConnection()) {
+        if (isAndroid) {
+            if (fb.canPresentOpenGraphActionDialog) {
+                performFacebookPost(fb);
+            } else {
+                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.fbShareErrorTxt);
+            }
         } else {
-            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.fbShareErrorTxt);
+            if (fb.getCanPresentShareDialog()) {
+                performFacebookPost(fb);
+            } else {
+                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.fbShareErrorTxt);
+            }
         }
     } else {
-        if (fb.getCanPresentShareDialog()) {
-            performFacebookPost(fb);
-        } else {
-            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.fbShareErrorTxt);
-        }
+        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
     }
-} else {
-    Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
-}
+});
 
 function performFacebookPost(fb) {
 
@@ -189,10 +191,8 @@ function performFacebookPost(fb) {
         namespaceAction : 'betbattle:place'
     };
 
-    fbUserBtn.addEventListener('click', function(e) {
-        Alloy.Globals.unlockAchievement(5);
-        fb.share(data);
-    });
+    Alloy.Globals.unlockAchievement(5);
+    fb.share(data);
 }
 
 // --------------------------------------------------------------- Share to TWITTER  -------------------------------------------------------------------------------

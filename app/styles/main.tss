@@ -2,12 +2,14 @@
 	layout: 'vertical',
     width: Ti.UI.FILL,
     height: Ti.UI.FILL,
-	backgroundColor: '#303030',
+    backgroundImage: '/images/Default-Portrait.png'
 },
 "#nav[platform=ios]":{
-	backgroundImage : 'images/green_bg.png',
 	tintColor : '#FFF',
-	barColor : '#FFF'
+	barColor : '#000',
+	height : Ti.UI.FILL,
+	backgroundColor : 'transparent',
+	opacity : 0.9
 },
 ".navLogo":{
 	left : 86,

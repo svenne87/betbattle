@@ -126,6 +126,7 @@ function getChallengesAndStart() {
                     }
 
                     addEvent();
+                    
                     $.login.close();
 
                     if (Alloy.Globals.INDEXWIN !== null) {
@@ -433,7 +434,7 @@ fb.initialize();  // TODO
 
 // Har satt Alloy.Globals.FBERROR till false för att inte öppna flera gånger, sätta till true vid error??
 // set correct language phrase
-$.facebookBtnText.text = Alloy.Globals.PHRASES.loginFacebookButtonTxt;
+$.facebookBtnText.text = Alloy.Globals.PHRASES.loginFacebookButtonTxt + ' ';
 
 // try to get Betkampen token
 Alloy.Globals.readToken();
@@ -862,5 +863,5 @@ $.registerBtn.addEventListener('click', function(e) {
     Alloy.Globals.WINDOWS.push($.login);
 });
 
-$.registerBtnText.text = Alloy.Globals.PHRASES.registerTxt;
-$.loginBtnText.text = Alloy.Globals.PHRASES.signInTxt;
+$.registerBtnText.text = Alloy.Globals.PHRASES.registerTxt + ' ';
+$.loginBtnText.text = Alloy.Globals.PHRASES.signInTxt + ' ';

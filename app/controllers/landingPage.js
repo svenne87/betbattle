@@ -491,6 +491,7 @@ if (!isAndroid) {
     // require('net.iamyellow.gcmjs').unregister();
 }
 
+
 /*
  // General App
  if (Alloy.Globals.checkConnection()) {

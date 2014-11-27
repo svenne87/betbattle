@@ -26,7 +26,7 @@ function Controller() {
         profilePic.addEventListener("error", imageErrorHandler);
         userWrapper.add(profilePic);
         userWrapper.add(Ti.UI.createLabel({
-            text: member.name,
+            text: member.name + " ",
             left: 60,
             width: "auto",
             font: Alloy.Globals.getFontCustom(14, "Regular"),
@@ -458,7 +458,7 @@ function Controller() {
                     sub: subRow
                 });
                 row.add(Ti.UI.createLabel({
-                    text: array[i].attributes.name,
+                    text: array[i].attributes.name + " ",
                     top: 14,
                     left: 60,
                     font: Alloy.Globals.getFontCustom(16, "Regular"),
@@ -490,7 +490,7 @@ function Controller() {
                 detailsImg.addEventListener("error", imageErrorHandler);
                 row.add(detailsImg);
                 row.add(Ti.UI.createLabel({
-                    text: array[i].attributes.name,
+                    text: array[i].attributes.name + " ",
                     textAlign: "center",
                     left: 60,
                     font: Alloy.Globals.getFontCustom(16, "Regular"),

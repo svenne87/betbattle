@@ -1,12 +1,16 @@
 var error = Alloy.Globals.PHRASES.loginError;
 var uie = require('lib/IndicatorWindow');
 
-var indicator;
+var indicator = uie.createIndicatorWindow({
+    top : 200,
+    text : Alloy.Globals.PHRASES.loadingTxt
+});
+
 var user_team;
 var args = arguments[0] || {};
 
-var abortBtn = Alloy.Globals.createButtonView('#d50f25', '#FFF', Alloy.Globals.PHRASES.abortBtnTxt);
-var signInBtn = Alloy.Globals.createButtonView(Alloy.Globals.themeColor(), '#FFF', Alloy.Globals.PHRASES.signInTxt);
+var abortBtn = Alloy.Globals.createButtonView('#d50f25', '#FFF', Alloy.Globals.PHRASES.abortBtnTxt + ' ');
+var signInBtn = Alloy.Globals.createButtonView(Alloy.Globals.themeColor(), '#FFF', Alloy.Globals.PHRASES.signInTxt + ' ');
 
 var emailReg = -1;
 if ( typeof args.email !== 'undefined') {
@@ -21,7 +25,6 @@ if ( typeof args.password !== 'undefined') {
 if (emailReg !== -1 && passwordReg !== -1) {
     // auto login
     login(true);
-    // TODO dölja inloggning i bakgrund??
 }
 var isAndroid = false;
 
@@ -225,6 +228,24 @@ $.loginEmail.addEventListener('return', function() {
     }
 });
 
+function hideShowLogin(hide) {
+    if(hide) {
+        $.sign_in_row.setOpacity(0.5);
+        $.info.setOpacity(0.5);
+        $.table.setOpacity(0.5);
+        $.abort_row.setOpacity(0.5);
+        $.space_row.setOpacity(0.5);
+        indicator.openIndicator();
+    } else {
+        indicator.closeIndicator();
+        $.sign_in_row.setOpacity(1);
+        $.info.setOpacity(1);
+        $.table.setOpacity(1);
+        $.abort_row.setOpacity(1);
+        $.space_row.setOpacity(1);
+    }
+}
+
 function createLeagueAndUidObj(response) {
     Alloy.Globals.BETKAMPENUID = response.betkampen_uid;
     Alloy.Globals.PROFILENAME = response.profile_name;
@@ -264,6 +285,7 @@ function getChallengesAndStart() {
         Ti.API.error('Bad Sever =>' + e.error);
         indicator.closeIndicator();
         signInBtn.enabled = true;
+        hideShowLogin(false);
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
     };
 
@@ -277,12 +299,15 @@ function getChallengesAndStart() {
     } catch(e) {
         Ti.API.error('Bad Sever =>' + e.error);
         indicator.closeIndicator();
+        hideShowLogin(false);
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
     }
     xhr.onload = function() {
         if (this.status == '200') {
             if (this.readyState == 4) {
-                var response = null;
+                var response = null;     
+                hideShowLogin(false);
+                indicator.closeIndicator();       
 
                 try {
                     response = JSON.parse(this.responseText);
@@ -354,6 +379,7 @@ function getChallengesAndStart() {
         } else {
             signInBtn.enabled = true;
             indicator.closeIndicator();
+            hideShowLogin(false);
             Ti.API.error("Error =>" + this.response);
         }
     };
@@ -379,6 +405,7 @@ function loginAuthenticated() {
     } catch(e) {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.internetMayBeOffErrorTxt);
         indicator.closeIndicator();
+        hideShowLogin(false);
         signInBtn.enabled = true;
     }
 
@@ -390,6 +417,7 @@ function loginAuthenticated() {
                     response = JSON.parse(this.responseText);
                 } catch(e) {
                     indicator.closeIndicator();
+                    hideShowLogin(false);
                     Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                 }
 
@@ -403,6 +431,7 @@ function loginAuthenticated() {
                     //////
                     Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                     indicator.closeIndicator();
+                    hideShowLogin(false);
                     signInBtn.enabled = true;
                 }
 
@@ -411,6 +440,7 @@ function loginAuthenticated() {
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             Ti.API.error("Error =>" + this.response);
             indicator.closeIndicator();
+            hideShowLogin(false);
             signInBtn.enabled = true;
         }
     };
@@ -441,7 +471,6 @@ function showBadCredentialsAlert() {
                 $.loginView.close();
         }
     });
-
     alertDialog.show();
 }
 
@@ -452,6 +481,7 @@ function login(auto) {
         // login from register
         user = emailReg;
         pass = passwordReg;
+        hideShowLogin(true);
     } else {
         user = $.loginEmail.value;
         pass = $.loginPass.value;
@@ -476,6 +506,7 @@ function login(auto) {
             indicator.closeIndicator();
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             signInBtn.enabled = true;
+            hideShowLogin(false);
         }
 
         loginReq.onload = function() {
@@ -494,13 +525,17 @@ function login(auto) {
                     loginAuthenticated();
                 }
             } else {
+                indicator.closeIndicator();
                 Ti.API.log(this.responseText);
+                hideShowLogin(false);
+                signInBtn.enabled = true;
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.loginCredentialsError);
             }
         };
         loginReq.onerror = function(e) {
             Ti.API.error('Bad Sever =>' + JSON.stringify(e));
             signInBtn.enabled = true;
+            hideShowLogin(false);
             indicator.closeIndicator();
             if (e.code === 400) {
                 // OAuth return 400 on credentials error

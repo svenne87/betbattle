@@ -461,7 +461,6 @@ if (OS_IOS) {
     var status = false;
 
     var PUBLIC_KEY = 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlxb/6H5UAlfdtBk66M1DeVOaXcvHTHx6R2nnLtN/n6LQVnPYF7t8UaoqIW+KgpjpIx3Ffopki26Wm83aHxkBq5L2Q5+I2laH8RpUWR6w0cz4Gv+7j0inQwX7GpE52EetREupqHrCz3CfhVPKMVGxLQsKCXFZewaocWGTh3fDRzk+nJK8NtlM1HvQIeFW/sAqtx+hNyKRd4nNQ5AZidM9J9WfTQwDZfh1lgvDra9ysSppD29ZHnCp9taZD0ntbOdM/QBxr+4ur+h/Jl43vT9tjBmIsRxip/I0Op3f1DOamoNwPV/PdhwjuzYFbAMvtJxCav+z6Pn9coPV98HEYz1R/wIDAQAB';
-
     // Read more about the developer payload in the "Verify the Developer Payload"
     // section of the documentation. It is not necessary to change this to run the example.
     var developerPayloadRaw = Ti.Utils.base64encode(Alloy.Globals.BETKAMPENUID).text;

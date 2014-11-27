@@ -97,9 +97,12 @@ function removeCouponGame(gameID) {
                     amount_deleted++;
 
                     // make sure match is removed so that we can check the dates for matches in the array
-                    for (var i in games) {
-                        if (games[i].game_id == gameID) {
-                            var index = Alloy.Globals.COUPON.games.indexOf(games[i]);
+                    
+                    // TODO var games innan ( 3 första rader)
+                    
+                    for (var i in Alloy.Globals.COUPON.games) {
+                        if (Alloy.Globals.COUPON.games[i].game_id == gameID) {
+                            var index = Alloy.Globals.COUPON.games.indexOf(Alloy.Globals.COUPON.games[i]);
                             Alloy.Globals.COUPON.games.splice(index, 1);
                         }
                     }
@@ -589,7 +592,8 @@ if (isAndroid) {
 
 submitButton.addEventListener('click', function() {
     var gameDatesValid = true;
-
+    
+    var games = Alloy.Globals.COUPON.games;
     // check if any of the games in the coupon has started / already finished.
     for (var i = 0; i < games.length; i++) {
         var gameDateMilli = games[i].game_date + "000";

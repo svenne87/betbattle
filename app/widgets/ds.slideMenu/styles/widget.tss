@@ -24,12 +24,21 @@
 	zIndex: "3",
 	width : Ti.Platform.displayCaps.platformWidth,
 },
-"#contentview": {
+"#contentview[platform=android]": {
 	left : "0dp",
 	width : Ti.Platform.displayCaps.platformWidth,
 	height : Ti.UI.Fill,
+	fullScreen : true,
 	top : "0dp",
-	backgroundColor : '#303030'
+	backgroundImage: '/images/Default-Portrait.png'
+},
+"#contentview[platform=ios]": {
+	left : "0dp",
+	width : Ti.Platform.displayCaps.platformWidth,
+	height : Ti.UI.Fill,
+	fullScreen : true,
+	top : "0dp",
+	backgroundImage: '/images/Default-Portrait.png'
 },
 "#shadowview": {
 	shadowColor:"black",

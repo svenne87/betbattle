@@ -87,9 +87,9 @@ function removeCouponGame(gameID) {
                     amount_deleted++;
 
                     // make sure match is removed so that we can check the dates for matches in the array
-                    for (var i in games) {
-                        if (games[i].game_id == gameID) {
-                            var index = Alloy.Globals.COUPON.games.indexOf(games[i]);
+                    for (var i in Alloy.Globals.COUPON.games) {
+                        if (Alloy.Globals.COUPON.games[i].game_id == gameID) {
+                            var index = Alloy.Globals.COUPON.games.indexOf(Alloy.Globals.COUPON.games[i]);
                             Alloy.Globals.COUPON.games.splice(index, 1);
                         }
                     }
@@ -102,6 +102,7 @@ function removeCouponGame(gameID) {
                         couponWin.setOpacity(0);
                         couponWin.close();
                     }
+                    
                     Alloy.Globals.getCoupon();
                     $.editGame.setOpacity(0);
                     $.editGame.close();
