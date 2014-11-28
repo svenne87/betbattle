@@ -208,5 +208,3 @@ if (language) {
     getLanguage();
 }
 
-// när man stänger fönster, dölj med opacity innan...
-// http://developer.appcelerator.com/question/145806/how-to-prevent-duplicate-actions-in-titanium

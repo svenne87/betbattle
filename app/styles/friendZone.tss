@@ -3,6 +3,8 @@
   height: "100%",
   layout: "absolute",
   backgroundColor : "#000",
+  translucent: false,
+  barColor : 'black'
 },
 ".challengesSection":{
 	height : 75,

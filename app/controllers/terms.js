@@ -27,7 +27,7 @@ if (OS_ANDROID) {
         url : url,
         height : Ti.UI.FILL,
         width : Ti.UI.FILL,
-        backgroundColor : '#303030',
+        backgroundColor : '#000',
         softKeyboardOnFocus : Titanium.UI.Android.SOFT_KEYBOARD_HIDE_ON_FOCUS
     });
 
@@ -47,7 +47,7 @@ if (OS_ANDROID) {
         url : url,
         height : Ti.UI.FILL,
         width : Ti.UI.FILL,
-        backgroundColor : '#303030'
+        backgroundColor : '#000'
     });
 }
 extwebview.hideLoadIndicator = true;

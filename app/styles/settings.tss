@@ -3,6 +3,8 @@
     width: Ti.UI.FILL,
     height: Ti.UI.FILL,
 	backgroundColor : "#000",
+	translucent: false,
+	barColor : 'black'
 },
 "#settingsView": {
 	layout: 'vertical',

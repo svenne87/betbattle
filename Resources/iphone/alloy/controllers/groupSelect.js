@@ -660,7 +660,9 @@ function Controller() {
         layout: "vertical",
         width: Ti.UI.FILL,
         height: Ti.UI.FILL,
-        backgroundColor: "#000000",
+        backgroundColor: "#000",
+        translucent: false,
+        barColor: "black",
         apiName: "Ti.UI.Window",
         classes: [ "container" ],
         id: "groupSelectWindow"

@@ -843,7 +843,7 @@ Alloy.Globals.unlockAchievement = function(achID) {
                         if(OS_IOS) {
                             indWin = Titanium.UI.createWindow();
                         } else {
-                             indWin = Titanium.UI.createWindow({backgroundColor : 'transparent'});
+                             indWin = Titanium.UI.createWindow({ backgroundColor : 'transparent', navBarHidden : true });                           
                         }
                         
                         //  view
@@ -879,7 +879,13 @@ Alloy.Globals.unlockAchievement = function(achID) {
                         indView.add(image);
                         indView.add(message);
                         indWin.open();
-
+                        
+                        if(OS_ANDROID) {
+                            indWin.addEventListener('open', function() {
+                                indWin.activity.actionBar.hide();
+                            });               
+                        }
+                        
                         player.play();
 
                         var interval = interval ? interval : 2500;

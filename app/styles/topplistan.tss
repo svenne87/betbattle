@@ -3,6 +3,8 @@
   	height: Ti.UI.FILL,
   	layout: "vertical",
 	backgroundColor : "#000",
+	translucent: false,
+	barColor : 'black'
 },
 "#scoreBoardView": {
 	layout: 'vertical',

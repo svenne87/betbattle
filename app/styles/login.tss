@@ -2,7 +2,7 @@
 	layout: 'vertical',
 	width: Ti.UI.FILL,
 	height: Ti.UI.FILL,
-	backgroundColor: 'transparent'
+	backgroundColor: '#000'
 },
 "#content":{
 	height: '100%',
@@ -12,11 +12,9 @@
 },
 "#nav[platform=ios]":{
 	tintColor : '#FFF',
-	barColor : '#000',
+	translucent: true,
+	barColor : 'black',
 	height : Ti.UI.FILL,
-	backgroundImage : 'none',
-	backgroundColor : 'transparent',
-	opacity : 0.9
 },
 "#facebookBtn":{
 	top: '65%',

@@ -2,10 +2,13 @@
  	width:"100%",
  	height:"100%",
 	backgroundColor: '#303030',
- 	layout:"vertical" 
+ 	layout:"vertical",
+ 	translucent: false,
+	barColor : 'black'
 },
 "#nav[platform=ios]":{
 	backgroundImage : 'images/green_bg.png',
 	tintColor : '#FFF',
-	barColor : '#FFF'
+	translucent: false,
+	barColor : 'black'
 }

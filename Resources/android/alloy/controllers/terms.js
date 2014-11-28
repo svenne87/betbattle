@@ -28,6 +28,8 @@ function Controller() {
         width: Ti.UI.FILL,
         height: Ti.UI.FILL,
         backgroundColor: "#303030",
+        translucent: false,
+        barColor: "black",
         apiName: "Ti.UI.Window",
         classes: [ "container" ],
         id: "terms"
@@ -60,7 +62,7 @@ function Controller() {
         url: url,
         height: Ti.UI.FILL,
         width: Ti.UI.FILL,
-        backgroundColor: "#303030",
+        backgroundColor: "#000",
         softKeyboardOnFocus: Titanium.UI.Android.SOFT_KEYBOARD_HIDE_ON_FOCUS
     });
     extwebview.hideLoadIndicator = true;

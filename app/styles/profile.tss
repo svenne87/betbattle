@@ -2,6 +2,8 @@
 ".container" : {
   width: Ti.UI.FILL,
   height: Ti.UI.FILL,
+  translucent: false,
+  barColor : 'black'
 },
 "#table[platform=ios]": {
 	height : Ti.UI.FILL,

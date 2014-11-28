@@ -3,6 +3,8 @@
     width: Ti.UI.FILL,
     height: Ti.UI.FILL,
 	backgroundColor: '#303030',
+	translucent: false,
+	barColor : 'black'
 },
 "#challenges_finished":{
 	height:Ti.UI.FILL,

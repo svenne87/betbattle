@@ -40,7 +40,7 @@ if (OS_ANDROID) {
 } else {
     $.registrationView.titleControl = Ti.UI.createLabel({
         text : Alloy.Globals.PHRASES.regTxt,
-        font : Alloy.Globals.FONT,
+        font : Alloy.Globals.getFontCustom(18, "Bold"),
         color : 'white'
     });
 

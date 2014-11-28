@@ -4,4 +4,6 @@
   height: "100%",
   layout: "vertical",
   backgroundColor : "#000",
+  translucent: false,
+  barColor : 'black'
 }
