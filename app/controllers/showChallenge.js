@@ -4,11 +4,12 @@ var botView;
 var groupName = args.group;
 var headerScoreLabel;
 var pendingStandingsArray = [];
-var tempScoreLabelArray = [];
 var challengeFinished = false;
 var refresher;
 var swipeRefresh = null;
 var androidViews = [];
+var firstSections; 
+var firstTable;
 
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({
@@ -72,9 +73,9 @@ function checkDate(date) {
 }
 
 function compare(a, b) {
-    if (a.points > b.points)
+    if ((a.points - 0) > (b.points - 0))
         return -1;
-    if (a.points < b.points)
+    if ((a.points - 0) < (b.points - 0))
         return 1;
     return 0;
 }
@@ -92,16 +93,6 @@ function addPointPendingStandings(game_type, nrOfValues, uid) {
             if (pendingStandingsArray[player].uid === uid) {
                 // user found
                 pendingStandingsArray[player].points = ((pendingStandingsArray[player].points - 0) + point);
-
-                // Find correct label and update result
-                if (tempScoreLabelArray.length > 0) {
-                    for (var label in tempScoreLabelArray) {
-                        if (tempScoreLabelArray[label].id === uid) {
-                            tempScoreLabelArray[label].setText(pendingStandingsArray[player].points);
-                            break;
-                        }
-                    }
-                }
                 break;
             }
         }
@@ -257,8 +248,14 @@ function createGameType(gameType, game, values, index, sections) {
                                 
                                 if(desc !== '') {
                                     headerScoreLabel.setText(resultText + "    (" + endTimeResultText + " " + desc + ")");
+                                    headerScoreLabel.width = Ti.UI.FILL;
                                 } else {
-                                    headerScoreLabel.setText(resultText + "    (" + endTimeResultText + ")");
+                                    if(endTimeResultText !== '0 - 0'){
+                                        headerScoreLabel.setText(resultText + "    (" + endTimeResultText + ")");                                   
+                                    } else {
+                                        headerScoreLabel.setText(resultText); 
+                                    }
+                                    headerScoreLabel.width = Ti.UI.FILL;
                                 }
                             } else {
                                 headerScoreLabel.setText(resultText);
@@ -427,7 +424,7 @@ function createGameType(gameType, game, values, index, sections) {
     }
 }
 
-function createLayout(game, values, games, currentStanding, isFirst, isFinished) {
+function createLayout(game, values, games, currentStanding, isFirst, isFinished, isLast) {
     // isFinished will be true if all matches are finished
     if (currentStanding.length > 0 && isFinished) {
         challengeFinished = true;
@@ -682,13 +679,8 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished)
         // send in y and sections to add the data to the correct section. (y+1 will be that section, since section[0] is used)
         createGameType(gametypes[y], game, values, ((y - 0 ) + 1), sections);
     }
-
-    if (!challengeFinished) {
-        // sort array
-        currentStanding.sort(compare);
-    }
-
-    // create standings view
+    
+        // create standings view
     if (currentStanding.length > 0 && isFirst) {
         // standings
         var standingsView = Ti.UI.createView({
@@ -753,6 +745,16 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished)
 
         }
 
+        // keep track of these, since we add the standings rows to section[0] then setData
+        firstSections = sections;
+        firstTable = table; 
+    }
+
+
+    if (!challengeFinished && isLast) {
+        // sort array and add standings tabel. Only do this after the last game
+        currentStanding.sort(compare);
+        
         for (var i = 0; i < currentStanding.length; i++) {
             var tmpObj = currentStanding[i];
             var image = '';
@@ -796,7 +798,7 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished)
                 width : Ti.UI.SIZE,
                 font : Alloy.Globals.getFontCustom(16, 'Regular'),
                 color : '#FFF',
-                text : tmpObj.playerName
+                text : tmpObj.playerName + ' '
             });
 
             if (challengeFinished) {
@@ -843,18 +845,28 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished)
                     text : tmpObj.points || '0'
                 });
 
-                // keep track of all labels for update
-                tempScoreLabelArray.push(potTextLabel);
-
                 row.add(potTextLabel);
             }
 
             row.add(nameLabel);
 
-            sections[0].add(row);
+            if(isFirst && isLast) {
+                // only one game
+                sections[0].add(row);
+            } else {
+                firstSections[0].add(row);
+            }
         }
+        
+        if(games.length > 1) {
+            // more than one game
+            if(firstTable && firstSections) {
+                firstTable.setData(firstSections);
+            }
+        }
+ 
     }
-
+    
     // add slide text, if this is not the last game
     if (games.indexOf(game) !== (games.length - 1)) {
         // not last game
@@ -1021,6 +1033,7 @@ function getChallengeShow() {
 
 function showResults(challenge) {
     var isFirst = false;
+    var isLast = false;
     var isFinished = false;
     var finishedGamesCount = 0;
     $.showChallenge.hide();
@@ -1060,11 +1073,16 @@ function showResults(challenge) {
     for (var y in challenge.games) {
         if (y === '0') {
             isFirst = true;
+        } 
+
+        if(y == (challenge.games.length - 1)) {
+            isLast = true;
         }
 
         // create layout
-        createLayout(challenge.games[y], challenge.values, challenge.games, challenge.current_standing, isFirst, isFinished);
+        createLayout(challenge.games[y], challenge.values, challenge.games, challenge.current_standing, isFirst, isFinished, isLast);
         isFirst = false;
+        isLast = false;
     }
 
     setTimeout(function() {

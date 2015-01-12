@@ -419,7 +419,15 @@ function challengeFriends() {
             indicator.closeIndicator();
             isSubmitting = false;
             Ti.API.info("ERROR PARSE : " + JSON.stringify(this.responseText));
-            if (JSON.parse(this.responseText).indexOf(Alloy.Globals.PHRASES.coinsInfoTxt.toLowerCase()) != -1) {
+            
+            var errorTxt = "";
+            try{
+                errorTxt = JSON.parse(this.responseText);
+            } catch(e) {
+                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+            }
+            
+            if (errorTxt.indexOf(Alloy.Globals.PHRASES.coinsInfoTxt.toLowerCase()) != -1) {
                 // not enough coins
                 // show dialog with "link" to the store
                 var alertWindow = Titanium.UI.createAlertDialog({

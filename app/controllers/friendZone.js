@@ -349,6 +349,7 @@ cGroupLabel = Titanium.UI.createLabel({
 
 createGroupBtn.add(cGroupLabel);
 
+/*
 var shareBtn = Titanium.UI.createTableViewRow({
     id : 'shareBtn',
     hasChild : child,
@@ -391,7 +392,7 @@ shareLabel = Titanium.UI.createLabel({
 });
 
 shareBtn.add(shareLabel);
-
+*/
 var fb;
 
 if (Alloy.Globals.FACEBOOKOBJECT != null) {
@@ -542,6 +543,7 @@ createGroupBtn.addEventListener('click', function(e) {
     }
 });
 
+/*
 shareBtn.addEventListener('click', function(e) {
     // check connection
     if (!Alloy.Globals.checkConnection()) {
@@ -561,8 +563,9 @@ shareBtn.addEventListener('click', function(e) {
         win = null;
     }
 });
+*/
 
-sections[0].add(shareBtn);
+//sections[0].add(shareBtn);
 sections[0].add(fbFriendBtn);
 sections[1].add(addFriendsBtn);
 sections[1].add(myFriendBtn);

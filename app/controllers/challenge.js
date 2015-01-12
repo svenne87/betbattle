@@ -1183,9 +1183,48 @@ function postAnswer(gameArray) {
     }
 }
 
+// function to split array based on game id
+function splitByGameId(arr) {
+  return arr.reduce(function(memo, x) {
+    if (!memo[x.game_id]) { memo[x.game_id] = []; }
+    
+    memo[x.game_id].push(x);
+    return memo;
+  }, {});
+}
+
 // validate
 function validate() {
+    
+    // if there is several views and this ain't the last page
+    if($.challenge.views.length > 1 && $.challenge.currentPage !== ($.challenge.views.length - 1)) {
+        var badValueCount = 0;  
+        
+        // check if we can "auto change" view
+        for (var i in gameArray) {
+            // find the values for the correct game displayed in this view             
+            if(gameArray[i].game_id === $.challenge.views[$.challenge.currentPage].id) {
+                // check to see if the page need to change (if all values on that that page is selected)             
+                for (var y in gameArray[i].gameValue) {                
+                    if (gameArray[i].gameValue[y] === -1) {
+                        // bad value found, we can't change page
+                        badValueCount++;
+                    }
+                }
+             
+            }
+        }
+        
+        if(badValueCount === 0) {
+            // all values for this view have been selected
+            $.challenge.scrollToView($.challenge.currentPage + 1);  
+        }    
+    }
+
+
+    // keep this check separate to make sure that the first loop always runs
     for (var i in gameArray) {
+        // check to see if values are set
         for (var y in gameArray[i].gameValue) {
             if (gameArray[i].gameValue[y] === -1) {
                 return false;
@@ -1196,11 +1235,12 @@ function validate() {
 }
 
 // create the layout views
-function createLayout(gameObject) {
+function createLayout(gameObject) {         
     view = Ti.UI.createView({
         height : Ti.UI.FILL,
         width : 'auto',
         layout : 'vertical',
+        id : gameObject.attributes.game_id
         //showVerticalScrollIndicator : true,
     });
 
@@ -1396,9 +1436,9 @@ function createLayout(gameObject) {
 
             tableFooterView.add(slide);
 
-            if (isAndroid) {
+            //if (isAndroid) { // TODO varför var det bara satt på Android??
                 table.footerView = tableFooterView;
-            }
+            //}
 
         }
 
@@ -1895,4 +1935,3 @@ if (Alloy.Globals.checkConnection()) {
 } else {
     Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 }
-

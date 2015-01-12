@@ -542,8 +542,12 @@ Alloy.Globals.setAndroidCouponMenu = function(activity) {
 
         if (Alloy.Globals.hasCoupon) {
             menu.findItem(1).setIcon('images/ikoner_kupong_red.png');
+           // menu.findItem(1).setOpacity(1);
+            menu.findItem(1).setVisible(true);
         } else {
             menu.findItem(1).setIcon('images/ikoner_kupong.png');
+           // menu.findItem(1).setOpacity(0);
+            menu.findItem(1).setVisible(false);
         }
     };
 
@@ -1253,8 +1257,10 @@ Alloy.Globals.getCoupon = function(showAlert, indicator) {
                         Alloy.Globals.hasCoupon = false;
                         if (OS_IOS) {
                             var children = Alloy.Globals.NAV.getChildren();
-                            for (var i in children) {
+                            for (var i in children) {                                
                                 if (children[i].id == "ticketView") {
+                                    children[i].setOpacity(0); // hide the ticket icon
+                                    
                                     var labels = children[i].getChildren();
                                     for (var y in labels) {
                                         if (labels[y].id == "badge") {
@@ -1282,9 +1288,11 @@ Alloy.Globals.getCoupon = function(showAlert, indicator) {
 
                         if (OS_IOS) {
                             Ti.API.info("challenge succces");
-                            var children = Alloy.Globals.NAV.getChildren();
+                            var children = Alloy.Globals.NAV.getChildren();                            
                             for (var i in children) {
                                 if (children[i].id == "ticketView") {
+                                    children[i].setOpacity(1); // show the ticket icon
+                                    
                                     var labels = children[i].getChildren();
                                     for (var y in labels) {
                                         if (labels[y].id == "badge") {

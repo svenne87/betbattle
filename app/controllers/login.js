@@ -426,7 +426,7 @@ if (Alloy.Globals.FBERROR) {
                 //addEvent();
             }
         }
-    });
+    }); 
 }
 
 addEvent();

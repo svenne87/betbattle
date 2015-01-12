@@ -1,7 +1,7 @@
 var args = arguments[0] || {};
 
 //if (args.refresh) {
-   // getChallenges();
+// getChallenges();
 //}
 
 var iOSVersion;
@@ -130,41 +130,59 @@ table.addEventListener('click', function(e) {
     if (e.rowData !== null) {
         if (Alloy.Globals.checkConnection()) {
             if ( typeof e.rowData.id !== 'undefined') {
-                var obj = Alloy.Globals.CHALLENGEOBJECTARRAY[1][e.rowData.id];
-                if (obj.attributes.show !== 0) {
-                    // view challenge
-                    var group = null;
-                    try {
-                        group = obj.attributes.group[0].name;
-                    } catch(e) {
-                        group = null;
-                    }
-
-                    if ( typeof group === undefined) {
-                        group = null;
-                    }
-                    var args = {
-                        cid : obj.attributes.id,
-                        group : group
+                if (e.rowData.name === 'showMatchOTD') {
+                    var arg = {
+                        gameID : e.rowData.id,
                     };
 
-                    Alloy.Globals.CHALLENGEINDEX = e.rowData.id;
-                    var win = Alloy.createController('showChallenge', args).getView();
+                    var win = Alloy.createController('showMatchOTD', arg).getView();
                     Alloy.Globals.WINDOWS.push(win);
 
-                    if (OS_IOS) {
+                    if (!isAndroid) {
                         Alloy.Globals.NAV.openWindow(win, {
                             animated : true
                         });
-                    } else if (OS_ANDROID) {
+                    } else {
                         win.open({
                             fullScreen : true
                         });
                     }
+                } else {
+                    var obj = Alloy.Globals.CHALLENGEOBJECTARRAY[1][e.rowData.id];
+                    if (obj.attributes.show !== 0) {
+                        // view challenge
+                        var group = null;
+                        try {
+                            group = obj.attributes.group[0].name;
+                        } catch(e) {
+                            group = null;
+                        }
 
+                        if ( typeof group === undefined) {
+                            group = null;
+                        }
+                        var args = {
+                            cid : obj.attributes.id,
+                            group : group
+                        };
+
+                        Alloy.Globals.CHALLENGEINDEX = e.rowData.id;
+                        var win = Alloy.createController('showChallenge', args).getView();
+                        Alloy.Globals.WINDOWS.push(win);
+
+                        if (OS_IOS) {
+                            Alloy.Globals.NAV.openWindow(win, {
+                                animated : true
+                            });
+                        } else if (OS_ANDROID) {
+                            win.open({
+                                fullScreen : true
+                            });
+                        }
+
+                    }
                 }
             }
-
         } else {
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
         }
@@ -173,30 +191,30 @@ table.addEventListener('click', function(e) {
 
 buildTableRows();
 
-if(!isAndroid) {
+if (!isAndroid) {
     $.challenges_pending.add(table);
 } else {
     var swipeRefreshModule = require('com.rkam.swiperefreshlayout');
 
-        swipeRefresh = swipeRefreshModule.createSwipeRefresh({
-            view : table,
-            height : Ti.UI.FILL,
-            width : Ti.UI.FILL,
-            id : 'swiper'
-        });
-        
-        swipeRefresh.addEventListener('refreshing', function(e) {
-            if (Alloy.Globals.checkConnection()) {
-                setTimeout(function() {
-                    indicator.openIndicator();
-                    getChallenges();
-                }, 800);
-            } else {
-                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
-                swipeRefresh.setRefreshing(false);
-            }
-        }); 
-        $.challenges_pending.add(swipeRefresh);   
+    swipeRefresh = swipeRefreshModule.createSwipeRefresh({
+        view : table,
+        height : Ti.UI.FILL,
+        width : Ti.UI.FILL,
+        id : 'swiper'
+    });
+
+    swipeRefresh.addEventListener('refreshing', function(e) {
+        if (Alloy.Globals.checkConnection()) {
+            setTimeout(function() {
+                indicator.openIndicator();
+                getChallenges();
+            }, 800);
+        } else {
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+            swipeRefresh.setRefreshing(false);
+        }
+    });
+    $.challenges_pending.add(swipeRefresh);
 }
 
 function endRefresher() {
@@ -211,10 +229,18 @@ function endRefresher() {
     }
 }
 
-
 function buildTableRows() {
     //table.setData([]);
     data = [];
+    var createdPendingMatchOTD = false;
+
+    // build pending row for match OTD
+    if ( typeof Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_data !== 'undefined') {
+        if (Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_data.status !== '2') {
+            data.push(createMatchOTDRow());
+            createdPendingMatchOTD = true;
+        }
+    }
 
     var arrayObj = Alloy.Globals.CHALLENGEOBJECTARRAY[1];
     // create 'accept' rows
@@ -222,7 +248,7 @@ function buildTableRows() {
         for (var i = 0; i < arrayObj.length; i++) {
             data.push(constructChallengeRows(arrayObj[i], i));
         }
-    } else if (arrayObj.length === 0) {
+    } else if (arrayObj.length === 0 && !createdPendingMatchOTD) {
         data.push(createEmptyTableRow(Alloy.Globals.PHRASES.challengesSmallTxt));
     }
 
@@ -487,6 +513,264 @@ function constructChallengeRows(obj, index) {
     return row;
 }
 
+// function to create match of the day row
+function createMatchOTDRow() {
+    var fontawesome = require('lib/IconicFont').IconicFont({
+        font : 'lib/FontAwesome'
+    });
+
+    var font = 'FontAwesome';
+
+    var child = true;
+
+    if (isAndroid) {
+        child = false;
+        font = 'fontawesome-webfont';
+    }
+
+    var row = Ti.UI.createTableViewRow({
+        height : 95,
+        id : Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_data.game_id,
+        name : "showMatchOTD",
+        width : Ti.UI.FILL,
+        color : "#FFF",
+        backgroundColor : 'transparent',
+        font : Alloy.Globals.getFont(),
+        hasChild : child,
+        selectionStyle : 'none'
+    });
+
+    row.add(Ti.UI.createImageView({
+        image : '/images/ikoner_mix_sport.png',
+        left : 10,
+        width : 30,
+        height : 30
+    }));
+
+    var firstRowView = Ti.UI.createView({
+        top : -40,
+        layout : 'absolute',
+        width : 'auto'
+    });
+
+    firstRowView.add(Ti.UI.createLabel({
+        font : Alloy.Globals.getFontCustom(16, 'Regular'),
+        text : Alloy.Globals.PHRASES.landingPageMatch + ' ',
+        color : '#FFF',
+        left : 60,
+        height : Ti.UI.SIZE,
+        width : Ti.UI.SIZE
+    }));
+
+    var secondRowView = Ti.UI.createView({
+        top : 4,
+        layout : 'absolute',
+        width : 'auto'
+    });
+
+    var date = Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_data.game_date;
+    date = date.split(" ");
+    var time = date[1];
+    date = date[0];
+    date = date.substring(0, 10);
+    date = date.substring(5);
+
+    // check first char
+    if (date.charAt(0) == '0') {
+        date = date.substring(1);
+    }
+
+    // change position
+    var datePartOne = date.substring(date.lastIndexOf('-'));
+    datePartOne = datePartOne.replace('-', '');
+    if (datePartOne.charAt(0) == '0') {
+        datePartOne = datePartOne.substring(1);
+    }
+
+    var datePartTwo = date.substring(0, date.indexOf('-'));
+    date = datePartOne + '/' + datePartTwo;
+
+    time = time.substring(time.length - 8);
+    time = time.substring(0, 5);
+
+    var startTextLabel = Ti.UI.createLabel({
+        left : 60,
+        font : {
+            fontFamily : font
+        },
+        text : fontawesome.icon('fa-clock-o'),
+        color : Alloy.Globals.themeColor()
+    });
+
+    secondRowView.add(startTextLabel);
+
+    var startTextValueLabel = Ti.UI.createLabel({
+        left : 75,
+        text : '' + date + ' ' + time + ' ',
+        font : Alloy.Globals.getFontCustom(12, 'Regular'),
+        color : Alloy.Globals.themeColor()
+    });
+
+    secondRowView.add(startTextValueLabel);
+
+    var participantsTextLabel = Ti.UI.createLabel({
+        left : 160,
+        font : {
+            fontFamily : font
+        },
+        text : fontawesome.icon('icon-user'),
+        color : Alloy.Globals.themeColor()
+    });
+
+    secondRowView.add(participantsTextLabel);
+
+    var oppCount = parseInt(Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_data.participants.count);
+
+    var participantsValueLabel = Ti.UI.createLabel({
+        left : 175,
+        text : oppCount.toString() + ' ',
+        font : Alloy.Globals.getFontCustom(12, 'Regular'),
+        color : Alloy.Globals.themeColor()
+    });
+
+    secondRowView.add(participantsValueLabel);
+
+    var potTextLabel = Ti.UI.createLabel({
+        left : (160 + participantsValueLabel.toImage().width + 5 + participantsTextLabel.toImage().width + 2),
+        font : {
+            fontFamily : font
+        },
+        text : fontawesome.icon('fa-database'),
+        color : Alloy.Globals.themeColor()
+    });
+
+    secondRowView.add(potTextLabel);
+
+    var currentPot = Alloy.Globals.PHRASES.unknownSmallTxt;
+
+    try {
+        currentPot = (oppCount * Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_data.participants.bet_amount);
+    } catch (e) {
+        currentPot = Alloy.Globals.PHRASES.unknownSmallTxt;
+    }
+
+    var potValueLabel = Ti.UI.createLabel({
+        left : (160 + participantsValueLabel.toImage().width + 2 + participantsTextLabel.toImage().width + 6 + potTextLabel.toImage().width + 2),
+        text : '' + currentPot,
+        font : Alloy.Globals.getFontCustom(12, 'Regular'),
+        color : Alloy.Globals.themeColor()
+    });
+
+    secondRowView.add(potValueLabel);
+
+    if (!child) {
+        var rightPercentage = '5%';
+
+        font = 'fontawesome-webfont';
+
+        if (Titanium.Platform.displayCaps.platformWidth < 350) {
+            rightPercentage = '3%';
+        }
+
+        row.add(Ti.UI.createLabel({
+            font : {
+
+                fontFamily : font
+            },
+            text : fontawesome.icon('icon-chevron-right'),
+            right : rightPercentage,
+            color : '#c5c5c5',
+            fontSize : 60,
+            height : 'auto',
+            width : 'auto'
+        }));
+    }
+
+    var thirdRowView = Ti.UI.createView({
+        top : 40,
+        layout : 'absolute',
+        width : 'auto'
+    });
+
+    var pendingLabel = Ti.UI.createLabel({
+        left : 60,
+        text : Alloy.Globals.PHRASES.pendingTxt + ' ',
+        font : Alloy.Globals.getFontCustom(12, 'Regular'),
+        color : Alloy.Globals.themeColor()
+    });
+
+    thirdRowView.add(pendingLabel);
+
+    // check all matches in a challenge to check if any of the matches are active
+    if (Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_data.status === '3') {
+        // set the length of the images you have in your sequence
+        var loaderArrayLength = 2;
+
+        // initialize the index to 1
+        var loaderIndex = 1;
+
+        var liveIcon = null;
+        // this function will be called by the setInterval
+        function loadingAnimation() {
+            // set the image property of the imageview by constructing the path with the loaderIndex variable
+            try {
+                liveIcon.image = "/images/ikon_" + loaderIndex + "_live.png";
+            } catch (e) {
+
+            }
+
+            //increment the index so that next time it loads the next image in the sequence
+            loaderIndex++;
+            // if you have reached the end of the sequence, reset it to 1
+            if (loaderIndex === 3) {
+                loaderIndex = 1;
+            }
+        }
+
+        liveIcon = Ti.UI.createImageView({
+            left : 60 + pendingLabel.toImage().width + 5,
+            image : '/images/ikon_1_live.png',
+            height : 10,
+            width : 10,
+        });
+
+        thirdRowView.add(liveIcon);
+
+        var liveLabel = Ti.UI.createLabel({
+            text : "Live",
+            left : 60 + pendingLabel.toImage().width + 15,
+            font : Alloy.Globals.getFontCustom(12, "Regular"),
+            color : Alloy.Globals.themeColor()
+        });
+
+        thirdRowView.add(liveLabel);
+
+        var loaderAnimate = setInterval(loadingAnimation, 280);
+    }
+
+    // Add info to the created row
+    row.add(firstRowView);
+    row.add(secondRowView);
+    row.add(thirdRowView);
+
+    row.add(Ti.UI.createView({
+        top : 60,
+        heigth : 14,
+        layout : 'horizontal'
+    }));
+
+    if (iOSVersion < 7) {
+        row.add(Ti.UI.createView({
+            height : 0.5,
+            top : 65,
+            backgroundColor : '#303030',
+            width : '120%'
+        }));
+    }
+
+    return row;
+}
+
 function getChallenges() {
     // Get challenges
     var xhr = Titanium.Network.createHTTPClient();
@@ -577,4 +861,4 @@ if (OS_ANDROID) {
 }
 
 indicator.openIndicator();
-getChallenges();
+getChallenges(); 

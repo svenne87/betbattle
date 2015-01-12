@@ -8,7 +8,7 @@ var fontawesome = require('lib/IconicFont').IconicFont({
     font : 'lib/FontAwesome'
 });
 
- $.ds.contentview.add(Alloy.createController('challengesView', argu).getView());
+$.ds.contentview.add(Alloy.createController('challengesView', argu).getView());
 
 var font = 'FontAwesome';
 var isAndroid = false;
@@ -17,7 +17,6 @@ if (OS_ANDROID) {
     font = 'fontawesome-webfont';
     isAndroid = true;
 }
-
 
 if (!isAndroid) {
     Alloy.Globals.NAV = $.nav;
@@ -32,7 +31,7 @@ if (!isAndroid) {
         height : 25,
         width : Ti.UI.SIZE,
         borderColor : 'transparent',
-        backgroundColor : 'transparent'  // TODO
+        backgroundColor : 'transparent' // TODO
     });
 
     buttonBarMenu.addEventListener('click', function() {
@@ -64,6 +63,10 @@ if (!isAndroid) {
     });
 
     btn.add(ticketBtn);
+
+    btn.setOpacity(0);
+    // hide the ticket icon
+
     var badge = Ti.UI.createLabel({
         width : 15,
         height : 15,
@@ -92,14 +95,14 @@ if (!isAndroid) {
             Alloy.Globals.WINDOWS.push(win);
         }
     });
-    
+
     $.mainWin.setLeftNavButton(buttonBarMenu);
 
     $.nav.add(btn);
 
-   // var currentView = Alloy.createController('challengesView', argu).getView();
-   // $.ds.contentview.add(currentView);
-   // Alloy.Globals.CURRENTVIEW = currentView;
+    // var currentView = Alloy.createController('challengesView', argu).getView();
+    // $.ds.contentview.add(currentView);
+    // Alloy.Globals.CURRENTVIEW = currentView;
 
     if (oldIndicator !== null && typeof oldIndicator !== 'undefined') {
         oldIndicator.closeIndicator();
@@ -112,7 +115,7 @@ if (!isAndroid) {
     });
 
     $.mainWin.orientationModes = [Titanium.UI.PORTRAIT];
-    $.mainWin.addEventListener('open', function() {  
+    $.mainWin.addEventListener('open', function() {
 
         if (!$.mainWin.activity) {
             Ti.API.error("Can't access action bar on a lightweight window.");
@@ -151,8 +154,12 @@ if (!isAndroid) {
 
                     if (Alloy.Globals.hasCoupon) {
                         menu.findItem(1).setIcon('images/ikoner_kupong_red.png');
+                        //menu.findItem(1).setOpacity(1);
+                        menu.findItem(1).setVisible(true);
                     } else {
                         menu.findItem(1).setIcon('images/ikoner_kupong.png');
+                        //menu.findItem(1).setOpacity(0);
+                        menu.findItem(1).setVisible(false);
                     }
 
                 };
@@ -176,14 +183,14 @@ if (!isAndroid) {
             oldIndicator.closeIndicator();
             oldIndicator = null;
         }
-   
+
     });
-    
+
 }
 
 checkRatestatus();
 
-// Used to update the menu and add a indicator for a new challenge 
+// Used to update the menu and add a indicator for a new challenge
 Ti.App.addEventListener('app:updateMenu', function() {
     // rebuild table rows
     // Pass data to widget leftTableView
@@ -193,7 +200,7 @@ Ti.App.addEventListener('app:updateMenu', function() {
 
     // set new profile name
     nameLabel.setText(Alloy.Globals.PROFILENAME);
-    
+
     if (Alloy.Globals.FACEBOOKOBJECT) {
         centerImageView.setImage('https://graph.facebook.com/' + Alloy.Globals.FACEBOOKOBJECT.id + '/picture');
     } else {
@@ -201,7 +208,7 @@ Ti.App.addEventListener('app:updateMenu', function() {
     }
 });
 
-// Used to rebuild the android action bar menu, to indicate that a ticket is available 
+// Used to rebuild the android action bar menu, to indicate that a ticket is available
 Ti.App.addEventListener('app:rebuildAndroidMenu', function() {
     try {
         $.mainWin.activity.invalidateOptionsMenu();
@@ -258,7 +265,6 @@ Ti.App.addEventListener('app:updateView', function(obj) {
     Alloy.Globals.CURRENTVIEW = currentView;
 });
 
-
 // Used to create the header view in menu
 function createMenuHeader() {
     var userInfoView = Ti.UI.createView({
@@ -279,9 +285,9 @@ function createMenuHeader() {
         width : 50,
         layout : 'horizontal'
     });
-    
+
     var image;
-    
+
     if (Alloy.Globals.FACEBOOKOBJECT) {
         image = 'https://graph.facebook.com/' + Alloy.Globals.FACEBOOKOBJECT.id + '/picture';
     } else {
@@ -330,11 +336,11 @@ function createMenuHeader() {
 
     leftViewPart.add(profileViewRow);
 
-    var topPos = -15; 
+    var topPos = -15;
     var heightPos = 26;
     var borderLeftTop = 18;
     var borderRightTop = 47;
-    
+
     if (isAndroid) {
         topPos = 5;
     }
@@ -442,14 +448,13 @@ function createMenuHeader() {
     return userInfoView;
 }
 
-
 Alloy.Globals.MAINWIN = $.mainWin;
 
-if(!isAndroid){
+if (!isAndroid) {
     if (Alloy.Globals.INDEXWIN !== null) {
         Alloy.Globals.INDEXWIN.close();
         Alloy.Globals.INDEXWIN = null;
-    }  
+    }
 }
 
 var args = arguments[0] || {};
@@ -558,31 +563,37 @@ function createSection() {
      */
 
     var args = {
-        title : Alloy.Globals.PHRASES.inviteFriendsTxt,
-        customView : 'shareView',
-        image : '/images/sharethis.png'
-    };
-    section.add(Alloy.createController('menurow', args).getView());
-
-    var args1 = {
-        title : Alloy.Globals.PHRASES.createChallengeTxt,
-        customView : 'newChallengeLeague',
-        image : '/images/Skapa_Utmaning.png'
-    };
-    section.add(Alloy.createController('menurow', args1).getView());
-
-    var args2 = {
-        title : Alloy.Globals.PHRASES.challengesTxt,
+        title : Alloy.Globals.PHRASES.homeTxt,
         customView : 'challengesView',
         image : '/images/ikon_spelanasta.png',
         rightIcon : ''
     };
 
     // Update menu with icon if there are new challenges
-    if (Alloy.Globals.CHALLENGEOBJECTARRAY[0].length > 0) {
-        args2.rightIcon = Alloy.Globals.CHALLENGEOBJECTARRAY[0].length;
+    if (Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_otd_status === 0 && Alloy.Globals.CHALLENGEOBJECTARRAY[0].length > 0) {
+        // add badge
+        args.rightIcon = (Alloy.Globals.CHALLENGEOBJECTARRAY[0].length + 1);
+    } else if (Alloy.Globals.CHALLENGEOBJECTARRAY[0].length > 0) {
+        // accept challenges, add badge
+        args.rightIcon = Alloy.Globals.CHALLENGEOBJECTARRAY[0].length;
+    } else if (Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_otd_status === 0) {
+        args.rightIcon = 1;
     }
 
+    section.add(Alloy.createController('menurow', args).getView());
+
+    var args1 = {
+        title : Alloy.Globals.PHRASES.inviteFriendsTxt,
+        customView : 'shareView',
+        image : '/images/sharethis.png'
+    };
+    section.add(Alloy.createController('menurow', args1).getView());
+
+    var args2 = {
+        title : Alloy.Globals.PHRASES.createChallengeTxt,
+        customView : 'newChallengeLeague',
+        image : '/images/Skapa_Utmaning.png'
+    };
     section.add(Alloy.createController('menurow', args2).getView());
 
     /*
@@ -594,7 +605,6 @@ function createSection() {
      section.add(Alloy.createController('menurow', args3).getView());
      */
 
-    
     var args4 = {
         title : Alloy.Globals.PHRASES.friendZoneTxt,
         customView : 'friendZone',
@@ -630,7 +640,7 @@ function createSection() {
      };
      section.add(Alloy.createController('menurow', args8).getView());
      */
-  
+
     var args9 = {
         title : Alloy.Globals.PHRASES.signOutTxt,
         customView : 'logout',
@@ -709,10 +719,12 @@ function rowSelect(e) {
 
             alertWindow.addEventListener('click', function(e) {
                 switch (e.index) {
-                case 0:         
+                case 0:
                     if (Alloy.Globals.FACEBOOKOBJECT) {
-                         var fb = Alloy.Globals.FACEBOOK.createActivityWorker({lifecycleContainer: $.mainWin});
-                         
+                        var fb = Alloy.Globals.FACEBOOK.createActivityWorker({
+                            lifecycleContainer : $.mainWin
+                        });
+
                         fb.addEventListener('logout', function(e) {
                             Ti.API.log('steg 3');
                             // this never get's called, might be a bug
@@ -865,7 +877,6 @@ Ti.App.addEventListener("sliderToggled", function(e) {
         $.ds.rightMenu.zIndex = 2;
     }
 });
-
 
 //check if user has rated app if not dialog shows up
 function checkRatestatus() {

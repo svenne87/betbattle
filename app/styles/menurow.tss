@@ -38,12 +38,12 @@
 "#rightIcon[platform=ios]": {
   	width: "27dp",
   	height : '15dp',
-    left: "140dp",
+    left: "90dp",
 },
 "#rightIcon[platform=android]": {
 	width : "27dp",
 	height : 'auto',
-    left : "140dp",
+    left : "90dp",
 },
 "#title": {
   	left: "34dp"

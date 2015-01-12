@@ -270,8 +270,14 @@ function createGameType(gameType, game, values, index, sections) {
 
                                 if (desc !== '') {
                                     headerScoreLabel.setText(resultText + "    (" + endTimeResultText + " " + desc + ")");
+                                    headerScoreLabel.width = Ti.UI.FILL;
                                 } else {
-                                    headerScoreLabel.setText(resultText + "    (" + endTimeResultText + ")");
+                                    if(endTimeResultText !== '0 - 0'){
+                                        headerScoreLabel.setText(resultText + "    (" + endTimeResultText + ")");                                   
+                                    } else {
+                                        headerScoreLabel.setText(resultText); 
+                                    }
+                                    headerScoreLabel.width = Ti.UI.FILL;
                                 }
                             } else {
                                 headerScoreLabel.setText(resultText);

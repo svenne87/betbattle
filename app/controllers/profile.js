@@ -3,6 +3,13 @@ var openWindows = [];
 var isAndroid;
 var iOSVersion;
 var sections = [];
+var deviceWidth = Ti.Platform.displayCaps.platformWidth;
+
+var fontawesome = require('lib/IconicFont').IconicFont({
+    font : 'lib/FontAwesome'
+});
+
+var font = 'FontAwesome';    
 
 if (OS_ANDROID) {
     $.profileWin.addEventListener('open', function() {
@@ -17,6 +24,8 @@ if (OS_ANDROID) {
         $.profileWin.activity.actionBar.title = Alloy.Globals.PHRASES.profile;
     });
 
+    font = 'fontawesome-webfont';
+    
     $.table.footerView = Ti.UI.createView({
         height : 0.5,
         backgroundColor : '#303030'
@@ -81,7 +90,7 @@ profileNameLabel = Ti.UI.createLabel({
 sections[0].headerView.add(profileNameLabel);
 
 var mainProfileRow = Ti.UI.createTableViewRow({
-    height : 140,
+    height : 200,
     className : "profile",
     width : Ti.UI.FILL,
     backgroundColor : '#000',
@@ -90,7 +99,7 @@ var mainProfileRow = Ti.UI.createTableViewRow({
 
 var firstMainProfileRowView = Ti.UI.createView({
     top : 10,
-    height : 90,
+    height : 100,
     width : Ti.UI.FILL,
     layout : 'horizontal'
 });
@@ -137,11 +146,42 @@ firstMainProfileRowView.add(favoriteTeamImageView);
 firstMainProfileRowView.add(profileImageView);
 firstMainProfileRowView.add(levelImageView);
 
-var secondMainProfileRowView = Ti.UI.createView({
+mainProfileRow.add(firstMainProfileRowView);
+
+var profileStatsView = Ti.UI.createView({
+    height : 100,
+    left : 0,
     top : 100,
-    height : 20,
     width : Ti.UI.FILL,
-    layout : 'absolute'
+    backgroundColor : '#000',
+});
+
+profileStatsView.hide();
+
+mainProfileRow.add(profileStatsView);
+
+var firstProfilePart = Ti.UI.createView({
+    height : Ti.UI.SIZE,
+    left : 0,
+    width : (deviceWidth / 2),
+    backgroundColor : '#000',
+    layout : 'horizontal'
+});
+
+var secondProfilePart = Ti.UI.createView({
+    height : Ti.UI.SIZE,
+    left : (deviceWidth / 2),
+    width : (deviceWidth / 2),
+    backgroundColor : '#000',
+    layout : 'horizontal'
+});
+
+var firstLeftRow = Ti.UI.createView({
+    top : 0,
+    left : 0,
+    height : 30,
+    width : Ti.UI.FILL,
+    layout : 'horizontal'
 });
 
 var favoriteTeamNameLabel = Ti.UI.createLabel({
@@ -149,80 +189,16 @@ var favoriteTeamNameLabel = Ti.UI.createLabel({
     text : '',
     color : '#FFF',
     left : 20,
-    height : 20,
     width : Ti.UI.SIZE
 });
 
-var dynHeight;
+firstLeftRow.add(favoriteTeamNameLabel);
+firstProfilePart.add(firstLeftRow);
 
-if(isAndroid) {
-    dynHeight = Ti.UI.SIZE;
-} else {
-    dynHeight = 22;
-}
-
-var levelLabel = Ti.UI.createLabel({
-    font : Alloy.Globals.getFontCustom(16, 'Regular'),
-    text : Alloy.Globals.PHRASES.loadingTxt + ' ',
-    color : '#FFF',
-    right : 20,
-    height : dynHeight,
-    width : Ti.UI.SIZE
-});
-
-secondMainProfileRowView.add(favoriteTeamNameLabel);
-secondMainProfileRowView.add(levelLabel);
-
-mainProfileRow.add(firstMainProfileRowView);
-mainProfileRow.add(secondMainProfileRowView);
-
-/*      Part 2      */
-sections[1] = Ti.UI.createTableViewSection({
-    headerView : Ti.UI.createView({
-        height : 75,
-        backgroundColor : '#303030',
-        backgroundGradient : {
-            type : "linear",
-            startPoint : {
-                x : "0%",
-                y : "0%"
-            },
-            endPoint : {
-                x : "0%",
-                y : "100%"
-            },
-            colors : [{
-                color : "#151515",
-
-            }, {
-                color : "#2E2E2E",
-
-            }]
-        }
-    })
-});
-
-//Create the list of Achievements
-var statsProfileLabel = Ti.UI.createLabel({
-    text : Alloy.Globals.PHRASES.statsTxt,
-    textAlign : "center",
-    color : "#FFF",
-    font : Alloy.Globals.getFontCustom(18, 'Bold'),
-});
-
-sections[1].headerView.add(statsProfileLabel);
-
-var generalProfileRow = Ti.UI.createTableViewRow({
-    height : 125,
-    className : "profile",
-    width : Ti.UI.FILL,
-    backgroundColor : '#000',
-    hasChild : false
-});
-
-var coinsView = Ti.UI.createView({
-    top : 10,
-    height : 23,
+var secondLeftRow = Ti.UI.createView({
+    top : 0,
+    left : 0,
+    height : 30,
     width : Ti.UI.FILL,
     layout : 'horizontal'
 });
@@ -243,12 +219,47 @@ var coinsLabelValue = Ti.UI.createLabel({
     width : Ti.UI.SIZE
 });
 
-coinsView.add(coinsLabelText);
-coinsView.add(coinsLabelValue);
+secondLeftRow.add(coinsLabelText);
 
-var pointsView = Ti.UI.createView({
-    top : 36,
-    height : 23,
+secondLeftRow.add(Ti.UI.createLabel({
+    left : 10,
+    width : Ti.UI.SIZE,
+    font : {
+        fontFamily : font
+    },
+    text : fontawesome.icon('fa-database'),
+    color : Alloy.Globals.themeColor(), //'#FFF'
+}));
+
+secondLeftRow.add(coinsLabelValue); 
+
+firstProfilePart.add(secondLeftRow);
+
+var firstRightRow = Ti.UI.createView({
+    top : 0,
+    height : 30,
+    left : 30,
+    width : Ti.UI.FILL,
+    layout : 'horizontal'
+});
+
+var levelLabel = Ti.UI.createLabel({
+    font : Alloy.Globals.getFontCustom(16, 'Regular'),
+    text : '',
+    color : '#FFF',
+    left : 20,
+    width : Ti.UI.SIZE
+});
+
+firstRightRow.add(levelLabel);
+secondProfilePart.add(firstRightRow);
+
+// TODO samma som vänster + loading 
+
+var secondRightRow = Ti.UI.createView({
+    top : 0,
+    height : 30,
+    left : 30,
     width : Ti.UI.FILL,
     layout : 'horizontal'
 });
@@ -269,12 +280,26 @@ var pointsLabelValue = Ti.UI.createLabel({
     width : Ti.UI.SIZE
 });
 
-pointsView.add(pointsLabelText);
-pointsView.add(pointsLabelValue);
+secondRightRow.add(pointsLabelText);
 
-var winsView = Ti.UI.createView({
-    top : 62,
-    height : 23,
+secondRightRow.add(Ti.UI.createLabel({
+    left : 10,
+    width : Ti.UI.SIZE,
+    font : {
+        fontFamily : font
+    },
+    text : fontawesome.icon('fa-signal'),
+    color : Alloy.Globals.themeColor(), //'#FFF'
+}));
+
+secondRightRow.add(pointsLabelValue);
+// TODO
+secondProfilePart.add(firstRightRow);
+
+var thirdLeftRow = Ti.UI.createView({
+    top : 0,
+    left : 0,
+    height : 30,
     width : Ti.UI.FILL,
     layout : 'horizontal'
 });
@@ -295,12 +320,26 @@ var winsLabelValue = Ti.UI.createLabel({
     width : Ti.UI.SIZE
 });
 
-winsView.add(winsLabelText);
-winsView.add(winsLabelValue);
+thirdLeftRow.add(winsLabelText);
 
-var scoreBoardView = Ti.UI.createView({
-    top : 87,
-    height : 23,
+thirdLeftRow.add(Ti.UI.createLabel({
+    left : 10,
+    width : Ti.UI.SIZE,
+    font : {
+        fontFamily : font
+    },
+    text : fontawesome.icon('fa-trophy'),
+    color : Alloy.Globals.themeColor(), //'#FFF'
+}));
+
+thirdLeftRow.add(winsLabelValue);
+
+firstProfilePart.add(thirdLeftRow);
+
+var secondRightRow = Ti.UI.createView({
+    top : 0,
+    height : 30,
+    left : 30,
     width : Ti.UI.FILL,
     layout : 'horizontal'
 });
@@ -321,16 +360,16 @@ var scoreBoardLabelValue = Ti.UI.createLabel({
     width : Ti.UI.SIZE
 });
 
-scoreBoardView.add(scoreBoardLabelText);
-scoreBoardView.add(scoreBoardLabelValue);
+secondRightRow.add(scoreBoardLabelText);
+secondRightRow.add(scoreBoardLabelValue);
 
-generalProfileRow.add(coinsView);
-generalProfileRow.add(pointsView);
-generalProfileRow.add(winsView);
-generalProfileRow.add(scoreBoardView);
+secondProfilePart.add(secondRightRow);
 
-/*      Part 3      */
-sections[2] = Ti.UI.createTableViewSection({
+profileStatsView.add(firstProfilePart);
+profileStatsView.add(secondProfilePart);
+
+/*      Part 2      */
+sections[1] = Ti.UI.createTableViewSection({
     headerView : Ti.UI.createView({
         height : 75,
         backgroundColor : '#303030',
@@ -363,7 +402,7 @@ var achievementsLabel = Ti.UI.createLabel({
     font : Alloy.Globals.getFontCustom(18, 'Bold'),
 });
 
-sections[2].headerView.add(achievementsLabel);
+sections[1].headerView.add(achievementsLabel);
 
 var achievementsRow = Ti.UI.createTableViewRow({
     height : Ti.UI.SIZE,
@@ -385,8 +424,7 @@ var achievementsLoadingLabel = Ti.UI.createLabel({
 achievementsRow.add(achievementsLoadingLabel);
 
 sections[0].add(mainProfileRow);
-sections[1].add(generalProfileRow);
-sections[2].add(achievementsRow);
+sections[1].add(achievementsRow);
 
 $.table.setData(sections);
 
@@ -458,6 +496,8 @@ function getProfile() {
                     pointsLabelValue.setText(userInfo.totalPoints + ' ');
                     winsLabelValue.setText(userInfo.totalWins + ' ');
                     scoreBoardLabelValue.setText(userInfo.position + ' ');
+                    
+                    profileStatsView.show();
                 }
             }
 

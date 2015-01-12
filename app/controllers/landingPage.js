@@ -515,3 +515,8 @@ if (!isAndroid) {
  // loginSuccessWindow = null;
  }
  */
+
+// Android -> Är man riktigt snabb efter man gått ur appen och släcker skärmen och låser upp den igen så hänger sig betkampen (inte hunnit avsluta än)
+// Android/iPhone -> Uppdatera coins i meny efter köp...
+// Android -> Vad händer om man tar emot push för match som redan har startat?
+// iPhone -> Problem med att starta om app vid språkbyte

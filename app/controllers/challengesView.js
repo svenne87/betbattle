@@ -11,9 +11,21 @@ var swipeRefresh = null;
 var webViewUrl = '';
 var webViewTitle = '';
 var acceptRow;
+var profileRow;
+var firstRow;
+var secondRow;
+var profileImageView;
 var acceptTextLabel;
-var matchOTDTextLabel;
-var matchOTDRow;
+var profileNameLabel = '';
+var profileCoinsLabel = '';
+var profilePointsLabel = '';
+var profileWinsLabel = '';
+var profileRankingLabel = '';
+var profileAchievementsLabel = '';
+var profileLevelImage = '';
+
+//var matchOTDTextLabel;
+//var matchOTDRow;
 
 var args = arguments[0] || {};
 if (args.refresh == 1) {
@@ -21,7 +33,6 @@ if (args.refresh == 1) {
         // refresh table with challenges
         indicator.openIndicator();
         getChallenges();
-        getUserInfo();
         if (args.sent_challenge == 1) {
             Alloy.Globals.unlockAchievement(11);
         }
@@ -31,7 +42,20 @@ if (args.refresh == 1) {
 }
 
 Ti.App.addEventListener('matchOTDUpdate', function() {
-    matchOTDRow.remove(matchOTDLabel);
+    Ti.API.log("Trying to update..."); // TODO uppdaterade inte här innan
+    var count = acceptLabel.getText();
+    count = count - 0;
+    
+    if(count === '0') {
+        acceptRow.remove(acceptLabel);
+    } else {
+        acceptRow.remove(acceptLabel);
+        acceptLabel.setText(count);
+        acceptLabel.setLeft(acceptTextLabel.toImage().width + 70);
+        acceptRow.add(acceptLabel);
+    }
+    
+   // matchOTDRow.remove(matchOTDLabel);
 });
 
 var acceptLabel = Ti.UI.createLabel({
@@ -44,6 +68,7 @@ var acceptLabel = Ti.UI.createLabel({
     height : Ti.UI.SIZE
 });
 
+/*
 var matchOTDLabel = Ti.UI.createLabel({
     backgroundColor : Alloy.Globals.themeColor(),
     color : '#FFF',
@@ -53,6 +78,7 @@ var matchOTDLabel = Ti.UI.createLabel({
     top : 10,
     height : Ti.UI.SIZE
 });
+*/
 
 var iOSVersion;
 var isAndroid = true;
@@ -110,6 +136,38 @@ Ti.App.addEventListener("challengesViewRefresh", function(e) {
     }
 });
 
+// update profile info row
+function updateProfileData(userInfo) {
+
+    // TODO Får ju ut språkversion här, hämta ny automatiskt om den är inaktuell? fast måste ju ske tidigare ändå...? eller uppmana restart?
+    // TODO vid update av pengar etc så flyttar sig ikoner. Ska vara så (dynamiskt) eller fasta?
+    // TODO hängde sig när jag öppnade utmaning (via push) inne i appen (android)?
+    
+    // update profile data
+    if (userInfo.name.length > 16) {
+        userInfo.name = userInfo.name.substring(0, 13);
+        userInfo.name = userInfo.name + '...';
+    }
+    
+    profileNameLabel.setText(userInfo.name + ' ');
+    profileCoinsLabel.setText(userInfo.totalCoins + ' '); 
+    profilePointsLabel.setText(userInfo.totalPoints + ' ');
+    profileWinsLabel.setText(userInfo.totalWins + ' ');
+    profileRankingLabel.setText(userInfo.position + ' ');
+    profileAchievementsLabel.setText(userInfo.achieved_achievements + ' '); // + '/' + userInfo.total_achievements + ' ');
+    profileLevelImage.setImage(Alloy.Globals.BETKAMPENURL + "/" + userInfo.level.symbol);
+    
+    firstRow.show();
+    secondRow.show();
+
+    // update profile image
+    if (Alloy.Globals.FACEBOOKOBJECT) {
+        profileImageView.setImage('https://graph.facebook.com/' + Alloy.Globals.FACEBOOKOBJECT.id + '/picture');
+    } else {
+        profileImageView.setImage(Alloy.Globals.BETKAMPENURL + '/profile_images/' + Alloy.Globals.BETKAMPENUID + '.png' + "?t=" + new Date().getTime());
+    }
+}
+
 // get coins for user
 function getUserInfo() {
     var xhr = Titanium.Network.createHTTPClient();
@@ -145,6 +203,9 @@ function getUserInfo() {
                 if (userInfo !== null) {
                     // Update menu
                     Ti.App.fireEvent('app:coinsMenuInfo', userInfo);
+
+                    // update profile data
+                    updateProfileData(userInfo);
                 }
             }
         } else {
@@ -628,7 +689,7 @@ if (!isAndroid) {
 }
 
 var tableHeaderView = Ti.UI.createView({
-    height : 141,
+    height : 140,
     width : Ti.UI.FILL,
     layout : "vertical",
 });
@@ -808,7 +869,7 @@ table.addEventListener('click', function(e) {
                 fullScreen : true,
             });
         }
-    } else if (e.rowData.id === 'matchOTD') {
+   /* } else if (e.rowData.id === 'matchOTD') {
         var win = Alloy.createController('matchDay').getView();
         Alloy.Globals.WINDOWS.push(win);
 
@@ -821,7 +882,7 @@ table.addEventListener('click', function(e) {
                 fullScreen : true,
             });
         }
-
+    */
     } else if (e.rowData.id === 'finished') {
         var win = Alloy.createController('challenges_finished').getView();
         Alloy.Globals.WINDOWS.push(win);
@@ -940,7 +1001,7 @@ if (isAndroid) {
     $.challengesView.add(table);
 }
 
-// function to create matcg of the day row
+// function to create match of the day row
 function createMatchOTDRow() {
     var fontawesome = require('lib/IconicFont').IconicFont({
         font : 'lib/FontAwesome'
@@ -966,7 +1027,7 @@ function createMatchOTDRow() {
         hasChild : child,
         selectionStyle : 'none'
     });
-    
+
     row.add(Ti.UI.createImageView({
         image : '/images/ikoner_mix_sport.png',
         left : 10,
@@ -1232,8 +1293,37 @@ function constructTableData(array) {
         }
     }
 
-    acceptRow = Ti.UI.createTableViewRow({
+    // TODO keep image updated when we change profile image, should work.
+
+    profileRow = Ti.UI.createTableViewRow({
         top : 0,
+        height : 75,
+        id : "profile",
+        width : Ti.UI.FILL,
+        font : Alloy.Globals.getFont(),
+        backgroundColor : '#303030',
+        backgroundGradient : {
+            type : "linear",
+            startPoint : {
+                x : "0%",
+                y : "0%"
+            },
+            endPoint : {
+                x : "0%",
+                y : "100%"
+            },
+            colors : [{
+                color : "#151515",            
+            },{
+                color : "#2E2E2E"
+            }]
+        },
+        hasChild : false,
+        selectionStyle : 'none'
+    });
+
+    acceptRow = Ti.UI.createTableViewRow({
+        //top : 0,
         height : 75,
         id : "new",
         width : Ti.UI.FILL,
@@ -1265,7 +1355,7 @@ function constructTableData(array) {
         hasChild : child,
         selectionStyle : 'none'
     });
-
+/*
     matchOTDRow = Ti.UI.createTableViewRow({
         height : 75,
         id : "matchOTD",
@@ -1275,6 +1365,232 @@ function constructTableData(array) {
         font : Alloy.Globals.getFont(),
         hasChild : child,
         selectionStyle : 'none'
+    });
+*/
+    var widthParted = Ti.Platform.displayCaps.platformWidth / 4;
+
+    var leftProfilePart = Ti.UI.createView({
+        width : widthParted,
+        left : 0,
+        height : 75,
+        layout : 'horizontal'
+    });
+    
+    var centerProfilePart = Ti.UI.createView({
+        width : (widthParted * 2),
+        left : widthParted,
+        height : 75,
+        layout : 'horizontal'
+    });
+
+    var rightProfilePart = Ti.UI.createView({
+        width : widthParted,
+        left : (widthParted * 3),
+        height : 75,
+        layout : 'horizontal'
+    });
+
+    var image;
+
+    if (Alloy.Globals.FACEBOOKOBJECT) {
+        image = 'https://graph.facebook.com/' + Alloy.Globals.FACEBOOKOBJECT.id + '/picture';
+    } else {
+        image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + Alloy.Globals.BETKAMPENUID + '.png' + "?t=" + new Date().getTime();
+    }
+
+    profileImageView = Ti.UI.createImageView({
+        left : ((widthParted - 50) / 2), // based on the image beeing 50 in height
+        top : 12.5, // based on the image beeing 50 in height
+        height : 50,
+        width : 50,
+        borderRadius : 25,
+        image : image
+    });
+
+    profileImageView.addEventListener('error', function(e) {
+        // fallback for image
+        profileImageView.image = '/images/no_pic.png';
+    });
+
+    leftProfilePart.add(profileImageView);
+    
+    var topPosRelative = 7;
+    
+    if(isAndroid) {
+       topPosRelative = 4; 
+    }
+    
+    profileNameLabel = Ti.UI.createLabel({
+        text : Alloy.Globals.PHRASES.loadingTxt,
+        font : Alloy.Globals.getFontCustom(14, "Regular"),
+        color : '#FFF',
+        top : topPosRelative,
+        left : 30,
+        width : Ti.UI.FILL
+    });
+    
+    centerProfilePart.add(profileNameLabel);
+    
+    firstRow = Ti.UI.createView({
+        layout : 'horizontal',
+        left : 30,
+        top : 0,
+        width : Ti.UI.FILL,
+        height : 20//Ti.UI.SIZE
+    });
+    
+    firstRow.hide();
+    
+    firstRow.add(Ti.UI.createLabel({
+        left : 0,
+        width : Ti.UI.SIZE,
+        font : {
+            fontFamily : font
+        },
+        text : fontawesome.icon('fa-database'),
+        color : Alloy.Globals.themeColor(), //'#FFF'
+    }));
+    
+    profileCoinsLabel = Ti.UI.createLabel({
+        text : '',
+        font : Alloy.Globals.getFontCustom(14, "Regular"),
+        color : Alloy.Globals.themeColor(), //'#FFF',
+        left : 10,
+        width : Ti.UI.SIZE
+    });
+    
+    firstRow.add(profileCoinsLabel);
+  
+    firstRow.add(Ti.UI.createLabel({
+        left : 15,
+        font : {
+            fontFamily : font
+        },
+        text : fontawesome.icon('fa-signal'),
+        color : Alloy.Globals.themeColor() //'#FFF'
+    }));
+ 
+    profilePointsLabel = Ti.UI.createLabel({
+       left : 10,
+       text : '',
+       font : Alloy.Globals.getFontCustom(14, "Regular"),
+       color :  Alloy.Globals.themeColor(), //'#FFF',
+       width : Ti.UI.FILL 
+    });
+    
+    firstRow.add(profilePointsLabel);
+    centerProfilePart.add(firstRow);
+    
+    secondRow = Ti.UI.createView({
+        layout : 'horizontal',
+        left : 30,
+        top : 0, //-20,
+        width : Ti.UI.FILL,
+        height : Ti.UI.SIZE
+    });
+    
+    secondRow.hide();
+    
+    secondRow.add(Ti.UI.createLabel({
+        left : 0,
+        font : {
+            fontFamily : font
+        },
+        text : fontawesome.icon('fa-trophy'),
+        color : Alloy.Globals.themeColor() //'#FFF'
+    }));
+    
+    profileWinsLabel = Ti.UI.createLabel({
+       text : '',
+       font : Alloy.Globals.getFontCustom(14, "Regular"),
+       color : Alloy.Globals.themeColor(), //'#FFF,'
+       left : 10,
+       width : Ti.UI.SIZE 
+    });
+    
+    secondRow.add(profileWinsLabel);
+    
+    var relativeLeftPos = 30;
+    
+    if(isAndroid) {
+        relativeLeftPos = 32;
+    }
+  
+  
+    secondRow.add(Ti.UI.createLabel({
+        left : relativeLeftPos,
+        font : {
+            fontFamily : font
+        },
+        text : fontawesome.icon('fa-unlock'),
+        color : Alloy.Globals.themeColor() //'#FFF'
+    }));
+    
+    profileAchievementsLabel = Ti.UI.createLabel({
+       text : '',
+       font : Alloy.Globals.getFontCustom(14, "Regular"),
+       color : Alloy.Globals.themeColor(), //'#FFF',
+       left : 10,
+       width : Ti.UI.SIZE 
+    });
+    
+    secondRow.add(profileAchievementsLabel);
+    /*
+    secondRow.add(Ti.UI.createLabel({
+        left : 20,
+        font : {
+            fontFamily : font
+        },
+        text : fontawesome.icon('fa-star'),
+        color : Alloy.Globals.themeColor() //'#FFF'
+    }));
+    */
+   // TODO show ranking?
+    
+    profileRankingLabel = Ti.UI.createLabel({
+       text : '        ',
+       font : Alloy.Globals.getFontCustom(14, "Regular"),
+       left : 5,
+       width : Ti.UI.SIZE,
+       color : Alloy.Globals.themeColor() //'#FFF'
+    });
+        
+   // secondRow.add(profileRankingLabel);
+  
+    centerProfilePart.add(secondRow);
+
+    profileLevelImage = Ti.UI.createImageView({
+        left : ((widthParted - 50) / 2), // based on the image beeing 50 in height
+        top : 12.5, // based on the image beeing 50 in height
+        height : 50,
+        width : 50,
+        borderRadius : 25,
+        defaultImage : '/images/no_team.png'
+    });
+    
+    profileLevelImage.addEventListener('error', function() {
+        profileLevelImage.image = '/images/no_team.png';
+    });
+    
+    rightProfilePart.add(profileLevelImage);
+    
+    profileRow.add(leftProfilePart);
+    profileRow.add(centerProfilePart);
+    profileRow.add(rightProfilePart);
+
+    // open profile window when clicking profile row
+    profileRow.addEventListener('click', function() {
+        var win = Alloy.createController('profile').getView();
+        Alloy.Globals.CURRENTVIEW = win;
+        if (!isAndroid) {
+            Alloy.Globals.NAV.openWindow(win, {
+                animated : true
+            });
+        } else {
+            win.open({
+                fullScreen : true
+            });
+        }
     });
 
     acceptRow.add(Ti.UI.createImageView({
@@ -1310,10 +1626,21 @@ function constructTableData(array) {
         }));
     }
 
-    if (Alloy.Globals.CHALLENGEOBJECTARRAY[0].length > 0) {
-        // accept challenges, add badge
+    if (Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_otd_status === 0 && Alloy.Globals.CHALLENGEOBJECTARRAY[0].length > 0) {
+        // add badge
+        acceptLabel.setText(Alloy.Globals.CHALLENGEOBJECTARRAY[0].length + 1);
         acceptLabel.setLeft(acceptTextLabel.toImage().width + 70);
+        acceptRow.add(acceptLabel);
+    } else if (Alloy.Globals.CHALLENGEOBJECTARRAY[0].length > 0) {
+        // accept challenges, add badge
+        Ti.API.log("test");
         acceptLabel.setText(Alloy.Globals.CHALLENGEOBJECTARRAY[0].length);
+        acceptLabel.setLeft(acceptTextLabel.toImage().width + 70);
+        acceptRow.add(acceptLabel);
+    } else if (Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_otd_status === 0) {
+        // match otd, add badge
+        acceptLabel.setText('1');
+        acceptLabel.setLeft(acceptTextLabel.toImage().width + 70);
         acceptRow.add(acceptLabel);
     }
 
@@ -1376,7 +1703,8 @@ function constructTableData(array) {
             width : 'auto',
         }));
     }
-
+    
+    /*
     matchOTDRow.add(Ti.UI.createImageView({
         left : 10,
         width : 30,
@@ -1416,11 +1744,13 @@ function constructTableData(array) {
             width : 'auto'
         }));
     }
+    */
 
+    sections[0].add(profileRow);
     sections[0].add(acceptRow);
     sections[0].add(pendingRow);
     sections[0].add(finishedRow);
-    sections[0].add(matchOTDRow);
+   // sections[0].add(matchOTDRow);
 
     sections[1] = createSectionsForTable(Alloy.Globals.PHRASES.challengesViewHot);
 
@@ -1432,8 +1762,8 @@ function constructTableData(array) {
     var pendingNowCount = 1;
 
     // add Match OTD
-    if(typeof Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_data !== 'undefined') {
-        if(Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_data.status !== '2') {
+    if ( typeof Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_data !== 'undefined') {
+        if (Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_data.status !== '2') {
             rightNowRows = rightNowRows + 1;
             sections[1].add(createMatchOTDRow());
         }
@@ -1593,23 +1923,24 @@ function getChallenges() {
                 // construct array with objects
                 Alloy.Globals.CHALLENGEOBJECTARRAY = Alloy.Globals.constructChallenge(response);
 
-                if (Alloy.Globals.CHALLENGEOBJECTARRAY[0].length > 0) {
+                if (Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_otd_status === 0 && Alloy.Globals.CHALLENGEOBJECTARRAY[0].length > 0) {
+                    // add badge
+                    acceptLabel.setText(Alloy.Globals.CHALLENGEOBJECTARRAY[0].length + 1);
+                    acceptLabel.setLeft(acceptTextLabel.toImage().width + 70);
+                    acceptRow.add(acceptLabel);
+                } else if (Alloy.Globals.CHALLENGEOBJECTARRAY[0].length > 0) {
                     // accept challenges, add badge
                     Ti.API.log("test");
                     acceptLabel.setText(Alloy.Globals.CHALLENGEOBJECTARRAY[0].length);
                     acceptLabel.setLeft(acceptTextLabel.toImage().width + 70);
                     acceptRow.add(acceptLabel);
-                } else if (Alloy.Globals.CHALLENGEOBJECTARRAY[0].length == 0) {
-                    acceptRow.remove(acceptLabel);
-                }
-
-                if (Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_otd_status === 0) {
+                } else if (Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_otd_status === 0) {
                     // match otd, add badge
-                    matchOTDLabel.setText('1');
-                    matchOTDLabel.setLeft(matchOTDTextLabel.toImage().width + 70);
-                    matchOTDRow.add(matchOTDLabel);
-                } else if (Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_otd_status === 1) {
-                    matchOTDRow.remove(matchOTDLabel);
+                    acceptLabel.setText('1');
+                    acceptLabel.setLeft(acceptTextLabel.toImage().width + 70);
+                    acceptRow.add(acceptLabel);
+                } else {
+                    acceptRow.remove(acceptLabel);
                 }
 
                 // Update menu with icon if there are new challenges
@@ -1621,7 +1952,7 @@ function getChallenges() {
             }
 
             if (isAndroid) {
-                if ( swipeRefresh !== null && typeof swipeRefresh !== 'undefined') {
+                if (swipeRefresh !== null && typeof swipeRefresh !== 'undefined') {
                     swipeRefresh.setRefreshing(false);
                 }
             }

@@ -1,7 +1,7 @@
 var args = arguments[0] || {};
 
 //if (args.refresh) {
-    //getChallenges();
+//getChallenges();
 //}
 
 var iOSVersion;
@@ -102,12 +102,12 @@ if (!isAndroid) {
         separatorColor : '#303030',
         id : 'challengeTable'
     });
-    
+
     table.headerView = Ti.UI.createView({
         height : 0.5,
         backgroundColor : '#303030'
     });
-    
+
     table.footerView = Ti.UI.createView({
         height : 0.5,
         backgroundColor : '#303030'
@@ -129,44 +129,48 @@ table.addEventListener('click', function(e) {
     if (e.rowData !== null) {
         if (Alloy.Globals.checkConnection()) {
             if ( typeof e.rowData.id !== 'undefined') {
-                var obj = Alloy.Globals.CHALLENGEOBJECTARRAY[0][e.rowData.id];
-                if (obj.attributes.show !== 0) {
-                    // view challenge
-
-                    var group = null;
-                    try {
-                        group = obj.attributes.group.name;
-                    } catch(e) {
-                        group = null;
-                    }
-
-                    if ( typeof group === undefined) {
-                        group = null;
-                    }
-                    var count = obj.attributes.opponents.length;
-
-                    var bet_amount = obj.attributes.potential_pot / count;
-                    Ti.API.info("bet_amount : " + bet_amount);
-                    var arg = {
-                        answer : 1,
-                        group : group,
-                        bet_amount : bet_amount
-                    };
-                    Alloy.Globals.CHALLENGEINDEX = e.rowData.id;
-                    var win = Alloy.createController('challenge', arg).getView();
-                    Alloy.Globals.WINDOWS.push(win);
-
-                    if (!isAndroid) {
-                        Alloy.Globals.NAV.openWindow(win, {
-                            animated : true
-                        });
-                    } else {
-                        win.open({
-                            fullScreen : true
-                        });
-                    }
+                if (e.rowData.id === 'nextMatchOTDRow') {
+                    showNextMatchOTD();
                 } else {
-                    Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.roundHasStartedErrorTxt);
+                    var obj = Alloy.Globals.CHALLENGEOBJECTARRAY[0][e.rowData.id];
+                    if (obj.attributes.show !== 0) {
+                        // view challenge
+
+                        var group = null;
+                        try {
+                            group = obj.attributes.group.name;
+                        } catch(e) {
+                            group = null;
+                        }
+
+                        if ( typeof group === undefined) {
+                            group = null;
+                        }
+                        var count = obj.attributes.opponents.length;
+
+                        var bet_amount = obj.attributes.potential_pot / count;
+                        Ti.API.info("bet_amount : " + bet_amount);
+                        var arg = {
+                            answer : 1,
+                            group : group,
+                            bet_amount : bet_amount
+                        };
+                        Alloy.Globals.CHALLENGEINDEX = e.rowData.id;
+                        var win = Alloy.createController('challenge', arg).getView();
+                        Alloy.Globals.WINDOWS.push(win);
+
+                        if (!isAndroid) {
+                            Alloy.Globals.NAV.openWindow(win, {
+                                animated : true
+                            });
+                        } else {
+                            win.open({
+                                fullScreen : true
+                            });
+                        }
+                    } else {
+                        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.roundHasStartedErrorTxt);
+                    }
                 }
             }
         } else {
@@ -177,31 +181,30 @@ table.addEventListener('click', function(e) {
 
 buildTableRows();
 
-
-if(!isAndroid) {
+if (!isAndroid) {
     $.challenges_new.add(table);
 } else {
     var swipeRefreshModule = require('com.rkam.swiperefreshlayout');
 
-        swipeRefresh = swipeRefreshModule.createSwipeRefresh({
-            view : table,
-            height : Ti.UI.FILL,
-            width : Ti.UI.FILL,
-            id : 'swiper'
-        });
-        
-        swipeRefresh.addEventListener('refreshing', function(e) {
-            if (Alloy.Globals.checkConnection()) {
-                setTimeout(function() {
-                    indicator.openIndicator();
-                    getChallenges();
-                }, 800);
-            } else {
-                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
-                swipeRefresh.setRefreshing(false);
-            }
-        }); 
-        $.challenges_new.add(swipeRefresh);   
+    swipeRefresh = swipeRefreshModule.createSwipeRefresh({
+        view : table,
+        height : Ti.UI.FILL,
+        width : Ti.UI.FILL,
+        id : 'swiper'
+    });
+
+    swipeRefresh.addEventListener('refreshing', function(e) {
+        if (Alloy.Globals.checkConnection()) {
+            setTimeout(function() {
+                indicator.openIndicator();
+                getChallenges();
+            }, 800);
+        } else {
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+            swipeRefresh.setRefreshing(false);
+        }
+    });
+    $.challenges_new.add(swipeRefresh);
 }
 
 function endRefresher() {
@@ -211,7 +214,8 @@ function endRefresher() {
         }
     } else {
         if (swipeRefresh !== null && typeof swipeRefresh !== 'undefined') {
-            Ti.API.log(JSON.stringify(swipeRefresh)); // dummy fix
+            Ti.API.log(JSON.stringify(swipeRefresh));
+            // dummy fix
             swipeRefresh.setRefreshing(false);
         }
     }
@@ -220,6 +224,14 @@ function endRefresher() {
 function buildTableRows() {
     //table.setData([]);
     data = [];
+    var createdMatchOTDRow = false;
+
+    // add next Match OTD row
+    // only create this row if the user has not already joined this challenge
+    if (Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_otd_status === 0) {
+        data.push(createNextMatchOTDRow());
+        createdMatchOTDRow = true;
+    }
 
     var arrayObj = Alloy.Globals.CHALLENGEOBJECTARRAY[0];
     // create 'accept' rows
@@ -227,14 +239,14 @@ function buildTableRows() {
         for (var i = 0; i < arrayObj.length; i++) {
             data.push(constructChallengeRows(arrayObj[i], i));
         }
-    } else if (arrayObj.length === 0) {
+    } else if (arrayObj.length === 0 && !createdMatchOTDRow) {
         data.push(createEmptyTableRow(Alloy.Globals.PHRASES.challengesSmallTxt));
     }
 
     data.push(createNewChallengeRow());
     data.push(createInviteFriendsTxtRow());
     data.push(createInviteFriendsRow());
-    
+
     table.setData(data);
 }
 
@@ -523,6 +535,210 @@ function createEmptyTableRow(text) {
     return row;
 }
 
+function createNextMatchOTDRow() {
+    
+    var child = true;
+
+    if (isAndroid) {
+        child = false;
+    }
+
+    var row = Ti.UI.createTableViewRow({
+        id : 'nextMatchOTDRow',
+        hasChild : child,
+        width : Ti.UI.FILL,
+        left : 0,
+        className : 'nextMatchOTDRow',
+        height : 75
+    });
+
+    row.add(Ti.UI.createImageView({
+        image : '/images/ikoner_utmaning_ny.png',
+        left : 10,
+        width : 30,
+        height : 30
+    }));
+
+    var firstRowView = Ti.UI.createView({
+        top : -20,
+        layout : 'absolute',
+        width : 'auto'
+    });
+
+    firstRowView.add(Ti.UI.createLabel({
+        text : Alloy.Globals.PHRASES.landingPageMatch + ' ',
+        font : Alloy.Globals.getFontCustom(16, "Regular"),
+        color : "#FFF",
+        left : 60
+    }));
+
+    var secondRowView = Ti.UI.createView({
+        top : 25,
+        layout : 'absolute',
+        width : 'auto'
+    });
+
+    secondRowView.add(Ti.UI.createLabel({
+        text : Alloy.Globals.PHRASES.matchOTDNextBtn + ' ',
+        left : 60,
+        font : Alloy.Globals.getFontCustom(12, 'Regular'),
+        color : Alloy.Globals.themeColor()
+    }));
+
+    row.add(firstRowView);
+    row.add(secondRowView);
+
+    // add custom icon on Android to symbol that the row has child
+    if (child != true) {
+        row.add(Ti.UI.createLabel({
+            font : {
+                fontFamily : font
+            },
+            text : fontawesome.icon('icon-chevron-right'),
+            right : rightPercentage,
+            color : '#FFF',
+            fontSize : 80,
+            height : 'auto',
+            width : 'auto'
+        }));
+    }
+
+    return row;
+}
+
+function showNextMatchOTD() {
+    // check connection
+    if (!Alloy.Globals.checkConnection()) {
+        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+        return;
+    }
+
+    var match;
+    indicator.openIndicator();
+
+    var xhr = Titanium.Network.createHTTPClient();
+    xhr.onerror = function(e) {
+        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+        Ti.API.error('Bad Sever =>' + e.error);
+        indicator.closeIndicator();
+    };
+
+    try {
+        xhr.open('GET', Alloy.Globals.BETKAMPENGETMOTDINFO + '?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
+        xhr.setRequestHeader("content-type", "application/json");
+        xhr.setTimeout(Alloy.Globals.TIMEOUT);
+        xhr.send();
+    } catch(e) {
+        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+        indicator.closeIndicator();
+    }
+
+    xhr.onload = function() {
+        if (this.status == '200') {
+            if (this.readyState == 4) {
+                try {
+                    match = JSON.parse(this.responseText);
+
+                    if (Alloy.Globals.checkConnection()) {
+                        var xhr = Titanium.Network.createHTTPClient();
+                        xhr.onerror = function(e) {
+                            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+                            indicator.closeIndicator();
+                            Ti.API.error('Bad Sever =>' + e.error);
+                        };
+
+                        try {
+                            xhr.open('GET', Alloy.Globals.BETKAMPENGETMATCHOTDSTATUSURL + '?lang=' + Alloy.Globals.LOCALE + '&gameID=' + match.game_id);
+                            xhr.setRequestHeader("content-type", "application/json");
+                            xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
+                            xhr.setTimeout(Alloy.Globals.TIMEOUT);
+                            xhr.send();
+                        } catch(e) {
+                            indicator.closeIndicator();
+                            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+                        }
+
+                        xhr.onload = function() {
+                            if (this.status == '200') {
+                                if (this.readyState == 4) {
+                                    indicator.closeIndicator();
+                                    var resp = null;
+                                    try {
+                                        resp = JSON.parse(this.responseText);
+                                    } catch (e) {
+                                        resp = null;
+                                    }
+
+                                    if (resp == 2) {
+                                        var arg = {
+                                            round : match.roundID,
+                                            leagueName : match.leagueName,
+                                            leagueId : match.leagueID,
+                                            gameID : match.game_id,
+                                            matchOTD : 1,
+                                            bet_amount : match.bet_amount,
+                                            win : $.challenges_new                    // TODO this should work?
+                                        };
+
+                                        var win = Alloy.createController('challenge', arg).getView();
+                                        Alloy.Globals.WINDOWS.push(win);
+
+                                        if (!isAndroid) {
+                                            Alloy.Globals.NAV.openWindow(win, {
+                                                animated : true
+                                            });
+                                        } else {
+                                            win.open({
+                                                fullScreen : true
+                                            });
+                                        }
+                                    } else if (resp == 1) {
+                                        var arg = {
+                                            gameID : match.game_id,
+                                        };
+
+                                        var win = Alloy.createController('showMatchOTD', arg).getView();
+                                        Alloy.Globals.WINDOWS.push(win);
+
+                                        if (!isAndroid) {
+                                            Alloy.Globals.NAV.openWindow(win, {
+                                                animated : true
+                                            });
+                                        } else {
+                                            win.open({
+                                                fullScreen : true
+                                            });
+                                        }
+                                    } else if (resp == 0) {
+                                        Alloy.Globals.showToast(Alloy.Globals.PHRASES.noGamesTxt);
+                                    }
+
+                                }
+
+                            } else {
+                                indicator.closeIndicator();
+                                Ti.API.error("Error =>" + this.response);
+                            }
+                        };
+                    } else {
+                        indicator.closeIndicator();
+                        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+                    }
+
+                } catch (e) {
+                    match = null;
+                    inidcator.closeIndicator();
+                }
+            }
+
+        } else {
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+            Ti.API.error("Error =>" + this.response);
+            indicator.closeIndicator();
+        }
+    };
+}
+
 function createNewChallengeRow() {
     child = true;
 
@@ -563,7 +779,7 @@ function createNewChallengeRow() {
             width : Ti.UI.SIZE
         }));
     }
-    
+
     tableFooterView.addEventListener("click", function(e) {
         var win = Alloy.createController('newChallengeLeague').getView();
         Alloy.Globals.WINDOWS.push(win);
@@ -622,7 +838,7 @@ function createInviteFriendsRow() {
             width : Ti.UI.SIZE
         }));
     }
-    
+
     tableFooterView.addEventListener("click", function(e) {
         var win = Alloy.createController('shareView').getView();
         Alloy.Globals.WINDOWS.push(win);
@@ -649,7 +865,7 @@ function createInviteFriendsTxtRow() {
         hasChild : false,
         selectionStyle : 'none'
     });
-    
+
     tableFooterView.add(Ti.UI.createLabel({
         text : Alloy.Globals.PHRASES.playDescriptionTxt + ' ',
         font : Alloy.Globals.getFontCustom(16, "Regular"),
@@ -662,7 +878,6 @@ function createInviteFriendsTxtRow() {
 
     return tableFooterView;
 }
-
 
 if (isAndroid) {
     $.challenges_new.orientationModes = [Titanium.UI.PORTRAIT];

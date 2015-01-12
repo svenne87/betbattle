@@ -137,7 +137,7 @@ function getLanguage() {
         };
 
         try {
-            xhr.open('GET', Alloy.Globals.GETLANGUAGE + '?lang=' + Alloy.Globals.LOCALE);
+            xhr.open('GET', Alloy.Globals.GETLANGUAGE + '?lang=' + Alloy.Globals.LOCALE); 
             xhr.setRequestHeader("content-type", "application/json");
             xhr.setTimeout(Alloy.Globals.TIMEOUT);
 

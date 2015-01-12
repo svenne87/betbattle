@@ -266,7 +266,13 @@ function Controller() {
                 indicator.closeIndicator();
                 isSubmitting = false;
                 Ti.API.info("ERROR PARSE : " + JSON.stringify(this.responseText));
-                if (-1 != JSON.parse(this.responseText).indexOf(Alloy.Globals.PHRASES.coinsInfoTxt.toLowerCase())) {
+                var errorTxt = "";
+                try {
+                    errorTxt = JSON.parse(this.responseText);
+                } catch (e) {
+                    Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+                }
+                if (-1 != errorTxt.indexOf(Alloy.Globals.PHRASES.coinsInfoTxt.toLowerCase())) {
                     var alertWindow = Titanium.UI.createAlertDialog({
                         title: Alloy.Globals.PHRASES.betbattleTxt,
                         message: JSON.parse(this.responseText),
