@@ -9,6 +9,7 @@ var friends = null;
 var iOSVersion;
 var child = true;
 var isAndroid = true;
+var context;
 
 if (OS_IOS) {
     iOSVersion = parseInt(Ti.Platform.version);
@@ -39,6 +40,7 @@ var fontawesome = require('lib/IconicFont').IconicFont({
 var font = 'FontAwesome';
 
 if (isAndroid) {
+    context = require('lib/Context');
     child = false;
     font = 'fontawesome-webfont';
 
@@ -57,6 +59,18 @@ if (isAndroid) {
             indicator.openIndicator();
         }
     });
+}
+
+function onOpen(evt) {
+    if(isAndroid) {
+        context.on('editGroupActivity', this.activity);
+    }
+}
+
+function onClose(evt) {
+    if(isAndroid) {
+        context.off('editGroupActivity');
+    }
 }
 
 var mainView = Ti.UI.createView({

@@ -353,7 +353,8 @@ if (OS_IOS) {
 } else {
     isAndroid = true;
     fbModule = require('com.ti.facebook');
-    fb = fbModule.createActivityWorker({lifecycleContainer: $.login});
+    $.login.fbProxy = fbModule.createActivityWorker({lifecycleContainer: $.login});
+    fb = fbModule;
     fb.permissions = ['email', 'public_profile'];
 }
 
@@ -418,7 +419,7 @@ if (Alloy.Globals.FBERROR) {
                     Alloy.Globals.showFeedbackDialog(e.error);
                 }
                 
-                //addEvent();
+                addEvent(); // TODO need to add it here??????
             } else if (e.cancelled) {
                 isSubmitting = false;
                 setButtonOpacity(1);
@@ -430,7 +431,13 @@ if (Alloy.Globals.FBERROR) {
 }
 
 addEvent();
-fb.initialize();  // TODO
+
+if(isAndroid) {
+    fb.initialize(5000);  // TODO  
+} else {
+    fb.initialize(5000, false);   // TODO this should be false right?
+}
+
 
 // Har satt Alloy.Globals.FBERROR till false för att inte öppna flera gånger, sätta till true vid error??
 // set correct language phrase

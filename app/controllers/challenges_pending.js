@@ -4,6 +4,7 @@ var args = arguments[0] || {};
 // getChallenges();
 //}
 
+var context;
 var iOSVersion;
 var isAndroid = false;
 var refresher = null;
@@ -20,7 +21,21 @@ if (OS_IOS) {
     iOSVersion = parseInt(Ti.Platform.version);
 } else {
     isAndroid = true;
+    context = require('lib/Context');
 }
+
+function onOpen(evt) {
+    if(isAndroid) {
+        context.on('challengesPendingActivity', this.activity);
+    }
+}
+
+function onClose(evt) {
+    if(isAndroid) {
+        context.off('challengesPendingActivity');
+    }
+}
+
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({
     top : 200,
@@ -82,6 +97,7 @@ if (!isAndroid) {
             left : 0,
             right : 0
         },
+        separatorStyle : Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE,
         id : 'challengeTable',
         refreshControl : refresher,
         separatorColor : '#303030'
@@ -147,8 +163,9 @@ table.addEventListener('click', function(e) {
                             fullScreen : true
                         });
                     }
-                } else {
+                } else {                    
                     var obj = Alloy.Globals.CHALLENGEOBJECTARRAY[1][e.rowData.id];
+
                     if (obj.attributes.show !== 0) {
                         // view challenge
                         var group = null;
@@ -229,6 +246,14 @@ function endRefresher() {
     }
 }
 
+function compare(a, b) {
+    if (a.attributes.time < b.attributes.time)
+        return -1;
+    if (a.attributes.time > b.attributes.time)
+        return 1;
+    return 0;
+}
+
 function buildTableRows() {
     //table.setData([]);
     data = [];
@@ -241,7 +266,9 @@ function buildTableRows() {
             createdPendingMatchOTD = true;
         }
     }
-
+    
+    Alloy.Globals.CHALLENGEOBJECTARRAY[1].sort(compare);
+    
     var arrayObj = Alloy.Globals.CHALLENGEOBJECTARRAY[1];
     // create 'accept' rows
     if (arrayObj.length > 0) {

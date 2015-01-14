@@ -1,4 +1,4 @@
 <Alloy>
-	<Window class="container" id="myFriends">
+	<Window class="container" id="myFriends" onOpen="onOpen" onClose="onClose">
 	</Window>
 </Alloy>

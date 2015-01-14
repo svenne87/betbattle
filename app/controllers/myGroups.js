@@ -1,3 +1,4 @@
+var context;
 var sections = [];
 var table = null;
 var isAndroid = true;
@@ -22,10 +23,23 @@ if (OS_IOS) {
 }
 
 if (isAndroid) {
+    context = require('lib/Context');
     var rightPercentage = '5%';
 
     if (Titanium.Platform.displayCaps.platformWidth < 350) {
         rightPercentage = '3%';
+    }
+}
+
+function onOpen(evt) {
+    if(isAndroid) {
+        context.on('myGroupsActivity', this.activity);
+    }
+}
+
+function onClose(evt) {
+    if(isAndroid) {
+        context.off('myGroupsActivity');
     }
 }
 

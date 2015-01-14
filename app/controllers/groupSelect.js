@@ -125,7 +125,7 @@ function getFriends() {
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             }
             indicator.closeIndicator();
-            if(isAndroid) {
+            if (isAndroid) {
                 endRefresher();
             }
         } else {
@@ -199,49 +199,78 @@ function getGroups() {
                     // create the views
                     createViews(groupObjects, '1');
                 } else {
-                       /*
-                    tab_groups.setBackgroundColor('#242424');
-                    tab_groups.backgroundGradient = {
-                        type : "linear",
-                        startPoint : {
-                            x : "0%",
-                            y : "0%"
-                        },
-                        endPoint : {
-                            x : "0%",
-                            y : "100%"
-                        },
-                        colors : [{
-                            color : "#2E2E2E",
-                            offset : 0.0
-                        }, {
-                            color : "#151515",
-                            offset : 1.0
-                        }]
-                    };
-                    tab_friends.setBackgroundColor(Alloy.Globals.themeColor());
-                    
-                    getFriends();  // TODO */
-                       
+                    /*
+                     tab_groups.setBackgroundColor('#242424');
+                     tab_groups.backgroundGradient = {
+                     type : "linear",
+                     startPoint : {
+                     x : "0%",
+                     y : "0%"
+                     },
+                     endPoint : {
+                     x : "0%",
+                     y : "100%"
+                     },
+                     colors : [{
+                     color : "#2E2E2E",
+                     offset : 0.0
+                     }, {
+                     color : "#151515",
+                     offset : 1.0
+                     }]
+                     };
+                     tab_friends.setBackgroundColor(Alloy.Globals.themeColor());
+
+                     getFriends();  // TODO */
+
                     globalType = '1';
                     data = [];
-                    
+
                     var emptyRow = Ti.UI.createTableViewRow({
-                        height : 75,
+                        height : Ti.UI.SIZE,
                         hasChild : false,
-                        width : Ti.UI.FILL
-                           
+                        width : Ti.UI.FILL,
+                        selectionStyle : 'none'
                     });
-                    
-                    emptyRow.add(Ti.UI.createLabel({
+
+                    var emptyView = Ti.UI.createView({
+                        backgroundColor : '#000',
+                        height : Ti.UI.SIZE,
+                        width : Ti.UI.FILL,
+                        layout : 'vertical'
+                    });
+
+                    var emptyTxt = Ti.UI.createLabel({
                         text : Alloy.Globals.PHRASES.noGroupsTxt + " ",
                         left : 60,
+                        top : 30,
                         font : Alloy.Globals.getFontCustom(16, "Regular"),
                         color : "#FFF",
-                    }));
-                    
+                    });
+
+                    emptyView.add(emptyTxt);
+
+                    var emptyButton = Alloy.Globals.createButtonView(Alloy.Globals.themeColor(), "#FFF", Alloy.Globals.PHRASES.createGroupTxt);
+                    emptyButton.top = 40;
+
+                    emptyButton.addEventListener('click', function(e) {
+                        var win = Alloy.createController('createGroup').getView();
+                        if (!isAndroid) {
+                            Alloy.Globals.NAV.openWindow(win, {
+                                animated : true
+                            });
+                        } else {
+                            win.open({
+                                fullScreen : true
+                            });
+                            win = null;
+                        }
+                    });
+
+                    emptyView.add(emptyButton);
+                    emptyRow.add(emptyView);
+
                     data.push(emptyRow);
-                    
                     table.setData(data);
 
                     tableWrapper.removeAllChildren();
@@ -252,7 +281,7 @@ function getGroups() {
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             }
             indicator.closeIndicator();
-            if(isAndroid) {
+            if (isAndroid) {
                 endRefresher();
             }
         } else {
@@ -314,14 +343,14 @@ function challengeGroup(array) {
             } else {
                 // any other "bad request error"
                 var errorText = "";
-                try{
+                try {
                     errorText = JSON.parse(this.responseText);
                     Alloy.Globals.showFeedbackDialog(errorText);
                 } catch(e) {
                     //
                 }
-                
-                if(errorText === "") {
+
+                if (errorText === "") {
                     Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                 }
             }
@@ -368,7 +397,7 @@ function challengeGroup(array) {
                     response = response.replace(/(<br \/>)+/g, "\n");
                     // show dialog and if ok close window
                     Alloy.Globals.showToast(response, true);
-                   
+
                     // change view
                     var arg = {
                         refresh : true
@@ -377,19 +406,19 @@ function challengeGroup(array) {
                         controller : 'challengesView',
                         arg : arg
                     };
-                   
+
                     Ti.App.fireEvent('app:updateView', obj);
-                    
+
                     for (var win in Alloy.Globals.WINDOWS) {
                         Alloy.Globals.WINDOWS[win].setOpacity(0);
                     }
-                    
+
                     $.groupSelectWindow.close();
-                    
+
                     for (var win in Alloy.Globals.WINDOWS) {
                         Alloy.Globals.WINDOWS[win].close();
-                    }       
-                    
+                    }
+
                 } else {
                     Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                     isSubmitting = false;
@@ -419,14 +448,14 @@ function challengeFriends() {
             indicator.closeIndicator();
             isSubmitting = false;
             Ti.API.info("ERROR PARSE : " + JSON.stringify(this.responseText));
-            
+
             var errorTxt = "";
-            try{
+            try {
                 errorTxt = JSON.parse(this.responseText);
             } catch(e) {
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             }
-            
+
             if (errorTxt.indexOf(Alloy.Globals.PHRASES.coinsInfoTxt.toLowerCase()) != -1) {
                 // not enough coins
                 // show dialog with "link" to the store
@@ -434,7 +463,7 @@ function challengeFriends() {
                     title : Alloy.Globals.PHRASES.betbattleTxt,
                     message : JSON.parse(this.responseText),
                     buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.storeTxt]
-                });                                
+                });
 
                 alertWindow.addEventListener('click', function(e) {
                     switch (e.index) {
@@ -464,14 +493,14 @@ function challengeFriends() {
             } else {
                 // any other "bad request error"
                 var errorText = "";
-                try{
+                try {
                     errorText = JSON.parse(this.responseText);
                     Alloy.Globals.showFeedbackDialog(errorText);
                 } catch(e) {
                     //
                 }
-                
-                if(errorText === "") {
+
+                if (errorText === "") {
                     Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                 }
             }
@@ -514,9 +543,9 @@ function challengeFriends() {
                     var response = JSON.parse(this.responseText);
 
                     response = response.replace(/(<br \/>)+/g, "\n");
-                    // show dialog and if ok close window   
-                    Alloy.Globals.showToast(response, true);                           
-   
+                    // show dialog and if ok close window
+                    Alloy.Globals.showToast(response, true);
+
                     // change view
                     var arg = {
                         refresh : true
@@ -525,15 +554,15 @@ function challengeFriends() {
                         controller : 'challengesView',
                         arg : arg
                     };
-                    
+
                     Ti.App.fireEvent('app:updateView', obj);
-                    
+
                     for (var win in Alloy.Globals.WINDOWS) {
                         Alloy.Globals.WINDOWS[win].setOpacity(0);
                     }
-                    
+
                     $.groupSelectWindow.close();
-                    
+
                     for (var win in Alloy.Globals.WINDOWS) {
                         Alloy.Globals.WINDOWS[win].close();
                     }
@@ -614,7 +643,7 @@ function createSubmitButtons(type) {
 
 function createViews(array, type) {
     globalType = type;
-    
+
     // check if table exists, and if it does simply remove it
     var children = tableWrapper.children;
     for (var i = 0; i < children.length; i++) {
@@ -646,8 +675,8 @@ function createViews(array, type) {
                 refresher.endRefreshing();
             }
         });
-    } 
-    
+    }
+
     // Table
     var hasChild = false;
 
@@ -999,6 +1028,7 @@ var imageErrorHandler = function(e) {
     e.image = '/images/no_pic.png';
 };
 
+var context;
 var args = arguments[0] || {};
 //var params = args.param || null;
 var groupObjects = [];
@@ -1033,6 +1063,7 @@ var fontawesome = require('lib/IconicFont').IconicFont({
 var font = 'FontAwesome';
 
 if (OS_ANDROID) {
+    context = require('lib/Context');
     isAndroid = true;
     font = 'fontawesome-webfont';
 
@@ -1062,6 +1093,18 @@ if (!isAndroid) {
     });
 }
 
+function onOpen(evt) {
+    if(isAndroid) {
+        context.on('groupSelectActivity', this.activity);
+    }
+}
+
+function onClose(evt) {
+    if(isAndroid) {
+        context.off('groupSelectActivity');
+    }
+}
+
 var topView = Ti.UI.createView({
     height : 70,
     width : Ti.UI.FILL,
@@ -1076,7 +1119,7 @@ var botView = Ti.UI.createView({
 
 var tab_groups = Ti.UI.createView({
     height : 70,
-    width : (Alloy.Globals.deviceWidth/2), 
+    width : (Alloy.Globals.deviceWidth / 2),
     backgroundColor : "#242424",
     backgroundGradient : {
         type : "linear",
@@ -1107,7 +1150,7 @@ tab_groups.add(Ti.UI.createLabel({
 
 var tab_friends = Ti.UI.createView({
     height : 70,
-    width : (Alloy.Globals.deviceWidth/2),
+    width : (Alloy.Globals.deviceWidth / 2),
     backgroundColor : Alloy.Globals.themeColor()
 });
 

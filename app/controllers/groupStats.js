@@ -1,4 +1,5 @@
 var args = arguments[0] || {};
+var context;
 
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({
@@ -7,6 +8,8 @@ var indicator = uie.createIndicatorWindow({
 });
 
 if (OS_ANDROID) {
+    context = require('lib/Context');
+    
     $.groupStats.addEventListener('open', function() {
         Alloy.Globals.setAndroidCouponMenu($.groupStats.activity);
 
@@ -26,6 +29,18 @@ if (OS_ANDROID) {
         font : Alloy.Globals.getFontCustom(18, "Bold"),
         color : '#FFF'
     });
+}
+
+function onOpen(evt) {
+    if(isAndroid) {
+        context.on('groupStatsActivity', this.activity);
+    }
+}
+
+function onClose(evt) {
+    if(isAndroid) {
+        context.off('groupStatsActivity');
+    }
 }
 
 $.groupStats.addEventListener('close', function() {

@@ -1,8 +1,22 @@
 var uie = require('lib/IndicatorWindow');
+var context;
+var isAndroid = false;
 var indicator = uie.createIndicatorWindow({
     top : 200,
     text : Alloy.Globals.PHRASES.loadingTxt
 });
+
+function onOpen(evt) {
+    if(isAndroid) {
+        context.on('storeActivity', this.activity);
+    }
+}
+
+function onClose(evt) {
+    if(isAndroid) {
+        context.off('storeActivity');
+    }
+}
 
 if (OS_IOS) {
     var InAppProducts = require('com.logicallabs.inappproducts');
@@ -18,6 +32,8 @@ if (OS_IOS) {
     if (iOSVersion < 7) {
         table.separatorStyle = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
         table.separatorColor = 'transparent';
+    } else {
+        table.separatorStyle = Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE;
     }
 
     // This call (or any other) may fail on Android if the module hasn't finished
@@ -213,6 +229,23 @@ if (OS_IOS) {
                     if (this.readyState == 4) {
                         Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
                         Alloy.Globals.unlockAchievement(3);
+                        
+                        // update menu
+                        var coins;
+                        
+                        if(identifier === "apps.topgame.betkampen.coins.20") {
+                            coins = 500;
+                        } else if(identifier === "apps.topgame.betkampen.coins.40") {
+                            coins = 1250;
+                        } else if(identifier === "apps.topgame.betkampen.coins.100") {
+                            coins = 3500;
+                        }
+                        
+                        var coinsInfo = {
+                            newCoins : coins
+                        };
+                        
+                        Ti.App.fireEvent('app:coinsMenuInfo', coinsInfo, true);
                     } 
                 } else {
                     indicator.closeIndicator();
@@ -368,6 +401,9 @@ if (OS_IOS) {
     });
 
 } else if (OS_ANDROID) {
+    isAndroid = true;
+    context = require('lib/Context');
+
     $.table.headerView = Ti.UI.createView({
         height : 0.5,
         width : Ti.UI.FILL,
@@ -429,6 +465,27 @@ if (OS_IOS) {
                     if (this.readyState == 4) {
                         Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
                         Alloy.Globals.unlockAchievement(3);
+                        
+                        // Unexpected token (position:TEXT "Tack f\u00f6r d...@1:31 in java.io.InputStreamReader@4314f9a8)
+                        // Blir nåe fel med feedback här oxå?
+                        
+                        // update menu
+                        var coins;
+                        var identifier = product.productId;
+                        
+                        if(identifier === "apps.topgame.betkampen.coins.20") {
+                            coins = 500;
+                        } else if(identifier === "apps.topgame.betkampen.coins.40") {
+                            coins = 1250;
+                        } else if(identifier === "apps.topgame.betkampen.coins.100") {
+                            coins = 3500;
+                        }
+                        
+                        var coinsInfo = {
+                            newCoins : coins
+                        };
+                        
+                        Ti.App.fireEvent('app:coinsMenuInfo', coinsInfo, true);
                     }
                 } else {
                     indicator.closeIndicator();

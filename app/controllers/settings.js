@@ -9,6 +9,7 @@ var fontawesome = require('lib/IconicFont').IconicFont({
 });
 
 var isAndroid = false;
+var context;
 
 if (OS_ANDROID) {
     isAndroid = true;
@@ -24,6 +25,8 @@ if (OS_ANDROID) {
         $.settingsWindow.activity.actionBar.displayHomeAsUp = true;
         $.settingsWindow.activity.actionBar.title = Alloy.Globals.PHRASES.settingsTxt;
     });
+    
+    context = require('lib/Context');
 } else {
     $.settingsWindow.titleControl = Ti.UI.createLabel({
         text : Alloy.Globals.PHRASES.settingsTxt,
@@ -31,6 +34,18 @@ if (OS_ANDROID) {
         color : '#FFF'
     });
 }
+
+function onOpen(evt) {
+    if(isAndroid) {
+        context.on('settingsActivity', this.activity);
+    }
+}
+
+function onClose(evt) {
+    if(isAndroid) {
+        context.off('settingsActivity');
+    }
+} 
 
 var picker;
 
@@ -136,6 +151,16 @@ function createGUI() {
             backgroundColor : '#303030'
         });
     } else {
+        var iOSVersion;
+        iOSVersion = parseInt(Ti.Platform.version);
+        
+        if (iOSVersion < 7) {
+            $.table.separatorStyle = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
+            $.table.separatorColor = 'transparent';
+        } else {
+            $.table.separatorStyle = Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE;
+        }
+        
         $.table.headerView = Ti.UI.createView({
             height : 0.3,
             top : 0,

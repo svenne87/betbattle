@@ -224,13 +224,17 @@ Alloy.Globals.performTimeout = function(func) {
 Alloy.Globals.getLanguage = function(indicator) {
     // check connection
     if (Alloy.Globals.checkConnection()) {
-        indicator.openIndicator();
-
+        if(indicator !== null) {
+            indicator.openIndicator();
+        }
+        
         var xhr = Titanium.Network.createHTTPClient();
         xhr.onerror = function(e) {
             Ti.App.Properties.setString("language_version", JSON.stringify("0"));
             Ti.API.error('Bad Sever =>' + e.error);
-            indicator.closeIndicator();
+            if(indicator !== null) {
+                indicator.closeIndicator();
+            }
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
         };
 
@@ -242,7 +246,9 @@ Alloy.Globals.getLanguage = function(indicator) {
             xhr.send();
         } catch(e) {
             Ti.App.Properties.setString("language_version", JSON.stringify("0"));
-            indicator.closeIndicator();
+            if(indicator !== null) {
+                indicator.closeIndicator();
+            }
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
         }
 
@@ -254,7 +260,10 @@ Alloy.Globals.getLanguage = function(indicator) {
                     file1.write(this.responseText);
 
                     Alloy.Globals.PHRASES = JSON.parse(file1.read().text);
-
+                    
+                    // store language version
+                    Ti.App.Properties.setString("language_version", JSON.stringify(Alloy.Globals.VERSIONS.language_version));
+                    
                     // store language and that we have selected a language
                     Ti.App.Properties.setString("language", JSON.stringify({
                         language : Alloy.Globals.LOCALE
@@ -263,12 +272,16 @@ Alloy.Globals.getLanguage = function(indicator) {
                         languageSelected : true
                     }));
 
-                    Alloy.Globals.showAlertWithRestartNote();
+                    Alloy.Globals.showAlertWithRestartNote(1);
                 }
-                indicator.closeIndicator();
+                if(indicator !== null) {
+                    indicator.closeIndicator();
+                }
             } else {
                 Ti.App.Properties.setString("language_version", JSON.stringify("0"));
-                indicator.closeIndicator();
+                if(indicator !== null) {
+                    indicator.closeIndicator();
+                }
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                 Ti.API.error("Error =>" + this.response);
             }
@@ -292,12 +305,17 @@ Alloy.Globals.getLanguage = function(indicator) {
 };
 
 // function to show alert box to restart app
-Alloy.Globals.showAlertWithRestartNote = function() {
+Alloy.Globals.showAlertWithRestartNote = function(auto) {
+   
     var alertWindow = Titanium.UI.createAlertDialog({
         title : Alloy.Globals.PHRASES.betbattleTxt,
         message : Alloy.Globals.PHRASES.appRestartTxt,
         buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtnTxt]
     });
+    
+    if(auto === 1) {
+        alertWindow.message = Alloy.Globals.PHRASES.languageRestartTxt;
+    }
 
     alertWindow.addEventListener('click', function(e) {
         switch (e.index) {
@@ -406,13 +424,16 @@ Alloy.Globals.getTutorial = function(indicator) {
 
 Alloy.Globals.checkVersions = function(indicator) {
     // check if any versions are stored (if the app runs for the first time, there will be no versions stored.)
-
+    Ti.API.log("checking language...");
+    
     if (Ti.App.Properties.hasProperty("language_version")) {
         // stored version found, check if it's out dated
         var currentLanguageVersion = JSON.parse(Ti.App.Properties.getString('language_version'));
 
         if (Alloy.Globals.VERSIONS.language_version !== currentLanguageVersion) {
             // update needed
+            Alloy.Globals.getLanguage(null);
+            /*
             var alertWindow = Titanium.UI.createAlertDialog({
                 title : Alloy.Globals.PHRASES.betbattleTxt,
                 message : Alloy.Globals.PHRASES.newLanguageTxt,
@@ -426,7 +447,7 @@ Alloy.Globals.checkVersions = function(indicator) {
                     // get new language and store version
                     alertWindow.hide();
                     Ti.App.Properties.setString("language_version", JSON.stringify(Alloy.Globals.VERSIONS.language_version));
-                    Alloy.Globals.getLanguage(indicator);
+                    Alloy.Globals.getLanguage(null);
                     break;
                 case 1:
                     Ti.App.Properties.setString("language_version", JSON.stringify(Alloy.Globals.VERSIONS.language_version));
@@ -435,6 +456,7 @@ Alloy.Globals.checkVersions = function(indicator) {
                 }
             });
             alertWindow.show();
+            */
         }
 
     } else {

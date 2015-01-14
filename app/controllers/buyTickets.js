@@ -1,4 +1,6 @@
 var args = arguments[0] || {};
+var context;
+var isAndroid = false;
 
 if (OS_IOS) {
     $.buyTickets.titleControl = Ti.UI.createLabel({
@@ -8,6 +10,9 @@ if (OS_IOS) {
     });
 
 } else {
+    isAndroid = true;
+    context = require('lib/Context');
+
     $.buyTickets.orientationModes = [Titanium.UI.PORTRAIT];
 
     $.buyTickets.addEventListener('open', function() {
@@ -20,6 +25,18 @@ if (OS_IOS) {
         $.buyTickets.activity.actionBar.displayHomeAsUp = true;
         $.buyTickets.activity.actionBar.title = Alloy.Globals.PHRASES.ticketsTxt;
     });
+}
+
+function onOpen(evt) {
+    if(isAndroid) {
+        context.on('buyTicketsActivity', this.activity);
+    }
+}
+
+function onClose(evt) {
+    if(isAndroid) {
+        context.off('buyTicketsActivity');
+    }
 }
 
 var topLabel = Ti.UI.createLabel({

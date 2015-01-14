@@ -1,5 +1,5 @@
 <Alloy>
-	<Window class="container" id="scoreView">
+	<Window class="container" id="scoreView" onOpen="onOpen" onClose="onClose">
 		<View id="scoreBoardView">
 			<TableView id="scoreBoardTable">
 			</TableView>

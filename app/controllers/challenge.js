@@ -1657,14 +1657,14 @@ var indicator = uie.createIndicatorWindow({
     text : Alloy.Globals.PHRASES.loadingTxt
 });
 var table = null;
-
+var context;
 var iOSVersion;
 var isAndroid = true;
 
 if (OS_IOS) {
     isAndroid = false;
     iOSVersion = parseInt(Ti.Platform.version);
-}
+} 
 
 var fontawesome = require('lib/IconicFont').IconicFont({
     font : 'lib/FontAwesome'
@@ -1673,7 +1673,20 @@ var fontawesome = require('lib/IconicFont').IconicFont({
 var fontAwe = 'FontAwesome';
 
 if (isAndroid) {
+    context = require('lib/Context');
     fontAwe = 'fontawesome-webfont';
+}
+
+function onOpen(evt) {
+    if(isAndroid) {
+        context.on('challengeActivity', this.activity);
+    }
+}
+
+function onClose(evt) {
+    if(isAndroid) {
+        context.off('challengeActivity');
+    }
 }
 
 var prevWin = args.win;

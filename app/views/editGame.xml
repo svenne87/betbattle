@@ -1,4 +1,4 @@
 <Alloy>
-	<Window class="container" id="editGame">
+	<Window class="container" id="editGame" onOpen="onOpen" onClose="onClose">
 	</Window>
 </Alloy>

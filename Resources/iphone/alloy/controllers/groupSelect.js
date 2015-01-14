@@ -141,16 +141,40 @@ function Controller() {
                         globalType = "1";
                         data = [];
                         var emptyRow = Ti.UI.createTableViewRow({
-                            height: 75,
+                            height: Ti.UI.SIZE,
                             hasChild: false,
-                            width: Ti.UI.FILL
+                            width: Ti.UI.FILL,
+                            selectionStyle: "none"
                         });
-                        emptyRow.add(Ti.UI.createLabel({
+                        var emptyView = Ti.UI.createView({
+                            backgroundColor: "#000",
+                            height: Ti.UI.SIZE,
+                            width: Ti.UI.FILL,
+                            layout: "vertical"
+                        });
+                        var emptyTxt = Ti.UI.createLabel({
                             text: Alloy.Globals.PHRASES.noGroupsTxt + " ",
                             left: 60,
+                            top: 30,
                             font: Alloy.Globals.getFontCustom(16, "Regular"),
                             color: "#FFF"
-                        }));
+                        });
+                        emptyView.add(emptyTxt);
+                        var emptyButton = Alloy.Globals.createButtonView(Alloy.Globals.themeColor(), "#FFF", Alloy.Globals.PHRASES.createGroupTxt);
+                        emptyButton.top = 40;
+                        emptyButton.addEventListener("click", function() {
+                            var win = Alloy.createController("createGroup").getView();
+                            if (isAndroid) {
+                                win.open({
+                                    fullScreen: true
+                                });
+                                win = null;
+                            } else Alloy.Globals.NAV.openWindow(win, {
+                                animated: true
+                            });
+                        });
+                        emptyView.add(emptyButton);
+                        emptyRow.add(emptyView);
                         data.push(emptyRow);
                         table.setData(data);
                         tableWrapper.removeAllChildren();
@@ -647,6 +671,12 @@ function Controller() {
     function endRefresher() {
         isAndroid ? "undefined" != typeof swipeRefresh && null !== swipeRefresh && swipeRefresh.setRefreshing(false) : "undefined" != typeof refresher && null !== refresher && refresher.endRefreshing();
     }
+    function onOpen() {
+        isAndroid && context.on("groupSelectActivity", this.activity);
+    }
+    function onClose() {
+        isAndroid && context.off("groupSelectActivity");
+    }
     require("alloy/controllers/BaseController").apply(this, Array.prototype.slice.call(arguments));
     this.__controllerPath = "groupSelect";
     if (arguments[0]) {
@@ -662,6 +692,7 @@ function Controller() {
     }
     var $ = this;
     var exports = {};
+    var __defers = {};
     $.__views.groupSelectWindow = Ti.UI.createWindow({
         layout: "vertical",
         width: Ti.UI.FILL,
@@ -674,6 +705,8 @@ function Controller() {
         id: "groupSelectWindow"
     });
     $.__views.groupSelectWindow && $.addTopLevelView($.__views.groupSelectWindow);
+    onOpen ? $.__views.groupSelectWindow.addEventListener("open", onOpen) : __defers["$.__views.groupSelectWindow!open!onOpen"] = true;
+    onClose ? $.__views.groupSelectWindow.addEventListener("close", onClose) : __defers["$.__views.groupSelectWindow!close!onClose"] = true;
     $.__views.groupSelect = Ti.UI.createView({
         height: "100%",
         width: "100%",
@@ -699,6 +732,7 @@ function Controller() {
     var imageErrorHandler = function(e) {
         e.image = "/images/no_pic.png";
     };
+    var context;
     var args = arguments[0] || {};
     var groupObjects = [];
     var friendObjects = [];
@@ -889,6 +923,8 @@ function Controller() {
         getFriends();
         notFirstRun = true;
     } else Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+    __defers["$.__views.groupSelectWindow!open!onOpen"] && $.__views.groupSelectWindow.addEventListener("open", onOpen);
+    __defers["$.__views.groupSelectWindow!close!onClose"] && $.__views.groupSelectWindow.addEventListener("close", onClose);
     _.extend($, exports);
 }
 

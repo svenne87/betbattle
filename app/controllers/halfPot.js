@@ -1,4 +1,6 @@
 var args = arguments[0] || {};
+var context;
+var isAndroid = false;
 var tickets = null;
 
 var topView = Ti.UI.createView({
@@ -219,6 +221,8 @@ buyTicketsBtn.add(buyTicketsLabel);
 
 botView.add(buyTicketsBtn);
 if (OS_ANDROID) {
+    isAndroid = true;
+    context = require('lib/Context');
     font = 'fontawesome-webfont';
 
     $.halfPot.orientationModes = [Titanium.UI.PORTRAIT];
@@ -239,6 +243,18 @@ if (OS_ANDROID) {
         font : Alloy.Globals.getFontCustom(18, "Bold"),
         color : '#FFF'
     });
+}
+
+function onOpen(evt) {
+    if(isAndroid) {
+        context.on('halfPotActivity', this.activity);
+    }
+}
+
+function onClose(evt) {
+    if(isAndroid) {
+        context.off('halfPotActivity');
+    }
 }
 
 $.halfPot.add(topView);

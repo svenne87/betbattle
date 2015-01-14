@@ -7,8 +7,12 @@ var indicator = uie.createIndicatorWindow({
 var args = arguments[0] || {};
 var url = Alloy.Globals.BETKAMPENURL + args.url;
 var extwebview;
+var context;
+var isAndroid = false;
 
 if (OS_ANDROID) {
+    isAndroid = true;
+    context = require('lib/Context');
     $.dynamicWebViewWin.orientationModes = [Titanium.UI.PORTRAIT];
 
     $.dynamicWebViewWin.addEventListener('open', function() {
@@ -64,3 +68,14 @@ $.dynamicWebViewWin.addEventListener('close', function() {
 $.dynamicWebViewWin.add(extwebview);
 //adding webview in current window
 
+function onOpen(evt) {
+    if(isAndroid) {
+        context.on('dynamicWebViewActivity', this.activity);
+    }
+}
+
+function onClose(evt) {
+    if(isAndroid) {
+        context.off('dynamicWebViewActivity');
+    }
+}

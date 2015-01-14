@@ -1,5 +1,5 @@
 <Alloy>
-	<Window class="container" id="showChallengeWindow">
+	<Window class="container" id="showChallengeWindow" onOpen="onOpen" onClose="onClose">
 		<ScrollableView id="showChallenge" showPagingControl="true">
 		</ScrollableView>
 	</Window>

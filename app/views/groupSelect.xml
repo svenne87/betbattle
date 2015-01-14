@@ -1,5 +1,5 @@
 <Alloy>
-	<Window class="container" id="groupSelectWindow">
+	<Window class="container" id="groupSelectWindow" onOpen="onOpen" onClose="onClose">
 		<View id="groupSelect">
 		</View>
 	</Window>

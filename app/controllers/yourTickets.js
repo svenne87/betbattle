@@ -1,4 +1,23 @@
 var args = arguments[0] || {};
+var context;
+var isAndroid = false;
+
+if(OS_ANDROID) {
+    isAndroid = true;
+    context = require('lib/Context');
+}
+
+function onOpen(evt) {
+    if(isAndroid) {
+        context.on('yourTicketsActivity', this.activity);
+    }
+}
+
+function onClose(evt) {
+    if(isAndroid) {
+        context.off('yourTicketsActivity');
+    }
+}
 
 var scrollView = Ti.UI.createScrollView({
     contentWidth : Ti.UI.FILL,

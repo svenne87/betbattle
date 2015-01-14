@@ -4,6 +4,7 @@ var couponTable = args.table || null;
 var couponWin = args.couponWin || null;
 var gameObjects = [];
 var gameArray = [];
+var context;
 
 var games = null;
 if (Alloy.Globals.COUPON && Alloy.Globals.COUPON.games.length > 0) {
@@ -41,6 +42,20 @@ if (OS_IOS) {
         font : Alloy.Globals.getFontCustom(18, "Bold"),
         color : '#FFF'
     });
+} else {
+    context = require('lib/Context');
+}
+
+function onOpen(evt) {
+    if(isAndroid) {
+        context.on('editGameActivity', this.activity);
+    }
+}
+
+function onClose(evt) {
+    if(isAndroid) {
+        context.off('editGameActivity');
+    }
 }
 
 $.editGame.addEventListener('close', function() {

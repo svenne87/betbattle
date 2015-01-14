@@ -2,10 +2,12 @@ var fontawesome = require('lib/IconicFont').IconicFont({
     font : 'lib/FontAwesome'
 });
 
+var context;
 var font = 'FontAwesome';
 var isAndroid = false;
 
 if (OS_ANDROID) {
+    context = require('lib/Context');
     isAndroid = true;
     font = 'fontawesome-webfont';
     $.share.orientationModes = [Titanium.UI.PORTRAIT];
@@ -26,6 +28,18 @@ if (OS_ANDROID) {
         font : Alloy.Globals.getFontCustom(18, "Bold"),
         color : '#FFF'
     });
+}
+
+function onOpen(evt) {
+    if(isAndroid) {
+        context.on('shareViewActivity', this.activity);
+    }
+}
+
+function onClose(evt) {
+    if(isAndroid) {
+        context.off('shareViewActivity');
+    }
 }
 
 var mainView = Ti.UI.createScrollView({
@@ -142,18 +156,16 @@ var fb;
 
 if (Alloy.Globals.FACEBOOKOBJECT != null) {
     if (isAndroid) {
-        fb = Alloy.Globals.FACEBOOK.createActivityWorker({
-            lifecycleContainer : $.share
-        });
+        $.share.fbProxy = Alloy.Globals.FACEBOOK.createActivityWorker({lifecycleContainer: $.share});
+        fb = Alloy.Globals.FACEBOOK;
     } else {
         fb = Alloy.Globals.FACEBOOK;
     }
 } else {
     if (isAndroid) {
         var fbModule = require('com.ti.facebook');
-        fb = fbModule.createActivityWorker({
-            lifecycleContainer : $.share
-        });
+        $.share.fbProxy = fbModule.createActivityWorker({lifecycleContainer: $.share});
+        fb = fbModule;
     } else {
         fb = require("com.facebook");
     }

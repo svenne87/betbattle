@@ -1,5 +1,5 @@
 var args = arguments[0] || {};
-
+var context;
 var gameID = args.gameID;
 var topView;
 var botView;
@@ -32,11 +32,24 @@ if (OS_IOS) {
     isAndroid = false;
     iOSVersion = parseInt(Ti.Platform.version);
 } else {
+    context = require('lib/Context');
     var swipeRefreshModule = require('com.rkam.swiperefreshlayout');
 }
 
 var sections = [];
 var table = null;
+
+function onOpen(evt) {
+    if(isAndroid) {
+        context.on('showMatchOTDActivity', this.activity);
+    }
+}
+
+function onClose(evt) {
+    if(isAndroid) {
+        context.off('showMatchOTDActivity');
+    }
+}
 
 function checkDate(date) {
     // check if match has started

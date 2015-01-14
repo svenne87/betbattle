@@ -1,4 +1,5 @@
 var args = arguments[0] || {};
+var context;
 
 var uie = require('lib/IndicatorWindow');
 
@@ -54,6 +55,20 @@ if (OS_IOS) {
     $.showCoupon.addEventListener('open', function() {
         Alloy.Globals.couponOpen = true;
     });
+} else {
+    context = require('lib/Context');
+}
+
+function onOpen(evt) {
+    if(isAndroid) {
+        context.on('showCouponActivity', this.activity);
+    }
+}
+
+function onClose(evt) {
+    if(isAndroid) {
+        context.off('showCouponActivity');
+    }
 }
 
 $.showCoupon.addEventListener('close', function() {

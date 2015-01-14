@@ -16,6 +16,15 @@ var isAndroid = false;
 if (OS_ANDROID) {
     font = 'fontawesome-webfont';
     isAndroid = true;
+    var Context = require('lib/Context');
+    
+    function onOpen(evt) {
+        Context.on('mainActivity', this.activity);
+    }
+
+    function onClose(evt) {
+        Context.off('mainActivity');
+    } 
 }
 
 if (!isAndroid) {
@@ -224,9 +233,32 @@ Ti.App.addEventListener('app:slide', function() {
 });
 
 // Used to update coins information
-Ti.App.addEventListener('app:coinsMenuInfo', function(data) {
-    winsLabel.setText(data.totalPoints);
-    coinsLabel.setText(data.totalCoins);
+Ti.App.addEventListener('app:coinsMenuInfo', function(data, status) {    
+    if(status) {
+        // add coins sent in to the current amount
+        var coins = coinsLabel.getText();
+        coins = coins - 0 ;
+        var coinsToAdd = data.newCoins;
+        coinsToAdd = coinsToAdd - 0;
+        
+        // set new amount
+        coinsLabel.setText(coins + coinsToAdd);
+        
+        // TODO uppdatera menyn och challengesView profile row....
+         
+    } else {
+        winsLabel.setText(data.totalPoints);
+        coinsLabel.setText(data.totalCoins);
+    }
+   
+
+    if(winsLabel.getText().length > 4) {
+        winsLabel.setText(winsLabel.getText().substring(0, 3) + '..');
+    }
+    
+    if(coinsLabel.getText().length > 4) {
+        coinsLabel.setText(coinsLabel.getText().substring(0, 3) + '..');
+    }
 });
 
 // update coins
@@ -721,9 +753,8 @@ function rowSelect(e) {
                 switch (e.index) {
                 case 0:
                     if (Alloy.Globals.FACEBOOKOBJECT) {
-                        var fb = Alloy.Globals.FACEBOOK.createActivityWorker({
-                            lifecycleContainer : $.mainWin
-                        });
+                        $.mainWin.fbProxy = Alloy.Globals.FACEBOOK.createActivityWorker({lifecycleContainer: $.mainWin});
+                        var fb = Alloy.Globals.FACEBOOK;                        
 
                         fb.addEventListener('logout', function(e) {
                             Ti.API.log('steg 3');
@@ -833,6 +864,11 @@ if (!isAndroid) {
         left : 0,
         right : 0
     };
+    
+    if (iOSVersion < 7) {
+        $.ds.leftTableView.separatorStyle = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
+        $.ds.leftTableView.separatorColor = 'transparent';
+    }
 }
 
 // Pass data to widget leftTableView

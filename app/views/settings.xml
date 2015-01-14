@@ -1,5 +1,5 @@
 <Alloy>
-	<Window class="container" id="settingsWindow">	
+	<Window class="container" id="settingsWindow" onOpen="onOpen" onClose="onClose">	
 		<View id="settingsView">
 			<TableView id="table">
 				<TableViewRow class="settings_row" id="language_row">

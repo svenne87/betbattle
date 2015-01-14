@@ -1,5 +1,5 @@
 <Alloy>
-	<Window class="container" id="store">
+	<Window class="container" id="store" onOpen="onOpen" onClose="onClose">
 		<TableView id="table">
 		</TableView>
 	</Window>

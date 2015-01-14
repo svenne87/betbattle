@@ -1,4 +1,5 @@
 var args = arguments[0] || {};
+var context;
 
 var fontawesome = require('lib/IconicFont').IconicFont({
     font : 'lib/FontAwesome'
@@ -19,6 +20,20 @@ if (OS_IOS) {
         font : Alloy.Globals.getFontCustom(18, "Bold"),
         color : '#FFF'
     });
+} else {
+    context = require('lib/Context');
+}
+
+function onOpen(evt) {
+    if(isAndroid) {
+        context.on('friendZoneActivity', this.activity);
+    }
+}
+
+function onClose(evt) {
+    if(isAndroid) {
+        context.off('friendZoneActivity');
+    }
 }
 
 var mainView = Ti.UI.createView({
@@ -397,9 +412,8 @@ var fb;
 
 if (Alloy.Globals.FACEBOOKOBJECT != null) {
     if (isAndroid) {
-        fb = Alloy.Globals.FACEBOOK.createActivityWorker({
-            lifecycleContainer : $.friendZone
-        });
+        $.friendZone.fbProxy = Alloy.Globals.FACEBOOK.createActivityWorker({lifecycleContainer : $.friendZone});
+        fb = Alloy.Globals.FACEBOOK;
     } else {
         fb = Alloy.Globals.FACEBOOK;
     }
@@ -407,7 +421,8 @@ if (Alloy.Globals.FACEBOOKOBJECT != null) {
 } else {
     if(isAndroid) {
         var fbModule = require('com.ti.facebook');
-        fb = fbModule.createActivityWorker({lifecycleContainer: $.friendZone});
+        $.friendZone.fbProxy = fbModule.createActivityWorker({lifecycleContainer : $.friendZone});
+        fb = fbModule;
     } else {
         fb = require("com.facebook");
     }

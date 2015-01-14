@@ -1,6 +1,7 @@
 var args = arguments[0] || {};
 var isAndroid = false;
 var match = null;
+var context;
 
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({
@@ -16,6 +17,7 @@ var font = 'FontAwesome';
 var rightPercentage;
 
 if (OS_ANDROID) {
+    context = require('lib/Context');
     isAndroid = true;
     $.matchDay.orientationModes = [Titanium.UI.PORTRAIT];
 
@@ -41,6 +43,18 @@ if (OS_ANDROID) {
         font : Alloy.Globals.getFontCustom(18, "Bold"),
         color : '#FFF'
     });
+}
+
+function onOpen(evt) {
+    if(isAndroid) {
+        context.on('matchDayActivity', this.activity);
+    }
+}
+
+function onClose(evt) {
+    if(isAndroid) {
+        context.off('matchDayActivity');
+    }
 }
 
 getMatchOfTheDay();
@@ -237,6 +251,8 @@ if (!isAndroid) {
     if (iOSVersion < 7) {
         table.separatorStyle = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
         table.separatorColor = 'transparent';
+    } else {
+        table.separatorStyle = Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE;
     }
 
     table.separatorInsets = {

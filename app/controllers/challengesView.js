@@ -42,11 +42,11 @@ if (args.refresh == 1) {
 }
 
 Ti.App.addEventListener('matchOTDUpdate', function() {
-    Ti.API.log("Trying to update..."); // TODO uppdaterade inte här innan
+    Ti.API.log("Trying to update..."); // TODO uppdaterade inte här. Funkar nu?
     var count = acceptLabel.getText();
-    count = count - 0;
+    count = count - 1;
     
-    if(count === '0') {
+    if(count === 0) {
         acceptRow.remove(acceptLabel);
     } else {
         acceptRow.remove(acceptLabel);
@@ -54,8 +54,6 @@ Ti.App.addEventListener('matchOTDUpdate', function() {
         acceptLabel.setLeft(acceptTextLabel.toImage().width + 70);
         acceptRow.add(acceptLabel);
     }
-    
-   // matchOTDRow.remove(matchOTDLabel);
 });
 
 var acceptLabel = Ti.UI.createLabel({
@@ -139,9 +137,13 @@ Ti.App.addEventListener("challengesViewRefresh", function(e) {
 // update profile info row
 function updateProfileData(userInfo) {
 
-    // TODO Får ju ut språkversion här, hämta ny automatiskt om den är inaktuell? fast måste ju ske tidigare ändå...? eller uppmana restart?
-    // TODO vid update av pengar etc så flyttar sig ikoner. Ska vara så (dynamiskt) eller fasta?
     // TODO hängde sig när jag öppnade utmaning (via push) inne i appen (android)?
+    // https://github.com/omorandi/TiSMSDialog   <-- Om inte den andra modulen uppdateras
+    // restart buggar bara på ios 6?    
+     
+    
+    // check if language or tutorial has been changed, if it has download the new version
+    Alloy.Globals.checkVersions(indicator);
     
     // update profile data
     if (userInfo.name.length > 16) {
@@ -149,14 +151,37 @@ function updateProfileData(userInfo) {
         userInfo.name = userInfo.name + '...';
     }
     
-    profileNameLabel.setText(userInfo.name + ' ');
-    profileCoinsLabel.setText(userInfo.totalCoins + ' '); 
-    profilePointsLabel.setText(userInfo.totalPoints + ' ');
-    profileWinsLabel.setText(userInfo.totalWins + ' ');
-    profileRankingLabel.setText(userInfo.position + ' ');
-    profileAchievementsLabel.setText(userInfo.achieved_achievements + ' '); // + '/' + userInfo.total_achievements + ' ');
+    profileNameLabel.setText(userInfo.name);
+    profileCoinsLabel.setText(userInfo.totalCoins);
+    profilePointsLabel.setText(userInfo.totalPoints);
+    profileWinsLabel.setText(userInfo.totalWins);  
+    profileRankingLabel.setText(userInfo.position);
+    profileAchievementsLabel.setText(userInfo.achieved_achievements); // + '/' + userInfo.total_achievements + ' ');
     profileLevelImage.setImage(Alloy.Globals.BETKAMPENURL + "/" + userInfo.level.symbol);
+ 
+    if(profileCoinsLabel.getText().length > 5) {
+        profileCoinsLabel.setText(profileCoinsLabel.getText().substring(0, 3) + '..');
+    }
     
+    if(profilePointsLabel.getText().length > 5) {
+        profilePointsLabel.setText(profilePointsLabel.getText().substring(0, 3) + '..');
+    }
+    
+    if(profileWinsLabel.getText().length > 4) {
+        profileWinsLabel.setText(profileWinsLabel.getText().substring(0, 2) + '..');
+    }
+    
+    if(profileAchievementsLabel.getText().length > 4) {
+        profileAchievementsLabel.setText(profileAchievementsLabel.getText().substring(0, 2) + '..');
+    }
+    
+    // make sure they are at the same position
+    if(profileCoinsLabel.toImage().width > profileWinsLabel.toImage().width) {
+        profileWinsLabel.setWidth(profileCoinsLabel.toImage().width);
+    } else if(profileWinsLabel.toImage().width > profileCoinsLabel.toImage().width){
+        profileCoinsLabel.setWidth(profileWinsLabel.toImage().width);
+    }
+
     firstRow.show();
     secondRow.show();
 
@@ -186,7 +211,7 @@ function getUserInfo() {
             totalCoins : '',
             totalPoints : ''
         };
-        Ti.App.fireEvent('app:coinsMenuInfo', error);
+        Ti.App.fireEvent('app:coinsMenuInfo', error, false);
     }
 
     xhr.onload = function() {
@@ -202,7 +227,7 @@ function getUserInfo() {
 
                 if (userInfo !== null) {
                     // Update menu
-                    Ti.App.fireEvent('app:coinsMenuInfo', userInfo);
+                    Ti.App.fireEvent('app:coinsMenuInfo', userInfo, false);
 
                     // update profile data
                     updateProfileData(userInfo);
@@ -749,12 +774,12 @@ if (!isAndroid) {
         width : '100%',
         backgroundColor : 'transparent',
         style : Ti.UI.iPhone.TableViewStyle.GROUPED,
+        id : 'challengeTable',
+        refreshControl : refresher,
         separatorInsets : {
             left : 0,
             right : 0
         },
-        id : 'challengeTable',
-        refreshControl : refresher,
         separatorStyle : Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE,
         separatorColor : '#303030'
     });
@@ -1259,6 +1284,14 @@ function createMatchOTDRow() {
     return row;
 }
 
+ function compare(a, b) {
+    if (a.attributes.time > b.attributes.time)
+        return -1;
+    if (a.attributes.time < b.attributes.time)
+        return 1;
+    return 0;
+}
+
 // create the hole table view with sections and checks if there are no challenges
 function constructTableData(array) {
     getDynamicTopImage();
@@ -1366,8 +1399,9 @@ function constructTableData(array) {
         hasChild : child,
         selectionStyle : 'none'
     });
-*/
-    var widthParted = Ti.Platform.displayCaps.platformWidth / 4;
+*/  
+    var deviceWidth = Ti.Platform.displayCaps.platformWidth;
+    var widthParted = deviceWidth / 4;
 
     var leftProfilePart = Ti.UI.createView({
         width : widthParted,
@@ -1436,7 +1470,7 @@ function constructTableData(array) {
         left : 30,
         top : 0,
         width : Ti.UI.FILL,
-        height : 20//Ti.UI.SIZE
+        height : 20
     });
     
     firstRow.hide();
@@ -1448,13 +1482,13 @@ function constructTableData(array) {
             fontFamily : font
         },
         text : fontawesome.icon('fa-database'),
-        color : Alloy.Globals.themeColor(), //'#FFF'
+        color : Alloy.Globals.themeColor()
     }));
     
     profileCoinsLabel = Ti.UI.createLabel({
         text : '',
         font : Alloy.Globals.getFontCustom(14, "Regular"),
-        color : Alloy.Globals.themeColor(), //'#FFF',
+        color : Alloy.Globals.themeColor(),
         left : 10,
         width : Ti.UI.SIZE
     });
@@ -1467,15 +1501,16 @@ function constructTableData(array) {
             fontFamily : font
         },
         text : fontawesome.icon('fa-signal'),
-        color : Alloy.Globals.themeColor() //'#FFF'
+        width : Ti.UI.SIZE,
+        color : Alloy.Globals.themeColor()
     }));
  
     profilePointsLabel = Ti.UI.createLabel({
        left : 10,
        text : '',
        font : Alloy.Globals.getFontCustom(14, "Regular"),
-       color :  Alloy.Globals.themeColor(), //'#FFF',
-       width : Ti.UI.FILL 
+       color :  Alloy.Globals.themeColor(),
+       width : Ti.UI.SIZE 
     });
     
     firstRow.add(profilePointsLabel);
@@ -1484,7 +1519,7 @@ function constructTableData(array) {
     secondRow = Ti.UI.createView({
         layout : 'horizontal',
         left : 30,
-        top : 0, //-20,
+        top : 0,
         width : Ti.UI.FILL,
         height : Ti.UI.SIZE
     });
@@ -1497,39 +1532,34 @@ function constructTableData(array) {
             fontFamily : font
         },
         text : fontawesome.icon('fa-trophy'),
-        color : Alloy.Globals.themeColor() //'#FFF'
+        width : Ti.UI.SIZE,
+        color : Alloy.Globals.themeColor()
     }));
     
     profileWinsLabel = Ti.UI.createLabel({
        text : '',
        font : Alloy.Globals.getFontCustom(14, "Regular"),
-       color : Alloy.Globals.themeColor(), //'#FFF,'
+       color : Alloy.Globals.themeColor(),
        left : 10,
        width : Ti.UI.SIZE 
     });
     
     secondRow.add(profileWinsLabel);
-    
-    var relativeLeftPos = 30;
-    
-    if(isAndroid) {
-        relativeLeftPos = 32;
-    }
-  
-  
+
     secondRow.add(Ti.UI.createLabel({
-        left : relativeLeftPos,
+        left : 12,
         font : {
             fontFamily : font
         },
         text : fontawesome.icon('fa-unlock'),
-        color : Alloy.Globals.themeColor() //'#FFF'
+        width : Ti.UI.SIZE,
+        color : Alloy.Globals.themeColor()
     }));
     
     profileAchievementsLabel = Ti.UI.createLabel({
        text : '',
        font : Alloy.Globals.getFontCustom(14, "Regular"),
-       color : Alloy.Globals.themeColor(), //'#FFF',
+       color : Alloy.Globals.themeColor(),
        left : 10,
        width : Ti.UI.SIZE 
     });
@@ -1552,7 +1582,7 @@ function constructTableData(array) {
        font : Alloy.Globals.getFontCustom(14, "Regular"),
        left : 5,
        width : Ti.UI.SIZE,
-       color : Alloy.Globals.themeColor() //'#FFF'
+       color : Alloy.Globals.themeColor()
     });
         
    // secondRow.add(profileRankingLabel);
@@ -1771,10 +1801,10 @@ function constructTableData(array) {
 
     for (var x = 0; x < array.length; x++) {
         var arrayObj = array[x];
-
         if (x === 0) {
             // create 'accept' rows
             if (arrayObj.length > 0) {
+                Alloy.Globals.CHALLENGEOBJECTARRAY[x].sort(compare);  // TODO Används vid öppnade av utmaning
                 for (var i = 0; i < arrayObj.length; i++) {
                     if (rightNowRows < 5) {
                         rightNowRows++;
@@ -1785,8 +1815,8 @@ function constructTableData(array) {
                 acceptNowCount = 0;
             }
         } else if (x === 1) {
-
             if (arrayObj.length > 0) {
+                Alloy.Globals.CHALLENGEOBJECTARRAY[x].sort(compare);  // TODO Används vid öppnade av utmaning
                 for (var i = 0; i < arrayObj.length; i++) {
                     if (rightNowRows < 5) {
                         rightNowRows++;
@@ -1980,5 +2010,3 @@ if (!checkFirstTime) {
     }
 }
 
-// check if language or tutorial has been changed, if it has download the new version
-Alloy.Globals.checkVersions(indicator);

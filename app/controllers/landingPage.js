@@ -58,9 +58,6 @@ function createLeagueAndUidObj(response) {
         };
         Alloy.Globals.AVAILABLELANGUAGES.push(language);
     }
-
-    // check if language or tutorial has been changed, if it has download the new version
-    Alloy.Globals.checkVersions(indicator);
 }
 
 /* Only used for Betkampen token sign in! */
@@ -235,40 +232,45 @@ if (!isAndroid) {
         });
     }
 } else if (isAndroid) {
-    var bc = Ti.Android.createBroadcastReceiver({
-        onReceived : function() {
-            //Ti.App.fireEvent('challengesViewRefresh');
+    // when the app is resumed
+    Ti.App.addEventListener('resumed', function() {
+        
+        Ti.API.log("resume");
+        //Ti.App.fireEvent('challengesViewRefresh');
 
-            if (Alloy.Globals.checkConnection()) {
-                Alloy.Globals.appStatus = 'foreground';
+        if (Alloy.Globals.checkConnection()) {
+            Alloy.Globals.appStatus = 'foreground';
 
-                if (Alloy.Globals.FACEBOOKOBJECT) {
-                    var fb = Alloy.Globals.FACEBOOK.createActivityWorker({
-                        lifecycleContainer : $.landingPageWin
-                    });
-                    //        Alloy.Globals.BETKAMPEN.token = Alloy.Globals.BETKAMPEN.token + 'aa';  // TODO
-                    if (fb) {
-                        if (fb.loggedIn) {
-                            loginBetkampenAuthenticated(2);
-                            // TODO Test, run methods, need to authorize??  Testa /me och se om de svara 401 etc. då visa login...
-                        } else {
-                            // not logged in, show Betkampen login view
-                            showFbLogin();
-                        }
+            if (Alloy.Globals.FACEBOOKOBJECT) {
+                $.landingPageWin.fbProxy = Alloy.Globals.FACEBOOK.createActivityWorker({
+                    lifecycleContainer : $.landingPageWin
+                });
+                var fb = Alloy.Globals.FACEBOOK;
+                //        Alloy.Globals.BETKAMPEN.token = Alloy.Globals.BETKAMPEN.token + 'aa';  // TODO
+                if (fb) {
+                    if (fb.loggedIn) {
+                        loginBetkampenAuthenticated(2);
+                        // TODO Test, run methods, need to authorize??  Testa /me och se om de svara 401 etc. då visa login...
+                    } else {
+                        // not logged in, show Betkampen login view
+                        showFbLogin();
                     }
-                } else {
-                    // Betkampen check and if needed refresh token
-                    Ti.API.log("resume...");
-                    Alloy.Globals.readToken();
-                    loginBetkampenAuthenticated(1);
                 }
             } else {
-                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionError);
+                // Betkampen check and if needed refresh token
+                Ti.API.log("resume...");
+                Alloy.Globals.readToken();
+                loginBetkampenAuthenticated(1);
             }
+        } else {
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionError);
         }
     });
-
-    Ti.Android.registerBroadcastReceiver(bc, [Ti.Android.ACTION_SCREEN_OFF]);
+    
+    // when the app is paused
+    Ti.App.addEventListener('paused', function() {
+        Ti.API.log("pause");
+    });
 }
 
 var deviceToken;
@@ -516,7 +518,3 @@ if (!isAndroid) {
  }
  */
 
-// Android -> Är man riktigt snabb efter man gått ur appen och släcker skärmen och låser upp den igen så hänger sig betkampen (inte hunnit avsluta än)
-// Android/iPhone -> Uppdatera coins i meny efter köp...
-// Android -> Vad händer om man tar emot push för match som redan har startat?
-// iPhone -> Problem med att starta om app vid språkbyte

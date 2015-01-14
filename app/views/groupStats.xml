@@ -1,4 +1,4 @@
 <Alloy>
-	<Window class="container" id="groupStats">
+	<Window class="container" id="groupStats" onOpen="onOpen" onClose="onClose">
 	</Window>
 </Alloy>

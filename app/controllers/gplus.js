@@ -4,10 +4,13 @@ var indicator = uie.createIndicatorWindow({
     text : Alloy.Globals.PHRASES.loadingTxt
 });
 
+var context;
 var url = Alloy.Globals.PHRASES.shareUrlLink;
 var win = $.gplus;
+var isAndroid = false;
 
 if (OS_ANDROID) {
+    isAndroid = true;
     $.gplus.orientationModes = [Titanium.UI.PORTRAIT];
 
     $.gplus.addEventListener('open', function() {
@@ -34,6 +37,8 @@ if (OS_ANDROID) {
 var extwebview;
 
 if (OS_ANDROID) {
+    context = require('lib/Context');
+    
     extwebview = Titanium.UI.createWebView({
         top : 0,
         left : 0,
@@ -69,3 +74,14 @@ win.addEventListener('close', function() {
 win.add(extwebview);
 //adding webview in current window
 
+function onOpen(evt) {
+    if(isAndroid) {
+        context.on('gPlusActivity', this.activity);
+    }
+}
+
+function onClose(evt) {
+    if(isAndroid) {
+        context.off('gPlusActivity');
+    }
+}

@@ -1,4 +1,5 @@
 var args = arguments[0] || {};
+var context;
 
 var wrapperView = null;
 var uie = require('lib/IndicatorWindow');
@@ -20,6 +21,7 @@ if (OS_IOS) {
         color : '#FFF'
     });
 } else {
+    context = require('lib/Context');
     isAndroid = true;
     $.previousMatchOTD.orientationModes = [Titanium.UI.PORTRAIT];
 
@@ -31,6 +33,18 @@ if (OS_IOS) {
         $.previousMatchOTD.activity.actionBar.displayHomeAsUp = true;
         $.previousMatchOTD.activity.actionBar.title = Alloy.Globals.PHRASES.matchOTDPreviousBtn;
     });
+}
+
+function onOpen(evt) {
+    if(isAndroid) {
+        context.on('previousMatchOTDActivity', this.activity);
+    }
+}
+
+function onClose(evt) {
+    if(isAndroid) {
+        context.off('previousMatchOTDActivity');
+    }
 }
 
 function getPreviousMatchDay() {

@@ -261,8 +261,10 @@ function createAndShowTableView(league, array) {
             backgroundColor : '#303030',
             separatorColor : '#303030',
             separatorInsets : {
-                left : 0
-            }
+                left : 0,
+                right : 0
+            },
+            separatorStyle : Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE,
         });
     } else {
         // Table
@@ -588,6 +590,7 @@ function getGames(league, firstTime, start, rows) {
 }
 
 /* Flow */
+var context;
 var leagueName = '';
 var leagueId = -1;
 var table;
@@ -612,8 +615,11 @@ var fontawesome = require('lib/IconicFont').IconicFont({
 });
 
 var font = 'FontAwesome';
+var isAndroid = false;
 
 if (OS_ANDROID) {
+    isAndroid = true;
+    context = require('lib/Context');
     font = 'fontawesome-webfont';
 
     $.newChallenge.orientationModes = [Titanium.UI.PORTRAIT];
@@ -639,6 +645,18 @@ if (OS_ANDROID) {
         font : Alloy.Globals.getFontCustom(18, "Bold"),
         color : '#FFF'
     });
+}
+
+function onOpen(evt) {
+    if(isAndroid) {
+        context.on('newChallengeActivity', this.activity);
+    }
+}
+
+function onClose(evt) {
+    if(isAndroid) {
+        context.off('newChallengeActivity');
+    }
 }
 
 $.newChallenge.addEventListener('close', function() {

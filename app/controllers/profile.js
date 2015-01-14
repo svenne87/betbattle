@@ -1,8 +1,10 @@
 var args = arguments[0] || {};
+var context;
 var openWindows = [];
 var isAndroid;
 var iOSVersion;
 var sections = [];
+var profileLoadingLabel;
 var deviceWidth = Ti.Platform.displayCaps.platformWidth;
 
 var fontawesome = require('lib/IconicFont').IconicFont({
@@ -30,6 +32,8 @@ if (OS_ANDROID) {
         height : 0.5,
         backgroundColor : '#303030'
     });
+    
+    context = require('lib/Context');  
 } else {
     isAndroid = false;
     $.profileWin.titleControl = Ti.UI.createLabel({
@@ -48,6 +52,18 @@ if (OS_ANDROID) {
     $.table.footerView = Ti.UI.createView({
         height : 0.1
     });
+}
+
+function onOpen(evt) {
+    if(isAndroid) {
+        context.on('profileActivity', this.activity);
+    }
+}
+
+function onClose(evt) {
+    if(isAndroid) {
+        context.off('profileActivity');
+    }
 }
 
 //variables to use in class
@@ -106,16 +122,22 @@ var firstMainProfileRowView = Ti.UI.createView({
 
 var favoriteTeamImageView = Ti.UI.createImageView({
     defaultImage : '/images/no_team.png',
-    width : 40,
+    width : 50,
     left : '10%',
-    height : 40,
-    borderRadius : 20
+    height : 50,
+    borderRadius : 25
 });
+
+var dynLeft = '17%';
+
+if(deviceWidth <= 320) {
+    dynLeft = '12%';
+}
 
 var profileImageView = Ti.UI.createImageView({
     defaultImage : '/images/no_pic.png',
     width : 80,
-    left : '17%',
+    left : dynLeft,
     height : 80,
     borderRadius : 40
 });
@@ -136,10 +158,10 @@ profileImageView.addEventListener('error', function(e) {
 
 var levelImageView = Ti.UI.createImageView({
     defaultImage : '/images/no_team.png',
-    width : 40,
-    left : '17%',
-    height : 40,
-    borderRadius : 20
+    width : 50,
+    left : dynLeft,
+    height : 50,
+    borderRadius : 25
 });
 
 firstMainProfileRowView.add(favoriteTeamImageView);
@@ -156,7 +178,15 @@ var profileStatsView = Ti.UI.createView({
     backgroundColor : '#000',
 });
 
-profileStatsView.hide();
+profileLoadingLabel = Ti.UI.createLabel({
+    font : Alloy.Globals.getFontCustom(16, 'Regular'),
+    text : Alloy.Globals.PHRASES.loadingTxt + ' ',
+    color : '#FFF',
+    left : 20,
+    width : Ti.UI.SIZE
+});
+
+profileStatsView.add(profileLoadingLabel);
 
 mainProfileRow.add(profileStatsView);
 
@@ -176,9 +206,12 @@ var secondProfilePart = Ti.UI.createView({
     layout : 'horizontal'
 });
 
+firstProfilePart.hide();
+secondProfilePart.hide();
+
 var firstLeftRow = Ti.UI.createView({
     top : 0,
-    left : 0,
+    left : 10,
     height : 30,
     width : Ti.UI.FILL,
     layout : 'horizontal'
@@ -188,7 +221,7 @@ var favoriteTeamNameLabel = Ti.UI.createLabel({
     font : Alloy.Globals.getFontCustom(16, 'Regular'),
     text : '',
     color : '#FFF',
-    left : 20,
+    left : 0,
     width : Ti.UI.SIZE
 });
 
@@ -197,7 +230,7 @@ firstProfilePart.add(firstLeftRow);
 
 var secondLeftRow = Ti.UI.createView({
     top : 0,
-    left : 0,
+    left : 10,
     height : 30,
     width : Ti.UI.FILL,
     layout : 'horizontal'
@@ -207,7 +240,7 @@ var coinsLabelText = Ti.UI.createLabel({
     font : Alloy.Globals.getFontCustom(16, 'Regular'),
     text : Alloy.Globals.PHRASES.coinsInfoTxt + ':',
     color : '#FFF',
-    left : 20,
+    left : 0,
     width : Ti.UI.SIZE
 });
 
@@ -228,7 +261,7 @@ secondLeftRow.add(Ti.UI.createLabel({
         fontFamily : font
     },
     text : fontawesome.icon('fa-database'),
-    color : Alloy.Globals.themeColor(), //'#FFF'
+    color : Alloy.Globals.themeColor(),
 }));
 
 secondLeftRow.add(coinsLabelValue); 
@@ -238,7 +271,6 @@ firstProfilePart.add(secondLeftRow);
 var firstRightRow = Ti.UI.createView({
     top : 0,
     height : 30,
-    left : 30,
     width : Ti.UI.FILL,
     layout : 'horizontal'
 });
@@ -247,19 +279,67 @@ var levelLabel = Ti.UI.createLabel({
     font : Alloy.Globals.getFontCustom(16, 'Regular'),
     text : '',
     color : '#FFF',
-    left : 20,
-    width : Ti.UI.SIZE
+    right : 10,
+    textAlign: 'right',
+    width : Ti.UI.FILL
 });
 
 firstRightRow.add(levelLabel);
 secondProfilePart.add(firstRightRow);
 
-// TODO samma som vänster + loading 
-
 var secondRightRow = Ti.UI.createView({
     top : 0,
     height : 30,
-    left : 30,
+    width : Ti.UI.FILL,
+});
+
+var secondRightRowInner = Ti.UI.createView({
+    top : 0,
+    height : 30,
+    width : Ti.UI.SIZE,
+    right : 10,
+    layout : 'horizontal'
+});
+
+var winsLabelText = Ti.UI.createLabel({
+    font : Alloy.Globals.getFontCustom(16, 'Regular'),
+    text : Alloy.Globals.PHRASES.winsInfoTxt + ':',
+    color : '#FFF',
+    left : 10,
+    textAlign : 'right', 
+    width : Ti.UI.SIZE
+});
+
+var winsLabelValue = Ti.UI.createLabel({
+    font : Alloy.Globals.getFontCustom(16, 'Regular'),
+    text : '',
+    color : Alloy.Globals.themeColor(),
+    left : 5,
+    textAlign : 'right',
+    width : Ti.UI.SIZE
+});
+
+secondRightRowInner.add(winsLabelText);
+
+secondRightRowInner.add(Ti.UI.createLabel({
+    left : 10,
+    textAlign : 'left',
+    width : Ti.UI.SIZE,
+    font : {
+        fontFamily : font
+    },
+    text : fontawesome.icon('fa-trophy'),
+    color : Alloy.Globals.themeColor(),
+}));
+
+secondRightRowInner.add(winsLabelValue);
+secondRightRow.add(secondRightRowInner);
+secondProfilePart.add(secondRightRow);
+
+var thirdLeftRow = Ti.UI.createView({
+    top : 0,
+    left : 10,
+    height : 30,
     width : Ti.UI.FILL,
     layout : 'horizontal'
 });
@@ -268,7 +348,7 @@ var pointsLabelText = Ti.UI.createLabel({
     font : Alloy.Globals.getFontCustom(16, 'Regular'),
     text : Alloy.Globals.PHRASES.scoreInfoTxt + ':',
     color : '#FFF',
-    left : 20,
+    left : 0,
     width : Ti.UI.SIZE
 });
 
@@ -280,47 +360,7 @@ var pointsLabelValue = Ti.UI.createLabel({
     width : Ti.UI.SIZE
 });
 
-secondRightRow.add(pointsLabelText);
-
-secondRightRow.add(Ti.UI.createLabel({
-    left : 10,
-    width : Ti.UI.SIZE,
-    font : {
-        fontFamily : font
-    },
-    text : fontawesome.icon('fa-signal'),
-    color : Alloy.Globals.themeColor(), //'#FFF'
-}));
-
-secondRightRow.add(pointsLabelValue);
-// TODO
-secondProfilePart.add(firstRightRow);
-
-var thirdLeftRow = Ti.UI.createView({
-    top : 0,
-    left : 0,
-    height : 30,
-    width : Ti.UI.FILL,
-    layout : 'horizontal'
-});
-
-var winsLabelText = Ti.UI.createLabel({
-    font : Alloy.Globals.getFontCustom(16, 'Regular'),
-    text : Alloy.Globals.PHRASES.winsInfoTxt + ':',
-    color : '#FFF',
-    left : 20,
-    width : Ti.UI.SIZE
-});
-
-var winsLabelValue = Ti.UI.createLabel({
-    font : Alloy.Globals.getFontCustom(16, 'Regular'),
-    text : '...                      ',
-    color : Alloy.Globals.themeColor(),
-    left : 5,
-    width : Ti.UI.SIZE
-});
-
-thirdLeftRow.add(winsLabelText);
+thirdLeftRow.add(pointsLabelText);
 
 thirdLeftRow.add(Ti.UI.createLabel({
     left : 10,
@@ -328,19 +368,24 @@ thirdLeftRow.add(Ti.UI.createLabel({
     font : {
         fontFamily : font
     },
-    text : fontawesome.icon('fa-trophy'),
-    color : Alloy.Globals.themeColor(), //'#FFF'
+    text : fontawesome.icon('fa-signal'),
+    color : Alloy.Globals.themeColor()
 }));
 
-thirdLeftRow.add(winsLabelValue);
-
+thirdLeftRow.add(pointsLabelValue);
 firstProfilePart.add(thirdLeftRow);
 
-var secondRightRow = Ti.UI.createView({
+var thirdRightRow = Ti.UI.createView({
     top : 0,
     height : 30,
-    left : 30,
-    width : Ti.UI.FILL,
+    width : Ti.UI.FILL
+});
+
+var thirdRightRowInner = Ti.UI.createView({
+    top : 0,
+    height : 30,
+    width : Ti.UI.SIZE,
+    right : 10,
     layout : 'horizontal'
 });
 
@@ -348,22 +393,25 @@ var scoreBoardLabelText = Ti.UI.createLabel({
     font : Alloy.Globals.getFontCustom(16, 'Regular'),
     text : Alloy.Globals.PHRASES.positionTxt + ':',
     color : '#FFF',
-    left : 20,
+    left : 0,
+    textAlign : 'right', 
     width : Ti.UI.SIZE
 });
 
 var scoreBoardLabelValue = Ti.UI.createLabel({
     font : Alloy.Globals.getFontCustom(16, 'Regular'),
-    text : '...                    ',
+    text : '',
     color : Alloy.Globals.themeColor(),
     left : 5,
+    textAlign: 'right',
     width : Ti.UI.SIZE
 });
 
-secondRightRow.add(scoreBoardLabelText);
-secondRightRow.add(scoreBoardLabelValue);
+thirdRightRowInner.add(scoreBoardLabelText);
+thirdRightRowInner.add(scoreBoardLabelValue);
 
-secondProfilePart.add(secondRightRow);
+thirdRightRow.add(thirdRightRowInner);
+secondProfilePart.add(thirdRightRow);
 
 profileStatsView.add(firstProfilePart);
 profileStatsView.add(secondProfilePart);
@@ -415,10 +463,10 @@ var achievementsRow = Ti.UI.createTableViewRow({
 
 var achievementsLoadingLabel = Ti.UI.createLabel({
     text : Alloy.Globals.PHRASES.loadingTxt,
-    textAlign : "center",
     top : 30,
+    left : 20,
     color : "#FFF",
-    font : Alloy.Globals.getFontCustom(18, 'Regular'),
+    font : Alloy.Globals.getFontCustom(16, 'Regular'),
 });
 
 achievementsRow.add(achievementsLoadingLabel);
@@ -496,8 +544,26 @@ function getProfile() {
                     pointsLabelValue.setText(userInfo.totalPoints + ' ');
                     winsLabelValue.setText(userInfo.totalWins + ' ');
                     scoreBoardLabelValue.setText(userInfo.position + ' ');
+
+                    if(coinsLabelValue.getText().length > 6) {               
+                        coinsLabelValue.setText(coinsLabelValue.getText().substring(0, 5) + '..');
+                    }
                     
-                    profileStatsView.show();
+                    if(pointsLabelValue.getText().length > 6) {
+                        pointsLabelValue.setText(pointsLabelValue.getText().substring(0, 5) + '..');
+                    }
+                    
+                    if(winsLabelValue.getText().length > 4) {
+                        winsLabelValue.setText(winsLabelValue.getText().substring(0, 3) + '..');
+                    }
+                    
+                    if(scoreBoardLabelValue.getText().length > 6) {
+                        scoreBoardLabelValue.setText(scoreBoardLabelValue.getText().substring(0, 5) + '..');
+                    }
+
+                    profileStatsView.remove(profileLoadingLabel);
+                    firstProfilePart.show();
+                    secondProfilePart.show();
                 }
             }
 
@@ -540,6 +606,28 @@ function getAchievements() {
                 }
 
                 if (achievements !== null) {
+                    var achievementsCoverView = Ti.UI.createView({
+                        top : 0,
+                        height : Ti.UI.SIZE,
+                        width : Ti.UI.FILL,
+                        layout : 'horizontal'
+                    });
+                    
+                    var achievementsHolderView = Ti.UI.createView({
+                        top : 0,
+                        height : Ti.UI.SIZE,
+                        width : '90%',
+                        left : '-2%',
+                        right : '10%',
+                        layout : 'horizontal'
+                    });
+                    
+                    var dynWidth = '14%';
+                   
+                    if(deviceWidth <= 320) {
+                        dynWidth = '12%';
+                    }
+                    
                     for (var i = 0; i < achievements.length; i++) {
                         var ach_img = '/images/locked_ach.png';
                         if (achievements[i].unlocked == true) {
@@ -550,7 +638,7 @@ function getAchievements() {
                             image : ach_img,
                             width : 60,
                             height : 60,
-                            left : '12%',
+                            left : dynWidth,
                             top : 10,
                             bottom : 10
                         });
@@ -742,9 +830,11 @@ function getAchievements() {
                             }
 
                         });
+                        achievementsHolderView.add(achievement);
 
-                        achievementsRow.add(achievement);
                     }
+                    achievementsCoverView.add(achievementsHolderView);
+                    achievementsRow.add(achievementsCoverView);
                 }
             }
         } else {

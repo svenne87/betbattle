@@ -1,5 +1,5 @@
 <Alloy>
-	<Window class="container" id="profileWin">
+	<Window class="container" id="profileWin" onOpen="onOpen" onClose="onClose">
 		<TableView id="table"></TableView>
 	</Window>
 </Alloy>

@@ -1,4 +1,4 @@
 <Alloy>
-	<Window class="container" id="challenges_new">
+	<Window class="container" id="challenges_new" onOpen="onOpen" onClose="onClose">
 	</Window>
 </Alloy>

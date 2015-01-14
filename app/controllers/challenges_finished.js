@@ -4,6 +4,7 @@ if (args.refresh) {
     getFinishedChallenges(true, 0, 20);
 }
 
+var context;
 var iOSVersion;
 var isAndroid = false;
 var finishedChallengesArray = [];
@@ -26,12 +27,25 @@ if (OS_IOS) {
     });
 } else {
     isAndroid = true;
+    context = require('lib/Context');
 }
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({
     top : 200,
     text : Alloy.Globals.PHRASES.loadingTxt
 });
+
+function onOpen(evt) {
+    if(isAndroid) {
+        context.on('challengesFinishedActivity', this.activity);
+    }
+}
+
+function onClose(evt) {
+    if(isAndroid) {
+        context.off('challengesFinishedActivity');
+    }
+}
 
 if (!isAndroid) {
     refresher = Ti.UI.createRefreshControl({
@@ -123,6 +137,7 @@ if (!isAndroid) {
             left : 0,
             right : 0
         },
+        separatorStyle : Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE,
         id : 'challengeTable',
         refreshControl : refresher,
         separatorColor : '#303030'
@@ -258,12 +273,23 @@ table.addEventListener('click', function(e) {
 buildTableRows();
 $.challenges_finished.add(table);
 
+function compare(a, b) {
+    if (a.attributes.time > b.attributes.time)
+        return -1;
+    if (a.attributes.time < b.attributes.time)
+        return 1;
+    return 0;
+}
+
 function buildTableRows() {
     table.setData([]);
     data = [];
 
     // add last matchOTD row
     data.push(createLastMatchOTDRow());
+    
+    // sort challenges based on first game date
+    finishedChallengesArray.sort(compare);
 
     var arrayObj = finishedChallengesArray;
     // create 'accept' rows
@@ -272,7 +298,6 @@ function buildTableRows() {
             data.push(constructChallengeRows(arrayObj[i], i));
         }
     } else if (arrayObj.length === 0) {
-        // TODO There will now always be a "last match OTD" so no need for this?
         data.push(createEmptyTableRow(Alloy.Globals.PHRASES.challengesSmallTxt));
     }
 
@@ -680,6 +705,10 @@ function getFinishedChallenges(firstTime, start, rows) {
                         table.appendRow(constructChallengeRows(tmpArray[challenge], challenge));
                         finishedChallengesArray.push(tmpArray[challenge]);
                     }
+                    
+                    // need to sort the array here again, in order to get the correct data when clicking a row
+                    finishedChallengesArray.sort(compare); // TODO works?
+                    
                     setDisplayText();
                 }
 

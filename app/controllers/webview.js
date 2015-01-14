@@ -1,5 +1,6 @@
 var args = arguments[0] || {};
-
+var context;
+var isAndroid;
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({
     top : 200,
@@ -10,6 +11,8 @@ var url = Alloy.Globals.BETKAMPENURL + args.link;
 var win = $.webview;
 
 if (OS_ANDROID) {
+    isAndroid = true;
+    context = require('lib/Context');
     $.webview.orientationModes = [Titanium.UI.PORTRAIT];
 
     $.webview.addEventListener('open', function() {
@@ -65,3 +68,14 @@ win.addEventListener('close', function() {
 win.add(extwebview);
 //adding webview in current window
 
+function onOpen(evt) {
+    if(isAndroid) {
+        context.on('webviewActivity', this.activity);
+    }
+}
+
+function onClose(evt) {
+    if(isAndroid) {
+        context.off('webviewActivity');
+    }
+}

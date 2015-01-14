@@ -8,6 +8,12 @@ function __processArg(obj, key) {
 }
 
 function Controller() {
+    function onOpen() {
+        isAndroid && context.on("termsActivity", this.activity);
+    }
+    function onClose() {
+        isAndroid && context.off("termsActivity");
+    }
     require("alloy/controllers/BaseController").apply(this, Array.prototype.slice.call(arguments));
     this.__controllerPath = "terms";
     if (arguments[0]) {
@@ -23,6 +29,7 @@ function Controller() {
     }
     var $ = this;
     var exports = {};
+    var __defers = {};
     $.__views.terms = Ti.UI.createWindow({
         layout: "vertical",
         width: Ti.UI.FILL,
@@ -35,9 +42,13 @@ function Controller() {
         id: "terms"
     });
     $.__views.terms && $.addTopLevelView($.__views.terms);
+    onOpen ? $.__views.terms.addEventListener("open", onOpen) : __defers["$.__views.terms!open!onOpen"] = true;
+    onClose ? $.__views.terms.addEventListener("close", onClose) : __defers["$.__views.terms!close!onClose"] = true;
     exports.destroy = function() {};
     _.extend($, $.__views);
     var uie = require("lib/IndicatorWindow");
+    var context;
+    var isAndroid = false;
     var indicator = uie.createIndicatorWindow({
         top: 200,
         text: Alloy.Globals.PHRASES.loadingTxt
@@ -45,6 +56,8 @@ function Controller() {
     var url = Alloy.Globals.BETKAMPENURL + "/webviews/terms_wv.php";
     var win = $.terms;
     var extwebview;
+    isAndroid = true;
+    context = require("lib/Context");
     $.terms.orientationModes = [ Titanium.UI.PORTRAIT ];
     $.terms.addEventListener("open", function() {
         $.terms.activity.actionBar.onHomeIconItemSelected = function() {
@@ -73,6 +86,8 @@ function Controller() {
         indicator.closeIndicator();
     });
     win.add(extwebview);
+    __defers["$.__views.terms!open!onOpen"] && $.__views.terms.addEventListener("open", onOpen);
+    __defers["$.__views.terms!close!onClose"] && $.__views.terms.addEventListener("close", onClose);
     _.extend($, exports);
 }
 

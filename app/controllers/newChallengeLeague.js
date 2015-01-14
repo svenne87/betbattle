@@ -86,6 +86,8 @@ if (OS_IOS) {
     if (iOSVersion < 7) {
         table.separatorStyle = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
         table.separatorColor = 'transparent';
+    } else {
+        table.separatorStyle = Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE;
     }
 
     table.separatorInsets = {
@@ -132,14 +134,28 @@ function compare(a, b) {
 }
 
 // devide into different sports
+var context;
 var sports = splitByType(leagues);
 var count = 0;
 var child;
 
 if (OS_ANDROID) {
+    context = require('lib/Context');
     child = false;
 } else {
     child = true;
+}
+
+function onOpen(evt) {
+    if(isAndroid) {
+        context.on('newChallengeLeagueActivity', this.activity);
+    }
+}
+
+function onClose(evt) {
+    if(isAndroid) {
+        context.off('newChallengeLeagueActivity');
+    }
 }
 
 // add rows to table

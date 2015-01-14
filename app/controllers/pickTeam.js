@@ -1,5 +1,5 @@
 var args = arguments[0] || {};
-
+var context;
 var showNav = false;
 showNav = args.navOpen;
 
@@ -16,7 +16,7 @@ var isSending;
 
 if (OS_ANDROID) {
     isAndroid = true;
-
+    context = require('lib/Context');
     $.pickTeam.orientationModes = [Titanium.UI.PORTRAIT];
 
     $.pickTeam.addEventListener('open', function() {
@@ -36,6 +36,18 @@ if (OS_ANDROID) {
         font : Alloy.Globals.getFontCustom(18, "Bold"),
         color : '#FFF'
     });
+}
+
+function onOpen(evt) {
+    if(isAndroid) {
+        context.on('pickTeamActivity', this.activity);
+    }
+}
+
+function onClose(evt) {
+    if(isAndroid) {
+        context.off('pickTeamActivity');
+    }
 }
 
 // create sections for the table
@@ -111,6 +123,8 @@ if (!isAndroid) {
     if (iOSVersion < 7) {
         table.separatorStyle = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
         table.separatorColor = 'transparent';
+    } else {
+        table.separatorStyle = Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE;
     }
 
     table.separatorInsets = {

@@ -1,4 +1,5 @@
 var args = arguments[0] || {};
+var context;
 var view;
 var botView;
 var groupName = args.group;
@@ -32,6 +33,7 @@ var fontawesome = require('lib/IconicFont').IconicFont({
 var font = 'FontAwesome';
 
 if (isAndroid) {
+    context = require('lib/Context');
     font = 'fontawesome-webfont';
 
     $.showChallengeWindow.scrollType = 'vertical';
@@ -54,6 +56,18 @@ if (isAndroid) {
         font : Alloy.Globals.getFontCustom(18, "Bold"),
         color : '#FFF'
     });
+}
+
+function onOpen(evt) {
+    if(isAndroid) {
+        context.on('showChallengeActivity', this.activity);
+    }
+}
+
+function onClose(evt) {
+    if(isAndroid) {
+        context.off('showChallengeActivity');
+    }
 }
 
 var imageErrorHandler = function(e) {
@@ -750,8 +764,8 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished,
         firstTable = table; 
     }
 
-
-    if (!challengeFinished && isLast) {
+// was (!challengeFinished && !challengeFinished before) 
+    if (isLast) {
         // sort array and add standings tabel. Only do this after the last game
         currentStanding.sort(compare);
         
@@ -914,7 +928,6 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished,
         }
     }
 
-    
     // add name to the section with game type and then custom to make the "final result" end up last in sections
     var customSection = null;
 
@@ -967,8 +980,9 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished,
         $.showChallenge.addView(swipeRefresh);
 
     } else {
+        // Titanium 3.5.0 fix (adding the view before content to the view.)
+        $.showChallenge.addView(view); 
         view.add(table);
-        $.showChallenge.addView(view);
     }
 }
 
@@ -984,7 +998,7 @@ function endRefresher() {
     }
 }
 
-function getChallengeShow() {
+function getChallengeShow() {    
     var xhr = Titanium.Network.createHTTPClient();
     xhr.onerror = function(e) {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
@@ -1078,18 +1092,20 @@ function showResults(challenge) {
         if(y == (challenge.games.length - 1)) {
             isLast = true;
         }
-
+        
         // create layout
-        createLayout(challenge.games[y], challenge.values, challenge.games, challenge.current_standing, isFirst, isFinished, isLast);
+        createLayout(challenge.games[y], challenge.values, challenge.games, challenge.current_standing, isFirst, isFinished, isLast); 
         isFirst = false;
         isLast = false;
     }
 
-    setTimeout(function() {
+   // setTimeout(function() {
+       // show and closeIndi was in here before. Not needed?
+   // }, 400);
+          
         indicator.closeIndicator();
         // show layout
         $.showChallenge.show();
-    }, 400);
 }
 
 if (Alloy.Globals.checkConnection()) {

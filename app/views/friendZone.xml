@@ -1,4 +1,4 @@
 <Alloy>
-	<Window class="container" id="friendZone">
+	<Window class="container" id="friendZone" onOpen="onOpen" onClose="onClose">
 	</Window>
 </Alloy>

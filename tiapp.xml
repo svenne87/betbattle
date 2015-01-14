@@ -90,15 +90,14 @@
             <uses-sdk android:minSdkVersion="14" android:targetSdkVersion="16"/>
             <supports-screens android:anyDensity="false"
                 android:largeScreens="true" android:normalScreens="true" android:smallScreens="false"/>
-			<uses-permission android:name="com.android.vending.BILLING" />
+            <uses-permission android:name="com.android.vending.BILLING"/>
             <!--
             <uses-permission android:name="android.permission.BLUETOOTH"/>
             <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
             
             debuggable = true
             -->
-            <application
-                android:hardwareAccelerated="true"
+            <application android:hardwareAccelerated="true"
                 android:icon="@drawable/appicon"
                 android:label="@string/app_name"
                 android:largeHeap="true"
@@ -173,15 +172,15 @@
     </mobileweb>
     <modules>
         <module platform="android">com.yydigital.realswitch</module>
-        <module platform="iphone">com.facebook</module>
         <module platform="iphone">com.logicallabs.inappproducts</module>
+        <module platform="iphone">com.facebook</module>
         <module platform="commonjs">ti.cloud</module>
         <module platform="iphone">bencoding.blur</module>
-        <module platform="android">bencoding.blur</module>
         <module platform="android" version="0.2">net.iamyellow.gcmjs</module>
+        <module platform="android">bencoding.blur</module>
+        <module platform="android">com.rkam.swiperefreshlayout</module>
         <module platform="android">ti.inappbilling</module>
         <module platform="iphone">bencoding.sms</module>
-        <module platform="android">com.rkam.swiperefreshlayout</module>
         <module platform="android">com.ti.facebook</module>
     </modules>
     <deployment-targets>

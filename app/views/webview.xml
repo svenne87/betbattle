@@ -1,4 +1,4 @@
 <Alloy>
-	<Window class="container" id="webview">
+	<Window class="container" id="webview" onOpen="onOpen" onClose="onClose">
 	</Window>
 </Alloy>

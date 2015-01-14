@@ -1,4 +1,5 @@
 var args = arguments[0] || {};
+var context;
 
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({
@@ -31,6 +32,20 @@ if (OS_IOS) {
     isAndroid = false;
     child = true;
     iOSVersion = parseInt(Ti.Platform.version);
+} else {
+    context = require('lib/Context');
+}
+
+function onOpen(evt) {
+    if(isAndroid) {
+        context.on('myFriendsActivity', this.activity);
+    }
+}
+
+function onClose(evt) {
+    if(isAndroid) {
+        context.off('myFriendsActivity');
+    }
 }
 
 var mainView = Ti.UI.createView({

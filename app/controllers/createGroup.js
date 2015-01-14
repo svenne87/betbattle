@@ -8,6 +8,7 @@ var indicator = uie.createIndicatorWindow({
     text : Alloy.Globals.PHRASES.loadingTxt
 });
 
+var context;
 var friends = [];
 var sections = [];
 var selectedFriends = [];
@@ -20,6 +21,7 @@ var font = 'FontAwesome';
 var iOSVersion;
 
 if (OS_ANDROID) {
+    context = require('lib/Context');
     font = 'fontawesome-webfont';
     hasChild = false;
     isAndroid = true;
@@ -53,6 +55,18 @@ if (OS_ANDROID) {
 $.createGroup.addEventListener('close', function() {
     indicator.closeIndicator();
 });
+
+function onOpen(evt) {
+    if(isAndroid) {
+        context.on('createGroupActivity', this.activity);
+    }
+}
+
+function onClose(evt) {
+    if(isAndroid) {
+        context.off('createGroupActivity');
+    }
+}
 
 var sectionView = Ti.UI.createView({
     height : 75,

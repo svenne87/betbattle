@@ -10,6 +10,7 @@ var fontawesome = require('lib/IconicFont').IconicFont({
     font : 'lib/FontAwesome'
 });
 
+var context;
 var font = 'FontAwesome';
 var myFbFriends = null;
 var isAndroid = true;
@@ -30,6 +31,7 @@ if (OS_IOS) {
 }
 
 if (isAndroid) {
+    context = require('lib/Context');
     font = 'fontawesome-webfont';
 
     $.fbFriends.addEventListener('open', function() {
@@ -47,6 +49,18 @@ if (isAndroid) {
 $.fbFriends.addEventListener('close', function() {
     indicator.closeIndicator();
 });
+
+function onOpen(evt) {
+    if(isAndroid) {
+        context.on('fbFriendsActivity', this.activity);
+    }
+}
+
+function onClose(evt) {
+    if(isAndroid) {
+        context.off('fbFriendsActivity');
+    }
+}
 
 var mainView = Ti.UI.createScrollView({
     class : "topView",

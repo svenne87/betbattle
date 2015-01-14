@@ -1,4 +1,6 @@
 var uie = require('lib/IndicatorWindow');
+var context;
+var isAndroid = false;
 var indicator = uie.createIndicatorWindow({
     top : 200,
     text : Alloy.Globals.PHRASES.loadingTxt
@@ -9,6 +11,8 @@ var win = $.terms;
 var extwebview;
 
 if (OS_ANDROID) {
+    isAndroid = true;
+    context = require('lib/Context');
     $.terms.orientationModes = [Titanium.UI.PORTRAIT];
 
     $.terms.addEventListener('open', function() {
@@ -64,3 +68,14 @@ win.addEventListener('close', function() {
 win.add(extwebview);
 //adding webview in current window
 
+function onOpen(evt) {
+    if(isAndroid) {
+        context.on('termsActivity', this.activity);
+    }
+}
+
+function onClose(evt) {
+    if(isAndroid) {
+        context.off('termsActivity');
+    }
+}

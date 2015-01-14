@@ -1,4 +1,4 @@
 <Alloy>
-	<Window class="container" id="share">
+	<Window class="container" id="share" onOpen="onOpen" onClose="onClose">
 	</Window>
 </Alloy>

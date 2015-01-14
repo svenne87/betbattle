@@ -1,7 +1,8 @@
 var args = arguments[0] || {};
-
+var context;
 var mod = require('bencoding.blur');
 var openWindows = [];
+var isAndroid = false;
 
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({
@@ -84,6 +85,21 @@ if (OS_IOS) {
         color : '#FFF'
     });
 
+} else {
+    context = require('lib/Context');
+    isAndroid = true;
+}
+
+function onOpen(evt) {
+    if(isAndroid) {
+        context.on('scoreBoardActivity', this.activity);
+    }
+}
+
+function onClose(evt) {
+    if(isAndroid) {
+        context.off('scoreBoardActivity');
+    }
 }
 
 $.scoreBoardTable.addEventListener('scroll', function(_evt) {

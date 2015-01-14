@@ -1,4 +1,4 @@
 <Alloy>
-	<Window class="container" id="gplus">
+	<Window class="container" id="gplus" onOpen="onOpen" onClose="onClose">
 	</Window>
 </Alloy>

@@ -1,4 +1,4 @@
 <Alloy>
-	<Window class="container" id="previousMatchOTD">
+	<Window class="container" id="previousMatchOTD" onOpen="onOpen" onClose="onClose">
 	</Window>
 </Alloy>

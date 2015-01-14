@@ -10,6 +10,7 @@ var fontawesome = require('lib/IconicFont').IconicFont({
     font : 'lib/FontAwesome'
 });
 
+var context;
 var font = 'FontAwesome';
 var iOSVersion;
 var isAndroid = true;
@@ -18,6 +19,7 @@ var sections = [];
 var friendResp = null;
 
 if (OS_ANDROID) {
+    context = require('lib/Context');
     font = 'fontawesome-webfont';
     $.friendSearch.addEventListener('open', function() {
         Alloy.Globals.setAndroidCouponMenu($.friendSearch.activity);
@@ -37,6 +39,18 @@ if (OS_ANDROID) {
         font : Alloy.Globals.getFontCustom(18, "Bold"),
         color : '#FFF'
     });
+}
+
+function onOpen(evt) {
+    if(isAndroid) {
+        context.on('friendSearchActivity', this.activity);
+    }
+}
+
+function onClose(evt) {
+    if(isAndroid) {
+        context.off('friendSearchActivity');
+    }
 }
 
 $.friendSearch.addEventListener('close', function() {
