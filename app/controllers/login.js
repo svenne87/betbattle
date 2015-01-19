@@ -103,7 +103,7 @@ function getChallengesAndStart() {
                 if (user_team.data.length > 0) {
                     // keep landing page in memory
                     var tmp = Alloy.createController('landingPage', args).getView();
-                    
+
                     // open main
                     var loginSuccessWindow = Alloy.createController('main', args).getView();
                     // Alloy.Globals.CURRENTVIEW = loginSuccessWindow;
@@ -117,9 +117,10 @@ function getChallengesAndStart() {
                         loginSuccessWindow = null;
 
                     } else if (OS_ANDROID) {
+                        // exitOnClose was false before
                         loginSuccessWindow.open({
                             fullScreen : true,
-                            exitOnClose : false,
+                            exitOnClose : true,
                             orientationModes : [Titanium.UI.PORTRAIT]
                         });
                         loginSuccessWindow = null;
@@ -345,6 +346,8 @@ var fb;
 var fbModule;
 var isAndroid;
 
+var added = false;
+
 if (OS_IOS) {
     isAndroid = false;
     $.login.hideNavBar();
@@ -361,85 +364,113 @@ if (OS_IOS) {
 fb.forceDialogAuth = false;
 Alloy.Globals.connect = true;
 
-if (Alloy.Globals.FBERROR) {
-    Ti.API.log("Försöker iaf 1..." + fb.loggedIn);
-    // Kommer inte in i appen med
-    // funkar inte heller -> exitOnClose="false"
 
-    // need to keep track if event was already added, since it is beeing added several times otherwise.
-    fb.addEventListener('login', function(e) {
-        isSubmitting = true;
-        setButtonOpacity(0);
-        Ti.API.log("Försöker iaf 11...");
+Ti.API.log("Försöker iaf 1..." + fb.loggedIn);
 
-        if (Alloy.Globals.connect == true) {
-            indicator.openIndicator();
-        }
-        Alloy.Globals.FBERROR = false;
-        if (Alloy.Globals.connect == true) {
-            if (e.success) {
-                
-                if(isAndroid) {
-                    e.data = JSON.parse(e.data);
-                    Alloy.Globals.FACEBOOK = fbModule;
-                } else {
-                   Alloy.Globals.FACEBOOK = fb; 
-                }
-                
-                Alloy.Globals.BETKAMPEN = {
-                    token : fb.accessToken
-                };
+// need to keep track if event was already added, since it is beeing added several times otherwise.
 
-                Alloy.Globals.FACEBOOKOBJECT = Alloy.createModel('facebook', {
-                    id : e.data.id,
-                    locale : e.data.locale,
-                    username : e.data.name,
-                    fullName : e.data.name,
-                    firstName : e.data.first_name,
-                    lastName : e.data.last_name,
-                    email : e.data.email
-                });
-                
-                removeEvent();
-                setTimeout(function() {
-                    loginAuthenticated(fb);
-                }, 300);
-            } else if (e.error) {
-                isSubmitting = false;
-                setButtonOpacity(1);
-                indicator.closeIndicator();
-                
-                if(!isAndroid) {
-                    if (e.error.indexOf('OTHER:') !== 0){
-                        Alloy.Globals.showFeedbackDialog(e.error); 
-                    } else {
-                        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.facebookAbortConnectionTxt); 
-                    }
-                } else {
-                    Alloy.Globals.showFeedbackDialog(e.error);
-                }
-                
-                addEvent(); // TODO need to add it here??????
-            } else if (e.cancelled) {
-                isSubmitting = false;
-                setButtonOpacity(1);
-                indicator.closeIndicator();
-                //addEvent();
+var fbLoginEvent = function(e) {
+    if (added) {
+        return;
+    }
+    added = true;
+
+    isSubmitting = true;
+    setButtonOpacity(0);
+    Ti.API.log("Försöker iaf 11...");
+
+    if (Alloy.Globals.connect == true) {
+        indicator.openIndicator();
+    }
+
+    if (Alloy.Globals.connect == true) {
+        if (e.success) {
+
+            if (isAndroid) {
+                e.data = JSON.parse(e.data);
+                Alloy.Globals.FACEBOOK = fbModule;
+            } else {
+                Alloy.Globals.FACEBOOK = fb;
             }
+
+            Alloy.Globals.BETKAMPEN = {
+                token : fb.accessToken
+            };
+
+            Alloy.Globals.FACEBOOKOBJECT = Alloy.createModel('facebook', {
+                id : e.data.id,
+                locale : e.data.locale,
+                username : e.data.name,
+                fullName : e.data.name,
+                firstName : e.data.first_name,
+                lastName : e.data.last_name,
+                email : e.data.email
+            });
+
+            removeEvent();
+            setTimeout(function() {
+                loginAuthenticated(fb);
+            }, 300);
+        } else if (e.error) {
+            isSubmitting = false;
+            setButtonOpacity(1);
+            indicator.closeIndicator();
+
+            if (!isAndroid) {
+                if (e.error.indexOf('OTHER:') !== 0) {
+                    Alloy.Globals.showFeedbackDialog(e.error);
+                } else {
+                    Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.facebookAbortConnectionTxt);
+                }
+            } else {
+                Alloy.Globals.showFeedbackDialog(e.error);
+            }
+
+            addEvent();
+            // TODO need to add it here??????
+        } else if (e.cancelled) {
+            isSubmitting = false;
+            setButtonOpacity(1);
+            indicator.closeIndicator();
+            //addEvent();
         }
-    }); 
+    }    
+};
+
+fb.addEventListener('login', fbLoginEvent);
+
+if (!isAndroid) {
+    // check boolean and if this is a restart
+    var restart = false;
+    var fbLogin = false;
+
+    if (Ti.App.Properties.hasProperty("restart")) {
+        restart = Ti.App.Properties.getBool("restart");
+    }
+
+    if (Ti.App.Properties.hasProperty("facebook")) {
+        fbLogin = Ti.App.Properties.getBool("facebook");
+    }
+
+    if (restart && fbLogin) {
+        fb.authorize();
+        // This is needed for our restart function on ios, but will not work on android
+        // reset
+        Ti.App.Properties.setBool("restart", false);
+        Ti.App.Properties.setBool("facebook", false);
+    }
 }
+
 
 addEvent();
 
 if(isAndroid) {
-    fb.initialize(5000);  // TODO  
+    fb.initialize(5000);
 } else {
     fb.initialize(5000, false);   // TODO this should be false right?
 }
 
 
-// Har satt Alloy.Globals.FBERROR till false för att inte öppna flera gånger, sätta till true vid error??
 // set correct language phrase
 $.facebookBtnText.text = Alloy.Globals.PHRASES.loginFacebookButtonTxt + ' ';
 
@@ -817,11 +848,13 @@ $.login.addEventListener('close', function() {
 
     children = null;
     $.scrollableView = null;
-
+    
+    fb.removeEventListener('login', fbLoginEvent);
+    
     $.destroy();
 });
 
-if (OS_ANDROID) {
+if (isAndroid) {
     $.login.addEventListener('open', function() {
         $.login.activity.actionBar.hide();
     });
@@ -834,7 +867,7 @@ if (OS_ANDROID) {
 }
 
 //----------------- email login
-if (OS_IOS) {
+if (!isAndroid) {
     Alloy.Globals.NAV = $.nav;
 }
 

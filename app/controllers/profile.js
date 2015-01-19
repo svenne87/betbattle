@@ -14,9 +14,12 @@ var fontawesome = require('lib/IconicFont').IconicFont({
 var font = 'FontAwesome';    
 
 if (OS_ANDROID) {
+    isAndroid = true;
+    font = 'fontawesome-webfont';
+    context = require('lib/Context');
+    
     $.profileWin.addEventListener('open', function() {
         Alloy.Globals.setAndroidCouponMenu($.profileWin.activity);
-        isAndroid = true;
 
         $.profileWin.activity.actionBar.onHomeIconItemSelected = function() {
             $.profileWin.close();
@@ -25,15 +28,11 @@ if (OS_ANDROID) {
         $.profileWin.activity.actionBar.displayHomeAsUp = true;
         $.profileWin.activity.actionBar.title = Alloy.Globals.PHRASES.profile;
     });
-
-    font = 'fontawesome-webfont';
     
     $.table.footerView = Ti.UI.createView({
         height : 0.5,
         backgroundColor : '#303030'
-    });
-    
-    context = require('lib/Context');  
+    });  
 } else {
     isAndroid = false;
     $.profileWin.titleControl = Ti.UI.createLabel({
@@ -66,7 +65,7 @@ function onClose(evt) {
     }
 }
 
-//variables to use in class
+// variables to use in class
 var userInfo = null;
 var mod = require('bencoding.blur');
 

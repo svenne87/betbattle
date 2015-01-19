@@ -180,8 +180,8 @@
         <module platform="android">bencoding.blur</module>
         <module platform="android">com.rkam.swiperefreshlayout</module>
         <module platform="android">ti.inappbilling</module>
-        <module platform="iphone">bencoding.sms</module>
         <module platform="android">com.ti.facebook</module>
+        <module platform="iphone">com.omorandi</module>
     </modules>
     <deployment-targets>
         <target device="android">true</target>

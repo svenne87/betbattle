@@ -190,51 +190,55 @@ function authWithRefreshToken() {
     }
 }
 
-Ti.App.addEventListener('pause', function(e) {
-    Ti.API.info("APP In background");
-    Alloy.Globals.appStatus = 'background';
-});
-
-// resume listener for ios and android
+// resume and pause listener for ios and android
 if (!isAndroid) {
-    if (Alloy.Globals.OPEN && Alloy.Globals.RESUME) {
-        Alloy.Globals.RESUME = false;
-        Ti.App.addEventListener('resume', function() {
-            Ti.API.log(" KöR resume... ");
+    Alloy.Globals.iosPauseEvent = function(e) {
+        Ti.API.info("APP In background");
+        Alloy.Globals.appStatus = 'background';
+    };
 
-            if (Alloy.Globals.CURRENTVIEW !== null) {
-                // check connection
-                Alloy.Globals.appStatus = 'foreground';
-                if (Alloy.Globals.checkConnection()) {
-                    if (Alloy.Globals.FACEBOOKOBJECT) {
-                        var fb = Alloy.Globals.FACEBOOK;
-                        if (fb) {
-                            if (fb.loggedIn) {
-                                loginBetkampenAuthenticated(2);
-                                // TODO Test, run methods, need to authorize??  Testa /me och se om de svara 401 etc. då visa login...
-                            } else {
-                                // not logged in, show Betkampen login view
-                                showFbLogin();
-                            }
-                        }
+    Ti.App.addEventListener('pause', Alloy.Globals.iosPauseEvent);
+
+    //if (Alloy.Globals.OPEN && Alloy.Globals.RESUME) {
+    //   Alloy.Globals.RESUME = false;  // TODO verkar bättre. Men när jag stängt av här så körs ju denna flera ggr?
+
+    Alloy.Globals.iosResumeEvent = function() {
+        Ti.API.log(" KöR resume... ");
+
+        // if (Alloy.Globals.CURRENTVIEW !== null) {
+        // check connection
+        Alloy.Globals.appStatus = 'foreground';
+        if (Alloy.Globals.checkConnection()) {
+            if (Alloy.Globals.FACEBOOKOBJECT) {
+                var fb = Alloy.Globals.FACEBOOK;
+                if (fb) {
+                    if (fb.loggedIn) {
+                        loginBetkampenAuthenticated(2);
+                        // TODO Test, run methods, need to authorize??  Testa /me och se om de svara 401 etc. då visa login...
                     } else {
-                        // Betkampen check and if needed refresh token
-                        Ti.API.log("resume...");
-                        Alloy.Globals.readToken();
-                        loginBetkampenAuthenticated(1);
+                        // not logged in, show Betkampen login view
+                        showFbLogin();
                     }
-                    Ti.UI.iPhone.setAppBadge(0);
-                } else {
-                    Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionError);
-                    // TODO add retry?
                 }
+            } else {
+                // Betkampen check and if needed refresh token
+                Ti.API.log("resume...");
+                Alloy.Globals.readToken();
+                loginBetkampenAuthenticated(1);
             }
-        });
-    }
+            Ti.UI.iPhone.setAppBadge(0);
+        } else {
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionError);
+            // TODO add retry?
+        }
+        //}
+    };
+
+    Ti.App.addEventListener('resume', Alloy.Globals.iosResumeEvent);
+    //  }
 } else if (isAndroid) {
     // when the app is resumed
-    Ti.App.addEventListener('resumed', function() {
-        
+    Alloy.Globals.androidResumeEvent = function() {
         Ti.API.log("resume");
         //Ti.App.fireEvent('challengesViewRefresh');
 
@@ -265,12 +269,16 @@ if (!isAndroid) {
         } else {
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionError);
         }
-    });
-    
+    };
+
+    Ti.App.addEventListener('resumed', Alloy.Globals.androidResumeEvent);
+
     // when the app is paused
-    Ti.App.addEventListener('paused', function() {
+    Alloy.Globals.androidPauseEvent = function() {
         Ti.API.log("pause");
-    });
+    };
+
+    Ti.App.addEventListener('paused', Alloy.Globals.androidPauseEvent);
 }
 
 var deviceToken;
@@ -300,7 +308,7 @@ if (!isAndroid) {
                 }
             };
 
-            if ( typeof push_data.extra_data !== 'undefined') {
+            if (push_data.extra_data !== null && typeof push_data.extra_data !== 'undefined' && push_data.extra_data !== "") {
                 push_data.extra_data = JSON.parse(push_data.extra_data);
             }
 
@@ -325,26 +333,89 @@ if (!isAndroid) {
                 win = Alloy.createController('showChallenge', args).getView();
             } else if (type === 'finished') {
                 win = Alloy.createController('challenges_finished', args).getView();
-            }
+            } else if (type === 'achievement') {
+                var player = Ti.Media.createSound({
+                    url : "/sound/unlocked.wav"
+                });
 
-            Ti.App.fireEvent('app:updateView', obj);
+                var indWin = Ti.UI.createWindow({
+                    backgroundColor : 'transparent',
+                    navBarHidden : true
+                });
+
+                indWin.addEventListener('open', function() {
+                    indWin.activity.actionBar.hide();
+                });
+
+                //  view
+                var indView = Titanium.UI.createView({
+                    top : '85%',
+                    height : 80,
+                    width : '100%',
+                    backgroundColor : '#FFF',
+                    opacity : 0.9,
+                    layout : 'horizontal'
+                });
+
+                indWin.add(indView);
+
+                var image = Ti.UI.createImageView({
+                    image : Alloy.Globals.BETKAMPENURL + '/achievements/' + push_data.extra_data.image,
+                    width : "15%",
+                    height : Ti.UI.SIZE,
+                    left : 0,
+                    top : 10
+                });
+                var mess = Titanium.UI.createLabel({
+                    text : push_data.message,
+                    right : 0,
+                    color : '#000',
+                    width : '75%',
+                    top : 25,
+                    height : 'auto',
+                    textAlign : 'center',
+                    font : Alloy.Globals.getFontCustom(12, 'Bold'),
+                });
+                indView.add(image);
+                indView.add(mess);
+                indWin.open();
+
+                player.play();
+
+                var interval = interval ? interval : 2500;
+                setTimeout(function() {
+                    indWin.close({
+                        opacity : 0,
+                        duration : 2000
+                    });
+                    player.stop();
+                    player.release();
+                }, interval);
+            } else if (type === 'message') {
+                // nothing right now
+            }
 
             if (win !== null) {
                 win.open();
             }
 
-            for (var w in Alloy.Globals.WINDOWS) {
-                Alloy.Globals.WINDOWS[w].setOpacity(0);
-            }
+            if (Alloy.Globals.WINDOWS.length > 0) {
+                for (var w in Alloy.Globals.WINDOWS) {
+                    Alloy.Globals.WINDOWS[w].setOpacity(0);
+                }
 
-            for (var w in Alloy.Globals.WINDOWS) {
-                if (Alloy.Globals.WINDOWS[w] === win) {
-                    Alloy.Globals.WINDOWS[w].close();
+                for (var w in Alloy.Globals.WINDOWS) {
+                    if (Alloy.Globals.WINDOWS[w] === win) {
+                        Alloy.Globals.WINDOWS[w].close();
+                    }
                 }
             }
+
             if (win !== null) {
                 Alloy.Globals.WINDOWS.push(win);
             }
+
+            Ti.App.fireEvent('challengesViewRefresh');
 
         } else {
             var loginSuccessWindow = Alloy.createController('main').getView();
@@ -372,7 +443,69 @@ if (!isAndroid) {
                 win = Alloy.createController('showChallenge', args).getView();
             } else if (type === 'finished') {
                 win = Alloy.createController('challenges_finished', args).getView();
+            } else if (type === 'achievement') {
+                var player = Ti.Media.createSound({
+                    url : "/sound/unlocked.wav"
+                });
+
+                var indWin = Ti.UI.createWindow({
+                    backgroundColor : 'transparent',
+                    navBarHidden : true
+                });
+
+                indWin.addEventListener('open', function() {
+                    indWin.activity.actionBar.hide();
+                });
+
+                //  view
+                var indView = Titanium.UI.createView({
+                    top : '85%',
+                    height : 80,
+                    width : '100%',
+                    backgroundColor : '#FFF',
+                    opacity : 0.9,
+                    layout : 'horizontal'
+                });
+
+                indWin.add(indView);
+
+                var image = Ti.UI.createImageView({
+                    image : Alloy.Globals.BETKAMPENURL + '/achievements/' + push_data.extra_data.image,
+                    width : "15%",
+                    height : Ti.UI.SIZE,
+                    left : 0,
+                    top : 10
+                });
+                var mess = Titanium.UI.createLabel({
+                    text : push_data.message,
+                    right : 0,
+                    color : '#000',
+                    width : '75%',
+                    top : 25,
+                    height : 'auto',
+                    textAlign : 'center',
+                    font : Alloy.Globals.getFontCustom(12, 'Bold'),
+                });
+                indView.add(image);
+                indView.add(mess);
+                indWin.open();
+
+                player.play();
+
+                var interval = interval ? interval : 2500;
+                setTimeout(function() {
+                    indWin.close({
+                        opacity : 0,
+                        duration : 2000
+                    });
+                    player.stop();
+                    player.release();
+
+                }, interval);
+            } else if (type === 'message') {
+                // nothing
             }
+
             if (win !== null) {
                 win.open();
                 //win = null;
@@ -400,13 +533,15 @@ if (!isAndroid) {
             type = 'pending';
         } else if (type === '3') {
             type = 'finished';
+        } else if (type === '4') {
+            type = 'achievement';
         }
 
         try {
-           setTimeout(function() { 
-               doPush(type, pendingData);
-           }, 2000);
-        
+            setTimeout(function() {
+                doPush(type, pendingData);
+            }, 2000);
+
         } catch(e) {
             // something went wrong
         }
@@ -434,6 +569,10 @@ if (!isAndroid) {
                 type = 'pending';
             } else if (type === '3') {
                 type = 'finished';
+            } else if (type === '4') {
+                type = 'achievement';
+            } else if (type === '0') {
+                type = 'message';
             }
 
             try {
@@ -470,6 +609,10 @@ if (!isAndroid) {
                 type = 'pending';
             } else if (type === '3') {
                 type = 'finished';
+            } else if (type === '4') {
+                type = 'achievement';
+            } else if (type === '0') {
+                type = 'message';
             }
 
             try {
@@ -492,7 +635,6 @@ if (!isAndroid) {
     // in order to unregister:
     // require('net.iamyellow.gcmjs').unregister();
 }
-
 
 /*
  // General App

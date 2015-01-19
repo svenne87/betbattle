@@ -53,7 +53,7 @@ if (OS_IOS) {
     });
 
     $.showCoupon.addEventListener('open', function() {
-        Alloy.Globals.couponOpen = true;
+        Alloy.Globals.couponOpen = true;              
     });
 } else {
     context = require('lib/Context');
@@ -80,7 +80,7 @@ $.showCoupon.addEventListener('close', function() {
         }
     }
 
-    Alloy.Globals.couponOpen = false;
+    Alloy.Globals.couponOpen = false; 
 });
 
 function removeCouponGame(gameID) {

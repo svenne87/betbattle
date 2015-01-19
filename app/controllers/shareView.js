@@ -31,13 +31,13 @@ if (OS_ANDROID) {
 }
 
 function onOpen(evt) {
-    if(isAndroid) {
+    if (isAndroid) {
         context.on('shareViewActivity', this.activity);
     }
 }
 
 function onClose(evt) {
-    if(isAndroid) {
+    if (isAndroid) {
         context.off('shareViewActivity');
     }
 }
@@ -156,7 +156,9 @@ var fb;
 
 if (Alloy.Globals.FACEBOOKOBJECT != null) {
     if (isAndroid) {
-        $.share.fbProxy = Alloy.Globals.FACEBOOK.createActivityWorker({lifecycleContainer: $.share});
+        $.share.fbProxy = Alloy.Globals.FACEBOOK.createActivityWorker({
+            lifecycleContainer : $.share
+        });
         fb = Alloy.Globals.FACEBOOK;
     } else {
         fb = Alloy.Globals.FACEBOOK;
@@ -164,7 +166,9 @@ if (Alloy.Globals.FACEBOOKOBJECT != null) {
 } else {
     if (isAndroid) {
         var fbModule = require('com.ti.facebook');
-        $.share.fbProxy = fbModule.createActivityWorker({lifecycleContainer: $.share});
+        $.share.fbProxy = fbModule.createActivityWorker({
+            lifecycleContainer : $.share
+        });
         fb = fbModule;
     } else {
         fb = require("com.facebook");
@@ -271,16 +275,40 @@ mailBtn.addEventListener('click', function(e) {
 
 // --------------------------------------------------------------- Send SMS  -------------------------------------------------------------------------------
 if (OS_IOS) {
-    var sms = require('bencoding.sms').createSMSDialog({
-        barColor : '#336699'
-    });
-    sms.setMessageBody(Alloy.Globals.PHRASES.smsMsg + '.' + '\n' + Alloy.Globals.PHRASES.myNameIsTxt + ": " + Alloy.Globals.PROFILENAME + "\n" + Alloy.Globals.PHRASES.appLinkTxt);
+
+    /*
+     var sms = require('bencoding.sms').createSMSDialog({
+     barColor : '#336699'
+     });
+     sms.setMessageBody(Alloy.Globals.PHRASES.smsMsg + '.' + '\n' + Alloy.Globals.PHRASES.myNameIsTxt + ": " + Alloy.Globals.PROFILENAME + "\n" + Alloy.Globals.PHRASES.appLinkTxt);
+
+     smsBtn.addEventListener('click', function(e) {
+     Alloy.Globals.unlockAchievement(5);
+     sms.open();
+     });
+     */
+
+    var module = require('com.omorandi');
+    var sms = module.createSMSDialog();
 
     smsBtn.addEventListener('click', function(e) {
-        Alloy.Globals.unlockAchievement(5);
-        sms.open();
-    });
+        //check if the feature is available on the device at hand
+        if (!sms.isSupported()) {
+            //falls here when executed on iOS versions < 4.0 and in the emulator
+            Alloy.Globals.showFeedbackDialog('This device does not support sending sms!');
+        } else {
+            sms.barColor = '#336699';
+            sms.messageBody = Alloy.Globals.PHRASES.smsMsg + '.' + '\n' + Alloy.Globals.PHRASES.myNameIsTxt + ": " + Alloy.Globals.PROFILENAME + "\n" + Alloy.Globals.PHRASES.appLinkTxt;
 
+            sms.addEventListener('complete', function(e) {
+                if (e.result == smsDialog.SENT) {
+                    Alloy.Globals.unlockAchievement(5);
+                } else if (e.result == smsDialog.FAILED) {
+                    Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+                }
+            });
+        }
+    });
 } else if (OS_ANDROID) {
 
     var intent = Ti.Android.createIntent({

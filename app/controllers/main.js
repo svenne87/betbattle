@@ -23,7 +23,7 @@ if (OS_ANDROID) {
     }
 
     function onClose(evt) {
-        Context.off('mainActivity');
+        Context.off('mainActivity'); 
     } 
 }
 
@@ -40,7 +40,7 @@ if (!isAndroid) {
         height : 25,
         width : Ti.UI.SIZE,
         borderColor : 'transparent',
-        backgroundColor : 'transparent' // TODO
+        backgroundColor : 'transparent' 
     });
 
     buttonBarMenu.addEventListener('click', function() {
@@ -200,12 +200,11 @@ if (!isAndroid) {
 checkRatestatus();
 
 // Used to update the menu and add a indicator for a new challenge
-Ti.App.addEventListener('app:updateMenu', function() {
+var updateMenu = function() {
     // rebuild table rows
     // Pass data to widget leftTableView
     leftData[0] = createSection();
     $.ds.leftTableView.data = leftData;
-    // TODO could just update the challenges row and profile image here...
 
     // set new profile name
     nameLabel.setText(Alloy.Globals.PROFILENAME);
@@ -214,43 +213,33 @@ Ti.App.addEventListener('app:updateMenu', function() {
         centerImageView.setImage('https://graph.facebook.com/' + Alloy.Globals.FACEBOOKOBJECT.id + '/picture');
     } else {
         centerImageView.setImage(Alloy.Globals.BETKAMPENURL + '/profile_images/' + Alloy.Globals.BETKAMPENUID + '.png' + "?t=" + new Date().getTime());
-    }
-});
+    }    
+};
+
+Ti.App.addEventListener('app:updateMenu', updateMenu);
 
 // Used to rebuild the android action bar menu, to indicate that a ticket is available
-Ti.App.addEventListener('app:rebuildAndroidMenu', function() {
+var rebuildAndroidMenu = function() {
     try {
         $.mainWin.activity.invalidateOptionsMenu();
     } catch(e) {
 
     }
-    // TODO Exception här? funkar ändå?
-});
+};
+
+Ti.App.addEventListener('app:rebuildAndroidMenu', rebuildAndroidMenu);
 
 // slide menu
-Ti.App.addEventListener('app:slide', function() {
-    $.ds.toggleLeftSlider();
-});
+var slide = function() {
+   $.ds.toggleLeftSlider(); 
+};
+
+Ti.App.addEventListener('app:slide', slide);
 
 // Used to update coins information
-Ti.App.addEventListener('app:coinsMenuInfo', function(data, status) {    
-    if(status) {
-        // add coins sent in to the current amount
-        var coins = coinsLabel.getText();
-        coins = coins - 0 ;
-        var coinsToAdd = data.newCoins;
-        coinsToAdd = coinsToAdd - 0;
-        
-        // set new amount
-        coinsLabel.setText(coins + coinsToAdd);
-        
-        // TODO uppdatera menyn och challengesView profile row....
-         
-    } else {
-        winsLabel.setText(data.totalPoints);
-        coinsLabel.setText(data.totalCoins);
-    }
-   
+var coinsMenuInfo = function(data) {
+    winsLabel.setText(data.totalPoints);
+    coinsLabel.setText(data.totalCoins);
 
     if(winsLabel.getText().length > 4) {
         winsLabel.setText(winsLabel.getText().substring(0, 3) + '..');
@@ -259,10 +248,12 @@ Ti.App.addEventListener('app:coinsMenuInfo', function(data, status) {
     if(coinsLabel.getText().length > 4) {
         coinsLabel.setText(coinsLabel.getText().substring(0, 3) + '..');
     }
-});
+};
+
+Ti.App.addEventListener('app:coinsMenuInfo', coinsMenuInfo);
 
 // update coins
-Ti.App.addEventListener('updateCoins', function(coins) {
+var updateCoins = function(coins) {
     var currentCoins = -1;
     try {
         var currentCoinsText = coinsLabel.getText();
@@ -276,10 +267,12 @@ Ti.App.addEventListener('updateCoins', function(coins) {
         currentCoins = currentCoins + coins;
         coinsLabel.setText(Alloy.Globals.PHRASES.coinsInfoTxt + ": " + currentCoins.toString());
     }
-});
+};
+
+Ti.App.addEventListener('updateCoins', updateCoins);
 
 // used to navigate between views
-Ti.App.addEventListener('app:updateView', function(obj) {
+var updateView = function(obj) {
     var currentView = Alloy.Globals.CURRENTVIEW;
     // attempt to clear memory
     $.ds.contentview.removeAllChildren();
@@ -295,8 +288,10 @@ Ti.App.addEventListener('app:updateView', function(obj) {
 
     $.ds.contentview.add(currentView);
     Alloy.Globals.CURRENTVIEW = currentView;
-});
+};
 
+Ti.App.addEventListener('app:updateView', updateView);
+ 
 // Used to create the header view in menu
 function createMenuHeader() {
     var userInfoView = Ti.UI.createView({
@@ -502,6 +497,15 @@ var indicator = uie.createIndicatorWindow({
 
 $.mainWin.addEventListener('close', function() {
     indicator.closeIndicator();
+    
+    // remove event listeners
+    Ti.App.removeEventListener('app:updateView', updateView);
+    Ti.App.removeEventListener('updateCoins', updateCoins);
+    Ti.App.removeEventListener('app:coinsMenuInfo', coinsMenuInfo);
+    Ti.App.removeEventListener('app:slide', slide);
+    Ti.App.removeEventListener('app:rebuildAndroidMenu', rebuildAndroidMenu);
+    Ti.App.removeEventListener('app:updateMenu', updateMenu);
+    Ti.App.removeEventListener('sliderToggled', sliderToggled);
 });
 
 var iOSVersion;
@@ -548,8 +552,15 @@ function logoutBetbattle() {
                     Alloy.Globals.FACEBOOKOBJECT = null;
                     // close
                     if (isAndroid) {
-                        $.mainWin.close();
+                        $.mainWin.close();;
                         var activity = Titanium.Android.currentActivity;
+            
+                        // remove old event listeners
+                        Ti.App.removeEventListener('paused', Alloy.Globals.androidPauseEvent);
+                        Ti.App.removeEventListener('resumed', Alloy.Globals.androidResumeEvent); // TODO
+                        Ti.App.removeEventListener('challengesViewRefresh', Alloy.Globals.challengesViewRefreshEvent);
+                        Ti.App.removeEventListener('userInfoUpdate', Alloy.Globals.userInfoUpdateEvent);
+                        
                         activity.finish();
 
                         // start app again
@@ -559,8 +570,7 @@ function logoutBetbattle() {
                         });
                         intent.addCategory(Ti.Android.CATEGORY_LAUNCHER);
                         Ti.Android.currentActivity.startActivity(intent);
-                    } else {
-                        Alloy.Globals.FBERROR = false;
+                    } else {     
                         Alloy.Globals.CURRENTVIEW = null;
                         Alloy.Globals.NAV.close();
 
@@ -767,7 +777,14 @@ function rowSelect(e) {
                         Alloy.Globals.FACEBOOK = null;
                         $.mainWin.close();
                         var activity = Titanium.Android.currentActivity;
-                        activity.finish();
+                                                                     
+                        // remove old event listeners
+                        Ti.App.removeEventListener('paused', Alloy.Globals.androidPauseEvent);
+                        Ti.App.removeEventListener('resumed', Alloy.Globals.androidResumeEvent); // TODO
+                        Ti.App.removeEventListener('challengesViewRefresh', Alloy.Globals.challengesViewRefreshEvent);
+                        Ti.App.removeEventListener('userInfoUpdate', Alloy.Globals.userInfoUpdateEvent);
+
+                         activity.finish();   
 
                         // start app again
                         var intent = Ti.Android.createIntent({
@@ -803,11 +820,18 @@ function rowSelect(e) {
             alertWindow.addEventListener('click', function(e) {
                 switch (e.index) {
                 case 0:
+                    Ti.App.removeEventListener('pause', Alloy.Globals.iosPauseEvent);
+                    Ti.App.removeEventListener('resume', Alloy.Globals.iosResumeEvent);
+                    Ti.App.removeEventListener('challengesViewRefresh', Alloy.Globals.challengesViewRefreshEvent);
+                    Ti.App.removeEventListener('userInfoUpdate', Alloy.Globals.userInfoUpdateEvent);
+                    
                     var fb = Alloy.Globals.FACEBOOK;
                     if (fb) {
                         if (Alloy.Globals.CLOSE) {
                             // need to keep track if event was already added, since it is beeing added several times otherwise.
                             fb.addEventListener('logout', function(e) {
+                                fb.loggedIn = false;
+   
                                 alertWindow.hide();
                                 Alloy.Globals.CLOSE = false;
                                 Alloy.Globals.CURRENTVIEW = null;
@@ -903,7 +927,7 @@ $.ds.leftTableView.addEventListener('scroll', function(e) {
         storedRowTitle.color = "#666";
 });
 
-Ti.App.addEventListener("sliderToggled", function(e) {
+var sliderToggled = function(e) {
     if (e.direction == "right") {
         $.ds.leftMenu.zIndex = 2;
         $.ds.rightMenu.zIndex = 1;
@@ -911,8 +935,10 @@ Ti.App.addEventListener("sliderToggled", function(e) {
     } else if (e.direction == "left") {
         $.ds.leftMenu.zIndex = 1;
         $.ds.rightMenu.zIndex = 2;
-    }
-});
+    } 
+};
+
+Ti.App.addEventListener("sliderToggled", sliderToggled);
 
 //check if user has rated app if not dialog shows up
 function checkRatestatus() {

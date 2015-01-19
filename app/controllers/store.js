@@ -229,23 +229,7 @@ if (OS_IOS) {
                     if (this.readyState == 4) {
                         Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
                         Alloy.Globals.unlockAchievement(3);
-                        
-                        // update menu
-                        var coins;
-                        
-                        if(identifier === "apps.topgame.betkampen.coins.20") {
-                            coins = 500;
-                        } else if(identifier === "apps.topgame.betkampen.coins.40") {
-                            coins = 1250;
-                        } else if(identifier === "apps.topgame.betkampen.coins.100") {
-                            coins = 3500;
-                        }
-                        
-                        var coinsInfo = {
-                            newCoins : coins
-                        };
-                        
-                        Ti.App.fireEvent('app:coinsMenuInfo', coinsInfo, true);
+                        Ti.App.fireEvent('userInfoUpdate');
                     } 
                 } else {
                     indicator.closeIndicator();
@@ -465,27 +449,7 @@ if (OS_IOS) {
                     if (this.readyState == 4) {
                         Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
                         Alloy.Globals.unlockAchievement(3);
-                        
-                        // Unexpected token (position:TEXT "Tack f\u00f6r d...@1:31 in java.io.InputStreamReader@4314f9a8)
-                        // Blir nåe fel med feedback här oxå?
-                        
-                        // update menu
-                        var coins;
-                        var identifier = product.productId;
-                        
-                        if(identifier === "apps.topgame.betkampen.coins.20") {
-                            coins = 500;
-                        } else if(identifier === "apps.topgame.betkampen.coins.40") {
-                            coins = 1250;
-                        } else if(identifier === "apps.topgame.betkampen.coins.100") {
-                            coins = 3500;
-                        }
-                        
-                        var coinsInfo = {
-                            newCoins : coins
-                        };
-                        
-                        Ti.App.fireEvent('app:coinsMenuInfo', coinsInfo, true);
+                        Ti.App.fireEvent('userInfoUpdate');
                     }
                 } else {
                     indicator.closeIndicator();

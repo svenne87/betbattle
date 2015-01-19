@@ -838,7 +838,7 @@ function postMatchOfTheDay() {
                         };
                         
                         // set status as answered
-                        Ti.App.fireEvent('matchOTDUpdate');
+                        Ti.App.fireEvent('challengesViewRefresh');
                         var win = Alloy.createController('showMatchOTD', args).getView();
 
                         if (!isAndroid) {
@@ -1826,7 +1826,6 @@ $.challengeWindow.addEventListener('close', function() {
 
 // check connection
 if (Alloy.Globals.checkConnection()) {
-
     if (!isAndroid) {
         indicator.openIndicator();
     }

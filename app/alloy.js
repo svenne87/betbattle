@@ -31,10 +31,15 @@ Alloy.Globals.MAINVIEW;
 Alloy.Globals.MAINWIN = null;
 Alloy.Globals.LANDINGWIN = null;
 Alloy.Globals.WINDOWS = [];
+Alloy.Globals.androidPauseEvent = null;
+Alloy.Globals.androidResumeEvent = null;
+Alloy.Globals.iosPauseEvent = null;
+Alloy.Globals.iosResumeEvent = null;
+Alloy.Globals.challengesViewRefreshEvent = null; 
+Alloy.Globals.userInfoUpdateEvent = null;
 Alloy.Globals.OPEN = true;
 Alloy.Globals.CLOSE = true;
 Alloy.Globals.RESUME = true;
-Alloy.Globals.FBERROR = true;
 Alloy.Globals.PHRASES = {};
 Alloy.Globals.TiBeacon = null;
 Alloy.Globals.AcceptedBeacon1 = false;
@@ -327,16 +332,32 @@ Alloy.Globals.showAlertWithRestartNote = function(auto) {
                 Alloy.Globals.CURRENTVIEW.close();
 
                 var activity = Titanium.Android.currentActivity;
+                
+                // remove old event listeners
+                Ti.App.removeEventListener('paused', Alloy.Globals.androidPauseEvent);
+                Ti.App.removeEventListener('resumed', Alloy.Globals.androidResumeEvent); 
+                Ti.App.removeEventListener('challengesViewRefresh', Alloy.Globals.challengesViewRefreshEvent);
+                Ti.App.removeEventListener('userInfoUpdate', Alloy.Globals.userInfoUpdateEvent);
+                
                 activity.finish();
 
                 // start app again
                 var intent = Ti.Android.createIntent({
                     action : Ti.Android.ACTION_MAIN,
                     url : 'Betbattle.js'
-                });
+                });                      
                 intent.addCategory(Ti.Android.CATEGORY_LAUNCHER);
-                Ti.Android.currentActivity.startActivity(intent);
+                Ti.Android.currentActivity.startActivity(intent);    
+
             } else {
+                // set value that app restarts
+                Ti.App.Properties.setBool("restart", true);
+                
+                if (Alloy.Globals.FACEBOOKOBJECT) { 
+                    // keep track if we are signed in with facebook
+                    Ti.App.Properties.setBool("facebook", true);
+                }
+                
                 // restart app
                 Ti.App._restart();
             }
@@ -1326,7 +1347,6 @@ Alloy.Globals.getCoupon = function(showAlert, indicator) {
                                             labels[y].setColor("#FFF");
                                         }
                                     }
-
                                 }
                             }
                         } else if (OS_ANDROID) {

@@ -41,20 +41,15 @@ if (args.refresh == 1) {
     }
 }
 
-Ti.App.addEventListener('matchOTDUpdate', function() {
-    Ti.API.log("Trying to update..."); // TODO uppdaterade inte här. Funkar nu?
-    var count = acceptLabel.getText();
-    count = count - 1;
-    
-    if(count === 0) {
-        acceptRow.remove(acceptLabel);
+Alloy.Globals.userInfoUpdateEvent = function() {
+    if (Alloy.Globals.checkConnection()) {
+        getUserInfo();
     } else {
-        acceptRow.remove(acceptLabel);
-        acceptLabel.setText(count);
-        acceptLabel.setLeft(acceptTextLabel.toImage().width + 70);
-        acceptRow.add(acceptLabel);
-    }
-});
+        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+    }   
+};
+
+Ti.App.addEventListener('userInfoUpdate', Alloy.Globals.userInfoUpdateEvent);
 
 var acceptLabel = Ti.UI.createLabel({
     backgroundColor : Alloy.Globals.themeColor(),
@@ -124,24 +119,22 @@ Ti.App.addEventListener("sliderToggled", function(e) {
 
 var mod = require('bencoding.blur');
 
-// refresh this view
-Ti.App.addEventListener("challengesViewRefresh", function(e) {
+Alloy.Globals.challengesViewRefreshEvent = function(e) {
+    Ti.API.log("refresh körs!!!!!!!!!");
+    
     if (Alloy.Globals.checkConnection()) {
         indicator.openIndicator();
         getChallenges();
     } else {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
-    }
-});
+    } 
+};
+
+// refresh this view
+Ti.App.addEventListener("challengesViewRefresh", Alloy.Globals.challengesViewRefreshEvent);
 
 // update profile info row
 function updateProfileData(userInfo) {
-
-    // TODO hängde sig när jag öppnade utmaning (via push) inne i appen (android)?
-    // https://github.com/omorandi/TiSMSDialog   <-- Om inte den andra modulen uppdateras
-    // restart buggar bara på ios 6?    
-     
-    
     // check if language or tutorial has been changed, if it has download the new version
     Alloy.Globals.checkVersions(indicator);
     
@@ -211,7 +204,7 @@ function getUserInfo() {
             totalCoins : '',
             totalPoints : ''
         };
-        Ti.App.fireEvent('app:coinsMenuInfo', error, false);
+        Ti.App.fireEvent('app:coinsMenuInfo', error);
     }
 
     xhr.onload = function() {
@@ -227,7 +220,7 @@ function getUserInfo() {
 
                 if (userInfo !== null) {
                     // Update menu
-                    Ti.App.fireEvent('app:coinsMenuInfo', userInfo, false);
+                    Ti.App.fireEvent('app:coinsMenuInfo', userInfo);
 
                     // update profile data
                     updateProfileData(userInfo);
@@ -1998,7 +1991,9 @@ function getChallenges() {
 }
 
 constructTableData(Alloy.Globals.CHALLENGEOBJECTARRAY);
-getUserInfo();
+if (args.refresh != 1) {
+    getUserInfo();
+}
 Alloy.Globals.getCoupon();
 
 var checkFirstTime = JSON.parse(Ti.App.Properties.getString("firstTimeAchievement"));

@@ -282,7 +282,7 @@ function getChallengesAndStart() {
     // Get challenges
     var xhr = Titanium.Network.createHTTPClient();
     xhr.onerror = function(e) {
-        Ti.API.error('Bad Sever =>' + e.error);
+        Ti.API.error('1. Bad Server =>' + e.error);
         indicator.closeIndicator();
         signInBtn.enabled = true;
         hideShowLogin(false);
@@ -297,7 +297,7 @@ function getChallengesAndStart() {
 
         xhr.send();
     } catch(e) {
-        Ti.API.error('Bad Sever =>' + e.error);
+        Ti.API.error('2. Bad Server =>' + e.error);
         indicator.closeIndicator();
         hideShowLogin(false);
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
@@ -391,9 +391,15 @@ function loginAuthenticated() {
     // Get betkampenID with valid token
     var xhr = Titanium.Network.createHTTPClient();
     xhr.onerror = function(e) {
-        Ti.API.error('Bad Sever =>' + e.error);
-        indicator.closeIndicator();
-        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+        Ti.API.error('4. Bad Server =>' + e.error);
+         indicator.closeIndicator();
+
+         if (e.source.status == 400) {
+            // OAuth return 400 on credentials error
+            showBadCredentialsAlert();
+         } else {
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+         }
     };
 
     try {
@@ -502,11 +508,17 @@ function login(auto) {
             loginReq.setTimeout(Alloy.Globals.TIMEOUT);
             loginReq.send(params);
         } catch(e) {
-            Ti.API.error('Bad Sever =>' + e.error);
-            indicator.closeIndicator();
-            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+            Ti.API.error('3. Bad Server =>' + e.error);
+            indicator.closeIndicator();   
             signInBtn.enabled = true;
             hideShowLogin(false);
+            
+            if (e.source.status == 400) {
+                // OAuth return 400 on credentials error
+                showBadCredentialsAlert();
+            } else {
+                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+            }
         }
 
         loginReq.onload = function() {
@@ -533,15 +545,14 @@ function login(auto) {
             }
         };
         loginReq.onerror = function(e) {
-            Ti.API.error('Bad Sever =>' + JSON.stringify(e));
+            Ti.API.error('4 Bad Server =>' + JSON.stringify(e));
             signInBtn.enabled = true;
             hideShowLogin(false);
             indicator.closeIndicator();
-            if (e.code === 400) {
+ 
+            if (e.source.status == 400) {
                 // OAuth return 400 on credentials error
-                // TODO
                 showBadCredentialsAlert();
-               // Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.loginCredentialsError);
             } else {
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             }

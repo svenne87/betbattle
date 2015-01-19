@@ -39,6 +39,10 @@ var apns = function() {
                     type = 'pending';
                 } else if (type === '3') {
                     type = 'finished';
+                } else if (type === '4') {
+                    type = 'achievement';
+                } else if (type === '0') {
+                    type = 'message';
                 }
 
                 var message = e.data.alert;
@@ -81,6 +85,58 @@ var apns = function() {
                             win = Alloy.createController('showChallenge', args).getView();
                         } else if (type === 'finished') {
                             win = Alloy.createController('challenges_finished', args).getView();
+                        } else if (type === 'achievement') {
+                            var player = Ti.Media.createSound({
+                                url : "sound/unlocked.wav"
+                            });
+
+                            var indWin = Ti.UI.createWindow();
+                            //  view
+                            var indView = Titanium.UI.createView({
+                                top : '85%',
+                                height : 80,
+                                width : '100%',
+                                backgroundColor : '#FFF',
+                                opacity : 0.9,
+                                layout : 'horizontal'
+                            });
+
+                            indWin.add(indView);
+
+                            var image = Ti.UI.createImageView({
+                                image : Alloy.Globals.BETKAMPENURL + '/achievements/' + data.extra_data.image,
+                                width : "15%",
+                                height : Ti.UI.SIZE,
+                                left : 0,
+                                top : 10
+                            });
+                            var mess = Titanium.UI.createLabel({
+                                text : message,
+                                right : 0,
+                                color : '#000',
+                                width : '75%',
+                                top : 25,
+                                height : 'auto',
+                                textAlign : 'center',
+                                font : Alloy.Globals.getFontCustom(12, 'Bold'),
+                            });
+                            indView.add(image);
+                            indView.add(mess);
+                            indWin.open();
+
+                            player.play();
+
+                            var interval = interval ? interval : 2500;
+                            setTimeout(function() {
+                                indWin.close({
+                                    opacity : 0,
+                                    duration : 2000
+                                });
+                                player.stop();
+                            }, interval);
+
+                        } else if (type === 'message') {
+                            // nothing
                         }
 
                         Ti.App.fireEvent('app:updateView', obj);
@@ -89,15 +145,18 @@ var apns = function() {
                             Alloy.Globals.NAV.openWindow(win);
                         }
 
-                        for (var w in Alloy.Globals.WINDOWS) {
-                            Alloy.Globals.WINDOWS[w].setOpacity(0);
-                        }
+                        if (Alloy.Globals.WINDOWS.length > 0) {
+                            for (var w in Alloy.Globals.WINDOWS) {
+                                Alloy.Globals.WINDOWS[w].setOpacity(0);
+                            }
 
-                        for (var w in Alloy.Globals.WINDOWS) {
-                            if (Alloy.Globals.WINDOWS[w] === win) {
-                                Alloy.Globals.WINDOWS[w].close();
+                            for (var w in Alloy.Globals.WINDOWS) {
+                                if (Alloy.Globals.WINDOWS[w] === win) {
+                                    Alloy.Globals.WINDOWS[w].close();
+                                }
                             }
                         }
+
                         if (win !== null) {
                             Alloy.Globals.WINDOWS.push(win);
                         }
@@ -124,13 +183,64 @@ var apns = function() {
                             args = {
                                 cid : cid
                             };
-                            
+
                             // This is never called?
                             // TODO cid : data.extra_data.cid ?
-                            
+
                             win = Alloy.createController('showChallenge', args).getView();
                         } else if (type === 'finished') {
                             win = Alloy.createController('challenges_finished', args).getView();
+                        } else if (type === 'achievement') {
+                            var player = Ti.Media.createSound({
+                                url : "sound/unlocked.wav"
+                            });
+
+                            var indWin = Ti.UI.createWindow();
+                            //  view
+                            var indView = Titanium.UI.createView({
+                                top : '85%',
+                                height : 80,
+                                width : '100%',
+                                backgroundColor : '#FFF',
+                                opacity : 0.9,
+                                layout : 'horizontal'
+                            });
+
+                            indWin.add(indView);
+
+                            var image = Ti.UI.createImageView({
+                                image : Alloy.Globals.BETKAMPENURL + '/achievements/' + data.extra_data.image,
+                                width : "15%",
+                                height : Ti.UI.SIZE,
+                                left : 0,
+                                top : 10
+                            });
+                            var mess = Titanium.UI.createLabel({
+                                text : message,
+                                right : 0,
+                                color : '#000',
+                                width : '75%',
+                                top : 25,
+                                height : 'auto',
+                                textAlign : 'center',
+                                font : Alloy.Globals.getFontCustom(12, 'Bold'),
+                            });
+                            indView.add(image);
+                            indView.add(mess);
+                            indWin.open();
+
+                            player.play();
+
+                            var interval = interval ? interval : 2500;
+                            setTimeout(function() {
+                                indWin.close({
+                                    opacity : 0,
+                                    duration : 2000
+                                });
+                                player.stop();
+                            }, interval);
+                        } else if (type === 'message') {
+                            // nothing
                         }
 
                         if (win !== null) {
@@ -149,4 +259,4 @@ var apns = function() {
 };
 exports = {
     apns : apns
-}; 
+};
