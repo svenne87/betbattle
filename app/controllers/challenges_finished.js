@@ -36,13 +36,13 @@ var indicator = uie.createIndicatorWindow({
 });
 
 function onOpen(evt) {
-    if(isAndroid) {
+    if (isAndroid) {
         context.on('challengesFinishedActivity', this.activity);
     }
 }
 
 function onClose(evt) {
-    if(isAndroid) {
+    if (isAndroid) {
         context.off('challengesFinishedActivity');
     }
 }
@@ -271,7 +271,34 @@ table.addEventListener('click', function(e) {
 });
 
 buildTableRows();
-$.challenges_finished.add(table);
+
+if (!isAndroid) {
+    $.challenges_finished.add(table);
+} else {
+    var swipeRefreshModule = require('com.rkam.swiperefreshlayout');
+
+    swipeRefresh = swipeRefreshModule.createSwipeRefresh({
+        view : table,
+        height : Ti.UI.FILL,
+        width : Ti.UI.FILL,
+        id : 'swiper'
+    });
+
+    swipeRefresh.addEventListener('refreshing', function(e) {
+        if (Alloy.Globals.checkConnection()) {
+            setTimeout(function() {
+                indicator.openIndicator();
+                fetchedFinishedChallenges = 0;
+                getFinishedChallenges(true, 0, 20);  // TODO
+
+            }, 800);
+        } else {
+            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+            swipeRefresh.setRefreshing(false);
+        }
+    });
+    $.challenges_finished.add(swipeRefresh);
+}
 
 function compare(a, b) {
     if (a.attributes.time > b.attributes.time)
@@ -287,7 +314,7 @@ function buildTableRows() {
 
     // add last matchOTD row
     data.push(createLastMatchOTDRow());
-    
+
     // sort challenges based on first game date
     finishedChallengesArray.sort(compare);
 
@@ -305,7 +332,7 @@ function buildTableRows() {
 }
 
 function createLastMatchOTDRow() {
-    
+
     var child = true;
 
     if (isAndroid) {
@@ -327,7 +354,7 @@ function createLastMatchOTDRow() {
         width : 30,
         height : 30
     }));
-    
+
     var firstRowView = Ti.UI.createView({
         top : -20,
         layout : 'absolute',
@@ -340,7 +367,7 @@ function createLastMatchOTDRow() {
         color : "#FFF",
         left : 60
     }));
-    
+
     var secondRowView = Ti.UI.createView({
         top : 25,
         layout : 'absolute',
@@ -353,7 +380,7 @@ function createLastMatchOTDRow() {
         font : Alloy.Globals.getFontCustom(12, 'Regular'),
         color : Alloy.Globals.themeColor()
     }));
-    
+
     row.add(firstRowView);
     row.add(secondRowView);
 
@@ -602,6 +629,18 @@ function setDisplayText() {
     }
 }
 
+function endRefresher() {
+    if (!isAndroid) {
+        if ( typeof refresher !== 'undefined' && refresher !== null) {
+            refresher.endRefreshing();
+        }
+    } else {
+        if ( typeof swipeRefresh !== 'undefined' && swipeRefresh !== null) {
+            swipeRefresh.setRefreshing(false);
+        }
+    }
+}
+
 function getFinishedChallenges(firstTime, start, rows) {
     if (firstTime && isAndroid) {
         indicator.openIndicator();
@@ -623,11 +662,7 @@ function getFinishedChallenges(firstTime, start, rows) {
     var xhr = Titanium.Network.createHTTPClient();
     xhr.onerror = function(e) {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-        if (OS_IOS) {
-            if ( typeof refresher !== 'undefined') {
-                refresher.endRefreshing();
-            }
-        }
+        endRefresher(); 
         Ti.API.error('Bad Sever =>' + e.error);
         indicator.closeIndicator();
     };
@@ -642,11 +677,7 @@ function getFinishedChallenges(firstTime, start, rows) {
         xhr.send();
     } catch(e) {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-        if (!isAndroid) {
-            if ( typeof refresher !== 'undefined') {
-                refresher.endRefreshing();
-            }
-        }
+        endRefresher();
         isLoading = false;
         indicator.closeIndicator();
     }
@@ -705,19 +736,15 @@ function getFinishedChallenges(firstTime, start, rows) {
                         table.appendRow(constructChallengeRows(tmpArray[challenge], challenge));
                         finishedChallengesArray.push(tmpArray[challenge]);
                     }
-                    
+
                     // need to sort the array here again, in order to get the correct data when clicking a row
-                    finishedChallengesArray.sort(compare); // TODO works?
-                    
+                    finishedChallengesArray.sort(compare);
+                    // TODO works?
+
                     setDisplayText();
                 }
 
-                if (!isAndroid) {
-                    if ( typeof refresher !== 'undefined') {
-                        refresher.endRefreshing();
-                    }
-                }
-
+                endRefresher();
                 isLoading = false;
                 indicator.closeIndicator();
             }
@@ -725,11 +752,7 @@ function getFinishedChallenges(firstTime, start, rows) {
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             indicator.closeIndicator();
             isLoading = false;
-            if (!isAndroid) {
-                if ( typeof refresher !== 'undefined') {
-                    refresher.endRefreshing();
-                }
-            }
+            endRefresher();
             Ti.API.error("Error =>" + this.response);
         }
     };

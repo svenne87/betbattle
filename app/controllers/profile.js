@@ -11,13 +11,13 @@ var fontawesome = require('lib/IconicFont').IconicFont({
     font : 'lib/FontAwesome'
 });
 
-var font = 'FontAwesome';    
+var font = 'FontAwesome';
 
 if (OS_ANDROID) {
     isAndroid = true;
     font = 'fontawesome-webfont';
     context = require('lib/Context');
-    
+
     $.profileWin.addEventListener('open', function() {
         Alloy.Globals.setAndroidCouponMenu($.profileWin.activity);
 
@@ -28,11 +28,11 @@ if (OS_ANDROID) {
         $.profileWin.activity.actionBar.displayHomeAsUp = true;
         $.profileWin.activity.actionBar.title = Alloy.Globals.PHRASES.profile;
     });
-    
+
     $.table.footerView = Ti.UI.createView({
         height : 0.5,
         backgroundColor : '#303030'
-    });  
+    });
 } else {
     isAndroid = false;
     $.profileWin.titleControl = Ti.UI.createLabel({
@@ -54,13 +54,13 @@ if (OS_ANDROID) {
 }
 
 function onOpen(evt) {
-    if(isAndroid) {
+    if (isAndroid) {
         context.on('profileActivity', this.activity);
     }
 }
 
 function onClose(evt) {
-    if(isAndroid) {
+    if (isAndroid) {
         context.off('profileActivity');
     }
 }
@@ -129,7 +129,7 @@ var favoriteTeamImageView = Ti.UI.createImageView({
 
 var dynLeft = '17%';
 
-if(deviceWidth <= 320) {
+if (deviceWidth <= 320) {
     dynLeft = '12%';
 }
 
@@ -263,7 +263,7 @@ secondLeftRow.add(Ti.UI.createLabel({
     color : Alloy.Globals.themeColor(),
 }));
 
-secondLeftRow.add(coinsLabelValue); 
+secondLeftRow.add(coinsLabelValue);
 
 firstProfilePart.add(secondLeftRow);
 
@@ -279,7 +279,7 @@ var levelLabel = Ti.UI.createLabel({
     text : '',
     color : '#FFF',
     right : 10,
-    textAlign: 'right',
+    textAlign : 'right',
     width : Ti.UI.FILL
 });
 
@@ -305,7 +305,7 @@ var winsLabelText = Ti.UI.createLabel({
     text : Alloy.Globals.PHRASES.winsInfoTxt + ':',
     color : '#FFF',
     left : 10,
-    textAlign : 'right', 
+    textAlign : 'right',
     width : Ti.UI.SIZE
 });
 
@@ -393,7 +393,7 @@ var scoreBoardLabelText = Ti.UI.createLabel({
     text : Alloy.Globals.PHRASES.positionTxt + ':',
     color : '#FFF',
     left : 0,
-    textAlign : 'right', 
+    textAlign : 'right',
     width : Ti.UI.SIZE
 });
 
@@ -402,7 +402,7 @@ var scoreBoardLabelValue = Ti.UI.createLabel({
     text : '',
     color : Alloy.Globals.themeColor(),
     left : 5,
-    textAlign: 'right',
+    textAlign : 'right',
     width : Ti.UI.SIZE
 });
 
@@ -534,8 +534,12 @@ function getProfile() {
                         levelImageView.image = '/images/no_team.png';
                     });
 
-                    if (Alloy.Globals.PHRASES.levels[level].lenght > 17) {
-                        Alloy.Globals.PHRASES.levels[level] = Alloy.Globals.PHRASES.levels[level].substring(0, 14) + '...';
+                    if ( typeof Alloy.Globals.PHRASES.levels[level] !== 'undefined') {
+                        if (Alloy.Globals.PHRASES.levels[level].lenght > 17) {
+                            Alloy.Globals.PHRASES.levels[level] = Alloy.Globals.PHRASES.levels[level].substring(0, 14) + '...';
+                        }
+                    } else {
+                        Alloy.Globals.PHRASES.levels[level] = 'N/A';
                     }
 
                     levelLabel.setText(Alloy.Globals.PHRASES.levels[level] + ' ');
@@ -544,19 +548,19 @@ function getProfile() {
                     winsLabelValue.setText(userInfo.totalWins + ' ');
                     scoreBoardLabelValue.setText(userInfo.position + ' ');
 
-                    if(coinsLabelValue.getText().length > 6) {               
+                    if (coinsLabelValue.getText().length > 6) {
                         coinsLabelValue.setText(coinsLabelValue.getText().substring(0, 5) + '..');
                     }
-                    
-                    if(pointsLabelValue.getText().length > 6) {
+
+                    if (pointsLabelValue.getText().length > 6) {
                         pointsLabelValue.setText(pointsLabelValue.getText().substring(0, 5) + '..');
                     }
-                    
-                    if(winsLabelValue.getText().length > 4) {
+
+                    if (winsLabelValue.getText().length > 4) {
                         winsLabelValue.setText(winsLabelValue.getText().substring(0, 3) + '..');
                     }
-                    
-                    if(scoreBoardLabelValue.getText().length > 6) {
+
+                    if (scoreBoardLabelValue.getText().length > 6) {
                         scoreBoardLabelValue.setText(scoreBoardLabelValue.getText().substring(0, 5) + '..');
                     }
 
@@ -611,7 +615,7 @@ function getAchievements() {
                         width : Ti.UI.FILL,
                         layout : 'horizontal'
                     });
-                    
+
                     var achievementsHolderView = Ti.UI.createView({
                         top : 0,
                         height : Ti.UI.SIZE,
@@ -620,13 +624,13 @@ function getAchievements() {
                         right : '10%',
                         layout : 'horizontal'
                     });
-                    
+
                     var dynWidth = '14%';
-                   
-                    if(deviceWidth <= 320) {
+
+                    if (deviceWidth <= 320) {
                         dynWidth = '12%';
                     }
-                    
+
                     for (var i = 0; i < achievements.length; i++) {
                         var ach_img = '/images/locked_ach.png';
                         if (achievements[i].unlocked == true) {
@@ -678,9 +682,15 @@ function getAchievements() {
                                     height : 150,
                                 });
                                 w.add(textWrapper);
+                                
+                                var achievementTitleTxt = 'not available';
+                                
+                                if(typeof Alloy.Globals.PHRASES.achievements[e.source.id] !== 'undefined') {
+                                    achievementTitleTxt = Alloy.Globals.PHRASES.achievements[e.source.id].title;
+                                }
 
                                 var achievementTitle = Ti.UI.createLabel({
-                                    text : Alloy.Globals.PHRASES.achievements[e.source.id].title,
+                                    text : achievementTitleTxt,
                                     textAlign : "center",
                                     color : "#000",
                                     zIndex : "2000",
@@ -691,12 +701,18 @@ function getAchievements() {
 
                                 var dynamicTop = 40;
 
-                                if (Alloy.Globals.PHRASES.achievements[e.source.id].title.length > 13) {
+                                if (achievementTitleTxt.length > 13) {
                                     dynamicTop = 60;
+                                }
+                                
+                                var achievementDescriptionTxt = 'not available';
+                                
+                                if(typeof Alloy.Globals.PHRASES.achievements[e.source.id] !== 'undefined') {
+                                    achievementDescriptionTxt = Alloy.Globals.PHRASES.achievements[e.source.id].description;
                                 }
 
                                 var achievementDescription = Ti.UI.createLabel({
-                                    text : Alloy.Globals.PHRASES.achievements[e.source.id].description,
+                                    text : achievementDescriptionTxt,
                                     textAlign : "center",
                                     color : "#000",
                                     width : "90%",
@@ -775,9 +791,15 @@ function getAchievements() {
                                 });
 
                                 w.add(greyGlass);
+                                
+                                var achievementTitleTxt = 'not available';
+                                
+                                if(typeof Alloy.Globals.PHRASES.achievements[e.source.id] !== 'undefined') {
+                                    achievementTitleTxt = Alloy.Globals.PHRASES.achievements[e.source.id].title;
+                                }
 
                                 var achievementTitle = Ti.UI.createLabel({
-                                    text : Alloy.Globals.PHRASES.achievements[e.source.id].title,
+                                    text : achievementTitleTxt,
                                     textAlign : "center",
                                     color : "#000",
                                     top : 15,
@@ -787,12 +809,18 @@ function getAchievements() {
 
                                 var dynamicTop = 40;
 
-                                if (Alloy.Globals.PHRASES.achievements[e.source.id].title.length > 13) {
+                                if (achievementTitleTxt.length > 13) {
                                     dynamicTop = 60;
                                 }
 
+                                var achievementDescriptionTxt = 'not available';
+                                
+                                if(typeof Alloy.Globals.PHRASES.achievements[e.source.id] !== 'undefined') {
+                                    achievementDescriptionTxt = Alloy.Globals.PHRASES.achievements[e.source.id].description;
+                                }
+
                                 var achievementDescription = Ti.UI.createLabel({
-                                    text : Alloy.Globals.PHRASES.achievements[e.source.id].description,
+                                    text : achievementDescriptionTxt,
                                     textAlign : "center",
                                     color : "#000",
                                     width : "90%",

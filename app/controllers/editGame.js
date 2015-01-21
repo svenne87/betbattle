@@ -47,13 +47,13 @@ if (OS_IOS) {
 }
 
 function onOpen(evt) {
-    if(isAndroid) {
+    if (isAndroid) {
         context.on('editGameActivity', this.activity);
     }
 }
 
 function onClose(evt) {
-    if(isAndroid) {
+    if (isAndroid) {
         context.off('editGameActivity');
     }
 }
@@ -117,7 +117,7 @@ function removeCouponGame(gameID) {
                         couponWin.setOpacity(0);
                         couponWin.close();
                     }
-                    
+
                     Alloy.Globals.getCoupon();
                     $.editGame.setOpacity(0);
                     $.editGame.close();
@@ -240,10 +240,10 @@ function createGameTypeWinnerResult(gameType, gameObject, i, gameArray, index) {
         layout : 'horizontal',
         selectionStyle : 'none',
     });
-    
+
     var width;
-    
-    if(isAndroid) {
+
+    if (isAndroid) {
         width = Ti.Platform.displayCaps.platformWidth / 3;
     } else {
         width = gameTypeView.toImage().width / 3;
@@ -317,58 +317,58 @@ function createGameTypeWinnerResult(gameType, gameObject, i, gameArray, index) {
 
     if (gameArray[index].gameValue[0] === '1') {
         optionOne.children[0].backgroundColor = '#D8D8D8';
-        optionOne.children[1].color = '#000'; 
+        optionOne.children[1].color = '#000';
     } else if (gameArray[index].gameValue[0] === '2') {
         optionTwo.children[0].backgroundColor = '#D8D8D8';
-        optionTwo.children[1].color = '#000'; 
+        optionTwo.children[1].color = '#000';
     } else if (gameArray[index].gameValue[0] === '3') {
         optionThree.children[0].backgroundColor = '#D8D8D8';
-        optionThree.children[1].color = '#000'; 
+        optionThree.children[1].color = '#000';
     }
 
     optionOne.addEventListener('click', function(e) {
-        if(isAndroid) {
+        if (isAndroid) {
             e.row = e.source;
         }
-        
+
         gameArray[e.row.id].gameValue[0] = 1;
         gameArray[e.row.id].gameValue[1] = 0;
-        optionTwo.children[0].backgroundColor = '#000'; 
+        optionTwo.children[0].backgroundColor = '#000';
         optionTwo.children[1].color = '#FFF';
-        optionThree.children[0].backgroundColor = '#000'; 
+        optionThree.children[0].backgroundColor = '#000';
         optionThree.children[1].color = '#FFF';
-        optionOne.children[0].backgroundColor = '#D8D8D8'; 
-        optionOne.children[1].color = '#000'; 
+        optionOne.children[0].backgroundColor = '#D8D8D8';
+        optionOne.children[1].color = '#000';
     });
 
     optionTwo.addEventListener('click', function(e) {
-        if(isAndroid) {
+        if (isAndroid) {
             e.row = e.source;
         }
-        
+
         gameArray[e.row.id].gameValue[0] = 2;
         gameArray[e.row.id].gameValue[1] = 0;
         optionTwo.children[0].backgroundColor = '#D8D8D8';
         optionTwo.children[1].color = '#000';
-        optionThree.children[0].backgroundColor = '#000'; 
-        optionThree.children[1].color = '#FFF'; 
-        optionOne.children[0].backgroundColor = '#000'; 
+        optionThree.children[0].backgroundColor = '#000';
+        optionThree.children[1].color = '#FFF';
+        optionOne.children[0].backgroundColor = '#000';
         optionOne.children[1].color = '#FFF';
     });
 
     optionThree.addEventListener('click', function(e) {
-        if(isAndroid) {
+        if (isAndroid) {
             e.row = e.source;
         }
-        
+
         gameArray[e.row.id].gameValue[0] = 3;
         gameArray[e.row.id].gameValue[1] = 0;
-        optionTwo.children[0].backgroundColor = '#000'; 
+        optionTwo.children[0].backgroundColor = '#000';
         optionTwo.children[1].color = '#FFF';
         optionThree.children[0].backgroundColor = '#D8D8D8';
-        optionThree.children[1].color = '#000'; 
-        optionOne.children[0].backgroundColor = '#000'; 
-        optionOne.children[1].color = '#FFF'; 
+        optionThree.children[1].color = '#000';
+        optionOne.children[0].backgroundColor = '#000';
+        optionOne.children[1].color = '#FFF';
     });
 
     gameTypeView.add(optionOne);
@@ -437,9 +437,9 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
             layout : 'absolute',
             left : ((Ti.Platform.displayCaps.platformWidth / 4) - 15)
         });
-        
+
         var leftPos = 15;
-        if(Ti.Platform.displayCaps.platformWidth > 320 && !isAndroid) {
+        if (Ti.Platform.displayCaps.platformWidth > 320 && !isAndroid) {
             leftPos = 30;
         }
 
@@ -1095,8 +1095,24 @@ function getGame() {
         var xhr = Titanium.Network.createHTTPClient();
         xhr.onerror = function(e) {
             indicator.closeIndicator();
-            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             Ti.API.error('Bad Sever =>' + e.error);
+
+            if (e.source.status == 400) {
+                // The match has begun without a challenge beeing accepted and therefore removed from the server
+                var alertWindow = Titanium.UI.createAlertDialog({
+                    title : Alloy.Globals.PHRASES.betbattleTxt,
+                    message : Alloy.Globals.PHRASES.matchRemovedTxt,
+                    buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt]
+                });
+
+                alertWindow.addEventListener('click', function(e) {
+                    removeCouponGame(gameID);
+                });
+                
+                alertWindow.show();
+            } else {
+                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+            }
         };
 
         try {

@@ -53,20 +53,20 @@ if (OS_IOS) {
     });
 
     $.showCoupon.addEventListener('open', function() {
-        Alloy.Globals.couponOpen = true;              
+        Alloy.Globals.couponOpen = true;
     });
 } else {
     context = require('lib/Context');
 }
 
 function onOpen(evt) {
-    if(isAndroid) {
+    if (isAndroid) {
         context.on('showCouponActivity', this.activity);
     }
 }
 
 function onClose(evt) {
-    if(isAndroid) {
+    if (isAndroid) {
         context.off('showCouponActivity');
     }
 }
@@ -80,7 +80,7 @@ $.showCoupon.addEventListener('close', function() {
         }
     }
 
-    Alloy.Globals.couponOpen = false; 
+    Alloy.Globals.couponOpen = false;
 });
 
 function removeCouponGame(gameID) {
@@ -112,9 +112,9 @@ function removeCouponGame(gameID) {
                     amount_deleted++;
 
                     // make sure match is removed so that we can check the dates for matches in the array
-                    
+
                     // TODO var games innan ( 3 första rader)
-                    
+
                     for (var i in Alloy.Globals.COUPON.games) {
                         if (Alloy.Globals.COUPON.games[i].game_id == gameID) {
                             var index = Alloy.Globals.COUPON.games.indexOf(Alloy.Globals.COUPON.games[i]);
@@ -228,10 +228,10 @@ function checkFriends() {
 
 // When clicking the edit icon of a match
 var editEvent = function(e) {
-    if(e.source.name === 'noEdit') {
+    if (e.source.name === 'noEdit') {
         return;
     }
-    
+
     var args = {
         gameID : e.row.id,
         table : table,
@@ -369,9 +369,9 @@ for (var i in games) {
         left : 10,
         color : Alloy.Globals.themeColor()
     }));
-    
+
     removeView.addEventListener('click', function(e) {
-        removeCouponGame(e.source.id); 
+        removeCouponGame(e.source.id);
     });
 
     row.add(removeView);
@@ -538,6 +538,18 @@ if (isAndroid) {
                 if (e.data) {
                     betPicker.setText(e.data[0].value);
                     coinsToJoin = e.data[0].value;
+
+                    switch(e.data[0].value) {
+                    case '20':
+                        coinsFastSelectViewOne.fireEvent('click');
+                        break;
+                    case '40':
+                        coinsFastSelectViewTwo.fireEvent('click');
+                        break;
+                    case '100':
+                        coinsFastSelectViewThree.fireEvent('click');
+                        break;
+                    }
                 }
                 betPicker.open = false;
             },
@@ -575,6 +587,18 @@ if (isAndroid) {
 
     betPicker.self.addEventListener('change', function(e) {
         coinsToJoin = betPicker.value;
+
+        switch(betPicker.value) {
+        case '20':
+            coinsFastSelectViewOne.fireEvent('click');
+            break;
+        case '40':
+            coinsFastSelectViewTwo.fireEvent('click');
+            break;
+        case '100':
+            coinsFastSelectViewThree.fireEvent('click');
+            break;
+        }
     });
 }
 
@@ -590,6 +614,144 @@ coinsRow.addEventListener('click', function() {
 
 sections[1].add(coinsRow);
 
+var coinsFastSelectRow = Ti.UI.createTableViewRow({
+    hasChild : false,
+    className : 'coinsFastSelectRow',
+    selectionStyle : 'none',
+    height : 75,
+    backgroundColor : "#000",
+    layout : "horizontal",
+});
+
+var phoneWidth = (Titanium.Platform.displayCaps.platformWidth / 3);
+
+var coinsFastSelectViewOne = Ti.UI.createView({
+    width : (phoneWidth - 0.5),
+    height : 75
+});
+
+var coinsIconOne = Ti.UI.createLabel({
+    font : {
+        fontFamily : font
+    },
+    left : (phoneWidth / 3),
+    text : fontawesome.icon('fa-database'),
+    color : Alloy.Globals.themeColor()
+});
+
+coinsFastSelectViewOne.add(coinsIconOne);
+
+coinsFastSelectViewOne.add(Ti.UI.createLabel({
+    left : (phoneWidth / 3) + 5 + coinsIconOne.toImage().width,
+    text : '20',
+    font : Alloy.Globals.getFontCustom(16, 'Regular'),
+    color : '#FFF'
+}));
+
+coinsFastSelectViewOne.addEventListener('click', function() {
+    coinsToJoin = 20;
+    betPicker.text = '20';
+
+    coinsFastSelectViewOne.backgroundColor = Alloy.Globals.themeColor();
+    coinsIconOne.color = '#FFF';
+    coinsFastSelectViewTwo.backgroundColor = '#000';
+    coinsIconTwo.color = Alloy.Globals.themeColor();
+    coinsFastSelectViewThree.backgroundColor = '#000';
+    coinsIconThree.color = Alloy.Globals.themeColor();
+});
+
+coinsFastSelectRow.add(coinsFastSelectViewOne);
+
+coinsFastSelectRow.add(Ti.UI.createView({
+    height : 75,
+    left : 0,
+    width : 0.5,
+    backgroundColor : '#303030',
+}));
+
+var coinsFastSelectViewTwo = Ti.UI.createView({
+    width : (phoneWidth - 0.5),
+    height : 75
+});
+
+var coinsIconTwo = Ti.UI.createLabel({
+    font : {
+        fontFamily : font
+    },
+    left : (phoneWidth / 3),
+    text : fontawesome.icon('fa-database'),
+    color : Alloy.Globals.themeColor()
+});
+
+coinsFastSelectViewTwo.add(coinsIconTwo);
+
+coinsFastSelectViewTwo.add(Ti.UI.createLabel({
+    left : (phoneWidth / 3) + 5 + coinsIconTwo.toImage().width,
+    text : '40',
+    font : Alloy.Globals.getFontCustom(16, 'Regular'),
+    color : '#FFF'
+}));
+
+coinsFastSelectViewTwo.addEventListener('click', function() {
+    coinsToJoin = 40;
+    betPicker.text = '40';
+
+    coinsFastSelectViewTwo.backgroundColor = Alloy.Globals.themeColor();
+    coinsIconTwo.color = '#FFF';
+    coinsFastSelectViewOne.backgroundColor = '#000';
+    coinsIconOne.color = Alloy.Globals.themeColor();
+    coinsFastSelectViewThree.backgroundColor = '#000';
+    coinsIconThree.color = Alloy.Globals.themeColor();
+});
+
+coinsFastSelectRow.add(coinsFastSelectViewTwo);
+
+coinsFastSelectRow.add(Ti.UI.createView({
+    height : 75,
+    left : 0,
+    width : 0.5,
+    backgroundColor : '#303030',
+}));
+
+var coinsFastSelectViewThree = Ti.UI.createView({
+    width : (phoneWidth - 2),
+    height : 75
+});
+
+var coinsIconThree = Ti.UI.createLabel({
+    font : {
+        fontFamily : font
+    },
+    left : (phoneWidth / 3),
+    text : fontawesome.icon('fa-database'),
+    color : Alloy.Globals.themeColor()
+});
+
+coinsFastSelectViewThree.add(coinsIconThree);
+
+coinsFastSelectViewThree.add(Ti.UI.createLabel({
+    left : (phoneWidth / 3) + 5 + coinsIconThree.toImage().width,
+    text : '100',
+    font : Alloy.Globals.getFontCustom(16, 'Regular'),
+    color : '#FFF'
+}));
+
+coinsFastSelectViewThree.addEventListener('click', function() {
+    coinsToJoin = 100;
+    betPicker.text = '100';
+
+    coinsFastSelectViewThree.backgroundColor = Alloy.Globals.themeColor();
+    coinsIconThree.color = '#FFF';
+    coinsFastSelectViewTwo.backgroundColor = '#000';
+    coinsIconTwo.color = Alloy.Globals.themeColor();
+    coinsFastSelectViewOne.backgroundColor = '#000';
+    coinsIconOne.color = Alloy.Globals.themeColor();
+});
+
+coinsFastSelectRow.add(coinsFastSelectViewThree);
+
+sections[1].add(coinsFastSelectRow);
+
 var footerView = Ti.UI.createView({
     height : Ti.UI.SIZE,
     width : Ti.UI.FILL,
@@ -600,14 +762,14 @@ var footerView = Ti.UI.createView({
 var submitButton = Alloy.Globals.createButtonView(Alloy.Globals.themeColor(), '#FFF', Alloy.Globals.PHRASES.challengeBtnTxt);
 
 if (isAndroid) {
-    submitButton.top = 35;
+    submitButton.top = 15;
 } else {
     submitButton.top = 45;
 }
 
 submitButton.addEventListener('click', function() {
     var gameDatesValid = true;
-    
+
     var games = Alloy.Globals.COUPON.games;
     // check if any of the games in the coupon has started / already finished.
     for (var i = 0; i < games.length; i++) {

@@ -138,6 +138,9 @@ function updateProfileData(userInfo) {
     // check if language or tutorial has been changed, if it has download the new version
     Alloy.Globals.checkVersions(indicator);
     
+    // keep coupon up to date
+    Alloy.Globals.getCoupon();
+    
     // update profile data
     if (userInfo.name.length > 16) {
         userInfo.name = userInfo.name.substring(0, 13);
@@ -1994,7 +1997,8 @@ constructTableData(Alloy.Globals.CHALLENGEOBJECTARRAY);
 if (args.refresh != 1) {
     getUserInfo();
 }
-Alloy.Globals.getCoupon();
+
+//Alloy.Globals.getCoupon();
 
 var checkFirstTime = JSON.parse(Ti.App.Properties.getString("firstTimeAchievement"));
 

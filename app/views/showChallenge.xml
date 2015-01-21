@@ -1,6 +1,10 @@
 <Alloy>
-	<Window class="container" id="showChallengeWindow" onOpen="onOpen" onClose="onClose">
-		<ScrollableView id="showChallenge" showPagingControl="true">
+	<Window class="container" id="showChallengeWindow" onOpen="onOpen" onClose="onClose">	
+		<ScrollableView id="showChallenge" showPagingControl="true" platform="ios">
 		</ScrollableView>
+        <SwipeRefresh module="com.rkam.swiperefreshlayout" id="swipeRefresh" platform="android">
+			<ScrollableView id="showChallenge" showPagingControl="true" platform="android">
+			</ScrollableView>
+        </SwipeRefresh>
 	</Window>
 </Alloy>

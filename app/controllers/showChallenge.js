@@ -9,7 +9,7 @@ var challengeFinished = false;
 var refresher;
 var swipeRefresh = null;
 var androidViews = [];
-var firstSections; 
+var firstSections;
 var firstTable;
 
 var uie = require('lib/IndicatorWindow');
@@ -59,13 +59,13 @@ if (isAndroid) {
 }
 
 function onOpen(evt) {
-    if(isAndroid) {
+    if (isAndroid) {
         context.on('showChallengeActivity', this.activity);
     }
 }
 
 function onClose(evt) {
-    if(isAndroid) {
+    if (isAndroid) {
         context.off('showChallengeActivity');
     }
 }
@@ -94,7 +94,7 @@ function compare(a, b) {
     return 0;
 }
 
-function addPointPendingStandings(game_type, nrOfValues, uid) {    
+function addPointPendingStandings(game_type, nrOfValues, uid) {
     if (pendingStandingsArray.length > 0) {
         var point = 1;
         if (nrOfValues === '2') {
@@ -163,43 +163,43 @@ function createGameType(gameType, game, values, index, sections) {
         font : Alloy.Globals.getFontCustom(12, "Regular"),
         color : Alloy.Globals.themeColor()
     });
-    
+
     gameTypeView.add(gameTypeScoreLabel);
 
     var resultText = '';
     var endTimeResultText = '';
     var ot = false;
     var pt = false;
-    
+
     // only print for challenges that have started
     if (checkDate(game.game_date)) {
-        
+
         // check to find  actuall end result. Check here since this is not a game type that gives points
         for (var i = 0; i < game.result_values.length; i++) {
-            if(game.result_values[i].gid === game.game_id && game.result_values[i].game_type === '20') {
+            if (game.result_values[i].gid === game.game_id && game.result_values[i].game_type === '20') {
                 endTimeResultText = game.result_values[i].value_1 + ' - ' + game.result_values[i].value_2;
             }
-            
+
             // over time
-            if(game.result_values[i].gid === game.game_id && game.result_values[i].game_type === '21') {
+            if (game.result_values[i].gid === game.game_id && game.result_values[i].game_type === '21') {
                 var otResult = game.result_values[i].value_1 + ' - ' + game.result_values[i].value_2;
 
-                if(otResult !== '0 - 0') {
+                if (otResult !== '0 - 0') {
                     ot = true;
                 }
             }
-            
+
             // penalty
-            if(game.result_values[i].gid === game.game_id && game.result_values[i].game_type === '22') {
+            if (game.result_values[i].gid === game.game_id && game.result_values[i].game_type === '22') {
                 var ptResult = game.result_values[i].value_1 + ' - ' + game.result_values[i].value_2;
-                
-                if(ptResult !== '0 - 0') {
+
+                if (ptResult !== '0 - 0') {
                     pt = true;
                 }
             }
-            
+
         }
-          
+
         for (var i = 0; i < game.result_values.length; i++) {
             if (game.result_values[i].game_type === type && game.result_values[i].gid === game.game_id) {
                 if (gameType.number_of_values === '1') {
@@ -241,39 +241,39 @@ function createGameType(gameType, game, values, index, sections) {
 
                 } else if (gameType.number_of_values === '2') {
                     resultText = game.result_values[i].value_1 + " - " + game.result_values[i].value_2;
-                    
+
                     if (game.result_values[i].game_type === '3') {
                         if (game.status === '2') {
                             // final score, update header label
-                            
+
                             // if there was ot or pn the end result would not be the same as our final result
-                            if(resultText !== endTimeResultText) {
+                            if (resultText !== endTimeResultText) {
                                 var desc = '';
-                                
-                                if(ot) {
+
+                                if (ot) {
                                     desc = Alloy.Globals.PHRASES.overTimeTxt;
-                                } else if(pt) {
+                                } else if (pt) {
                                     desc = Alloy.Globals.PHRASES.penaltyTxt;
                                 }
-                                 
-                                if(ot && pt) {
+
+                                if (ot && pt) {
                                     desc = Alloy.Globals.PHRASES.penaltyAndOverTimeTxt;
                                 }
-                                
-                                if(desc !== '') {
+
+                                if (desc !== '') {
                                     headerScoreLabel.setText(resultText + "    (" + endTimeResultText + " " + desc + ")");
                                     headerScoreLabel.width = Ti.UI.FILL;
                                 } else {
-                                    if(endTimeResultText !== '0 - 0'){
-                                        headerScoreLabel.setText(resultText + "    (" + endTimeResultText + ")");                                   
+                                    if (endTimeResultText !== '0 - 0') {
+                                        headerScoreLabel.setText(resultText + "    (" + endTimeResultText + ")");
                                     } else {
-                                        headerScoreLabel.setText(resultText); 
+                                        headerScoreLabel.setText(resultText);
                                     }
                                     headerScoreLabel.width = Ti.UI.FILL;
                                 }
                             } else {
                                 headerScoreLabel.setText(resultText);
-                            }                           
+                            }
                         } else if (game.status === '3') {
                             // current score, update header label
                             headerScoreLabel.setText("(" + resultText + ") ");
@@ -693,8 +693,8 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished,
         // send in y and sections to add the data to the correct section. (y+1 will be that section, since section[0] is used)
         createGameType(gametypes[y], game, values, ((y - 0 ) + 1), sections);
     }
-    
-        // create standings view
+
+    // create standings view
     if (currentStanding.length > 0 && isFirst) {
         // standings
         var standingsView = Ti.UI.createView({
@@ -761,14 +761,14 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished,
 
         // keep track of these, since we add the standings rows to section[0] then setData
         firstSections = sections;
-        firstTable = table; 
+        firstTable = table;
     }
 
-// was (!challengeFinished && !challengeFinished before) 
+    // was (!challengeFinished && !challengeFinished before)
     if (isLast) {
         // sort array and add standings tabel. Only do this after the last game
         currentStanding.sort(compare);
-        
+
         for (var i = 0; i < currentStanding.length; i++) {
             var tmpObj = currentStanding[i];
             var image = '';
@@ -864,23 +864,23 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished,
 
             row.add(nameLabel);
 
-            if(isFirst && isLast) {
+            if (isFirst && isLast) {
                 // only one game
                 sections[0].add(row);
             } else {
                 firstSections[0].add(row);
             }
         }
-        
-        if(games.length > 1) {
+
+        if (games.length > 1) {
             // more than one game
-            if(firstTable && firstSections) {
+            if (firstTable && firstSections) {
                 firstTable.setData(firstSections);
             }
         }
- 
+
     }
-    
+
     // add slide text, if this is not the last game
     if (games.indexOf(game) !== (games.length - 1)) {
         // not last game
@@ -945,43 +945,46 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished,
     }
 
     customSection = null;
-
     table.setData(sections);
 
     if (isAndroid) {
-        var swipeRefreshModule = require('com.rkam.swiperefreshlayout');
+        if (isFirst) {
+            var androidRefresh = function() {
+                if (Alloy.Globals.checkConnection()) {
+                    pendingStandingsArray = [];
+                    setTimeout(function() {
+                        indicator.openIndicator();
+                        androidViews = [];
 
-        swipeRefresh = swipeRefreshModule.createSwipeRefresh({
-            view : view,
-            height : Ti.UI.FILL,
-            width : Ti.UI.FILL,
-            id : 'swiper'
-        });
+                        for (var view in $.showChallenge.getViews()) {
+                            androidViews.push($.showChallenge.getViews()[view]);
+                        }
+                        
+                        getChallengeShow();
+                        $.swipeRefresh.removeEventListener('refreshing', androidRefresh);
+                    }, 800);
+                } else {
+                    Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+                    $.swipeRefresh.setRefreshing(false);
+                }
+            };
 
-        swipeRefresh.addEventListener('refreshing', function(e) {
-            if (Alloy.Globals.checkConnection()) {
-                pendingStandingsArray = [];
-                setTimeout(function() {
-                    indicator.openIndicator();
-                    androidViews = [];
+            $.swipeRefresh.addEventListener('refreshing', androidRefresh);
 
-                    for (var view in $.showChallenge.getViews()) {
-                        androidViews.push($.showChallenge.getViews()[view]);
-                    }
+            table.addEventListener('scroll', function(_evt) {
+                if (_evt.firstVisibleItem !== 1 && _evt.firstVisibleItem !== 0) {
+                    setTimeout(function() {
+                        $.swipeRefresh.setRefreshing(false);
+                    }, 100);
+                }
+            });
+        }
 
-                    getChallengeShow();
-                }, 800);
-            } else {
-                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
-                swipeRefresh.setRefreshing(false);
-            }
-        });
         view.add(table);
-        $.showChallenge.addView(swipeRefresh);
-
+        $.showChallenge.addView(view);
     } else {
         // Titanium 3.5.0 fix (adding the view before content to the view.)
-        $.showChallenge.addView(view); 
+        $.showChallenge.addView(view);
         view.add(table);
     }
 }
@@ -992,13 +995,13 @@ function endRefresher() {
             refresher.endRefreshing();
         }
     } else {
-        if ( typeof swipeRefresh !== 'undefined' && swipeRefresh !== null) {
-            swipeRefresh.setRefreshing(false);
+        if ( typeof $.swipeRefresh !== 'undefined' && $.swipeRefresh !== null) {
+            $.swipeRefresh.setRefreshing(false);
         }
     }
 }
 
-function getChallengeShow() {    
+function getChallengeShow() {
     var xhr = Titanium.Network.createHTTPClient();
     xhr.onerror = function(e) {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
@@ -1034,6 +1037,7 @@ function getChallengeShow() {
                 for (var view in androidViews) {
                     $.showChallenge.removeView(androidViews[view]);
                 }
+                $.swipeRefresh.setRefreshing(false);
             }
         } else {
             indicator.closeIndicator();
@@ -1087,25 +1091,25 @@ function showResults(challenge) {
     for (var y in challenge.games) {
         if (y === '0') {
             isFirst = true;
-        } 
+        }
 
-        if(y == (challenge.games.length - 1)) {
+        if (y == (challenge.games.length - 1)) {
             isLast = true;
         }
-        
+
         // create layout
-        createLayout(challenge.games[y], challenge.values, challenge.games, challenge.current_standing, isFirst, isFinished, isLast); 
+        createLayout(challenge.games[y], challenge.values, challenge.games, challenge.current_standing, isFirst, isFinished, isLast);
         isFirst = false;
         isLast = false;
     }
 
-   // setTimeout(function() {
-       // show and closeIndi was in here before. Not needed?
-   // }, 400);
-          
-        indicator.closeIndicator();
-        // show layout
-        $.showChallenge.show();
+    // setTimeout(function() {
+    // show and closeIndi was in here before. Not needed?
+    // }, 400);
+
+    indicator.closeIndicator();
+    // show layout
+    $.showChallenge.show();
 }
 
 if (Alloy.Globals.checkConnection()) {
