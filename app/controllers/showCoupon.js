@@ -507,6 +507,15 @@ var coinsRow = Ti.UI.createTableViewRow({
 var betArray = ['20', '40', '60', '80', '100'];
 var data = [];
 
+function coinsFastSelectDefault() {
+    coinsFastSelectViewOne.backgroundColor = '#000';
+    coinsFastSelectViewTwo.backgroundColor = '#000';
+    coinsFastSelectViewThree.backgroundColor = '#000';
+    coinsIconOne.color = Alloy.Globals.themeColor();
+    coinsIconTwo.color = Alloy.Globals.themeColor();
+    coinsIconThree.color = Alloy.Globals.themeColor();
+}
+
 if (isAndroid) {
     coinsToJoin = -1;
     betPicker = Ti.UI.createLabel({
@@ -549,6 +558,9 @@ if (isAndroid) {
                     case '100':
                         coinsFastSelectViewThree.fireEvent('click');
                         break;
+                    default : 
+                        coinsFastSelectDefault();
+                        break;
                     }
                 }
                 betPicker.open = false;
@@ -588,16 +600,19 @@ if (isAndroid) {
     betPicker.self.addEventListener('change', function(e) {
         coinsToJoin = betPicker.value;
 
-        switch(betPicker.value) {
-        case '20':
-            coinsFastSelectViewOne.fireEvent('click');
-            break;
-        case '40':
-            coinsFastSelectViewTwo.fireEvent('click');
-            break;
-        case '100':
-            coinsFastSelectViewThree.fireEvent('click');
-            break;
+        switch(coinsToJoin) {
+            case '20':
+                coinsFastSelectViewOne.fireEvent('click');
+                break;
+            case '40':
+                coinsFastSelectViewTwo.fireEvent('click');
+                break;
+            case '100':
+                coinsFastSelectViewThree.fireEvent('click');
+                break;
+            default : 
+                coinsFastSelectDefault();
+                break;
         }
     });
 }
@@ -764,7 +779,7 @@ var submitButton = Alloy.Globals.createButtonView(Alloy.Globals.themeColor(), '#
 if (isAndroid) {
     submitButton.top = 15;
 } else {
-    submitButton.top = 45;
+    submitButton.top = 25;
 }
 
 submitButton.addEventListener('click', function() {

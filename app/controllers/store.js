@@ -30,10 +30,10 @@ if (OS_IOS) {
     });
 
     if (iOSVersion < 7) {
-        table.separatorStyle = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
-        table.separatorColor = 'transparent';
+        $.table.separatorStyle = Titanium.UI.iPhone.TableViewSeparatorStyle.NONE;
+        $.table.separatorColor = 'transparent';
     } else {
-        table.separatorStyle = Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE;
+        $.table.separatorStyle = Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE;
     }
 
     // This call (or any other) may fail on Android if the module hasn't finished

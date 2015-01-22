@@ -615,7 +615,7 @@ function getAchievements() {
                         width : Ti.UI.FILL,
                         layout : 'horizontal'
                     });
-
+/*
                     var achievementsHolderView = Ti.UI.createView({
                         top : 0,
                         height : Ti.UI.SIZE,
@@ -624,11 +624,20 @@ function getAchievements() {
                         right : '10%',
                         layout : 'horizontal'
                     });
-
-                    var dynWidth = '14%';
+*/
+                    var achievementsHolderView = Ti.UI.createView({
+                        top : 0,
+                        height : Ti.UI.SIZE,
+                        width : Ti.UI.FILL,
+                        layout : 'horizontal'
+                    });
+                    
+                  //  var dynWidth = '14%';
+                    var dynWidth = '7%';
 
                     if (deviceWidth <= 320) {
-                        dynWidth = '12%';
+                        //dynWidth = '12%';
+                        dynWidth = '5%';
                     }
 
                     for (var i = 0; i < achievements.length; i++) {
@@ -642,8 +651,9 @@ function getAchievements() {
                             width : 60,
                             height : 60,
                             left : dynWidth,
-                            top : 10,
-                            bottom : 10
+                            top : dynWidth
+                            //top : 10,
+                            //bottom : 10
                         });
 
                         var achID = achievement.id;

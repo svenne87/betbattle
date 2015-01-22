@@ -1037,7 +1037,7 @@ function updateCouponGame() {
                                 top : '80%',
                                 height : 30,
                                 width : '80%',
-                                backgroundColor : '#000',
+                                backgroundColor : '#FFF',
                                 opacity : 0.9
                             });
 
@@ -1046,7 +1046,7 @@ function updateCouponGame() {
                             // message
                             var message = Titanium.UI.createLabel({
                                 text : Alloy.Globals.PHRASES.couponEditedGameFeedback,
-                                color : '#fff',
+                                color : '#000',
                                 width : 'auto',
                                 height : 'auto',
                                 textAlign : 'center',

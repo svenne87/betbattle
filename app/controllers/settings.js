@@ -124,6 +124,7 @@ function sendSettingsServer(param, type, valueToStore) {
 
                         // update event
                         Ti.App.fireEvent('app:updateMenu');
+                        Ti.App-fireEvent('userInfoUpdate');
                     }
                     Alloy.Globals.showToast(JSON.parse(this.responseText));
                 }
@@ -284,6 +285,7 @@ function createGUI() {
                             
                             // update event
                             Ti.App.fireEvent('app:updateMenu');
+                            Ti.App.fireEvent('userInfoUpdate');
                         } else {
                             $.upload_indicator.hide();
                             Ti.API.error("Error =>" + this.response);

@@ -1,3 +1,6 @@
+"#containerview":{
+	backgroundColor : '#000'
+},
 "#leftMenu": {
 	top: "0dp",
 	left: "0dp",

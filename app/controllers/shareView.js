@@ -307,6 +307,7 @@ if (OS_IOS) {
                     Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                 }
             });
+            sms.open({animated: true});
         }
     });
 } else if (OS_ANDROID) {

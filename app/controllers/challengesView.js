@@ -1322,8 +1322,6 @@ function constructTableData(array) {
         }
     }
 
-    // TODO keep image updated when we change profile image, should work.
-
     profileRow = Ti.UI.createTableViewRow({
         top : 0,
         height : 75,

@@ -26,6 +26,7 @@ function Controller() {
     var $ = this;
     var exports = {};
     $.__views.containerview = Ti.UI.createView({
+        backgroundColor: "#000",
         apiName: "Ti.UI.View",
         id: "containerview",
         classes: []

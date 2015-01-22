@@ -65,6 +65,9 @@ var apns = function() {
                             }
                         };
 
+// TODO Spökar här (visar ju start skärm...)
+Ti.API.log("Main anses vara igång!!!!");
+
                         var args = {
                             refresh : true
                         };
@@ -85,7 +88,7 @@ var apns = function() {
                             win = Alloy.createController('showChallenge', args).getView();
                         } else if (type === 'finished') {
                             win = Alloy.createController('challenges_finished', args).getView();
-                        } else if (type === 'achievement') {
+                        } else if (type === 'achievement') {     
                             var player = Ti.Media.createSound({
                                 url : "sound/unlocked.wav"
                             });
@@ -142,7 +145,7 @@ var apns = function() {
                         Ti.App.fireEvent('app:updateView', obj);
 
                         if (win !== null) {
-                            Alloy.Globals.NAV.openWindow(win);
+                            Alloy.Globals.NAV.openWindow(win);                    
                         }
 
                         if (Alloy.Globals.WINDOWS.length > 0) {
@@ -161,7 +164,13 @@ var apns = function() {
                             Alloy.Globals.WINDOWS.push(win);
                         }
 
+// TODO ska inte alltid köra win.open??? även för android? de fördärvar ju så tillvida att den startar en ny? Är det message eller achievement så behöver man inte .open..... ?
+
                     } else {
+                        
+  // TODO
+  Ti.API.log("Main anses ej vara igång!");
+                        
                         var loginSuccessWindow = Alloy.createController('main').getView();
                         loginSuccessWindow.open({
                             fullScreen : true

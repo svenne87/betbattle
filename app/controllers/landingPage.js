@@ -293,10 +293,13 @@ if (!isAndroid) {
     }
 
     if (appResume != 0)
-        $.landingPageWin.addEventListener('open', function() {
+       // $.mainWin.addEventListener('open', function() {   // TODO vet inte varför jag hade den i open listener??????
+           // Problem nu, antingen läggs listeners till flera gånger eller så öppnar den fel vid mottagande av push...
+           // startar main när den inte behöver...
             var apns = require('lib/push_notifications_apns');
             apns.apns();
-        });
+
+       // });
 
 } else {
     function doPush(type, push_data) {
