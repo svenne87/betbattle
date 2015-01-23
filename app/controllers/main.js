@@ -280,6 +280,10 @@ var updateView = function(obj) {
         $.ds.contentview[child] = null;
     }
 
+    // remove old event listeners
+    Ti.App.removeEventListener('challengesViewRefresh', Alloy.Globals.challengesViewRefreshEvent);
+    Ti.App.removeEventListener('userInfoUpdate', Alloy.Globals.userInfoUpdateEvent);
+                        
     if (obj.arg !== null) {
         currentView = Alloy.createController(obj.controller, obj.arg).getView();
     } else {

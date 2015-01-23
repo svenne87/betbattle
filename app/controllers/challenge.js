@@ -463,8 +463,6 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
                 });
             }
             
-            Ti.API.log("OPTION "+ gameType.options);
-    
             pickerLabels.push(pickerLabel);
 
             pickerLabel.addEventListener('click', function(event) {
@@ -1029,8 +1027,8 @@ function postAnswer(gameArray) {
         submitButton.touchEnabled = false;
         var xhr = Titanium.Network.createHTTPClient();
         xhr.onerror = function(e) {
-        indicator.closeIndicator();
-        submitButton.touchEnabled = true;
+            indicator.closeIndicator();
+            submitButton.touchEnabled = true;
 
             if (JSON.parse(this.responseText).indexOf(Alloy.Globals.PHRASES.coinsInfoTxt.toLowerCase()) != -1) {
                 // not enough coins
@@ -1334,7 +1332,7 @@ function createLayout(gameObject) {
     }));
 
     view.add(image);
-
+         
     function doRest(gameObject) {
 
         if (roundId === -1) {
@@ -1342,8 +1340,8 @@ function createLayout(gameObject) {
             coinsToJoin = gameObjects[0].attributes.pot;
             
             if ( typeof args.push_cid !== 'undefined' && typeof bet_amount !== 'undefined') {
-                coinsToJoin = bet_amount;
-            } else if ( typeof coinsToJoin === 'undefined') {
+                coinsToJoin = bet_amount; 
+            } else if ( typeof coinsToJoin === 'undefined' && typeof challengeObject.attributes.opponents !== 'undefined') {
                 coinsToJoin = parseInt(challengeObject.attributes.potential_pot) / challengeObject.attributes.opponents.length;
             } 
         }
@@ -1352,7 +1350,7 @@ function createLayout(gameObject) {
         var tableHeaderView = Ti.UI.createView({
             height : 0.1
         });
-
+    
         if (!isAndroid) {
             table = Titanium.UI.createTableView({
                 left : 0,
@@ -1397,6 +1395,7 @@ function createLayout(gameObject) {
         if (isAndroid) {
             font = 'fontawesome-webfont';
         }
+
         if (gameObjects.indexOf(gameObject) == (gameObjects.length - 1)) {
             tableFooterView = Ti.UI.createView({
                 height : 0.1
@@ -1435,15 +1434,13 @@ function createLayout(gameObject) {
             });
 
             tableFooterView.add(slide);
-
-            //if (isAndroid) { // TODO varför var det bara satt på Android??
-                table.footerView = tableFooterView;
-            //}
+            table.footerView = tableFooterView;
 
         }
 
         ///*******Create game types******///
         var gametypes = gameObject.attributes.game_types;
+            
         for (var y in gametypes) {
             // object to store game id and value
             var gameObj = new Object();
@@ -1768,7 +1765,6 @@ if ( typeof args.push_cid !== 'undefined') {
     challengeObject = Alloy.createModel('challenge', {id :args.push_cid});
 }
 
-
 // array to store game object
 var gameObjects = [];
 
@@ -1799,7 +1795,6 @@ if (isAndroid) {
         };
         $.challengeWindow.activity.actionBar.displayHomeAsUp = true;
         $.challengeWindow.activity.actionBar.title = menuText;
-        // indicator.openIndicator();
     });
 } else {
     $.challengeWindow.titleControl = Ti.UI.createLabel({
@@ -1834,8 +1829,23 @@ if (Alloy.Globals.checkConnection()) {
     var xhr = Titanium.Network.createHTTPClient();
     xhr.onerror = function(e) {
         indicator.closeIndicator();
-        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
         Ti.API.error('Bad Sever =>' + e.error);
+        
+        var alertWindow = Titanium.UI.createAlertDialog({
+            title : 'BetBattle',
+            message : Alloy.Globals.PHRASES.commonErrorTxt,
+            buttonNames : ['OK']
+        });
+
+        alertWindow.addEventListener('click', function(e) {
+            switch (e.index) {
+            case 0:
+                alertWindow.hide();
+                $.challengeWindow.close();
+                break;
+            }
+        });
+        alertWindow.show();
     };
 
     try {
@@ -1845,7 +1855,6 @@ if (Alloy.Globals.checkConnection()) {
             } else {
                 xhr.open('GET', Alloy.Globals.BETKAMPENGETGAMESFORTOURNAMENT + '/?uid=' + Alloy.Globals.BETKAMPENUID + '&tid=' + challengeObject.attributes.id + '&round=' + challengeObject.attributes.round + '&lang=' + Alloy.Globals.LOCALE);
             }
-
         } else {
             xhr.open('GET', Alloy.Globals.BETKAMPENGETGAMESFORCHALLENGEURL + '/?uid=' + Alloy.Globals.BETKAMPENUID + '&gameID=' + gameID + '&lang=' + Alloy.Globals.LOCALE);
         }
@@ -1926,11 +1935,12 @@ if (Alloy.Globals.checkConnection()) {
                         $.challenge.children[child] = null;
                     }
                 }
-
+                
                 // create views for each gameObject
                 for (var i = 0; i < gameObjects.length; i++) {
                     createLayout(gameObjects[i]);
                 }
+           
                 indicator.closeIndicator();
             } else {
                 indicator.closeIndicator();

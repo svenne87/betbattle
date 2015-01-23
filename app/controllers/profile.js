@@ -743,7 +743,7 @@ function getAchievements() {
                                     w = null;
                                 });
 
-                                $.profileWin.add(w);
+                                $.profileWin.add(w);                          
                             } else {
                                 var t = Titanium.UI.create2DMatrix();
                                 t = t.scale(0);
@@ -872,6 +872,14 @@ function getAchievements() {
                     }
                     achievementsCoverView.add(achievementsHolderView);
                     achievementsRow.add(achievementsCoverView);
+                    
+                    if(isAndroid) {
+                        // Android fix since it's not filling view.
+                        achievementsRow.add(Ti.UI.createView({
+                            height : 80,
+                            width : Ti.UI.FILL                         
+                        }));
+                    }
                 }
             }
         } else {

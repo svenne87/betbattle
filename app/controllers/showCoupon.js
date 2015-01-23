@@ -285,7 +285,7 @@ if (!isAndroid) {
         width : Ti.UI.FILL,
         footerView : tableFooterView,
         headerView : tableHeaderView,
-        height : '85%',
+        height : Ti.UI.FILL,
         backgroundColor : '#000',
         separatorColor : '#303030',
     });

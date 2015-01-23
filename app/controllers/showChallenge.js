@@ -973,9 +973,7 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished,
 
             table.addEventListener('scroll', function(_evt) {
                 if (_evt.firstVisibleItem !== 1 && _evt.firstVisibleItem !== 0) {
-                    setTimeout(function() {
-                        $.swipeRefresh.setRefreshing(false);
-                    }, 100);
+                    $.swipeRefresh.setRefreshing(false);
                 }
             });
         }

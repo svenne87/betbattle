@@ -293,7 +293,7 @@ Alloy.Globals.getLanguage = function(indicator) {
         };
     } else {
         var alertWindow = Titanium.UI.createAlertDialog({
-            title : 'Bet Battle',
+            title : 'BetBattle',
             message : 'No internet connection detected!',
             buttonNames : ['OK']
         });

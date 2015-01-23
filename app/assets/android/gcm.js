@@ -43,6 +43,7 @@
 	// create launcher intent
 	var ntfId = Ti.App.Properties.getInt('ntfId', 0),
 	launcherIntent = Ti.Android.createIntent({
+	    // className : 'apps.topgame.betkampen.BetbattleActivity', // maybe that will solve when starting app from not running state?
 		className: 'net.iamyellow.gcmjs.GcmjsActivity',
 		action: 'action' + ntfId, // we need an action identifier to be able to track click on notifications
 		packageName: Ti.App.id,

@@ -199,9 +199,6 @@ if (!isAndroid) {
 
     Ti.App.addEventListener('pause', Alloy.Globals.iosPauseEvent);
 
-    //if (Alloy.Globals.OPEN && Alloy.Globals.RESUME) {
-    //   Alloy.Globals.RESUME = false;  // TODO verkar bättre. Men när jag stängt av här så körs ju denna flera ggr?
-
     Alloy.Globals.iosResumeEvent = function() {
         Ti.API.log(" KöR resume... ");
 
@@ -285,22 +282,16 @@ var deviceToken;
 
 if (!isAndroid) {
     // Check if the device is running iOS 8 or later, before registering for local notifications
-    //Ti.Platform.name == "iPhone OS" &&
     if (parseInt(Ti.Platform.version.split(".")[0]) >= 8) {
         Ti.App.iOS.registerUserNotificationSettings({
             types : [Ti.App.iOS.USER_NOTIFICATION_TYPE_ALERT, Ti.App.iOS.UESR_NOTIFICATION_TYPE_BADGE]
         });
     }
 
-    if (appResume != 0)
-       // $.mainWin.addEventListener('open', function() {   // TODO vet inte varför jag hade den i open listener??????
-           // Problem nu, antingen läggs listeners till flera gånger eller så öppnar den fel vid mottagande av push...
-           // startar main när den inte behöver...
-            var apns = require('lib/push_notifications_apns');
-            apns.apns();
-
-       // });
-
+    if (appResume != 0) {
+        var apns = require('lib/push_notifications_apns');
+        apns.apns();
+    }
 } else {
     function doPush(type, push_data) {
         if (Alloy.Globals.MAINWIN !== null) {
@@ -312,7 +303,11 @@ if (!isAndroid) {
             };
 
             if (push_data.extra_data !== null && typeof push_data.extra_data !== 'undefined' && push_data.extra_data !== "") {
-                push_data.extra_data = JSON.parse(push_data.extra_data);
+                try {
+                    push_data.extra_data = JSON.parse(push_data.extra_data);
+                } catch(e) {
+                    type = 'message';
+                }
             }
 
             var args = {
@@ -548,7 +543,6 @@ if (!isAndroid) {
         } catch(e) {
             // something went wrong
         }
-
     }
 
     gcm.registerForPushNotifications({
