@@ -837,6 +837,7 @@ table.addEventListener('click', function(e) {
 
     if (e.rowData.className === 'accept') {
         var obj = Alloy.Globals.CHALLENGEOBJECTARRAY[0][e.rowData.id];
+
         if (obj.attributes.show !== 0) {
             // view challenge
 
@@ -919,6 +920,7 @@ table.addEventListener('click', function(e) {
         }
     } else if (e.rowData.className === 'pending') {
         var obj = Alloy.Globals.CHALLENGEOBJECTARRAY[1][e.rowData.id];
+        
         if (obj.attributes.show !== 0) {
             // view challenge
             var group = null;
@@ -1799,6 +1801,7 @@ function constructTableData(array) {
             // create 'accept' rows
             if (arrayObj.length > 0) {
                 Alloy.Globals.CHALLENGEOBJECTARRAY[x].sort(compare);  // TODO Används vid öppnade av utmaning
+                arrayObj.sort(compare);
                 for (var i = 0; i < arrayObj.length; i++) {
                     if (rightNowRows < 5) {
                         rightNowRows++;
@@ -1810,6 +1813,7 @@ function constructTableData(array) {
             }
         } else if (x === 1) {
             if (arrayObj.length > 0) {
+                arrayObj.sort(compare);
                 Alloy.Globals.CHALLENGEOBJECTARRAY[x].sort(compare);  // TODO Används vid öppnade av utmaning
                 for (var i = 0; i < arrayObj.length; i++) {
                     if (rightNowRows < 5) {

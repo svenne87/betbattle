@@ -294,6 +294,12 @@ if (!isAndroid) {
     }
 } else {
     function doPush(type, push_data) {
+        if(typeof Alloy.Globals.MAINWIN === 'undefined' || typeof Alloy.Globals.WINDOWS === 'undefined' || Alloy.Globals.MAINWIN === null || Alloy.Globals.WINDOWS === null) {
+            // globals variables might be null at push start.
+            return;
+        }
+        
+        
         if (Alloy.Globals.MAINWIN !== null) {
             var obj = {
                 controller : 'challengesView',
@@ -508,7 +514,7 @@ if (!isAndroid) {
                 win.open();
                 //win = null;
             }
-
+            
             if (win !== null) {
                 Alloy.Globals.WINDOWS.push(win);
             }
@@ -522,6 +528,12 @@ if (!isAndroid) {
         // and we set extras for the intent
         // and the app WAS NOT running
         // (don't worry, we'll see more of this later)
+        
+       // Ti.API.log("STATUS -> " + JSON.stringify(Ti.Android.currentActivity));  // TODO kan detta verkligen hjälpa??
+if(typeof Ti.Android.currentActivity.actionBar !== 'undefined' && typeof Alloy.Globals.PHRASES !== 'undefined') {
+    if(Ti.Android.currentActivity.actionBar.title === Alloy.Globals.PHRASES.betbattleTxt) {
+        
+
 
         var type = pendingData.challenge_type;
 
@@ -537,12 +549,14 @@ if (!isAndroid) {
 
         try {
             setTimeout(function() {
-                doPush(type, pendingData);
+                doPush(type, pendingData); 
             }, 2000);
 
         } catch(e) {
             // something went wrong
         }
+}
+  }
     }
 
     gcm.registerForPushNotifications({

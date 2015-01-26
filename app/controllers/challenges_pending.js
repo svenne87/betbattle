@@ -344,7 +344,7 @@ function constructChallengeRows(obj, index) {
         width : 30,
         height : 30
     }));
-
+                                                    
     var firstRowView = Ti.UI.createView({
         top : -20,
         layout : 'absolute',
@@ -363,8 +363,8 @@ function constructChallengeRows(obj, index) {
 
     if (betGroupName <= 0) {
         betGroupName = obj.attributes.name;
-    }
-    if (betGroupName.length > 15) {
+    }                                                             
+    if (betGroupName.length >= 15) {
         betGroupName = betGroupName.substring(0, 12) + '...';
     }
 
@@ -397,17 +397,17 @@ function constructChallengeRows(obj, index) {
 
     // check all matches in a challenge to check if any of the matches are active
     for (var i = 0; i < obj.attributes.matches.length; i++) {
-        if (obj.attributes.matches[i].status === '3') {
+        if (obj.attributes.matches[i].status === '3') { 
             var liveLabel = Ti.UI.createLabel({
                 text : "Live",
-                left : 175,
+                left : 195,
                 font : Alloy.Globals.getFontCustom(12, "Regular"),
                 color : Alloy.Globals.themeColor()
             });
 
             firstRowView.add(liveLabel);
             liveIcon = Ti.UI.createImageView({
-                left : 160,
+                left : 180,
                 image : '/images/ikon_1_live.png',
                 height : 10,
                 width : 10,

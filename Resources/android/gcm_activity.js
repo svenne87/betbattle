@@ -2,7 +2,7 @@
     var intent = activity.intent;
     intent.hasExtra("ntfId") && (gcm.data = {
         ntfId: intent.getIntExtra("ntfId", 0),
-        message: intent.getStringExtra("message"),
+        message: intent.getStringExtra("message", "UTF-8"),
         title: intent.getStringExtra("title"),
         challenge_type: intent.getStringExtra("challenge_type"),
         extra_data: intent.getStringExtra("extra_data")
