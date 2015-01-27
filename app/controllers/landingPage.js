@@ -67,8 +67,8 @@ function loginBetkampenAuthenticated(status) {
     // Get betkampenID with valid token
     var xhr = Titanium.Network.createHTTPClient();
     xhr.onerror = function(e) {
-        Ti.API.error('Bad Sever =>' + JSON.stringify(e));
-        if (e.code == 401) {
+        Ti.API.error('Bad Sever Login=> ' + Alloy.Globals.BETKAMPEN.token + " " + JSON.stringify(e));
+        if (e.code == 401 || e.source.status == 401 || JSON.stringify(e) === "Unauthorized") {
             if (status === 1) {
                 // if this is first try, then try refresh token
                 if (refreshTry === 0) {
@@ -293,14 +293,11 @@ if (!isAndroid) {
         apns.apns();
     }
 } else {
-    function doPush(type, push_data) {
-        if(typeof Alloy.Globals.MAINWIN === 'undefined' || typeof Alloy.Globals.WINDOWS === 'undefined' || Alloy.Globals.MAINWIN === null || Alloy.Globals.WINDOWS === null) {
-            // globals variables might be null at push start.
-            return;
-        }
-        
-        
-        if (Alloy.Globals.MAINWIN !== null) {
+    function doPush(type, push_data) {        
+        if (typeof Alloy.Globals.MAINWIN !== 'undefined' && Alloy.Globals.MAINWIN !== null) {
+            
+            Ti.API.log("Resume should land here...");
+            
             var obj = {
                 controller : 'challengesView',
                 arg : {
@@ -422,6 +419,9 @@ if (!isAndroid) {
             Ti.App.fireEvent('challengesViewRefresh');
 
         } else {
+            Ti.API.log("Resume should not get here...");
+            // TODO har inte lyckats komma in hit....
+            
             var loginSuccessWindow = Alloy.createController('main').getView();
             loginSuccessWindow.open({
                 fullScreen : true
@@ -437,7 +437,7 @@ if (!isAndroid) {
                     bet_amount : push_data.extra_data.bet_amount
                 };
 
-                Alloy.Globals.CHALLENGEINDEX = push_data.extra_data.cid;
+              // TODO  Alloy.Globals.CHALLENGEINDEX = push_data.extra_data.cid;
                 win = Alloy.createController('challenge', args).getView();
 
             } else if (type === 'pending') {
@@ -474,14 +474,15 @@ if (!isAndroid) {
                 indWin.add(indView);
 
                 var image = Ti.UI.createImageView({
-                    image : Alloy.Globals.BETKAMPENURL + '/achievements/' + push_data.extra_data.image,
+               // TODO     image : Alloy.Globals.BETKAMPENURL + '/achievements/' + push_data.extra_data.image,
                     width : "15%",
                     height : Ti.UI.SIZE,
                     left : 0,
                     top : 10
                 });
                 var mess = Titanium.UI.createLabel({
-                    text : push_data.message,
+                  //  text : push_data.message,   // TODO
+                    text : "this is a debug",
                     right : 0,
                     color : '#000',
                     width : '75%',
@@ -516,7 +517,7 @@ if (!isAndroid) {
             }
             
             if (win !== null) {
-                Alloy.Globals.WINDOWS.push(win);
+        //     TODO   Alloy.Globals.WINDOWS.push(win);
             }
         }
     }
@@ -530,6 +531,11 @@ if (!isAndroid) {
         // (don't worry, we'll see more of this later)
         
        // Ti.API.log("STATUS -> " + JSON.stringify(Ti.Android.currentActivity));  // TODO kan detta verkligen hjälpa??
+       
+       // kan kolla Ti.Android.currentActivity.intent ?? border startats med de... 
+       // login skum, när man får fel sen klickar logga in med facebook. händer inget... 
+       
+       
 if(typeof Ti.Android.currentActivity.actionBar !== 'undefined' && typeof Alloy.Globals.PHRASES !== 'undefined') {
     if(Ti.Android.currentActivity.actionBar.title === Alloy.Globals.PHRASES.betbattleTxt) {
         
@@ -550,6 +556,7 @@ if(typeof Ti.Android.currentActivity.actionBar !== 'undefined' && typeof Alloy.G
         try {
             setTimeout(function() {
                 doPush(type, pendingData); 
+                Ti.API.log("Resume Push");
             }, 2000);
 
         } catch(e) {

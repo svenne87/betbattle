@@ -577,7 +577,7 @@ function getProfile() {
     };
 }
 
-function getAchievements() {
+function getAchievements(userInfo) {
     var xhr = Titanium.Network.createHTTPClient();
     xhr.onerror = function(e) {
         achievementsRow.remove(achievementsLoadingLabel);
@@ -641,8 +641,11 @@ function getAchievements() {
                     }
 
                     for (var i = 0; i < achievements.length; i++) {
-                        var ach_img = '/images/locked_ach.png';
-                        if (achievements[i].unlocked == true) {
+                        //var ach_img = '/images/locked_ach.png';  TODO
+                        
+                        var ach_img;
+                        
+                        if (achievements[i].unlocked) {
                             ach_img = Alloy.Globals.BETKAMPENURL + "/achievements/" + achievements[i].image;
                         }
                         var achievement = Ti.UI.createImageView({
@@ -655,6 +658,27 @@ function getAchievements() {
                             //top : 10,
                             //bottom : 10
                         });
+                        
+                        if (!achievements[i].unlocked) {  
+                            achievement.setOpacity(0.2);
+                            
+                            if( i > 1) {
+                                achievement.setOpacity(0.3);
+                            } 
+                            
+                                                        if( i > 2) {
+                                achievement.setOpacity(0.4);
+                            } 
+                            
+                                                        if( i > 3) {
+                                achievement.setOpacity(0.6);
+                            } 
+                            
+                            if( i > 10) {
+                                achievement.setOpacity(0.8);
+                            } 
+                           
+                        }
 
                         var achID = achievement.id;
                         achievement.addEventListener("click", function(e) {

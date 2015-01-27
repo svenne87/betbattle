@@ -4,8 +4,8 @@
         ntfId: intent.getIntExtra("ntfId", 0),
         message: intent.getStringExtra("message", "UTF-8"),
         title: intent.getStringExtra("title"),
-        challenge_type: intent.getStringExtra("challenge_type"),
-        extra_data: intent.getStringExtra("extra_data")
+        extra_data: intent.getStringExtra("extra_data"),
+        challenge_type: intent.getStringExtra("challenge_type")
     });
     if (gcm.isLauncherActivity) {
         var mainActivityIntent = Ti.Android.createIntent({

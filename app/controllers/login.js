@@ -284,8 +284,10 @@ function login() {
         isSubmitting = true;
         setButtonOpacity(0);
         if (!args.reauth) {
-            fb.authorize();
- 
+            
+            fb.logout();  // TODO Added to see if it will reinitiate correct at error's
+            
+            fb.authorize();    
         } else {
             removeEvent();
             indicator.openIndicator();
@@ -385,7 +387,6 @@ var fbLoginEvent = function(e) {
 
     if (Alloy.Globals.connect == true) {
         if (e.success) {
-
             if (isAndroid) {
                 e.data = JSON.parse(e.data);
                 Alloy.Globals.FACEBOOK = fbModule;

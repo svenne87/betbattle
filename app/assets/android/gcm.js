@@ -3,9 +3,9 @@
 (function (service) {
 
 	var serviceIntent = service.getIntent(),
-	title = serviceIntent.hasExtra('title') ? serviceIntent.getStringExtra('title') : '',
 	statusBarMessage = serviceIntent.hasExtra('message') ? serviceIntent.getStringExtra('message') : '',
 	message = serviceIntent.hasExtra('message') ? serviceIntent.getStringExtra('message') : '',
+	title = serviceIntent.hasExtra('title') ? serviceIntent.getStringExtra('title') : '',
 	extra_data = serviceIntent.hasExtra('extra_data') ? serviceIntent.getStringExtra('extra_data') : '',
 	challenge_type = serviceIntent.hasExtra('challenge_type') ? serviceIntent.getStringExtra('challenge_type') : '',
 	notificationId = (function () {
