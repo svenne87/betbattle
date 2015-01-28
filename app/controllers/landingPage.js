@@ -333,7 +333,7 @@ if (!isAndroid) {
                 };
                 win = Alloy.createController('showChallenge', args).getView();
             } else if (type === 'finished') {
-                win = Alloy.createController('challenges_finished', args).getView();
+                win = Alloy.createController('challenges_finished').getView();            
             } else if (type === 'achievement') {
                 var player = Ti.Media.createSound({
                     url : "/sound/unlocked.wav"
@@ -419,6 +419,10 @@ if (!isAndroid) {
             Ti.App.fireEvent('challengesViewRefresh');
 
         } else {
+            
+            // TODO
+
+            /*
             Ti.API.log("Resume should not get here...");
             // TODO har inte lyckats komma in hit....
             
@@ -519,6 +523,7 @@ if (!isAndroid) {
             if (win !== null) {
         //     TODO   Alloy.Globals.WINDOWS.push(win);
             }
+            */
         }
     }
 
@@ -533,13 +538,12 @@ if (!isAndroid) {
        // Ti.API.log("STATUS -> " + JSON.stringify(Ti.Android.currentActivity));  // TODO kan detta verkligen hjälpa??
        
        // kan kolla Ti.Android.currentActivity.intent ?? border startats med de... 
-       // login skum, när man får fel sen klickar logga in med facebook. händer inget... 
-       
+Ti.API.log(JSON.stringify(Ti.Android.currentActivity.intent));       
        
 if(typeof Ti.Android.currentActivity.actionBar !== 'undefined' && typeof Alloy.Globals.PHRASES !== 'undefined') {
     if(Ti.Android.currentActivity.actionBar.title === Alloy.Globals.PHRASES.betbattleTxt) {
         
-
+        
 
         var type = pendingData.challenge_type;
 

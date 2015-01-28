@@ -72,46 +72,237 @@ var mod = require('bencoding.blur');
 /*      Part 1      */
 sections[0] = Ti.UI.createTableViewSection({
     headerView : Ti.UI.createView({
-        height : 75,
-        backgroundColor : '#303030',
-        backgroundGradient : {
-            type : "linear",
-            startPoint : {
-                x : "0%",
-                y : "0%"
-            },
-            endPoint : {
-                x : "0%",
-                y : "100%"
-            },
-            colors : [{
-                color : "#151515",
-
-            }, {
-                color : "#2E2E2E",
-
-            }]
-        }
+        height : 0.5,
+        backgroundColor : '#000',
     })
 });
 
+/*
 profileNameLabel = Ti.UI.createLabel({
     text : Alloy.Globals.PHRASES.loadingTxt + ' ',
     textAlign : 'center',
     font : Alloy.Globals.getFontCustom(18, "Bold"),
     color : "#FFF"
 });
+*/
 
-sections[0].headerView.add(profileNameLabel);
+//sections[0].headerView.add(profileNameLabel);
 
 var mainProfileRow = Ti.UI.createTableViewRow({
-    height : 200,
+    height : 260,
     className : "profile",
     width : Ti.UI.FILL,
     backgroundColor : '#000',
-    hasChild : false
+    hasChild : false,
+    layout : 'vertical'
 });
 
+var profileImageView = Ti.UI.createImageView({
+    top: 20,
+    defaultImage : '/images/no_pic.png',
+    width : 120,
+    //left : dynLeft,
+    height : 120,
+    borderRadius : 60,
+    borderColor : '#303030',
+    borderWidth : 2
+});
+
+// TODO http://www.appdesignvault.com/iphone-flat-ui-design-patterns/
+
+//profilepicture
+var image;
+if (Alloy.Globals.FACEBOOKOBJECT) {
+    profileImageView.image = "https://graph.facebook.com/" + Alloy.Globals.FACEBOOKOBJECT.id + "/picture?type=large";
+} else {
+    // get betkampen image
+    profileImageView.image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + Alloy.Globals.BETKAMPENUID + '.png' + "?t=" + new Date().getTime();
+}
+
+profileImageView.addEventListener('error', function(e) {
+    // fallback for image
+    profileImageView.image = '/images/no_pic.png';
+});
+
+mainProfileRow.add(profileImageView);
+
+var nameProfileLabel = Ti.UI.createLabel({
+    text : Alloy.Globals.PHRASES.loadingTxt + ' ',
+    textAlign : 'center',
+    top : 20,
+    font : Alloy.Globals.getFontCustom(18, "Bold"),
+    color : "#FFF" 
+});
+
+mainProfileRow.add(nameProfileLabel);
+
+var levelLabel = Ti.UI.createLabel({
+    text : '  ',
+    textAlign : 'center',
+    top : 10,
+    font : Alloy.Globals.getFontCustom(16, "Normal"),
+    color : Alloy.Globals.themeColor()
+});
+
+mainProfileRow.add(levelLabel);
+
+var statsRow = Ti.UI.createTableViewRow({
+    height : 100,
+    className : "profile",
+    width : Ti.UI.FILL,
+    backgroundColor : '#000',
+    hasChild : false,
+    layout : 'horizontal'
+});
+
+var statsViewOne = Ti.UI.createView({
+    height : 100,
+    //left : 0,
+    width : (deviceWidth / 3),
+    backgroundColor : '#000',
+    layout : 'vertical'
+});
+
+var coinsView = Ti.UI.createView({
+    height : Ti.UI.SIZE,
+    top : 25,
+    width : Ti.UI.SIZE,
+    backgroundColor : '#000',
+    layout : 'horizontal'
+});
+
+coinsView.add(Ti.UI.createLabel({
+    textAlign : 'center',
+    width : Ti.UI.SIZE,
+    font : {
+        fontFamily : font
+    },
+    text : fontawesome.icon('fa-database'),
+    color : '#FFF'
+}));
+
+var coinsLabelValue = Ti.UI.createLabel({
+    font : Alloy.Globals.getFontCustom(16, 'Regular'),
+    text : '',
+    color : '#FFF',
+    textAlign : 'center',
+    width : Ti.UI.SIZE,
+});
+
+coinsView.add(coinsLabelValue);
+
+var coinsLabelText = Ti.UI.createLabel({
+    font : Alloy.Globals.getFontCustom(16, 'Regular'),
+    text : Alloy.Globals.PHRASES.coinsInfoTxt + ' ',
+    color : Alloy.Globals.themeColor(),
+    textAlign : 'center',
+    width : (deviceWidth / 3)
+});
+
+statsViewOne.add(coinsView);
+statsViewOne.add(coinsLabelText);
+
+var statsViewTwo = Ti.UI.createView({
+    height : 100,
+   // left : (deviceWidth / 3),
+    width : (deviceWidth / 3),
+    backgroundColor : '#000',
+    layout : 'vertical'
+});
+
+var pointsView = Ti.UI.createView({
+    height : Ti.UI.SIZE,
+    top : 25,
+    width : Ti.UI.SIZE,
+    backgroundColor : '#000',
+    layout : 'horizontal'
+});
+
+pointsView.add(Ti.UI.createLabel({
+    textAlign : 'center',
+    width : Ti.UI.SIZE,
+    font : {
+        fontFamily : font
+    },
+    text : fontawesome.icon('fa-signal'),
+    color : '#FFF'
+}));
+
+var pointsLabelValue = Ti.UI.createLabel({
+    font : Alloy.Globals.getFontCustom(16, 'Regular'),
+    text : '',
+    color : '#FFF',
+    textAlign : 'center',
+    width : Ti.UI.SIZE
+});
+
+pointsView.add(pointsLabelValue);
+
+var pointsLabelText = Ti.UI.createLabel({
+    font : Alloy.Globals.getFontCustom(16, 'Regular'),
+    text : Alloy.Globals.PHRASES.scoreInfoTxt + ' ',
+    color : '#FFF',
+    color : Alloy.Globals.themeColor(),
+    textAlign : 'center',
+    width : (deviceWidth / 3)
+});
+
+statsViewTwo.add(pointsView);
+statsViewTwo.add(pointsLabelText);
+
+var statsViewThree = Ti.UI.createView({
+    height : 100,
+   // left : (deviceWidth / 3),
+    width : (deviceWidth / 3),
+    backgroundColor : '#000',
+    layout : 'vertical'
+});
+
+var winsView = Ti.UI.createView({
+    height : Ti.UI.SIZE,
+    top : 25,
+    width : Ti.UI.SIZE,
+    backgroundColor : '#000',
+    layout : 'horizontal'
+});
+
+winsView.add(Ti.UI.createLabel({
+    textAlign : 'center',
+    width : Ti.UI.SIZE,
+    font : {
+        fontFamily : font
+    },
+    text : fontawesome.icon('fa-trophy'),
+    color : '#FFF'
+}));
+
+var winsLabelValue = Ti.UI.createLabel({
+    font : Alloy.Globals.getFontCustom(16, 'Regular'),
+    text : '',
+    color : '#FFF',
+    textAlign : 'center',
+    width : Ti.UI.SIZE
+});
+
+winsView.add(winsLabelValue);
+
+var winsLabelText = Ti.UI.createLabel({
+    font : Alloy.Globals.getFontCustom(16, 'Regular'),
+    text : Alloy.Globals.PHRASES.winsInfoTxt + ' ',
+    color : Alloy.Globals.themeColor(),
+    textAlign : 'center',
+    width : (deviceWidth / 3)
+});
+
+statsViewThree.add(winsView);
+statsViewThree.add(winsLabelText);
+
+
+statsRow.add(statsViewOne);
+statsRow.add(statsViewTwo);
+statsRow.add(statsViewThree);
+
+/*
 var firstMainProfileRowView = Ti.UI.createView({
     top : 10,
     height : 100,
@@ -162,12 +353,12 @@ var levelImageView = Ti.UI.createImageView({
     height : 50,
     borderRadius : 25
 });
+*/
+//firstMainProfileRowView.add(favoriteTeamImageView);
+//firstMainProfileRowView.add(profileImageView);
+//firstMainProfileRowView.add(levelImageView);
 
-firstMainProfileRowView.add(favoriteTeamImageView);
-firstMainProfileRowView.add(profileImageView);
-firstMainProfileRowView.add(levelImageView);
-
-mainProfileRow.add(firstMainProfileRowView);
+/*
 
 var profileStatsView = Ti.UI.createView({
     height : 100,
@@ -187,7 +378,7 @@ profileLoadingLabel = Ti.UI.createLabel({
 
 profileStatsView.add(profileLoadingLabel);
 
-mainProfileRow.add(profileStatsView);
+//mainProfileRow.add(profileStatsView);
 
 var firstProfilePart = Ti.UI.createView({
     height : Ti.UI.SIZE,
@@ -273,7 +464,7 @@ var firstRightRow = Ti.UI.createView({
     width : Ti.UI.FILL,
     layout : 'horizontal'
 });
-
+/*
 var levelLabel = Ti.UI.createLabel({
     font : Alloy.Globals.getFontCustom(16, 'Regular'),
     text : '',
@@ -419,25 +610,7 @@ profileStatsView.add(secondProfilePart);
 sections[1] = Ti.UI.createTableViewSection({
     headerView : Ti.UI.createView({
         height : 75,
-        backgroundColor : '#303030',
-        backgroundGradient : {
-            type : "linear",
-            startPoint : {
-                x : "0%",
-                y : "0%"
-            },
-            endPoint : {
-                x : "0%",
-                y : "100%"
-            },
-            colors : [{
-                color : "#151515",
-
-            }, {
-                color : "#2E2E2E",
-
-            }]
-        }
+        backgroundColor : '#000',
     })
 });
 
@@ -471,6 +644,7 @@ var achievementsLoadingLabel = Ti.UI.createLabel({
 achievementsRow.add(achievementsLoadingLabel);
 
 sections[0].add(mainProfileRow);
+sections[0].add(statsRow);
 sections[1].add(achievementsRow);
 
 $.table.setData(sections);
@@ -512,27 +686,27 @@ function getProfile() {
                             userInfo.team.data[0].name = userInfo.team.data[0].name.substring(0, 14) + '...';
                         }
 
-                        favoriteTeamNameLabel.setText(userInfo.team.data[0].name + ' ');
-                        favoriteTeamImageView.setImage(Alloy.Globals.BETKAMPENURL + userInfo.team.data[0].team_logo);
+                       // favoriteTeamNameLabel.setText(userInfo.team.data[0].name + ' ');
+                       // favoriteTeamImageView.setImage(Alloy.Globals.BETKAMPENURL + userInfo.team.data[0].team_logo);
 
-                        favoriteTeamImageView.addEventListener('error', function() {
-                            favoriteTeamImageView.image = '/images/no_team.png';
-                        });
+                      //  favoriteTeamImageView.addEventListener('error', function() {
+                       //     favoriteTeamImageView.image = '/images/no_team.png';
+                       // });
                     }
 
                     if (userInfo.name.length > 17) {
                         userInfo.name = userInfo.name.substring(0, 15) + '...';
                     }
 
-                    profileNameLabel.setText(userInfo.name + ' ');
+                    nameProfileLabel.setText(userInfo.name + ' ');
 
                     var level = userInfo.level.level;
 
-                    levelImageView.setImage(Alloy.Globals.BETKAMPENURL + "/" + userInfo.level.symbol);
+        //            levelImageView.setImage(Alloy.Globals.BETKAMPENURL + "/" + userInfo.level.symbol);
 
-                    levelImageView.addEventListener('error', function() {
-                        levelImageView.image = '/images/no_team.png';
-                    });
+          //          levelImageView.addEventListener('error', function() {
+            //            levelImageView.image = '/images/no_team.png';
+             //       });
 
                     if ( typeof Alloy.Globals.PHRASES.levels[level] !== 'undefined') {
                         if (Alloy.Globals.PHRASES.levels[level].lenght > 17) {
@@ -546,8 +720,8 @@ function getProfile() {
                     coinsLabelValue.setText(userInfo.totalCoins + ' ');
                     pointsLabelValue.setText(userInfo.totalPoints + ' ');
                     winsLabelValue.setText(userInfo.totalWins + ' ');
-                    scoreBoardLabelValue.setText(userInfo.position + ' ');
-
+                  //  scoreBoardLabelValue.setText(userInfo.position + ' ');
+/*
                     if (coinsLabelValue.getText().length > 6) {
                         coinsLabelValue.setText(coinsLabelValue.getText().substring(0, 5) + '..');
                     }
@@ -563,10 +737,10 @@ function getProfile() {
                     if (scoreBoardLabelValue.getText().length > 6) {
                         scoreBoardLabelValue.setText(scoreBoardLabelValue.getText().substring(0, 5) + '..');
                     }
-
-                    profileStatsView.remove(profileLoadingLabel);
-                    firstProfilePart.show();
-                    secondProfilePart.show();
+*/
+                //    profileStatsView.remove(profileLoadingLabel);
+                   // firstProfilePart.show();
+                  //  secondProfilePart.show();
                 }
             }
 
@@ -651,8 +825,11 @@ function getAchievements(userInfo) {
                         var achievement = Ti.UI.createImageView({
                             id : achievements[i].id,
                             image : ach_img,
-                            width : 60,
-                            height : 60,
+                            width : 65,
+                            height : 65,
+                            borderRadius : 32.5,
+                            borderWidth : 2,
+                            borderColor : '#303030',
                             left : dynWidth,
                             top : dynWidth
                             //top : 10,

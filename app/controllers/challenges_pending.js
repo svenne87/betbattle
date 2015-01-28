@@ -394,20 +394,27 @@ function constructChallengeRows(obj, index) {
     }
 
     // start the setInverval -- adjust the time to make a smooth animation
+    var firstLeft = 200;
+    var secondLeft = 185;
+    
+    if(isAndroid) {
+        firstLeft = 220;
+        secondLeft = 205;
+    }
 
     // check all matches in a challenge to check if any of the matches are active
     for (var i = 0; i < obj.attributes.matches.length; i++) {
         if (obj.attributes.matches[i].status === '3') { 
             var liveLabel = Ti.UI.createLabel({
                 text : "Live",
-                left : 195,
+                left : firstLeft,
                 font : Alloy.Globals.getFontCustom(12, "Regular"),
                 color : Alloy.Globals.themeColor()
             });
 
             firstRowView.add(liveLabel);
             liveIcon = Ti.UI.createImageView({
-                left : 180,
+                left : secondLeft,
                 image : '/images/ikon_1_live.png',
                 height : 10,
                 width : 10,

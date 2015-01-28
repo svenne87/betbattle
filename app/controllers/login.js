@@ -284,8 +284,10 @@ function login() {
         isSubmitting = true;
         setButtonOpacity(0);
         if (!args.reauth) {
-            
+                            // kanske gav strul på ios?
+            if(isAndroid) {
             fb.logout();  // TODO Added to see if it will reinitiate correct at error's
+            }
             
             fb.authorize();    
         } else {

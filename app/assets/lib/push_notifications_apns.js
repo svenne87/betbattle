@@ -84,7 +84,7 @@ var apns = function() {
                             };
                             win = Alloy.createController('showChallenge', args).getView();
                         } else if (type === 'finished') {
-                            win = Alloy.createController('challenges_finished', args).getView();
+                            win = Alloy.createController('challenges_finished').getView();
                         } else if (type === 'achievement') {     
                             var player = Ti.Media.createSound({
                                 url : "sound/unlocked.wav"
@@ -194,7 +194,7 @@ var apns = function() {
 
                             win = Alloy.createController('showChallenge', args).getView();
                         } else if (type === 'finished') {
-                            win = Alloy.createController('challenges_finished', args).getView();
+                            win = Alloy.createController('challenges_finished').getView();
                         } else if (type === 'achievement') {
                             var player = Ti.Media.createSound({
                                 url : "sound/unlocked.wav"

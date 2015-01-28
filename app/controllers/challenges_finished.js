@@ -131,7 +131,7 @@ if (!isAndroid) {
         footerView : tableFooterView,
         height : '100%',
         width : '100%',
-        backgroundColor : 'transparent',
+        backgroundColor : '#000',
         style : Ti.UI.iPhone.TableViewStyle.GROUPED,
         separatorInsets : {
             left : 0,
@@ -308,7 +308,7 @@ function compare(a, b) {
     return 0;
 }
 
-function buildTableRows() {
+function buildTableRows() { 
     table.setData([]);
     data = [];
 
@@ -322,17 +322,18 @@ function buildTableRows() {
     // create 'accept' rows
     if (arrayObj.length > 0) {
         for (var i = 0; i < arrayObj.length; i++) {
-            data.push(constructChallengeRows(arrayObj[i], i));
+           // data.push(constructChallengeRows(arrayObj[i], i));
+            table.appendRow(constructChallengeRows(arrayObj[i], i));
         }
     } else if (arrayObj.length === 0) {
-        data.push(createEmptyTableRow(Alloy.Globals.PHRASES.challengesSmallTxt));
+       // data.push(createEmptyTableRow(Alloy.Globals.PHRASES.challengesSmallTxt));
+       table.appendRow(createEmptyTableRow(Alloy.Globals.PHRASES.challengesSmallTxt));
     }
-
-    table.setData(data);
+    
+   // table.setData(data);
 }
 
 function createLastMatchOTDRow() {
-
     var child = true;
 
     if (isAndroid) {
@@ -565,16 +566,22 @@ function constructChallengeRows(obj, index) {
     });
 
     secondRowView.add(participantsValueLabel);
+    
+    var potTextLabelLeft = 200;
+    
+    if(participantsValueLabel.toImage() !== null && participantsValueLabel.toImage().width !== null) {
+        potTextLabelLeft = (180 + participantsValueLabel.toImage().width + 2);
+    }
 
     var potTextLabel = Ti.UI.createLabel({
-        left : (160 + participantsValueLabel.toImage().width + 5 + participantsTextLabel.toImage().width + 2),
+        left : potTextLabelLeft,
         font : {
             fontFamily : font
         },
         text : fontawesome.icon('fa-database'),
         color : Alloy.Globals.themeColor()
     });
-
+    
     secondRowView.add(potTextLabel);
 
     var currentPot = Alloy.Globals.PHRASES.unknownSmallTxt;
@@ -584,12 +591,20 @@ function constructChallengeRows(obj, index) {
     } catch (e) {
         currentPot = Alloy.Globals.PHRASES.unknownSmallTxt;
     }
+    
+    var potValueLabelLeft = 210;
+    
+    if(participantsValueLabel.toImage() !== null && participantsValueLabel.toImage().width !== null && potTextLabel.toImage() !== null && potTextLabel.toImage().width !== null) {
+        potValueLabelLeft = (180 + participantsValueLabel.toImage().width + 2 + potTextLabel.toImage().width + 4);
+    } 
+// TODO
     var potValueLabel = Ti.UI.createLabel({
-        left : (160 + participantsValueLabel.toImage().width + 2 + participantsTextLabel.toImage().width + 6 + potTextLabel.toImage().width + 2),
+        left : potValueLabelLeft,
         text : '' + currentPot,
         font : Alloy.Globals.getFontCustom(12, 'Regular'),
         color : Alloy.Globals.themeColor()
     });
+    
 
     secondRowView.add(potValueLabel);
 
@@ -603,15 +618,16 @@ function constructChallengeRows(obj, index) {
         layout : 'horizontal'
     }));
 
-    if (iOSVersion < 7) {
-        row.add(Ti.UI.createView({
-            height : 0.5,
-            top : 65,
-            backgroundColor : '#303030',
-            width : '120%'
-        }));
+    if (!isAndroid) {
+        if (iOSVersion < 7) {
+            row.add(Ti.UI.createView({
+                height : 0.5,
+                top : 65,
+                backgroundColor : '#303030',
+                width : '120%'
+            }));
+        }
     }
-
     if (!isAndroid) {
         // keep track of the table total heigth, to decide when to start fetching more
         currentSize += row.toImage().height;
@@ -643,7 +659,7 @@ function endRefresher() {
 
 function getFinishedChallenges(firstTime, start, rows) {
     if (firstTime && isAndroid) {
-        indicator.openIndicator();
+       indicator.openIndicator();
     }
 
     // check connection
@@ -683,7 +699,7 @@ function getFinishedChallenges(firstTime, start, rows) {
     }
     xhr.onload = function() {
         if (this.status == '200') {
-            if (this.readyState == '4') {
+            if (this.readyState == '4') {           
                 // fake build same structure to use method
                 var res = JSON.parse(this.responseText);
                 finishedChallengesCount = res.count;
@@ -707,8 +723,9 @@ function getFinishedChallenges(firstTime, start, rows) {
                     // rebuild
                     tmpArray = Alloy.Globals.constructChallenge(response);
                     finishedChallengesArray = tmpArray[2];
+                    
                     buildTableRows();
-
+                    
                     if (fetchedFinishedChallenges == 0) {
                         footerViewLabel.setText(Alloy.Globals.PHRASES.nrOfGamesTxt + ' ' + 20 + '/' + finishedChallengesCount + ' ');
 
@@ -739,7 +756,6 @@ function getFinishedChallenges(firstTime, start, rows) {
 
                     // need to sort the array here again, in order to get the correct data when clicking a row
                     finishedChallengesArray.sort(compare);
-                    // TODO works?
 
                     setDisplayText();
                 }
@@ -804,4 +820,5 @@ if (OS_ANDROID) {
         $.challenges_finished.activity.actionBar.title = Alloy.Globals.PHRASES.finishedTxt;
     });
 }
+
 getFinishedChallenges(true, 0, 20);
