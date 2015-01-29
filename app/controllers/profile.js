@@ -19,7 +19,21 @@ if (OS_ANDROID) {
     context = require('lib/Context');
 
     $.profileWin.addEventListener('open', function() {
-        Alloy.Globals.setAndroidCouponMenu($.profileWin.activity);
+        $.profileWin.activity.onCreateOptionsMenu = function(e) {
+            settings = e.menu.add( settingsIcon = {
+                showAsAction : Ti.Android.SHOW_AS_ACTION_ALWAYS,
+                icon : 'images/settings_white.png',
+                itemId : 2
+            });
+
+            settings.addEventListener('click', function() {
+                var win = Alloy.createController("settings").getView();
+                Alloy.Globals.CURRENTVIEW = win;
+                win.open({
+                    fullScreen : true
+                });
+            });
+        };
 
         $.profileWin.activity.actionBar.onHomeIconItemSelected = function() {
             $.profileWin.close();
@@ -51,17 +65,53 @@ if (OS_ANDROID) {
     $.table.footerView = Ti.UI.createView({
         height : 0.1
     });
+
+    var settingsIcon = Ti.UI.createImageView({
+        width : 22,
+        height : 22,
+        image : '/images/settings_white.png'
+    });
+
+    settingsIcon.addEventListener('click', function() {
+        var win = Alloy.createController("settings").getView();
+        Alloy.Globals.CURRENTVIEW = win;
+        Alloy.Globals.NAV.openWindow(win, {
+            animated : true
+        });
+    });
+
+    $.profileWin.setRightNavButton(settingsIcon);
 }
 
 function onOpen(evt) {
     if (isAndroid) {
         context.on('profileActivity', this.activity);
+    } else {
+        Alloy.Globals.PREVIOUSVIEW = 'profile';
+        var children = Alloy.Globals.NAV.getChildren();
+        for (var i in children) {
+            if (children[i].id == "ticketView") {
+                children[i].setOpacity(0);
+            }
+        }
     }
 }
 
 function onClose(evt) {
     if (isAndroid) {
         context.off('profileActivity');
+    } else {
+        Alloy.Globals.PREVIOUSVIEW = '';
+        if (Alloy.Globals.COUPON !== null && Alloy.Globals.COUPON.games !== null) {
+            if (Alloy.Globals.COUPON.games.length > 0) {
+                var children = Alloy.Globals.NAV.getChildren();
+                for (var i in children) {
+                    if (children[i].id == "ticketView") {
+                        children[i].setOpacity(1);
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -77,17 +127,6 @@ sections[0] = Ti.UI.createTableViewSection({
     })
 });
 
-/*
-profileNameLabel = Ti.UI.createLabel({
-    text : Alloy.Globals.PHRASES.loadingTxt + ' ',
-    textAlign : 'center',
-    font : Alloy.Globals.getFontCustom(18, "Bold"),
-    color : "#FFF"
-});
-*/
-
-//sections[0].headerView.add(profileNameLabel);
-
 var mainProfileRow = Ti.UI.createTableViewRow({
     height : 260,
     className : "profile",
@@ -97,18 +136,26 @@ var mainProfileRow = Ti.UI.createTableViewRow({
     layout : 'vertical'
 });
 
-var profileImageView = Ti.UI.createImageView({
-    top: 20,
-    defaultImage : '/images/no_pic.png',
-    width : 120,
-    //left : dynLeft,
-    height : 120,
-    borderRadius : 60,
-    borderColor : '#303030',
-    borderWidth : 2
+var mainProfileCover = Ti.UI.createView({
+    height : 260,
+    width : Ti.UI.FILL,
+    backgroundImage : '/images/profile_header.jpg',
+    layout : 'vertical',
+    zIndex : 0
 });
 
-// TODO http://www.appdesignvault.com/iphone-flat-ui-design-patterns/
+mainProfileRow.add(mainProfileCover);
+
+var profileImageView = Ti.UI.createImageView({
+    top : 20,
+    defaultImage : '/images/no_pic.png',
+    width : 120,
+    height : 120,
+    borderRadius : 60,
+   // borderColor : '#303030',  // TODO
+    borderColor : '#FFF',
+    borderWidth : 2
+});
 
 //profilepicture
 var image;
@@ -124,27 +171,28 @@ profileImageView.addEventListener('error', function(e) {
     profileImageView.image = '/images/no_pic.png';
 });
 
-mainProfileRow.add(profileImageView);
+mainProfileCover.add(profileImageView);
 
 var nameProfileLabel = Ti.UI.createLabel({
     text : Alloy.Globals.PHRASES.loadingTxt + ' ',
     textAlign : 'center',
     top : 20,
     font : Alloy.Globals.getFontCustom(18, "Bold"),
-    color : "#FFF" 
+    color : "#FFF"
 });
 
-mainProfileRow.add(nameProfileLabel);
+mainProfileCover.add(nameProfileLabel);
 
 var levelLabel = Ti.UI.createLabel({
     text : '  ',
     textAlign : 'center',
     top : 10,
     font : Alloy.Globals.getFontCustom(16, "Normal"),
-    color : Alloy.Globals.themeColor()
+   // color : Alloy.Globals.themeColor()
+    color : '#FFF'  // TODO
 });
 
-mainProfileRow.add(levelLabel);
+mainProfileCover.add(levelLabel);
 
 var statsRow = Ti.UI.createTableViewRow({
     height : 100,
@@ -157,7 +205,6 @@ var statsRow = Ti.UI.createTableViewRow({
 
 var statsViewOne = Ti.UI.createView({
     height : 100,
-    //left : 0,
     width : (deviceWidth / 3),
     backgroundColor : '#000',
     layout : 'vertical'
@@ -184,9 +231,10 @@ coinsView.add(Ti.UI.createLabel({
 var coinsLabelValue = Ti.UI.createLabel({
     font : Alloy.Globals.getFontCustom(16, 'Regular'),
     text : '',
+    left : 2,
     color : '#FFF',
     textAlign : 'center',
-    width : Ti.UI.SIZE,
+    width : Ti.UI.SIZE
 });
 
 coinsView.add(coinsLabelValue);
@@ -204,7 +252,6 @@ statsViewOne.add(coinsLabelText);
 
 var statsViewTwo = Ti.UI.createView({
     height : 100,
-   // left : (deviceWidth / 3),
     width : (deviceWidth / 3),
     backgroundColor : '#000',
     layout : 'vertical'
@@ -231,6 +278,7 @@ pointsView.add(Ti.UI.createLabel({
 var pointsLabelValue = Ti.UI.createLabel({
     font : Alloy.Globals.getFontCustom(16, 'Regular'),
     text : '',
+    left : 2,
     color : '#FFF',
     textAlign : 'center',
     width : Ti.UI.SIZE
@@ -252,7 +300,6 @@ statsViewTwo.add(pointsLabelText);
 
 var statsViewThree = Ti.UI.createView({
     height : 100,
-   // left : (deviceWidth / 3),
     width : (deviceWidth / 3),
     backgroundColor : '#000',
     layout : 'vertical'
@@ -279,6 +326,7 @@ winsView.add(Ti.UI.createLabel({
 var winsLabelValue = Ti.UI.createLabel({
     font : Alloy.Globals.getFontCustom(16, 'Regular'),
     text : '',
+    left : 2,
     color : '#FFF',
     textAlign : 'center',
     width : Ti.UI.SIZE
@@ -297,314 +345,9 @@ var winsLabelText = Ti.UI.createLabel({
 statsViewThree.add(winsView);
 statsViewThree.add(winsLabelText);
 
-
 statsRow.add(statsViewOne);
 statsRow.add(statsViewTwo);
 statsRow.add(statsViewThree);
-
-/*
-var firstMainProfileRowView = Ti.UI.createView({
-    top : 10,
-    height : 100,
-    width : Ti.UI.FILL,
-    layout : 'horizontal'
-});
-
-var favoriteTeamImageView = Ti.UI.createImageView({
-    defaultImage : '/images/no_team.png',
-    width : 50,
-    left : '10%',
-    height : 50,
-    borderRadius : 25
-});
-
-var dynLeft = '17%';
-
-if (deviceWidth <= 320) {
-    dynLeft = '12%';
-}
-
-var profileImageView = Ti.UI.createImageView({
-    defaultImage : '/images/no_pic.png',
-    width : 80,
-    left : dynLeft,
-    height : 80,
-    borderRadius : 40
-});
-
-//profilepicture
-var image;
-if (Alloy.Globals.FACEBOOKOBJECT) {
-    profileImageView.image = "https://graph.facebook.com/" + Alloy.Globals.FACEBOOKOBJECT.id + "/picture?type=large";
-} else {
-    // get betkampen image
-    profileImageView.image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + Alloy.Globals.BETKAMPENUID + '.png' + "?t=" + new Date().getTime();
-}
-
-profileImageView.addEventListener('error', function(e) {
-    // fallback for image
-    profileImageView.image = '/images/no_pic.png';
-});
-
-var levelImageView = Ti.UI.createImageView({
-    defaultImage : '/images/no_team.png',
-    width : 50,
-    left : dynLeft,
-    height : 50,
-    borderRadius : 25
-});
-*/
-//firstMainProfileRowView.add(favoriteTeamImageView);
-//firstMainProfileRowView.add(profileImageView);
-//firstMainProfileRowView.add(levelImageView);
-
-/*
-
-var profileStatsView = Ti.UI.createView({
-    height : 100,
-    left : 0,
-    top : 100,
-    width : Ti.UI.FILL,
-    backgroundColor : '#000',
-});
-
-profileLoadingLabel = Ti.UI.createLabel({
-    font : Alloy.Globals.getFontCustom(16, 'Regular'),
-    text : Alloy.Globals.PHRASES.loadingTxt + ' ',
-    color : '#FFF',
-    left : 20,
-    width : Ti.UI.SIZE
-});
-
-profileStatsView.add(profileLoadingLabel);
-
-//mainProfileRow.add(profileStatsView);
-
-var firstProfilePart = Ti.UI.createView({
-    height : Ti.UI.SIZE,
-    left : 0,
-    width : (deviceWidth / 2),
-    backgroundColor : '#000',
-    layout : 'horizontal'
-});
-
-var secondProfilePart = Ti.UI.createView({
-    height : Ti.UI.SIZE,
-    left : (deviceWidth / 2),
-    width : (deviceWidth / 2),
-    backgroundColor : '#000',
-    layout : 'horizontal'
-});
-
-firstProfilePart.hide();
-secondProfilePart.hide();
-
-var firstLeftRow = Ti.UI.createView({
-    top : 0,
-    left : 10,
-    height : 30,
-    width : Ti.UI.FILL,
-    layout : 'horizontal'
-});
-
-var favoriteTeamNameLabel = Ti.UI.createLabel({
-    font : Alloy.Globals.getFontCustom(16, 'Regular'),
-    text : '',
-    color : '#FFF',
-    left : 0,
-    width : Ti.UI.SIZE
-});
-
-firstLeftRow.add(favoriteTeamNameLabel);
-firstProfilePart.add(firstLeftRow);
-
-var secondLeftRow = Ti.UI.createView({
-    top : 0,
-    left : 10,
-    height : 30,
-    width : Ti.UI.FILL,
-    layout : 'horizontal'
-});
-
-var coinsLabelText = Ti.UI.createLabel({
-    font : Alloy.Globals.getFontCustom(16, 'Regular'),
-    text : Alloy.Globals.PHRASES.coinsInfoTxt + ':',
-    color : '#FFF',
-    left : 0,
-    width : Ti.UI.SIZE
-});
-
-var coinsLabelValue = Ti.UI.createLabel({
-    font : Alloy.Globals.getFontCustom(16, 'Regular'),
-    text : '...                       ',
-    color : Alloy.Globals.themeColor(),
-    left : 5,
-    width : Ti.UI.SIZE
-});
-
-secondLeftRow.add(coinsLabelText);
-
-secondLeftRow.add(Ti.UI.createLabel({
-    left : 10,
-    width : Ti.UI.SIZE,
-    font : {
-        fontFamily : font
-    },
-    text : fontawesome.icon('fa-database'),
-    color : Alloy.Globals.themeColor(),
-}));
-
-secondLeftRow.add(coinsLabelValue);
-
-firstProfilePart.add(secondLeftRow);
-
-var firstRightRow = Ti.UI.createView({
-    top : 0,
-    height : 30,
-    width : Ti.UI.FILL,
-    layout : 'horizontal'
-});
-/*
-var levelLabel = Ti.UI.createLabel({
-    font : Alloy.Globals.getFontCustom(16, 'Regular'),
-    text : '',
-    color : '#FFF',
-    right : 10,
-    textAlign : 'right',
-    width : Ti.UI.FILL
-});
-
-firstRightRow.add(levelLabel);
-secondProfilePart.add(firstRightRow);
-
-var secondRightRow = Ti.UI.createView({
-    top : 0,
-    height : 30,
-    width : Ti.UI.FILL,
-});
-
-var secondRightRowInner = Ti.UI.createView({
-    top : 0,
-    height : 30,
-    width : Ti.UI.SIZE,
-    right : 10,
-    layout : 'horizontal'
-});
-
-var winsLabelText = Ti.UI.createLabel({
-    font : Alloy.Globals.getFontCustom(16, 'Regular'),
-    text : Alloy.Globals.PHRASES.winsInfoTxt + ':',
-    color : '#FFF',
-    left : 10,
-    textAlign : 'right',
-    width : Ti.UI.SIZE
-});
-
-var winsLabelValue = Ti.UI.createLabel({
-    font : Alloy.Globals.getFontCustom(16, 'Regular'),
-    text : '',
-    color : Alloy.Globals.themeColor(),
-    left : 5,
-    textAlign : 'right',
-    width : Ti.UI.SIZE
-});
-
-secondRightRowInner.add(winsLabelText);
-
-secondRightRowInner.add(Ti.UI.createLabel({
-    left : 10,
-    textAlign : 'left',
-    width : Ti.UI.SIZE,
-    font : {
-        fontFamily : font
-    },
-    text : fontawesome.icon('fa-trophy'),
-    color : Alloy.Globals.themeColor(),
-}));
-
-secondRightRowInner.add(winsLabelValue);
-secondRightRow.add(secondRightRowInner);
-secondProfilePart.add(secondRightRow);
-
-var thirdLeftRow = Ti.UI.createView({
-    top : 0,
-    left : 10,
-    height : 30,
-    width : Ti.UI.FILL,
-    layout : 'horizontal'
-});
-
-var pointsLabelText = Ti.UI.createLabel({
-    font : Alloy.Globals.getFontCustom(16, 'Regular'),
-    text : Alloy.Globals.PHRASES.scoreInfoTxt + ':',
-    color : '#FFF',
-    left : 0,
-    width : Ti.UI.SIZE
-});
-
-var pointsLabelValue = Ti.UI.createLabel({
-    font : Alloy.Globals.getFontCustom(16, 'Regular'),
-    text : '...                      ',
-    color : Alloy.Globals.themeColor(),
-    left : 5,
-    width : Ti.UI.SIZE
-});
-
-thirdLeftRow.add(pointsLabelText);
-
-thirdLeftRow.add(Ti.UI.createLabel({
-    left : 10,
-    width : Ti.UI.SIZE,
-    font : {
-        fontFamily : font
-    },
-    text : fontawesome.icon('fa-signal'),
-    color : Alloy.Globals.themeColor()
-}));
-
-thirdLeftRow.add(pointsLabelValue);
-firstProfilePart.add(thirdLeftRow);
-
-var thirdRightRow = Ti.UI.createView({
-    top : 0,
-    height : 30,
-    width : Ti.UI.FILL
-});
-
-var thirdRightRowInner = Ti.UI.createView({
-    top : 0,
-    height : 30,
-    width : Ti.UI.SIZE,
-    right : 10,
-    layout : 'horizontal'
-});
-
-var scoreBoardLabelText = Ti.UI.createLabel({
-    font : Alloy.Globals.getFontCustom(16, 'Regular'),
-    text : Alloy.Globals.PHRASES.positionTxt + ':',
-    color : '#FFF',
-    left : 0,
-    textAlign : 'right',
-    width : Ti.UI.SIZE
-});
-
-var scoreBoardLabelValue = Ti.UI.createLabel({
-    font : Alloy.Globals.getFontCustom(16, 'Regular'),
-    text : '',
-    color : Alloy.Globals.themeColor(),
-    left : 5,
-    textAlign : 'right',
-    width : Ti.UI.SIZE
-});
-
-thirdRightRowInner.add(scoreBoardLabelText);
-thirdRightRowInner.add(scoreBoardLabelValue);
-
-thirdRightRow.add(thirdRightRowInner);
-secondProfilePart.add(thirdRightRow);
-
-profileStatsView.add(firstProfilePart);
-profileStatsView.add(secondProfilePart);
 
 /*      Part 2      */
 sections[1] = Ti.UI.createTableViewSection({
@@ -681,36 +424,17 @@ function getProfile() {
                 }
 
                 if (userInfo !== null) {
-                    if (userInfo.team.data[0]) {
-                        if (userInfo.team.data[0].name.length > 17) {
-                            userInfo.team.data[0].name = userInfo.team.data[0].name.substring(0, 14) + '...';
-                        }
-
-                       // favoriteTeamNameLabel.setText(userInfo.team.data[0].name + ' ');
-                       // favoriteTeamImageView.setImage(Alloy.Globals.BETKAMPENURL + userInfo.team.data[0].team_logo);
-
-                      //  favoriteTeamImageView.addEventListener('error', function() {
-                       //     favoriteTeamImageView.image = '/images/no_team.png';
-                       // });
-                    }
-
-                    if (userInfo.name.length > 17) {
-                        userInfo.name = userInfo.name.substring(0, 15) + '...';
+                    if (userInfo.name.length > 30) {
+                        userInfo.name = userInfo.name.substring(0, 27) + '...';
                     }
 
                     nameProfileLabel.setText(userInfo.name + ' ');
 
                     var level = userInfo.level.level;
 
-        //            levelImageView.setImage(Alloy.Globals.BETKAMPENURL + "/" + userInfo.level.symbol);
-
-          //          levelImageView.addEventListener('error', function() {
-            //            levelImageView.image = '/images/no_team.png';
-             //       });
-
                     if ( typeof Alloy.Globals.PHRASES.levels[level] !== 'undefined') {
-                        if (Alloy.Globals.PHRASES.levels[level].lenght > 17) {
-                            Alloy.Globals.PHRASES.levels[level] = Alloy.Globals.PHRASES.levels[level].substring(0, 14) + '...';
+                        if (Alloy.Globals.PHRASES.levels[level].lenght > 30) {
+                            Alloy.Globals.PHRASES.levels[level] = Alloy.Globals.PHRASES.levels[level].substring(0, 28) + '...';
                         }
                     } else {
                         Alloy.Globals.PHRASES.levels[level] = 'N/A';
@@ -720,27 +444,18 @@ function getProfile() {
                     coinsLabelValue.setText(userInfo.totalCoins + ' ');
                     pointsLabelValue.setText(userInfo.totalPoints + ' ');
                     winsLabelValue.setText(userInfo.totalWins + ' ');
-                  //  scoreBoardLabelValue.setText(userInfo.position + ' ');
-/*
-                    if (coinsLabelValue.getText().length > 6) {
-                        coinsLabelValue.setText(coinsLabelValue.getText().substring(0, 5) + '..');
+
+                    if (coinsLabelValue.getText().length > 8) {
+                        coinsLabelValue.setText(coinsLabelValue.getText().substring(0, 6) + '..');
                     }
 
-                    if (pointsLabelValue.getText().length > 6) {
-                        pointsLabelValue.setText(pointsLabelValue.getText().substring(0, 5) + '..');
+                    if (pointsLabelValue.getText().length > 8) {
+                        pointsLabelValue.setText(pointsLabelValue.getText().substring(0, 6) + '..');
                     }
 
-                    if (winsLabelValue.getText().length > 4) {
-                        winsLabelValue.setText(winsLabelValue.getText().substring(0, 3) + '..');
+                    if (winsLabelValue.getText().length > 8) {
+                        winsLabelValue.setText(winsLabelValue.getText().substring(0, 6) + '..');
                     }
-
-                    if (scoreBoardLabelValue.getText().length > 6) {
-                        scoreBoardLabelValue.setText(scoreBoardLabelValue.getText().substring(0, 5) + '..');
-                    }
-*/
-                //    profileStatsView.remove(profileLoadingLabel);
-                   // firstProfilePart.show();
-                  //  secondProfilePart.show();
                 }
             }
 
@@ -789,72 +504,38 @@ function getAchievements(userInfo) {
                         width : Ti.UI.FILL,
                         layout : 'horizontal'
                     });
-/*
-                    var achievementsHolderView = Ti.UI.createView({
-                        top : 0,
-                        height : Ti.UI.SIZE,
-                        width : '90%',
-                        left : '-2%',
-                        right : '10%',
-                        layout : 'horizontal'
-                    });
-*/
+
                     var achievementsHolderView = Ti.UI.createView({
                         top : 0,
                         height : Ti.UI.SIZE,
                         width : Ti.UI.FILL,
                         layout : 'horizontal'
                     });
-                    
-                  //  var dynWidth = '14%';
-                    var dynWidth = '7%';
+
+                    var dynWidth = '6%';
 
                     if (deviceWidth <= 320) {
-                        //dynWidth = '12%';
-                        dynWidth = '5%';
+                        dynWidth = '4%';
                     }
 
                     for (var i = 0; i < achievements.length; i++) {
-                        //var ach_img = '/images/locked_ach.png';  TODO
-                        
-                        var ach_img;
-                        
-                        if (achievements[i].unlocked) {
-                            ach_img = Alloy.Globals.BETKAMPENURL + "/achievements/" + achievements[i].image;
-                        }
+
+                        var ach_img = Alloy.Globals.BETKAMPENURL + "/achievements/" + achievements[i].image;
+
                         var achievement = Ti.UI.createImageView({
                             id : achievements[i].id,
                             image : ach_img,
                             width : 65,
                             height : 65,
                             borderRadius : 32.5,
-                            borderWidth : 2,
+                            borderWidth : 3,
                             borderColor : '#303030',
                             left : dynWidth,
                             top : dynWidth
-                            //top : 10,
-                            //bottom : 10
                         });
-                        
-                        if (!achievements[i].unlocked) {  
+
+                        if (!achievements[i].unlocked) {
                             achievement.setOpacity(0.2);
-                            
-                            if( i > 1) {
-                                achievement.setOpacity(0.3);
-                            } 
-                            
-                                                        if( i > 2) {
-                                achievement.setOpacity(0.4);
-                            } 
-                            
-                                                        if( i > 3) {
-                                achievement.setOpacity(0.6);
-                            } 
-                            
-                            if( i > 10) {
-                                achievement.setOpacity(0.8);
-                            } 
-                           
                         }
 
                         var achID = achievement.id;
@@ -893,10 +574,10 @@ function getAchievements(userInfo) {
                                     height : 150,
                                 });
                                 w.add(textWrapper);
-                                
+
                                 var achievementTitleTxt = 'not available';
-                                
-                                if(typeof Alloy.Globals.PHRASES.achievements[e.source.id] !== 'undefined') {
+
+                                if ( typeof Alloy.Globals.PHRASES.achievements[e.source.id] !== 'undefined') {
                                     achievementTitleTxt = Alloy.Globals.PHRASES.achievements[e.source.id].title;
                                 }
 
@@ -915,10 +596,10 @@ function getAchievements(userInfo) {
                                 if (achievementTitleTxt.length > 13) {
                                     dynamicTop = 60;
                                 }
-                                
+
                                 var achievementDescriptionTxt = 'not available';
-                                
-                                if(typeof Alloy.Globals.PHRASES.achievements[e.source.id] !== 'undefined') {
+
+                                if ( typeof Alloy.Globals.PHRASES.achievements[e.source.id] !== 'undefined') {
                                     achievementDescriptionTxt = Alloy.Globals.PHRASES.achievements[e.source.id].description;
                                 }
 
@@ -944,7 +625,7 @@ function getAchievements(userInfo) {
                                     w = null;
                                 });
 
-                                $.profileWin.add(w);                          
+                                $.profileWin.add(w);
                             } else {
                                 var t = Titanium.UI.create2DMatrix();
                                 t = t.scale(0);
@@ -1002,10 +683,10 @@ function getAchievements(userInfo) {
                                 });
 
                                 w.add(greyGlass);
-                                
+
                                 var achievementTitleTxt = 'not available';
-                                
-                                if(typeof Alloy.Globals.PHRASES.achievements[e.source.id] !== 'undefined') {
+
+                                if ( typeof Alloy.Globals.PHRASES.achievements[e.source.id] !== 'undefined') {
                                     achievementTitleTxt = Alloy.Globals.PHRASES.achievements[e.source.id].title;
                                 }
 
@@ -1025,8 +706,8 @@ function getAchievements(userInfo) {
                                 }
 
                                 var achievementDescriptionTxt = 'not available';
-                                
-                                if(typeof Alloy.Globals.PHRASES.achievements[e.source.id] !== 'undefined') {
+
+                                if ( typeof Alloy.Globals.PHRASES.achievements[e.source.id] !== 'undefined') {
                                     achievementDescriptionTxt = Alloy.Globals.PHRASES.achievements[e.source.id].description;
                                 }
 
@@ -1073,12 +754,12 @@ function getAchievements(userInfo) {
                     }
                     achievementsCoverView.add(achievementsHolderView);
                     achievementsRow.add(achievementsCoverView);
-                    
-                    if(isAndroid) {
+
+                    if (isAndroid) {
                         // Android fix since it's not filling view.
                         achievementsRow.add(Ti.UI.createView({
                             height : 80,
-                            width : Ti.UI.FILL                         
+                            width : Ti.UI.FILL
                         }));
                     }
                 }

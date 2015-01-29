@@ -35,7 +35,7 @@ Alloy.Globals.androidPauseEvent = null;
 Alloy.Globals.androidResumeEvent = null;
 Alloy.Globals.iosPauseEvent = null;
 Alloy.Globals.iosResumeEvent = null;
-Alloy.Globals.challengesViewRefreshEvent = null; 
+Alloy.Globals.challengesViewRefreshEvent = null;
 Alloy.Globals.userInfoUpdateEvent = null;
 Alloy.Globals.OPEN = true;
 Alloy.Globals.CLOSE = true;
@@ -229,15 +229,15 @@ Alloy.Globals.performTimeout = function(func) {
 Alloy.Globals.getLanguage = function(indicator) {
     // check connection
     if (Alloy.Globals.checkConnection()) {
-        if(indicator !== null) {
+        if (indicator !== null) {
             indicator.openIndicator();
         }
-        
+
         var xhr = Titanium.Network.createHTTPClient();
         xhr.onerror = function(e) {
             Ti.App.Properties.setString("language_version", JSON.stringify("0"));
             Ti.API.error('Bad Sever =>' + e.error);
-            if(indicator !== null) {
+            if (indicator !== null) {
                 indicator.closeIndicator();
             }
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
@@ -251,7 +251,7 @@ Alloy.Globals.getLanguage = function(indicator) {
             xhr.send();
         } catch(e) {
             Ti.App.Properties.setString("language_version", JSON.stringify("0"));
-            if(indicator !== null) {
+            if (indicator !== null) {
                 indicator.closeIndicator();
             }
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
@@ -265,10 +265,10 @@ Alloy.Globals.getLanguage = function(indicator) {
                     file1.write(this.responseText);
 
                     Alloy.Globals.PHRASES = JSON.parse(file1.read().text);
-                    
+
                     // store language version
                     Ti.App.Properties.setString("language_version", JSON.stringify(Alloy.Globals.VERSIONS.language_version));
-                    
+
                     // store language and that we have selected a language
                     Ti.App.Properties.setString("language", JSON.stringify({
                         language : Alloy.Globals.LOCALE
@@ -279,12 +279,12 @@ Alloy.Globals.getLanguage = function(indicator) {
 
                     Alloy.Globals.showAlertWithRestartNote(1);
                 }
-                if(indicator !== null) {
+                if (indicator !== null) {
                     indicator.closeIndicator();
                 }
             } else {
                 Ti.App.Properties.setString("language_version", JSON.stringify("0"));
-                if(indicator !== null) {
+                if (indicator !== null) {
                     indicator.closeIndicator();
                 }
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
@@ -311,14 +311,14 @@ Alloy.Globals.getLanguage = function(indicator) {
 
 // function to show alert box to restart app
 Alloy.Globals.showAlertWithRestartNote = function(auto) {
-   
+
     var alertWindow = Titanium.UI.createAlertDialog({
         title : Alloy.Globals.PHRASES.betbattleTxt,
         message : Alloy.Globals.PHRASES.appRestartTxt,
         buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtnTxt]
     });
-    
-    if(auto === 1) {
+
+    if (auto === 1) {
         alertWindow.message = Alloy.Globals.PHRASES.languageRestartTxt;
     }
 
@@ -332,32 +332,32 @@ Alloy.Globals.showAlertWithRestartNote = function(auto) {
                 Alloy.Globals.CURRENTVIEW.close();
 
                 var activity = Titanium.Android.currentActivity;
-                
+
                 // remove old event listeners
                 Ti.App.removeEventListener('paused', Alloy.Globals.androidPauseEvent);
-                Ti.App.removeEventListener('resumed', Alloy.Globals.androidResumeEvent); 
+                Ti.App.removeEventListener('resumed', Alloy.Globals.androidResumeEvent);
                 Ti.App.removeEventListener('challengesViewRefresh', Alloy.Globals.challengesViewRefreshEvent);
                 Ti.App.removeEventListener('userInfoUpdate', Alloy.Globals.userInfoUpdateEvent);
-                
+
                 activity.finish();
 
                 // start app again
                 var intent = Ti.Android.createIntent({
                     action : Ti.Android.ACTION_MAIN,
                     url : 'Betbattle.js'
-                });                      
+                });
                 intent.addCategory(Ti.Android.CATEGORY_LAUNCHER);
-                Ti.Android.currentActivity.startActivity(intent);    
+                Ti.Android.currentActivity.startActivity(intent);
 
             } else {
                 // set value that app restarts
                 Ti.App.Properties.setBool("restart", true);
-                
-                if (Alloy.Globals.FACEBOOKOBJECT) { 
+
+                if (Alloy.Globals.FACEBOOKOBJECT) {
                     // keep track if we are signed in with facebook
                     Ti.App.Properties.setBool("facebook", true);
                 }
-                
+
                 // restart app
                 Ti.App._restart();
             }
@@ -446,7 +446,7 @@ Alloy.Globals.getTutorial = function(indicator) {
 Alloy.Globals.checkVersions = function(indicator) {
     // check if any versions are stored (if the app runs for the first time, there will be no versions stored.)
     Ti.API.log("checking language...");
-    
+
     if (Ti.App.Properties.hasProperty("language_version")) {
         // stored version found, check if it's out dated
         var currentLanguageVersion = JSON.parse(Ti.App.Properties.getString('language_version'));
@@ -455,29 +455,29 @@ Alloy.Globals.checkVersions = function(indicator) {
             // update needed
             Alloy.Globals.getLanguage(null);
             /*
-            var alertWindow = Titanium.UI.createAlertDialog({
-                title : Alloy.Globals.PHRASES.betbattleTxt,
-                message : Alloy.Globals.PHRASES.newLanguageTxt,
-                buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtnTxt],
-                persistent : true
-            });
+             var alertWindow = Titanium.UI.createAlertDialog({
+             title : Alloy.Globals.PHRASES.betbattleTxt,
+             message : Alloy.Globals.PHRASES.newLanguageTxt,
+             buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtnTxt],
+             persistent : true
+             });
 
-            alertWindow.addEventListener('click', function(e) {
-                switch (e.index) {
-                case 0:
-                    // get new language and store version
-                    alertWindow.hide();
-                    Ti.App.Properties.setString("language_version", JSON.stringify(Alloy.Globals.VERSIONS.language_version));
-                    Alloy.Globals.getLanguage(null);
-                    break;
-                case 1:
-                    Ti.App.Properties.setString("language_version", JSON.stringify(Alloy.Globals.VERSIONS.language_version));
-                    alertWindow.hide();
-                    break;
-                }
-            });
-            alertWindow.show();
-            */
+             alertWindow.addEventListener('click', function(e) {
+             switch (e.index) {
+             case 0:
+             // get new language and store version
+             alertWindow.hide();
+             Ti.App.Properties.setString("language_version", JSON.stringify(Alloy.Globals.VERSIONS.language_version));
+             Alloy.Globals.getLanguage(null);
+             break;
+             case 1:
+             Ti.App.Properties.setString("language_version", JSON.stringify(Alloy.Globals.VERSIONS.language_version));
+             alertWindow.hide();
+             break;
+             }
+             });
+             alertWindow.show();
+             */
         }
 
     } else {
@@ -585,11 +585,11 @@ Alloy.Globals.setAndroidCouponMenu = function(activity) {
 
         if (Alloy.Globals.hasCoupon) {
             menu.findItem(1).setIcon('images/ikoner_kupong_red.png');
-           // menu.findItem(1).setOpacity(1);
+            // menu.findItem(1).setOpacity(1);
             menu.findItem(1).setVisible(true);
         } else {
             menu.findItem(1).setIcon('images/ikoner_kupong.png');
-           // menu.findItem(1).setOpacity(0);
+            // menu.findItem(1).setOpacity(0);
             menu.findItem(1).setVisible(false);
         }
     };
@@ -883,16 +883,19 @@ Alloy.Globals.unlockAchievement = function(achID) {
                         Ti.API.info("visa toast");
                         var player = Ti.Media.createSound({
                             url : "sound/unlocked.wav"
-                        });                      
-                        
+                        });
+
                         var indWin;
-                        
-                        if(OS_IOS) {
+
+                        if (OS_IOS) {
                             indWin = Titanium.UI.createWindow();
                         } else {
-                             indWin = Titanium.UI.createWindow({ backgroundColor : 'transparent', navBarHidden : true });                           
+                            indWin = Titanium.UI.createWindow({
+                                backgroundColor : 'transparent',
+                                navBarHidden : true
+                            });
                         }
-                        
+
                         //  view
                         var indView = Titanium.UI.createView({
                             top : '85%',
@@ -926,13 +929,13 @@ Alloy.Globals.unlockAchievement = function(achID) {
                         indView.add(image);
                         indView.add(message);
                         indWin.open();
-                        
-                        if(OS_ANDROID) {
+
+                        if (OS_ANDROID) {
                             indWin.addEventListener('open', function() {
                                 indWin.activity.actionBar.hide();
-                            });               
+                            });
                         }
-                        
+
                         player.play();
 
                         var interval = interval ? interval : 2500;
@@ -1300,10 +1303,11 @@ Alloy.Globals.getCoupon = function(showAlert, indicator) {
                         Alloy.Globals.hasCoupon = false;
                         if (OS_IOS) {
                             var children = Alloy.Globals.NAV.getChildren();
-                            for (var i in children) {                                
+                            for (var i in children) {
                                 if (children[i].id == "ticketView") {
-                                    children[i].setOpacity(0); // hide the ticket icon
-                                    
+                                    children[i].setOpacity(0);
+                                    // hide the ticket icon
+
                                     var labels = children[i].getChildren();
                                     for (var y in labels) {
                                         if (labels[y].id == "badge") {
@@ -1331,20 +1335,23 @@ Alloy.Globals.getCoupon = function(showAlert, indicator) {
 
                         if (OS_IOS) {
                             Ti.API.info("challenge succces");
-                            var children = Alloy.Globals.NAV.getChildren();                            
-                            for (var i in children) {
-                                if (children[i].id == "ticketView") {
-                                    children[i].setOpacity(1); // show the ticket icon
-                                    
-                                    var labels = children[i].getChildren();
-                                    for (var y in labels) {
-                                        if (labels[y].id == "badge") {
-                                            labels[y].setBackgroundColor(Alloy.Globals.themeColor());
-                                            labels[y].setBorderColor("#c5c5c5");
-                                            labels[y].setText("" + Alloy.Globals.COUPON.games.length);
-                                        }
-                                        if (labels[y].id == "label") {
-                                            labels[y].setColor("#FFF");
+                            var children = Alloy.Globals.NAV.getChildren();
+                            if (Alloy.Globals.PREVIOUSVIEW !== 'profile') {
+                                for (var i in children) {
+                                    if (children[i].id == "ticketView") {
+                                        children[i].setOpacity(1);
+                                        // show the ticket icon
+
+                                        var labels = children[i].getChildren();
+                                        for (var y in labels) {
+                                            if (labels[y].id == "badge") {
+                                                labels[y].setBackgroundColor(Alloy.Globals.themeColor());
+                                                labels[y].setBorderColor("#c5c5c5");
+                                                labels[y].setText("" + Alloy.Globals.COUPON.games.length);
+                                            }
+                                            if (labels[y].id == "label") {
+                                                labels[y].setColor("#FFF");
+                                            }
                                         }
                                     }
                                 }

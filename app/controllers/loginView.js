@@ -139,7 +139,7 @@ $.loginPass.addEventListener('blur', function() {
     }
 });
 
-$.loginPass.addEventListener('return', function() {
+var loginEvent = function() {
     if (!isAndroid) {
         $.loginPass.enabled = false;
     }
@@ -174,7 +174,9 @@ $.loginPass.addEventListener('return', function() {
             Alloy.Globals.showFeedbackDialog(error);
         }
     }
-});
+};
+
+$.loginPass.addEventListener('return', loginEvent);
 
 if (isAndroid) {
     $.loginEmail.enabled = true;
@@ -562,8 +564,7 @@ function login(auto) {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
     }
 }
-
-signInBtn.addEventListener('click', function(e) {
+var signInEvent = function(e) {
     if ($.loginPass.value === Alloy.Globals.PHRASES.passwordTxt || $.loginEmail.value === Alloy.Globals.PHRASES.emailTxt) {
         Alloy.Globals.showFeedbackDialog(error);
         return;
@@ -583,6 +584,12 @@ signInBtn.addEventListener('click', function(e) {
     } else {
         Alloy.Globals.showFeedbackDialog(error);
     }
+};
+signInBtn.addEventListener('click', signInEvent);
+
+$.loginView.addEventListener('close', function() {
+    signInBtn.removeEventListener('click', signInEvent);
+    $.loginPass.removeEventListener('return', loginEvent);
 });
 
 abortBtn.addEventListener('click', function(e) {

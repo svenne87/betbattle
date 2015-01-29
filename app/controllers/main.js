@@ -552,6 +552,7 @@ function logoutBetbattle() {
                     Ti.API.log(response);
                     // remove token and name
                     Ti.App.Properties.removeProperty("BETKAMPEN");
+                    Ti.App.Properties.removeProperty("favorite_team");
                     Alloy.Globals.BETKAMPEN = null;
                     Alloy.Globals.FACEBOOKOBJECT = null;
                     // close
@@ -776,6 +777,8 @@ function rowSelect(e) {
                         });
                         fb.logout();
                         Ti.App.Properties.removeProperty("BETKAMPEN");
+                        Ti.App.Properties.removeProperty("favorite_team");
+
                         Alloy.Globals.BETKAMPEN = null;
                         Alloy.Globals.FACEBOOKOBJECT = null;
                         Alloy.Globals.FACEBOOK = null;
@@ -833,7 +836,7 @@ function rowSelect(e) {
                     if (fb) {
                         if (Alloy.Globals.CLOSE) {
                             // need to keep track if event was already added, since it is beeing added several times otherwise.
-                            fb.addEventListener('logout', function(e) {
+                            var logoutFunction = function(e){
                                 fb.loggedIn = false;
    
                                 alertWindow.hide();
@@ -841,16 +844,21 @@ function rowSelect(e) {
                                 Alloy.Globals.CURRENTVIEW = null;
                                 Alloy.Globals.NAV.close();
                                 Ti.App.Properties.removeProperty("BETKAMPEN");
+                                Ti.App.Properties.removeProperty("favorite_team");
                                 Alloy.Globals.BETKAMPEN = null;
                                 Alloy.Globals.FACEBOOKOBJECT = null;
                                 Alloy.Globals.FACEBOOK = null;
-
-                                var login = Alloy.createController('login').getView();
+                                
+                                var args = {reOpen : true};
+                                
+                                var login = Alloy.createController('login', args).getView();
                                 login.open({
                                     modal : false
                                 });
-                                login = null;
-                            });
+                                login = null; 
+                            };
+                            
+                            fb.addEventListener('logout', logoutFunction);
                         }
                         fb.logout();
 

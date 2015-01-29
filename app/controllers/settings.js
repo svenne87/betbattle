@@ -118,8 +118,8 @@ function sendSettingsServer(param, type, valueToStore) {
 
                         // set name in view
                         $.profile_name_value_label.text = valueToStore;
-                        if (Alloy.Globals.PROFILENAME.length > 10) {
-                            $.profile_name_value_label.text = Alloy.Globals.PROFILENAME.substring(0, 7) + '...';
+                        if (Alloy.Globals.PROFILENAME.length > 12) {
+                            $.profile_name_value_label.text = Alloy.Globals.PROFILENAME.substring(0, 9) + '...';
                         }
 
                         // update event
@@ -312,8 +312,8 @@ function createGUI() {
 
     /* Fourth row */
 
-    if (Alloy.Globals.PROFILENAME.length > 10) {
-        $.profile_name_value_label.text = Alloy.Globals.PROFILENAME.substring(0, 7) + '...';
+    if (Alloy.Globals.PROFILENAME.length > 12) {
+        $.profile_name_value_label.text = Alloy.Globals.PROFILENAME.substring(0, 9) + '...';
     }
 
     $.profile_name_row.addEventListener('click', function() {
@@ -389,7 +389,7 @@ function createGUI() {
 
     // sixth row
     $.favorite_team_settings_row.addEventListener('click', function() {
-        var args = {navOpen : true};
+        var args = {navOpen : true, label : favoriteTeamLabel};
         var loginSuccessWindow = Alloy.createController('pickTeam', args).getView();
 
         if (!isAndroid) {
@@ -400,6 +400,29 @@ function createGUI() {
             loginSuccessWindow = null;
         }
     });
+    
+    var favoriteTeam = "";
+    
+    if(Ti.App.Properties.hasProperty("favorite_team")) {
+         favoriteTeam = Ti.App.Properties.getString("favorite_team");
+    }
+    
+    if(favoriteTeam.length > 12) {
+        favoriteTeam = favoriteTeam.substring(0, 9);
+        favoriteTeam = favoriteTeam + "...";
+    }
+    
+    var favoriteTeamLabel = Ti.UI.createLabel({
+        textAlign : "left",
+        text : favoriteTeam,
+        right : 20,
+        height : Ti.UI.SIZE,
+        font : Alloy.Globals.FONT,
+        color : "#FFF",
+        width : Ti.UI.SIZE
+    });
+    
+    $.favorite_team_settings_row.add(favoriteTeamLabel);
 
 }
 

@@ -177,6 +177,10 @@ function updateProfileData(userInfo) {
     } else if(profileWinsLabel.toImage().width > profileCoinsLabel.toImage().width){
         profileCoinsLabel.setWidth(profileWinsLabel.toImage().width);
     }
+    
+    if (userInfo.team.data[0]) {
+        Ti.App.Properties.setString("favorite_team", userInfo.team.data[0].name);
+    }
 
     firstRow.show();
     secondRow.show();

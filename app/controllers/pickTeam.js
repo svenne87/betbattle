@@ -1,5 +1,7 @@
 var args = arguments[0] || {};
 var context;
+var selectedFavoriteTeamLabel = null;
+selectedFavoriteTeamLabel = args.label;
 var showNav = false;
 showNav = args.navOpen;
 
@@ -470,6 +472,8 @@ function teamPicked(tid, name) {
     var xhr = Ti.Network.createHTTPClient({
         onload : function(e) {
             indicator.closeIndicator();
+            
+            Ti.App.Properties.setString("favorite_team", name);
 
             //show toast of your favorite team
             Alloy.Globals.showToast(Alloy.Globals.PHRASES.youTeamTxt + ' ' + name);
@@ -493,6 +497,14 @@ function teamPicked(tid, name) {
                         orientationModes : [Titanium.UI.PORTRAIT]
                     });
                     loginSuccessWindow = null;
+                }
+            } else {
+                if(selectedFavoriteTeamLabel !== null) {
+                    if(name.length > 12) {
+                        selectedFavoriteTeamLabel.setText(name.substring(0, 9) + "...");
+                    } else {
+                        selectedFavoriteTeamLabel.setText(name);
+                    }
                 }
             }
 

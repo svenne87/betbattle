@@ -99,6 +99,11 @@ function getChallengesAndStart() {
                 var args = {
                     dialog : indicator
                 };
+                
+                                    if(!isAndroid) {
+                         $.nav.close();
+                    }  // TODO
+
 
                 if (user_team.data.length > 0) {
                     // keep landing page in memory
@@ -108,7 +113,7 @@ function getChallengesAndStart() {
                     var loginSuccessWindow = Alloy.createController('main', args).getView();
                     // Alloy.Globals.CURRENTVIEW = loginSuccessWindow;
                     // Alloy.Globals.CURRENTVIEW.hide();
-                    
+
                     if (OS_IOS) {
                         loginSuccessWindow.open({
                             fullScreen : true
@@ -286,9 +291,9 @@ function login() {
         if (!args.reauth) {
                             // kanske gav strul på ios?
             if(isAndroid) {
-            fb.logout();  // TODO Added to see if it will reinitiate correct at error's
+                fb.logout();  // TODO Added to see if it will reinitiate correct at error's
             }
-            
+
             fb.authorize();    
         } else {
             removeEvent();
@@ -350,6 +355,13 @@ var fb;
 var fbModule;
 var isAndroid;
 
+var reOpen = false;
+var args = arguments[0] || {};
+
+if(args.reOpen) {
+    reOpen = args.reOpen;
+}
+
 var added = false;
 
 if (OS_IOS) {
@@ -374,6 +386,8 @@ Ti.API.log("Försöker iaf 1..." + fb.loggedIn);
 // need to keep track if event was already added, since it is beeing added several times otherwise.
 
 var fbLoginEvent = function(e) {
+    Ti.API.log("added -> " + added + " connect -> " + Alloy.Globals.connect);
+    
     if (added) {
         return;
     }
@@ -428,7 +442,7 @@ var fbLoginEvent = function(e) {
             } else {
                 Alloy.Globals.showFeedbackDialog(e.error);
             }
-
+            added = false;
             addEvent();
             // TODO need to add it here??????
         } else if (e.cancelled) {
@@ -439,7 +453,7 @@ var fbLoginEvent = function(e) {
         }
     }    
 };
-
+             
 fb.addEventListener('login', fbLoginEvent);
 
 if (!isAndroid) {
@@ -470,7 +484,9 @@ addEvent();
 if(isAndroid) {
     fb.initialize(5000);
 } else {
-    fb.initialize(5000, false);   // TODO this should be false right?
+    if(!reOpen) {
+        fb.initialize(5000, false);   // problem efter man bytt språk eyy par ggr sen klickar logga ut sen ska in igen ( hade nog behövt initialize just där)
+    }
 }
 
 
@@ -848,12 +864,12 @@ $.login.addEventListener('close', function() {
     for (child in $.scrollableView.children) {
         $.scrollableView[child] = null;
     }
-
+    removeEvent();
     children = null;
     $.scrollableView = null;
-    
     fb.removeEventListener('login', fbLoginEvent);
-    
+    fb = null;
+    $.login = null;
     $.destroy();
 });
 
@@ -883,6 +899,7 @@ $.loginBtn.addEventListener('click', function(e) {
     var loginWindow = Alloy.createController('loginView').getView();
     if (OS_IOS) {
         $.nav.openWindow(loginWindow);
+        Alloy.Globals.WINDOWS.push($.nav);
     } else {
         loginWindow.open();
     }
@@ -899,6 +916,7 @@ $.registerBtn.addEventListener('click', function(e) {
     var regWindow = Alloy.createController('registrationView').getView();
     if (OS_IOS) {
         $.nav.openWindow(regWindow);
+        Alloy.Globals.WINDOWS.push($.nav);
     } else {
         regWindow.open();
     }
