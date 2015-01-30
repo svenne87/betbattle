@@ -162,6 +162,7 @@ function Controller() {
                         emptyView.add(emptyTxt);
                         var emptyButton = Alloy.Globals.createButtonView(Alloy.Globals.themeColor(), "#FFF", Alloy.Globals.PHRASES.createGroupTxt);
                         emptyButton.top = 40;
+                        emptyButton.bottom = 10;
                         emptyButton.addEventListener("click", function() {
                             var win = Alloy.createController("createGroup").getView();
                             if (isAndroid) {

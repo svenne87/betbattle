@@ -64,7 +64,7 @@
 },
 "#space_row":{
 	width : Ti.UI.FILL,
-	height : 35,
+	height : 35
 },
 "#loginEmail":{
 	color:'#CCC',

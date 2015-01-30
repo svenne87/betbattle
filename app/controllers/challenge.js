@@ -1635,12 +1635,20 @@ function createLayout(gameObject) {
         }
 
         table.setData(sections);
+        
+        if(!isAndroid) {
+            // Titanium 3.5.0 bug?
+            $.challenge.addView(view);
+        }
+        
         view.add(table);
     }
 
 
     Alloy.Globals.performTimeout(doRest(gameObject));
-    $.challenge.addView(view);
+    if(isAndroid) {
+        $.challenge.addView(view);  
+    }
 }
 
 /* Flow */
@@ -1935,7 +1943,7 @@ if (Alloy.Globals.checkConnection()) {
                         $.challenge.children[child] = null;
                     }
                 }
-                
+               
                 // create views for each gameObject
                 for (var i = 0; i < gameObjects.length; i++) {
                     createLayout(gameObjects[i]);

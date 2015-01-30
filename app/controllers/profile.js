@@ -6,7 +6,7 @@ var iOSVersion;
 var sections = [];
 var profileLoadingLabel;
 var deviceWidth = Ti.Platform.displayCaps.platformWidth;
-
+var profileImageView;
 var fontawesome = require('lib/IconicFont').IconicFont({
     font : 'lib/FontAwesome'
 });
@@ -27,7 +27,8 @@ if (OS_ANDROID) {
             });
 
             settings.addEventListener('click', function() {
-                var win = Alloy.createController("settings").getView();
+                var args = {profile : profileImageView};
+                var win = Alloy.createController("settings", args).getView();
                 Alloy.Globals.CURRENTVIEW = win;
                 win.open({
                     fullScreen : true
@@ -73,7 +74,8 @@ if (OS_ANDROID) {
     });
 
     settingsIcon.addEventListener('click', function() {
-        var win = Alloy.createController("settings").getView();
+        var args = {profile : profileImageView};
+        var win = Alloy.createController("settings", args).getView();
         Alloy.Globals.CURRENTVIEW = win;
         Alloy.Globals.NAV.openWindow(win, {
             animated : true
@@ -146,7 +148,7 @@ var mainProfileCover = Ti.UI.createView({
 
 mainProfileRow.add(mainProfileCover);
 
-var profileImageView = Ti.UI.createImageView({
+profileImageView = Ti.UI.createImageView({
     top : 20,
     defaultImage : '/images/no_pic.png',
     width : 120,
@@ -396,19 +398,19 @@ $.table.setData(sections);
 function getProfile() {
     var xhr = Titanium.Network.createHTTPClient();
     xhr.onerror = function(e) {
-        profileNameLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
+        nameProfileLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
         Ti.API.error('Bad Sever =>' + e.error);
     };
 
     try {
-        xhr.open('POST', Alloy.Globals.BETKAMPENUSERURL + '?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
+        xhr.open('GET', Alloy.Globals.BETKAMPENUSERURL + '?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
         xhr.setRequestHeader("content-type", "application/json");
         xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
         xhr.setTimeout(Alloy.Globals.TIMEOUT);
 
         xhr.send();
     } catch(e) {
-        profileNameLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
+        nameProfileLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
     }
 
     xhr.onload = function() {
@@ -460,7 +462,7 @@ function getProfile() {
             }
 
         } else {
-            profileNameLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
+            nameProfileLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
             Ti.API.error("Error =>" + this.response);
         }
     };

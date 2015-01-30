@@ -6,6 +6,14 @@ var indicator = uie.createIndicatorWindow({
     text : Alloy.Globals.PHRASES.loadingTxt
 });
 
+var deviceHeight = Ti.Platform.displayCaps.platformHeight;
+
+if(deviceHeight <= 480) {
+    $.space_row.height  = 5;
+} else if(deviceHeight >= 667) {
+    $.space_row.height  = 65;
+}
+
 var user_team;
 var args = arguments[0] || {};
 

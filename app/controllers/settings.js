@@ -3,6 +3,9 @@ var indicator = uie.createIndicatorWindow({
     top : 200,
     text : Alloy.Globals.PHRASES.loadingTxt
 });
+var argsIn = arguments[0] || {};
+var profileView = null;
+profileView = argsIn.profile;
 
 var fontawesome = require('lib/IconicFont').IconicFont({
     font : 'lib/FontAwesome'
@@ -124,7 +127,7 @@ function sendSettingsServer(param, type, valueToStore) {
 
                         // update event
                         Ti.App.fireEvent('app:updateMenu');
-                        Ti.App-fireEvent('userInfoUpdate');
+                        Ti.App.fireEvent('userInfoUpdate');
                     }
                     Alloy.Globals.showToast(JSON.parse(this.responseText));
                 }
@@ -282,6 +285,10 @@ function createGUI() {
                             var response = JSON.parse(this.responseText);
                             Alloy.Globals.showToast(response);
                             $.upload_indicator.hide();
+                            
+                            if(profileView) {
+                                profileView.image = Alloy.Globals.BETKAMPENURL + '/profile_images/' + Alloy.Globals.BETKAMPENUID + '.png' + "?t=" + new Date().getTime();
+                            }
                             
                             // update event
                             Ti.App.fireEvent('app:updateMenu');

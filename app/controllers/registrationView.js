@@ -4,6 +4,15 @@ var indicator = uie.createIndicatorWindow({
     text : Alloy.Globals.PHRASES.loadingTxt
 });
 
+var deviceHeight = Ti.Platform.displayCaps.platformHeight;
+
+if(deviceHeight <= 480) {
+    $.info_label.top = 5;
+    $.space_row.height  = 20;
+} else if(deviceHeight >= 667) {
+    $.space_row.height  = 65;
+}
+
 var isAndroid = false;
 
 if (OS_ANDROID) {

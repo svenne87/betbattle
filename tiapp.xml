@@ -12,7 +12,7 @@
     <publisher>Topgame</publisher>
     <url>http://betkampen.se</url>
     <description>not specified</description>
-    <copyright>2014 Topgame</copyright>
+    <copyright>2015 Topgame</copyright>
     <icon>appicon.png</icon>
     <fullscreen>true</fullscreen>
     <navbar-hidden>true</navbar-hidden>
@@ -86,7 +86,7 @@
         </plist>
     </ios>
     <android xmlns:android="http://schemas.android.com/apk/res/android">
-        <manifest android:versionCode="214" android:versionName="2.1">
+        <manifest android:versionCode="216" android:versionName="2.1">
             <uses-sdk android:minSdkVersion="14" android:targetSdkVersion="16"/>
             <supports-screens android:anyDensity="false"
                 android:largeScreens="true" android:normalScreens="true" android:smallScreens="false"/>
@@ -191,7 +191,7 @@
         <target device="mobileweb">false</target>
         <target device="tizen">false</target>
     </deployment-targets>
-    <sdk-version>3.5.0.GA</sdk-version>
+    <sdk-version>3.4.2</sdk-version>
     <plugins>
         <plugin version="1.0">ti.alloy</plugin>
     </plugins>

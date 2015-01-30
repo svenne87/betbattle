@@ -287,18 +287,19 @@ function login() {
     // check login
     if (Alloy.Globals.checkConnection()) {
         isSubmitting = true;
-        setButtonOpacity(0);
+       // setButtonOpacity(0);
         if (!args.reauth) {
-                            // kanske gav strul på ios?
+
             if(isAndroid) {
-                fb.logout();  // TODO Added to see if it will reinitiate correct at error's
+                fb.logout();  // Added to see if it will reinitiate correct at error's (will mess with ios)
             }
 
-            fb.authorize();    
+            fb.authorize();                
+            isSubmitting = false; // ios fix so we can login after restart...         
         } else {
+            setButtonOpacity(0);
             removeEvent();
-            indicator.openIndicator();
-            
+            indicator.openIndicator();         
             if (!fb.loggedIn) {
                 fb.authorize();
             } else {
@@ -386,8 +387,7 @@ Ti.API.log("Försöker iaf 1..." + fb.loggedIn);
 // need to keep track if event was already added, since it is beeing added several times otherwise.
 
 var fbLoginEvent = function(e) {
-    Ti.API.log("added -> " + added + " connect -> " + Alloy.Globals.connect);
-    
+    Ti.API.log("Försöker iaf 11...");
     if (added) {
         return;
     }
@@ -395,7 +395,7 @@ var fbLoginEvent = function(e) {
 
     isSubmitting = true;
     setButtonOpacity(0);
-    Ti.API.log("Försöker iaf 11...");
+    Ti.API.log("Försöker iaf 111...");
 
     if (Alloy.Globals.connect == true) {
         indicator.openIndicator();
@@ -444,7 +444,7 @@ var fbLoginEvent = function(e) {
             }
             added = false;
             addEvent();
-            // TODO need to add it here??????
+            // need to add it here??????
         } else if (e.cancelled) {
             isSubmitting = false;
             setButtonOpacity(1);
@@ -470,6 +470,7 @@ if (!isAndroid) {
     }
 
     if (restart && fbLogin) {
+        Ti.API.log("This is a restart");
         fb.authorize();
         // This is needed for our restart function on ios, but will not work on android
         // reset
@@ -485,7 +486,7 @@ if(isAndroid) {
     fb.initialize(5000);
 } else {
     if(!reOpen) {
-        fb.initialize(5000, false);   // problem efter man bytt språk eyy par ggr sen klickar logga ut sen ska in igen ( hade nog behövt initialize just där)
+        fb.initialize(5000, false);
     }
 }
 

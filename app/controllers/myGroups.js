@@ -146,7 +146,7 @@ function createBtn() {
     });
     mainView.add(addGroupLabel);
 
-    var openCreateGroupBtn = Alloy.Globals.createButtonView("#FFF", "#000", Alloy.Globals.PHRASES.createGroupTxt);
+    var openCreateGroupBtn = Alloy.Globals.createButtonView(Alloy.Globals.themeColor(), "#FFF", Alloy.Globals.PHRASES.createGroupTxt);
 
     mainView.add(openCreateGroupBtn);
 

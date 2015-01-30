@@ -197,11 +197,12 @@ function updateProfileData(userInfo) {
 function getUserInfo() {
     var xhr = Titanium.Network.createHTTPClient();
     xhr.onerror = function(e) {
-        Ti.API.error('Bad Sever =>' + e.error);
+        Ti.API.error('Bad Sever 2 =>' + e.error);
+        profileNameLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
     };
 
     try {
-        xhr.open('POST', Alloy.Globals.BETKAMPENUSERURL + '?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
+        xhr.open('GET', Alloy.Globals.BETKAMPENUSERURL + '?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
         xhr.setRequestHeader("content-type", "application/json");
         xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
         xhr.setTimeout(Alloy.Globals.TIMEOUT);
@@ -212,6 +213,7 @@ function getUserInfo() {
             totalPoints : ''
         };
         Ti.App.fireEvent('app:coinsMenuInfo', error);
+        profileNameLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
     }
 
     xhr.onload = function() {
@@ -235,6 +237,7 @@ function getUserInfo() {
             }
         } else {
             Ti.API.error("Error =>" + this.response);
+            profileNameLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
         }
     };
 }
@@ -1663,7 +1666,6 @@ function constructTableData(array) {
         acceptRow.add(acceptLabel);
     } else if (Alloy.Globals.CHALLENGEOBJECTARRAY[0].length > 0) {
         // accept challenges, add badge
-        Ti.API.log("test");
         acceptLabel.setText(Alloy.Globals.CHALLENGEOBJECTARRAY[0].length);
         acceptLabel.setLeft(acceptTextLabel.toImage().width + 70);
         acceptRow.add(acceptLabel);
@@ -1855,7 +1857,7 @@ function getDynamicTopImage() {
     var xhr = Titanium.Network.createHTTPClient();
     xhr.onerror = function(e) {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-        Ti.API.error('Bad Sever =>' + e.error);
+        Ti.API.error('Bad Sever 3 =>' + e.error);
     };
 
     try {
@@ -1933,7 +1935,7 @@ function getChallenges() {
     xhr.onerror = function(e) {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
         endRefresher();
-        Ti.API.error('Bad Sever =>' + e.error);
+        Ti.API.error('Bad Sever 1 =>' + e.error);
         indicator.closeIndicator();
     };
 
@@ -1962,7 +1964,6 @@ function getChallenges() {
                     acceptRow.add(acceptLabel);
                 } else if (Alloy.Globals.CHALLENGEOBJECTARRAY[0].length > 0) {
                     // accept challenges, add badge
-                    Ti.API.log("test");
                     acceptLabel.setText(Alloy.Globals.CHALLENGEOBJECTARRAY[0].length);
                     acceptLabel.setLeft(acceptTextLabel.toImage().width + 70);
                     acceptRow.add(acceptLabel);
