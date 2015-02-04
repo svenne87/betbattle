@@ -444,8 +444,17 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished,
         challengeFinished = true;
     } else {
         // only show standings if a match has started
-        if (checkDate(game.game_date)) {
-            currentStanding = pendingStandingsArray;
+        if(games.length > 1) {
+            for(var g in games) {
+                if(checkDate(games[g].game_date)) {
+                    currentStanding = pendingStandingsArray;
+                    break;
+                }
+            }
+        } else {
+            if (checkDate(game.game_date)) {
+                currentStanding = pendingStandingsArray;
+            } 
         }
     }
 

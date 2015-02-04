@@ -191,7 +191,8 @@ function createGameType(gameType, gameObject, i, gameArray, index) {
     gameTypeView.addEventListener("click", function(e) {
         gameArray[index].gameValue[0] = e.row.value;
         gameArray[index].gameValue[1] = 0;
-        var children = table.data[e.row.id];
+        //var children = table.data[e.row.id];
+        var children = e.section;
         var labels = [];
 
         e.row.add(Ti.UI.createLabel({

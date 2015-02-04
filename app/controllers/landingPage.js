@@ -555,6 +555,8 @@ if(typeof Ti.Android.currentActivity.actionBar !== 'undefined' && typeof Alloy.G
             type = 'finished';
         } else if (type === '4') {
             type = 'achievement';
+        } else if (type === '0') {
+            type = 'message';
         }
 
         try {
