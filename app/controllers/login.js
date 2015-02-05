@@ -100,7 +100,7 @@ function getChallengesAndStart() {
                     dialog : indicator
                 };
                 
-                                    if(!isAndroid) {
+                    if(!isAndroid) {
                          $.nav.close();
                     }  // TODO
 

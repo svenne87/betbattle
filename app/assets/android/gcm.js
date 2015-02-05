@@ -60,7 +60,6 @@
 	ntfId += 1;
 	Ti.App.Properties.setInt('ntfId', ntfId);
 
-    
 	// create notification
 	var pintent = Ti.Android.createPendingIntent({
 		intent: launcherIntent

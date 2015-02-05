@@ -141,9 +141,14 @@ function createGameType(gameType, game, values, index, sections) {
         }
     });
 
-    var gameTypeText = Alloy.Globals.PHRASES.gameTypes[type].displayResult;
-    if (gameTypeText.length > 20) {
-        gameTypeText = gameTypeText.substring(0, 17) + '...';
+    var gameTypeText = 'N/A';
+
+    if ( typeof Alloy.Globals.PHRASES.gameTypes[type] !== 'undefined') {
+        gameTypeText = Alloy.Globals.PHRASES.gameTypes[type].displayResult;
+
+        if (gameTypeText.length > 20) {
+            gameTypeText = gameTypeText.substring(0, 17) + '...';
+        }
     }
 
     gameTypeView.add(Ti.UI.createLabel({
@@ -203,36 +208,40 @@ function createGameType(gameType, game, values, index, sections) {
         for (var i = 0; i < game.result_values.length; i++) {
             if (game.result_values[i].game_type === type && game.result_values[i].gid === game.game_id) {
                 if (gameType.number_of_values === '1') {
-                    if ( typeof Alloy.Globals.PHRASES.gameTypes[type].buttonValues !== 'undefined') {
-                        // check for the gametype "draw"
-                        resultText = Alloy.Globals.PHRASES.gameTypes[type].buttonValues[game.result_values[i].value_1];
+                    if ( typeof Alloy.Globals.PHRASES.gameTypes[type] !== 'undefined') {
+                        if ( typeof Alloy.Globals.PHRASES.gameTypes[type].buttonValues !== 'undefined') {
+                            // check for the gametype "draw"
+                            resultText = Alloy.Globals.PHRASES.gameTypes[type].buttonValues[game.result_values[i].value_1];
 
-                        //if the json says team1 or team2. get the actual team names
-                        if (resultText === "team1") {
-                            resultText = game.team_1.team_name;
-                        } else if (resultText === "team2") {
-                            resultText = game.team_2.team_name;
-                        }
+                            //if the json says team1 or team2. get the actual team names
+                            if (resultText === "team1") {
+                                resultText = game.team_1.team_name;
+                            } else if (resultText === "team2") {
+                                resultText = game.team_2.team_name;
+                            }
 
-                        // if the game is in progress and result first goal, winning team etc. is draw
-                        if (game.status === '3') {
-                            if (game.result_values[i].value_1 === '2') {
+                            // if the game is in progress and result first goal, winning team etc. is draw
+                            if (game.status === '3') {
+                                if (game.result_values[i].value_1 === '2') {
+                                    resultText = "-";
+                                }
+                            }
+
+                            // resultText will be undefined if it's gametype "draw"
+                            if ( typeof resultText === 'undefined') {
+                                // if game is pending and the status is "no score", hide it
                                 resultText = "-";
                             }
-                        }
 
-                        // resultText will be undefined if it's gametype "draw"
-                        if ( typeof resultText === 'undefined') {
-                            // if game is pending and the status is "no score", hide it
-                            resultText = "-";
-                        }
-
-                        if (resultText.length > 15) {
-                            resultText = resultText.substring(0, 12) + '...';
+                            if (resultText.length > 15) {
+                                resultText = resultText.substring(0, 12) + '...';
+                            }
+                        } else {
+                            // Yellow card
+                            resultText = game.result_values[i].value_1;
                         }
                     } else {
-                        // Yellow card
-                        resultText = game.result_values[i].value_1;
+                        resultText = 'N/A';
                     }
                     // check if game typ is 1, winning team. Should be cleared out when the match is "live" and the score is more than 0-0
                     if (type === '1' && game.status === '3' && game.result_values[1].value_1 === '0' && game.result_values[1].value_1 === "0") {
@@ -374,28 +383,32 @@ function createGameType(gameType, game, values, index, sections) {
             // print out all the participants values
             var valueText = '';
             if (gameType.number_of_values === '1') {
-                if ( typeof Alloy.Globals.PHRASES.gameTypes[type].buttonValues !== 'undefined') {
-                    // check for the gametype "draw"
-                    valueText = Alloy.Globals.PHRASES.gameTypes[type].buttonValues[values[i].value_1];
+                if ( typeof Alloy.Globals.PHRASES.gameTypes[type] !== 'undefined') {
+                    if ( typeof Alloy.Globals.PHRASES.gameTypes[type].buttonValues !== 'undefined') {
+                        // check for the gametype "draw"
+                        valueText = Alloy.Globals.PHRASES.gameTypes[type].buttonValues[values[i].value_1];
 
-                    //if the json says team1 or team2. get the actual team names
-                    if (valueText === "team1") {
-                        valueText = game.team_1.team_name;
-                    } else if (valueText === "team2") {
-                        valueText = game.team_2.team_name;
-                    }
+                        //if the json says team1 or team2. get the actual team names
+                        if (valueText === "team1") {
+                            valueText = game.team_1.team_name;
+                        } else if (valueText === "team2") {
+                            valueText = game.team_2.team_name;
+                        }
 
-                    // valueText will be undefined if it's gametype "draw"
-                    if ( typeof valueText === 'undefined') {
+                        // valueText will be undefined if it's gametype "draw"
+                        if ( typeof valueText === 'undefined') {
+                            valueText = values[i].value_1;
+                        }
+
+                        if (valueText.length > 15) {
+                            valueText = valueText.substring(0, 12) + '...';
+                        }
+                    } else {
+                        // This will handle yellow cards
                         valueText = values[i].value_1;
                     }
-
-                    if (valueText.length > 15) {
-                        valueText = valueText.substring(0, 12) + '...';
-                    }
                 } else {
-                    // This will handle yellow cards
-                    valueText = values[i].value_1;
+                    valueText = 'N/A';
                 }
             } else if (gameType.number_of_values === '2') {
                 valueText = values[i].value_1 + " - " + values[i].value_2;
@@ -444,9 +457,9 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished,
         challengeFinished = true;
     } else {
         // only show standings if a match has started
-        if(games.length > 1) {
-            for(var g in games) {
-                if(checkDate(games[g].game_date)) {
+        if (games.length > 1) {
+            for (var g in games) {
+                if (checkDate(games[g].game_date)) {
                     currentStanding = pendingStandingsArray;
                     break;
                 }
@@ -454,7 +467,7 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished,
         } else {
             if (checkDate(game.game_date)) {
                 currentStanding = pendingStandingsArray;
-            } 
+            }
         }
     }
 
@@ -968,7 +981,7 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished,
                         for (var view in $.showChallenge.getViews()) {
                             androidViews.push($.showChallenge.getViews()[view]);
                         }
-                        
+
                         getChallengeShow();
                         $.swipeRefresh.removeEventListener('refreshing', androidRefresh);
                     }, 800);

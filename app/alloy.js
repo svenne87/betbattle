@@ -50,7 +50,7 @@ Alloy.Globals.VERSIONS;
 Alloy.Globals.COUPON = null;
 Alloy.Globals.hasCoupon = false;
 Alloy.Globals.couponOpen = false;
-Alloy.Globals.appStatus = 'foreground';
+Alloy.Globals.appStatus = 'background';
 Alloy.Globals.FONT = getFont();
 Alloy.Globals.FONTBOLD = getBoldFont();
 Alloy.Globals.deviceHeight = Ti.Platform.displayCaps.platformHeight;

@@ -201,10 +201,12 @@ if (!isAndroid) {
 
     Alloy.Globals.iosResumeEvent = function() {
         Ti.API.log(" KöR resume... ");
-
         // if (Alloy.Globals.CURRENTVIEW !== null) {
         // check connection
-        Alloy.Globals.appStatus = 'foreground';
+        setTimeout(function() {
+            Alloy.Globals.appStatus = 'foreground';
+        }, 1000);
+        
         if (Alloy.Globals.checkConnection()) {
             if (Alloy.Globals.FACEBOOKOBJECT) {
                 var fb = Alloy.Globals.FACEBOOK;
@@ -293,11 +295,11 @@ if (!isAndroid) {
         apns.apns();
     }
 } else {
-    function doPush(type, push_data) {        
-        if (typeof Alloy.Globals.MAINWIN !== 'undefined' && Alloy.Globals.MAINWIN !== null) {
-            
+    function doPush(type, push_data, refresh) {
+        if ( typeof Alloy.Globals.MAINWIN !== 'undefined' && Alloy.Globals.MAINWIN !== null) {
+
             Ti.API.log("Resume should land here...");
-            
+
             var obj = {
                 controller : 'challengesView',
                 arg : {
@@ -333,7 +335,7 @@ if (!isAndroid) {
                 };
                 win = Alloy.createController('showChallenge', args).getView();
             } else if (type === 'finished') {
-                win = Alloy.createController('challenges_finished').getView();            
+                win = Alloy.createController('challenges_finished').getView();
             } else if (type === 'achievement') {
                 var player = Ti.Media.createSound({
                     url : "/sound/unlocked.wav"
@@ -416,114 +418,9 @@ if (!isAndroid) {
                 Alloy.Globals.WINDOWS.push(win);
             }
 
-            Ti.App.fireEvent('challengesViewRefresh');
-
-        } else {
-            
-            // TODO
-
-            /*
-            Ti.API.log("Resume should not get here...");
-            // TODO har inte lyckats komma in hit....
-            
-            var loginSuccessWindow = Alloy.createController('main').getView();
-            loginSuccessWindow.open({
-                fullScreen : true
-            });
-            loginSuccessWindow = null;
-
-            var win = null;
-
-            if (type === 'accept') {
-                args = {
-                    answer : 1,
-                    group : push_data.extra_data.group,
-                    bet_amount : push_data.extra_data.bet_amount
-                };
-
-              // TODO  Alloy.Globals.CHALLENGEINDEX = push_data.extra_data.cid;
-                win = Alloy.createController('challenge', args).getView();
-
-            } else if (type === 'pending') {
-                args = {
-                    cid : push_data.extra_data.cid
-                };
-                win = Alloy.createController('showChallenge', args).getView();
-            } else if (type === 'finished') {
-                win = Alloy.createController('challenges_finished', args).getView();
-            } else if (type === 'achievement') {
-                var player = Ti.Media.createSound({
-                    url : "/sound/unlocked.wav"
-                });
-
-                var indWin = Ti.UI.createWindow({
-                    backgroundColor : 'transparent',
-                    navBarHidden : true
-                });
-
-                indWin.addEventListener('open', function() {
-                    indWin.activity.actionBar.hide();
-                });
-
-                //  view
-                var indView = Titanium.UI.createView({
-                    top : '85%',
-                    height : 80,
-                    width : '100%',
-                    backgroundColor : '#FFF',
-                    opacity : 0.9,
-                    layout : 'horizontal'
-                });
-
-                indWin.add(indView);
-
-                var image = Ti.UI.createImageView({
-               // TODO     image : Alloy.Globals.BETKAMPENURL + '/achievements/' + push_data.extra_data.image,
-                    width : "15%",
-                    height : Ti.UI.SIZE,
-                    left : 0,
-                    top : 10
-                });
-                var mess = Titanium.UI.createLabel({
-                  //  text : push_data.message,   // TODO
-                    text : "this is a debug",
-                    right : 0,
-                    color : '#000',
-                    width : '75%',
-                    top : 25,
-                    height : 'auto',
-                    textAlign : 'center',
-                    font : Alloy.Globals.getFontCustom(12, 'Bold'),
-                });
-                indView.add(image);
-                indView.add(mess);
-                indWin.open();
-
-                player.play();
-
-                var interval = interval ? interval : 2500;
-                setTimeout(function() {
-                    indWin.close({
-                        opacity : 0,
-                        duration : 2000
-                    });
-                    player.stop();
-                    player.release();
-
-                }, interval);
-            } else if (type === 'message') {
-                // nothing
+            if (refresh) {
+                Ti.App.fireEvent('challengesViewRefresh');
             }
-
-            if (win !== null) {
-                win.open();
-                //win = null;
-            }
-            
-            if (win !== null) {
-        //     TODO   Alloy.Globals.WINDOWS.push(win);
-            }
-            */
         }
     }
 
@@ -534,42 +431,50 @@ if (!isAndroid) {
         // and we set extras for the intent
         // and the app WAS NOT running
         // (don't worry, we'll see more of this later)
-        
-       // Ti.API.log("STATUS -> " + JSON.stringify(Ti.Android.currentActivity));  // TODO kan detta verkligen hjälpa??
-       
-       // kan kolla Ti.Android.currentActivity.intent ?? border startats med de... 
-Ti.API.log(JSON.stringify(Ti.Android.currentActivity.intent));       
-       
-if(typeof Ti.Android.currentActivity.actionBar !== 'undefined' && typeof Alloy.Globals.PHRASES !== 'undefined') {
-    if(Ti.Android.currentActivity.actionBar.title === Alloy.Globals.PHRASES.betbattleTxt) {
-        
-        
 
-        var type = pendingData.challenge_type;
+        if ( typeof Ti.Android.currentActivity.actionBar !== 'undefined' && typeof Alloy.Globals.PHRASES !== 'undefined') {
+            if (Ti.Android.currentActivity.actionBar.title === Alloy.Globals.PHRASES.betbattleTxt) {
 
-        if (type === '1') {
-            type = 'accept';
-        } else if (type === '2') {
-            type = 'pending';
-        } else if (type === '3') {
-            type = 'finished';
-        } else if (type === '4') {
-            type = 'achievement';
-        } else if (type === '0') {
-            type = 'message';
+                var type = pendingData.challenge_type;
+
+                if (type === '1') {
+                    type = 'accept';
+                } else if (type === '2') {
+                    type = 'pending';
+                } else if (type === '3') {
+                    type = 'finished';
+                } else if (type === '4') {
+                    type = 'achievement';
+                } else if (type === '0') {
+                    type = 'message';
+                }
+
+                // First push for the device will not trigger doPush, since 0 = 0.
+                // check if there is a last push id stored
+                var lastNtfid = Ti.App.Properties.getInt('last_ntfId', 0);
+
+                if (pendingData.ntfId && pendingData.ntfId !== null && typeof pendingData.ntfId !== 'undefined') {
+                    var thisNtfid = pendingData.ntfId;
+
+                    // check so we are not trying to show a push for a already shown.
+                    if (lastNtfid !== thisNtfid) {
+                        lastNtfid = thisNtfid;
+                        try {
+                            setTimeout(function() {
+                                doPush(type, pendingData, false);
+                                Ti.API.log("Resume Push");
+                            }, 2000);
+
+                        } catch(e) {
+                            // something went wrong
+                        }
+                    }
+                }
+
+                // keep track of when this id was used, so we don't show the same push at next app start
+                Ti.App.Properties.setInt('last_ntfId', lastNtfid);
+            }
         }
-
-        try {
-            setTimeout(function() {
-                doPush(type, pendingData); 
-                Ti.API.log("Resume Push");
-            }, 2000);
-
-        } catch(e) {
-            // something went wrong
-        }
-}
-  }
     }
 
     gcm.registerForPushNotifications({
@@ -607,7 +512,7 @@ if(typeof Ti.Android.currentActivity.actionBar !== 'undefined' && typeof Alloy.G
                 });
 
                 alertWindow.addEventListener('click', function(eve) {
-                    doPush(type, e);
+                    doPush(type, e, true);
                     alertWindow.hide();
                 });
                 alertWindow.show();
@@ -648,7 +553,7 @@ if(typeof Ti.Android.currentActivity.actionBar !== 'undefined' && typeof Alloy.G
 
                 alertWindow.addEventListener('click', function(e) {
                     alertWindow.hide();
-                    doPush(type, data);
+                    doPush(type, data, false);
                 });
                 alertWindow.show();
             } catch(e) {

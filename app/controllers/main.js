@@ -1034,3 +1034,7 @@ function setRateStatus(rate_status) {
     };
     rateStatus.send(params);
 }
+
+setTimeout(function() {
+    Alloy.Globals.appStatus = 'foreground';
+}, 1000);

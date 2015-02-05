@@ -21,6 +21,14 @@ var apns = function() {
             Ti.API.info("Error during registration: " + e.error);
         },
         callback : function(e) {
+            var refreshNeeded = false; // should allways run this if we can't solve it
+            Ti.API.log("Checking app status.... " + Alloy.Globals.appStatus);
+            if(Alloy.Globals.appStatus) {
+                if(Alloy.Globals.appStatus === 'foreground') {
+                    refreshNeeded = true;
+                }
+            }
+            
             // called when a push notification is received.
             Titanium.Media.vibrate();
             var data = e.data;
@@ -58,6 +66,7 @@ var apns = function() {
                     Titanium.UI.iPhone.appBadge = 0;
 
                     if (Alloy.Globals.MAINWIN !== null) {
+                        
                         var obj = {
                             controller : 'challengesView',
                             arg : {
@@ -139,14 +148,25 @@ var apns = function() {
                             // nothing
                         }
                         
+                        if(refreshNeeded) {
+                            Ti.API.log("Do tha refresh man....");
+                            // issues with updateView when we don't need it
+                            if(type !== 'message' && type !== 'achievement') {
+                                Ti.App.fireEvent('app:updateView', obj);
+                            } else {
+                                Ti.App.fireEvent('challengesViewRefresh');
+                            }   
+                        }
+                        
+                        /*
                         // issues with updateView when we don't need it
                         if(type !== 'message' && type !== 'achievement') {
                             Ti.App.fireEvent('app:updateView', obj);
                         } else {
                             Ti.App.fireEvent('challengesViewRefresh');
                         }
+                        */
                         
-
                         if (win !== null) {
                             Alloy.Globals.NAV.openWindow(win);                    
                         }
@@ -166,7 +186,7 @@ var apns = function() {
                         if (win !== null) {
                             Alloy.Globals.WINDOWS.push(win);
                         }
-                    } else {                       
+                    } else {                 
                         var loginSuccessWindow = Alloy.createController('main').getView();
                         loginSuccessWindow.open({
                             fullScreen : true

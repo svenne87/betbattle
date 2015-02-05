@@ -86,7 +86,7 @@
         </plist>
     </ios>
     <android xmlns:android="http://schemas.android.com/apk/res/android">
-        <manifest android:versionCode="217" android:versionName="2.1">
+        <manifest android:versionCode="218" android:versionName="2.1">
             <uses-sdk android:minSdkVersion="14" android:targetSdkVersion="16"/>
             <supports-screens android:anyDensity="false"
                 android:largeScreens="true" android:normalScreens="true" android:smallScreens="false"/>

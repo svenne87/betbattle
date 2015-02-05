@@ -71,7 +71,11 @@ function createGameType(gameType, gameObject, i, gameArray, index) {
         selectionStyle : 'none',
     });
     //get the corresponding text inside each button from the JSON file
-    var text = Alloy.Globals.PHRASES.gameTypes[type].buttonValues[i + 1];
+    var text = 'N/A';
+    
+    if(typeof Alloy.Globals.PHRASES.gameTypes[type] !== 'undefined') {
+        text = Alloy.Globals.PHRASES.gameTypes[type].buttonValues[i + 1];
+    }
 
     //if the json says team1 or team2. get the actual team names
     if (text == "team1") {
@@ -1473,9 +1477,15 @@ function createLayout(gameObject) {
                     }]
                 },
             });
+            
+            var gameTypeLabelTxt = 'N/A';
+            
+            if(typeof Alloy.Globals.PHRASES.gameTypes[gametypes[y].type] !== 'undefined') {
+                gameTypeLabelTxt = Alloy.Globals.PHRASES.gameTypes[gametypes[y].type].description + '  ';
+            }
 
             var gameTypeLabel = Ti.UI.createLabel({
-                text : Alloy.Globals.PHRASES.gameTypes[gametypes[y].type].description + '  ',
+                text : gameTypeLabelTxt,
                 top : 10,
                 left : 20,
                 font : Alloy.Globals.getFontCustom(18, "Bold"),
