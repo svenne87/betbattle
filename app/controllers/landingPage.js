@@ -201,7 +201,6 @@ if (!isAndroid) {
 
     Alloy.Globals.iosResumeEvent = function() {
         Ti.API.log(" KöR resume... ");
-        // if (Alloy.Globals.CURRENTVIEW !== null) {
         // check connection
         setTimeout(function() {
             Alloy.Globals.appStatus = 'foreground';
@@ -230,7 +229,6 @@ if (!isAndroid) {
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionError);
             // TODO add retry?
         }
-        //}
     };
 
     Ti.App.addEventListener('resume', Alloy.Globals.iosResumeEvent);
@@ -249,7 +247,7 @@ if (!isAndroid) {
                     lifecycleContainer : $.landingPageWin
                 });
                 var fb = Alloy.Globals.FACEBOOK;
-                //        Alloy.Globals.BETKAMPEN.token = Alloy.Globals.BETKAMPEN.token + 'aa';  // TODO
+
                 if (fb) {
                     if (fb.loggedIn) {
                         loginBetkampenAuthenticated(2);
