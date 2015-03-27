@@ -155,14 +155,23 @@ var apns = function() {
                             Alloy.Globals.NAV.openWindow(win);
                         }
 
-                        if (Alloy.Globals.WINDOWS.length > 0) {
+                        if (Alloy.Globals.WINDOWS.length > 1) {
                             for (var w in Alloy.Globals.WINDOWS) {
-                                Alloy.Globals.WINDOWS[w].setOpacity(0);
+                                if (type !== 'message') {
+                                    if (Alloy.Globals.WINDOWS[w].id === 'challenges_finished' || Alloy.Globals.WINDOWS[w].id === 'challenges_pending' || Alloy.Globals.WINDOWS[w].id === 'challenges_accept') {
+                                        Alloy.Globals.WINDOWS[w].setOpacity(0);
+                                    }
+                                }
                             }
 
                             for (var w in Alloy.Globals.WINDOWS) {
-                                if (Alloy.Globals.WINDOWS[w] === win) {
-                                    Alloy.Globals.WINDOWS[w].close();
+                                if (Alloy.Globals.WINDOWS[w] !== win) {
+                                    if (type !== 'message') {
+                                        if (Alloy.Globals.WINDOWS[w].id === 'challenges_finished' || Alloy.Globals.WINDOWS[w].id === 'challenges_pending' || Alloy.Globals.WINDOWS[w].id === 'challenges_accept') {
+                                            Alloy.Globals.WINDOWS[w].close();
+                                        }
+                                    }
+
                                 }
                             }
                         }

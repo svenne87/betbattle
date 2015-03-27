@@ -1159,13 +1159,18 @@ function postAnswer(gameArray) {
                     Ti.App.fireEvent('app:updateView', obj);
 
                     for (var win in Alloy.Globals.WINDOWS) {
-                        Alloy.Globals.WINDOWS[win].setOpacity(0);
+                        Ti.API.log("Släck -> " + Alloy.Globals.WINDOWS[win].id);
+                        if (Alloy.Globals.WINDOWS[win].id === 'challenges_new' || Alloy.Globals.WINDOWS[win].id === 'challenges_pending' || Alloy.Globals.WINDOWS[win].id === 'challenges_accept') {
+                            Alloy.Globals.WINDOWS[win].setOpacity(0);   
+                        }      
                     }
 
                     $.challengeWindow.close();
                     
                     for (var win in Alloy.Globals.WINDOWS) {
-                        Alloy.Globals.WINDOWS[win].close();
+                        if (Alloy.Globals.WINDOWS[win].id === 'challenges_finished' || Alloy.Globals.WINDOWS[win].id === 'challenges_pending' || Alloy.Globals.WINDOWS[win].id === 'challenges_accept') {
+                            Alloy.Globals.WINDOWS[win].close();
+                        }
                     }
 
                 } else {

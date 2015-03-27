@@ -313,7 +313,7 @@ function buildTableRows() {
     data = [];
 
     // add last matchOTD row
-    data.push(createLastMatchOTDRow());
+   //  table.appendRow(createLastMatchOTDRow());
 
     // sort challenges based on first game date
     finishedChallengesArray.sort(compare);

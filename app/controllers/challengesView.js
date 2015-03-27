@@ -843,8 +843,11 @@ table.addEventListener('click', function(e) {
     }
 
     if (e.rowData.className === 'accept') {
+        // TEST
+        Alloy.Globals.CHALLENGEOBJECTARRAY[0].sort(compare);
+        
         var obj = Alloy.Globals.CHALLENGEOBJECTARRAY[0][e.rowData.id];
-
+        console.log("Pending -> " + e.rowData.id); // TODO
         if (obj.attributes.show !== 0) {
             // view challenge
 
@@ -926,8 +929,11 @@ table.addEventListener('click', function(e) {
             });
         }
     } else if (e.rowData.className === 'pending') {
-        var obj = Alloy.Globals.CHALLENGEOBJECTARRAY[1][e.rowData.id];
+          // TEST
+        Alloy.Globals.CHALLENGEOBJECTARRAY[1].sort(compare);
         
+        var obj = Alloy.Globals.CHALLENGEOBJECTARRAY[1][e.rowData.id];
+        console.log("Pending -> " + e.rowData.id); // TODO
         if (obj.attributes.show !== 0) {
             // view challenge
             var group = null;
@@ -1003,7 +1009,8 @@ table.addEventListener('click', function(e) {
 });
 
 if (isAndroid) {
-    // https://github.com/raymondkam/Ti.SwipeRefreshLayout
+    // https://github.com/raymondkam/Ti.SwipeRefreshLayout (original)   
+    // https://github.com/iskugor/Ti.SwipeRefreshLayout
 
     var swipeRefreshModule = require('com.rkam.swiperefreshlayout');
 
