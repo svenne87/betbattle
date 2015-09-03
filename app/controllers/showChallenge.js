@@ -1132,6 +1132,27 @@ function showResults(challenge) {
     $.showChallenge.show();
 }
 
+var checkWindow = null;
+
+// handle result push
+if(typeof args.state !== 'undefined') {
+    if(args.state === 'live-state') {
+        checkWindow = Alloy.Globals.WINDOWS[Alloy.Globals.WINDOWS.length - 1];
+        args.cid = checkWindow.cid;    
+        
+
+        // TODO $.showChallengeWindow.cid = args.cid ;  SKit. Fixa och lägg till kod för Android.
+    
+     
+        
+        
+        checkWindow.setOpacity(0);                    
+        checkWindow.close(); 
+    }
+} else {
+    $.showChallengeWindow.cid = args.cid;
+}
+
 if (Alloy.Globals.checkConnection()) {
     if (OS_IOS) {
         indicator.openIndicator();

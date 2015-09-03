@@ -279,22 +279,28 @@ function loginAuthenticated(fb) {
     };
 }
 
+/*
+ Rename android_support-v4.jar to android_support-v4.disabled.jar located:
+on OS X: /Users/(your username)/Library/Application Support/Titanium/mobilesdk/osx/(your titanium version)/android/
+ */
+
 function login() {
     if(isSubmitting) {
         return;
     }
-    
+     
     // check login
     if (Alloy.Globals.checkConnection()) {
         isSubmitting = true;
        // setButtonOpacity(0);
         if (!args.reauth) {
-
+                              
             if(isAndroid) {
                 fb.logout();  // Added to see if it will reinitiate correct at error's (will mess with ios)
             }
-
-            fb.authorize();                
+            
+            fb.authorize();  
+     
             isSubmitting = false; // ios fix so we can login after restart...         
         } else {
             setButtonOpacity(0);
@@ -324,12 +330,10 @@ var indicator = uie.createIndicatorWindow({
 });
 
 var isSubmitting = false;
-var downloadView = null;
-var isDownloading = false;
 /* Main Flow */
 $.loginBtn.setBackgroundColor(Alloy.Globals.themeColor());
 $.registerBtn.setBackgroundColor(Alloy.Globals.themeColor());
-addTutorialImages();
+addTutorial();
 
 // add facebook icon to the "login with facebook button"
 var fontawesome = require('lib/IconicFont').IconicFont({
@@ -352,8 +356,7 @@ $.facebookBtn.add(Ti.UI.createLabel({
     fontSize : 40
 }));
 
-var fb; 
-var fbModule;
+var fb = require('facebook');
 var isAndroid;
 
 var reOpen = false;
@@ -368,15 +371,17 @@ var added = false;
 if (OS_IOS) {
     isAndroid = false;
     $.login.hideNavBar();
-    fb = require('com.facebook');
     fb.permissions = ['email', 'public_profile'];
 } else {
     isAndroid = true;
-    fbModule = require('com.ti.facebook');
-    $.login.fbProxy = fbModule.createActivityWorker({lifecycleContainer: $.login});
-    fb = fbModule;
+ 
+    $.login.fbProxy = fb.createActivityWorker({lifecycleContainer: $.login});
     fb.permissions = ['email', 'public_profile'];
 }
+
+/* This should not be needed... */
+fb.appid = '1403709019858016';
+/* - - - - - */
 
 fb.forceDialogAuth = false;
 Alloy.Globals.connect = true;
@@ -385,6 +390,7 @@ Alloy.Globals.connect = true;
 Ti.API.log("Försöker iaf 1..." + fb.loggedIn);
 
 // need to keep track if event was already added, since it is beeing added several times otherwise.
+
 
 var fbLoginEvent = function(e) {
     Ti.API.log("Försöker iaf 11...");
@@ -405,11 +411,10 @@ var fbLoginEvent = function(e) {
         if (e.success) {
             if (isAndroid) {
                 e.data = JSON.parse(e.data);
-                Alloy.Globals.FACEBOOK = fbModule;
-            } else {
-                Alloy.Globals.FACEBOOK = fb;
             }
-
+            
+            Alloy.Globals.FACEBOOK = fb;
+            
             Alloy.Globals.BETKAMPEN = {
                 token : fb.accessToken
             };
@@ -483,10 +488,14 @@ if (!isAndroid) {
 addEvent();
 
 if(isAndroid) {
-    fb.initialize(5000);
+     // TODO ERROR fb.initialize causes the app to load twice... here aswell??
+     fb.initialize(5000); 
 } else {
     if(!reOpen) {
-        fb.initialize(5000, false);
+ 
+        // TODO ERROR fb.initialize causes the app to load twice...
+       // fb.initialize(5000); // , false
+
     }
 }
 
@@ -604,179 +613,37 @@ function loginBetkampenAuthenticated() {
     };
 }
 
-function downloadTutorial() {
-    var platform = "";
-    if (Alloy.Globals.checkConnection()) {
-        isDownloading = true;
+function addTutorial() {
+    // TODO should there be several webviews for each language/platform? (or just one as now)
+    
+    if(Alloy.Globals.checkConnection()) {
+        var platform = 'android';
         
-        if (OS_IOS) {
-            platform = "iphone";
-        } else if (OS_ANDROID) {
-            platform = "android";
+        if(OS_IOS) {
+            platform = 'iphone';
         }
-        var xhr = Titanium.Network.createHTTPClient();
-        xhr.onerror = function(e) {
-            Ti.API.error('Bad Sever =>' + JSON.stringify(e));
-            indicator.closeIndicator();
-            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-            isDownloading = false;
-        };
-
-        try {
-            xhr.open('POST', Alloy.Globals.BETKAMPENGETTUTORIALURL + "?lang=" + Alloy.Globals.LOCALE + '&platform=' + platform);
-            xhr.setRequestHeader("content-type", "application/json");
-            xhr.setTimeout(Alloy.Globals.TIMEOUT);
-            xhr.send();
-        } catch(e) {
-            indicator.closeIndicator();
-            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-            isDownloading = false;
-        }
-
-        xhr.onload = function() {
-            if (this.status == '200') {
-                if (this.readyState == 4) {
-                    var response = JSON.parse(this.responseText);
-                    var imageLocationArray = [];
-                    var doneCount = 0;
-
-                    indicator.setText("Downloading tutorial...");
-                    indicator.openIndicator();
-
-                    // download each file
-                    for (var img in response) {
-                        var inline_function = function(img) {
-                            var imageDownloader = Titanium.Network.createHTTPClient();
-                            imageDownloader.setTimeout(Alloy.Globals.TIMEOUT);
-
-                            imageDownloader.onload = function(e) {
-                                var f = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, 'tut_' + response[img] + '.png');
-                                f.write(this.responseData);
-                                imageLocationArray.push({path: f.nativePath, name : img});
-                                doneCount++;
-
-                                if (doneCount == response.length) {
-                                    // store the array on phone
-                                    Ti.App.Properties.setString("tutorial_images", JSON.stringify(imageLocationArray));
-                                    indicator.closeIndicator();
-                                    indicator.setText(Alloy.Globals.PHRASES.loadingTxt);
-                                    isDownloading = false;
-                                    addTutorialImages();
-                                }
-                            };
-
-                            imageDownloader.open("GET", Alloy.Globals.BETKAMPENURL + '/tutorial/' + platform + '/' + Alloy.Globals.LOCALE + '/tut_' + response[img] + '.png');
-                            imageDownloader.send();
-                        };
-                        inline_function(img);
-                    }
-                }
-            }
-        };
-    } else {
-        indicator.closeIndicator();
-        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-    }
-
-}
-
-// function to sort array, base on "name"
-function compare(a, b) {
-    a.name = (a.name - 0);
-    b.name = (b.name - 0);
-
-    if (a.name < b.name)
-        return -1;
-    if (a.name > b.name)
-        return 1;
-    return 0;
-}
-
-function addTutorialImages() {
-    var addView = false;
-    if (downloadView === null) {
-        addView = true;
-        downloadView = Ti.UI.createView({
+        
+        var extwebview = Titanium.UI.createWebView({
+            top : 0,
+            left : 0,
+            right : 0,
+            url : Alloy.Globals.BETKAMPENGETTUTORIALURL + '?platform=' + platform + '&lang=' + Alloy.Globals.LOCALE,
             height : Ti.UI.FILL,
             width : Ti.UI.FILL,
-            backgroundImage: '/images/Default-Portrait.png',
-            id : 'remove'
+            backgroundColor : '#FFF',
+            hideLoadIndicator : true
         });
-
-        var downloadButton = Alloy.Globals.createButtonView(Alloy.Globals.themeColor(), '#FFF', Alloy.Globals.PHRASES.downloadTutorial);
-        downloadButton.setTop('75%');
-        downloadButton.setHeight('9%');
-        downloadButton.setWidth('80%');
-        downloadButton.setBorderRadius(3);
-        downloadButton.children[0].font.fontSize = 16;
-
-        downloadButton.addEventListener('click', function() {
-            if(isDownloading) {
-                return;
-            }
-            
-            // display welcome dialog
-            var alertWindow = Titanium.UI.createAlertDialog({
-                title : Alloy.Globals.PHRASES.betbattleTxt,
-                message : Alloy.Globals.PHRASES.getTutorialTxt,
-                buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtnTxt]
-            });
-
-            alertWindow.addEventListener('click', function(ev) {
-                switch(ev.index) {
-                case 0:
-                    downloadTutorial();
-                    break;
-                case 1:
-                    alertWindow.hide();
-                }
-            });
-            alertWindow.show();
-
+    
+        extwebview.addEventListener('beforeload', function() {
+            indicator.openIndicator();
         });
-
-        downloadView.add(downloadButton);
-    }
-
-    // get all available images
-    var images = JSON.parse(Ti.App.Properties.getString('tutorial_images'));
-
-    if (images !== null && images.length > 0) {  
-             
-        images = images.sort(compare);
-              
-        for (var img in images) {
-            var view = Ti.UI.createView({
-                height : Ti.UI.FILL,
-                width : Ti.UI.FILL,
-            });
-
-            var imageView;
-
-            if (OS_IOS) {
-                imageView = Ti.UI.createImageView({
-                    image : images[img].path,
-                    top : '5%',
-                    height : '95%',
-                    width : Ti.UI.FILL
-                });
-            } else {
-                imageView = Ti.UI.createImageView({
-                    image : images[img].path,
-                    height : Ti.UI.FILL,
-                    width : Ti.UI.FILL
-                });
-            }
-
-            view.add(imageView);
-            $.scrollableView.addView(view);
-            downloadView = null;
-        }
-    } else {
-        if(addView) {
-           $.scrollableView.addView(downloadView);
-        }
-    }
+        
+        extwebview.addEventListener('load', function() {
+            indicator.closeIndicator();
+        });
+ 
+        $.scrollableView.addView(extwebview); 
+    }   
 }
 
 // Try to authenticate using refresh token
@@ -846,17 +713,10 @@ function authWithRefreshToken() {
     }
 }
 
-$.scrollableView.addEventListener('scroll', function(e) {
-    if(downloadView === null) {
-        for(var sV in $.scrollableView.views) {
-            if($.scrollableView.views[sV].id === 'remove') {
-                $.scrollableView.removeView($.scrollableView.views[sV]);
-                break;
-            }
-        }
-    }
+$.scrollableView.addEventListener('close', function() {
+    indicator.closeIndicator();
 });
-
+    
 $.login.addEventListener('close', function() {
     indicator.closeIndicator();
 
@@ -893,6 +753,7 @@ if (!isAndroid) {
 
 // opening login view
 $.loginBtn.addEventListener('click', function(e) {
+    
     if(isSubmitting) {
         return;
     }

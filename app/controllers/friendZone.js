@@ -420,11 +420,11 @@ if (Alloy.Globals.FACEBOOKOBJECT != null) {
 
 } else {
     if(isAndroid) {
-        var fbModule = require('com.ti.facebook');
+        var fbModule = require('facebook');
         $.friendZone.fbProxy = fbModule.createActivityWorker({lifecycleContainer : $.friendZone});
         fb = fbModule;
     } else {
-        fb = require("com.facebook");
+        fb = require("facebook");
     }
 }
 

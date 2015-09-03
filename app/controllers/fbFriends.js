@@ -83,10 +83,10 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
     });
     mainView.add(connectLabel);
 
-    var fb = require('com.facebook');
+    var fb = require('facebook');
 
     // app id and permission's
-
+    fb.appid = '1403709019858016';
     fb.permissions = ['email', 'public_profile'];
 
     fb.forceDialogAuth = false;

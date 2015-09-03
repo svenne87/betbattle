@@ -165,15 +165,30 @@ if (Alloy.Globals.FACEBOOKOBJECT != null) {
     }
 } else {
     if (isAndroid) {
-        var fbModule = require('com.ti.facebook');
+        var fbModule = require('facebook');
         $.share.fbProxy = fbModule.createActivityWorker({
             lifecycleContainer : $.share
         });
         fb = fbModule;
     } else {
-        fb = require("com.facebook");
+        fb = require("facebook");
     }
 }
+
+/*
+ 
+ var fb = require('facebook');
+        fb.dialog('apprequests', {
+            title: 'My title',
+            message: 'My message'
+        }, function (e) {
+            Ti.API.debug(JSON.stringify(e));     
+        });
+        
+        Request Dialog
+ * */
+
+
 
 fbUserBtn.addEventListener('click', function(e) {
     if (Alloy.Globals.checkConnection()) {

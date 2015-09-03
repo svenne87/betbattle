@@ -1,26 +1,42 @@
 var apns = function() {
-    var typesArray = [];
-
-    // only send types with if iOS version is less than 8
+    var typesArray = [Titanium.Network.NOTIFICATION_TYPE_BADGE, Titanium.Network.NOTIFICATION_TYPE_ALERT];
+    
+    // check if version is < 8
     if (parseInt(Ti.Platform.version.split(".")[0]) < 8) {
-        typesArray = [Titanium.Network.NOTIFICATION_TYPE_BADGE, Titanium.Network.NOTIFICATION_TYPE_ALERT];
+        Titanium.Network.registerForPushNotifications({
+            types : typesArray,
+            success : deviceTokenSucces,
+            error : deviceTokenFailure,
+            callback : handlePush
+        }); 
+    } else {  
+         Ti.App.iOS.addEventListener('usernotificationsettings', function registerForPush() {
+ 
+            // Remove event listener once registered for push notifications
+            Ti.App.iOS.removeEventListener('usernotificationsettings', registerForPush); 
+ 
+            Ti.Network.registerForPushNotifications({
+                success : deviceTokenSucces,
+                error : deviceTokenFailure,
+                callback : handlePush
+            });
+        });
+ 
+        // Register notification types to use
+        Ti.App.iOS.registerUserNotificationSettings({
+            types: typesArray
+        });   
     }
-
-    Titanium.Network.registerForPushNotifications({
-        types : typesArray,
-        success : function(e) {
-            var deviceToken = e.deviceToken;
-            Ti.API.info("Push notification device token is: " + deviceToken);
-            Ti.API.info("Push notification types: " + Titanium.Network.remoteNotificationTypes);
-            Ti.API.info("Push notification enabled: " + Titanium.Network.remoteNotificationsEnabled);
-
-            // send token to our server
-            Alloy.Globals.postDeviceToken(e.deviceToken);
-        },
-        error : function(e) {
-            Ti.API.info("Error during registration: " + e.error);
-        },
-        callback : function(e) {
+    
+    function deviceTokenSucces(e) {
+        var deviceToken = e.deviceToken;
+        // send token to our server
+        Alloy.Globals.postDeviceToken(e.deviceToken);
+    }
+    function deviceTokenFailure(e) {
+        Ti.API.info("Error during registration: " + e.error);
+    }
+    function handlePush(e) {
             var refreshNeeded = false;
             Ti.API.log("Checking app status.... " + Alloy.Globals.appStatus);
 
@@ -57,7 +73,6 @@ var apns = function() {
                 var message = e.data.alert;
 
                 function handlePush() {
-
                     if (Alloy.Globals.MAINWIN !== null) {
 
                         var obj = {
@@ -138,7 +153,15 @@ var apns = function() {
                             }, interval);
 
                         } else if (type === 'message') {
-                            // nothing
+                            if (Alloy.Globals.WINDOWS.length > 1) {
+                               var checkWindow = Alloy.Globals.WINDOWS[Alloy.Globals.WINDOWS.length - 1];
+                               if(checkWindow.id === 'showChallengeWindow') {
+                                   if(typeof checkWindow.cid !== 'undefined') {
+                                        args.state = 'live-state';
+                                        win = Alloy.createController('showChallenge', args).getView();
+                                   }
+                               }
+                            }
                         }
 
                         if (refreshNeeded) {
@@ -151,7 +174,7 @@ var apns = function() {
                             }
                         }
 
-                        if (win !== null) {
+                        if (win !== null) {                            
                             Alloy.Globals.NAV.openWindow(win);
                         }
 
@@ -175,7 +198,7 @@ var apns = function() {
                                 }
                             }
                         }
-
+                        
                         if (win !== null) {
                             Alloy.Globals.WINDOWS.push(win);
                         }
@@ -200,7 +223,6 @@ var apns = function() {
                 Titanium.UI.iPhone.appBadge = 0;
             }
         }
-    });
 };
 exports = {
     apns : apns

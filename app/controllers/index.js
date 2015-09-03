@@ -16,7 +16,7 @@ function doLogin() {
         Alloy.Globals.INDEXWIN = login;
         login = null;
         $.indexWin.close();
-    } else if (OS_ANDROID) {
+    } else if (OS_ANDROID) { 
         login.open({
             closeOnExit : true,
             fullScreen : true,
@@ -31,7 +31,7 @@ function doLogin() {
         activity.finish();
     }
 }
-
+/*
 function doDowloadError() {
     // display welcome dialog
     var alertWindow = Titanium.UI.createAlertDialog({
@@ -56,7 +56,7 @@ function doDowloadError() {
     });
     alertWindow.show();
 }
-
+*/
 function startApp() {
     var hasLaunched = JSON.parse(Ti.App.Properties.getString("appLaunch"));
 

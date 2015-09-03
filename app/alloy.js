@@ -214,7 +214,7 @@ Alloy.Globals.BETKAMPENSETUSERTEAM = Alloy.Globals.BETKAMPENURL + '/api/add_user
 //set user team
 Alloy.Globals.BETKAMPENPREVIOUSMATCHDAY = Alloy.Globals.BETKAMPENURL + '/api/get_last_match_day.php';
 Alloy.Globals.SCOREBOARDURL = Alloy.Globals.BETKAMPENURL + '/api/get_scoreboard.php';
-Alloy.Globals.BETKAMPENGETTUTORIALURL = Alloy.Globals.BETKAMPENURL + '/api/get_tutorial_images.php';
+Alloy.Globals.BETKAMPENGETTUTORIALURL = Alloy.Globals.BETKAMPENURL + '/webviews/tutorial.php';
 Alloy.Globals.FINISHEDCHALLENGESURL = Alloy.Globals.BETKAMPENURL + '/api/get_finished_challenges.php';
 
 Alloy.Globals.performTimeout = function(func) {
