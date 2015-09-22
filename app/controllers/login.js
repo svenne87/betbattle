@@ -379,6 +379,9 @@ if (OS_IOS) {
     fb.permissions = ['email', 'public_profile'];
 }
 
+// permission = user_games_activity
+
+
 /* This should not be needed... */
 fb.appid = '1403709019858016';
 /* - - - - - */
@@ -409,16 +412,14 @@ var fbLoginEvent = function(e) {
 
     if (Alloy.Globals.connect == true) {
         if (e.success) {
-            if (isAndroid) {
-                e.data = JSON.parse(e.data);
-            }
+            e.data = JSON.parse(e.data);
             
             Alloy.Globals.FACEBOOK = fb;
             
             Alloy.Globals.BETKAMPEN = {
                 token : fb.accessToken
             };
-
+            
             Alloy.Globals.FACEBOOKOBJECT = Alloy.createModel('facebook', {
                 id : e.data.id,
                 locale : e.data.locale,
@@ -428,7 +429,7 @@ var fbLoginEvent = function(e) {
                 lastName : e.data.last_name,
                 email : e.data.email
             });
-
+            
             removeEvent();
             setTimeout(function() {
                 loginAuthenticated(fb);
@@ -494,7 +495,7 @@ if(isAndroid) {
     if(!reOpen) {
  
         // TODO ERROR fb.initialize causes the app to load twice...
-       // fb.initialize(5000); // , false
+       fb.initialize(5000); // , false
 
     }
 }

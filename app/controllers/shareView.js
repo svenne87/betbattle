@@ -193,17 +193,17 @@ if (Alloy.Globals.FACEBOOKOBJECT != null) {
 fbUserBtn.addEventListener('click', function(e) {
     if (Alloy.Globals.checkConnection()) {
         if (isAndroid) {
-            if (fb.canPresentOpenGraphActionDialog) {
-                performFacebookPost(fb);
-            } else {
-                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.fbShareErrorTxt);
-            }
+            //if (fb.canPresentOpenGraphActionDialog) {
+            performFacebookPost(fb);
+            //} else {
+            //    Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.fbShareErrorTxt);
+            //}
         } else {
-            if (fb.getCanPresentShareDialog()) {
-                performFacebookPost(fb);
-            } else {
-                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.fbShareErrorTxt);
-            }
+            //if (fb.getCanPresentShareDialog()) {
+            performFacebookPost(fb);
+            //} else {
+            //    Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.fbShareErrorTxt);
+            //}
         }
     } else {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
@@ -211,7 +211,22 @@ fbUserBtn.addEventListener('click', function(e) {
 });
 
 function performFacebookPost(fb) {
+	fb.presentSendRequestDialog({
+        message: Alloy.Globals.PHRASES.fbPostDescriptionTxt + "." + "\n" + Alloy.Globals.PHRASES.myNameIsTxt + ": " + Alloy.Globals.PROFILENAME,
+        title: Alloy.Globals.PHRASES.fbPostCaptionTxt,
+        data: {
+            player_name: Alloy.Globals.PROFILENAME
+        },
+        // to : '123456789, 123456788', lista vänner med permission user_friends
+    });
+   
+    fb.addEventListener('requestDialogCompleted', function (e) {
+        if (e.success) {
+             Alloy.Globals.unlockAchievement(5);
+        }
+    });
 
+/*
     var data = {
         url : Alloy.Globals.PHRASES.appLinkTxt,
         namespaceObject : 'betbattle:bet',
@@ -224,6 +239,7 @@ function performFacebookPost(fb) {
 
     Alloy.Globals.unlockAchievement(5);
     fb.share(data);
+  */
 }
 
 // --------------------------------------------------------------- Share to TWITTER  -------------------------------------------------------------------------------
