@@ -108,11 +108,7 @@ if (!isAndroid) {
     $.mainWin.setLeftNavButton(buttonBarMenu);
 
     $.nav.add(btn);
-
-    // var currentView = Alloy.createController('challengesView', argu).getView();
-    // $.ds.contentview.add(currentView);
-    // Alloy.Globals.CURRENTVIEW = currentView;
-
+    
     if (oldIndicator !== null && typeof oldIndicator !== 'undefined') {
         oldIndicator.closeIndicator();
         oldIndicator = null;
@@ -192,9 +188,7 @@ if (!isAndroid) {
             oldIndicator.closeIndicator();
             oldIndicator = null;
         }
-
     });
-
 }
 
 checkRatestatus();
@@ -600,14 +594,6 @@ function logoutBetbattle() {
 
 function createSection() {
     var section = Ti.UI.createTableViewSection();
-    /*
-     var args = {
-     title : Alloy.Globals.PHRASES.homeTxt,
-     customView : 'landingPage',
-     image : '/images/home.png'
-     };
-     section.add(Alloy.createController('menurow', args).getView());
-     */
 
     var args = {
         title : Alloy.Globals.PHRASES.homeTxt,
@@ -628,14 +614,15 @@ function createSection() {
     }
 
     section.add(Alloy.createController('menurow', args).getView());
-
+	/*
     var args1 = {
         title : Alloy.Globals.PHRASES.inviteFriendsTxt,
         customView : 'shareView',
         image : '/images/sharethis.png'
     };
     section.add(Alloy.createController('menurow', args1).getView());
-
+	*/
+	
     var args2 = {
         title : Alloy.Globals.PHRASES.createChallengeTxt,
         customView : 'newChallengeLeague',

@@ -270,9 +270,6 @@ function buildTableRows() {
     }
 
     data.push(createNewChallengeRow());
-    data.push(createInviteFriendsTxtRow());
-    data.push(createInviteFriendsRow());
-
     table.setData(data);
 }
 
@@ -820,87 +817,6 @@ function createNewChallengeRow() {
             });
         }
     });
-
-    return tableFooterView;
-}
-
-function createInviteFriendsRow() {
-    child = true;
-
-    if (isAndroid) {
-        child = false;
-    }
-
-    var tableFooterView = Ti.UI.createTableViewRow({
-        height : 75,
-        hasChild : child,
-    });
-
-    tableFooterView.add(Ti.UI.createImageView({
-        image : '/images/sharethis.png',
-        width : 40,
-        height : 40,
-        left : 10,
-    }));
-
-    tableFooterView.add(Ti.UI.createLabel({
-        text : Alloy.Globals.PHRASES.inviteFriendsTxt + ' ',
-        font : Alloy.Globals.getFontCustom(16, "Regular"),
-        color : "#FFF",
-        left : 65,
-    }));
-
-    // add custom icon on Android to symbol that the row has child
-    if (child != true) {
-        tableFooterView.add(Ti.UI.createLabel({
-            font : {
-                fontFamily : font
-            },
-            text : fontawesome.icon('icon-chevron-right'),
-            right : rightPercentage,
-            color : '#FFF',
-            fontSize : 80,
-            height : Ti.UI.SIZE,
-            width : Ti.UI.SIZE
-        }));
-    }
-
-    tableFooterView.addEventListener("click", function(e) {
-        var win = Alloy.createController('shareView').getView();
-        Alloy.Globals.WINDOWS.push(win);
-
-        if (!isAndroid) {
-            Alloy.Globals.NAV.openWindow(win, {
-                animated : true
-            });
-        } else {
-            win.open({
-                fullScreen : true
-            });
-        }
-    });
-
-    return tableFooterView;
-}
-
-function createInviteFriendsTxtRow() {
-    child = false;
-
-    var tableFooterView = Ti.UI.createTableViewRow({
-        height : 120,
-        hasChild : false,
-        selectionStyle : 'none'
-    });
-
-    tableFooterView.add(Ti.UI.createLabel({
-        text : Alloy.Globals.PHRASES.playDescriptionTxt + ' ',
-        font : Alloy.Globals.getFontCustom(16, "Regular"),
-        color : "#FFF",
-        textAlign : 'left',
-        left : 10,
-        width : '90%',
-        //left : 65,
-    }));
 
     return tableFooterView;
 }

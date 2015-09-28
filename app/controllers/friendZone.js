@@ -145,10 +145,10 @@ if (!isAndroid) {
     });
 }
 
-sections[0] = createSectionsForTable(Alloy.Globals.PHRASES.landingPageInviteBtnTop);
-sections[1] = createSectionsForTable(Alloy.Globals.PHRASES.FriendsTxt);
-sections[2] = createSectionsForTable(Alloy.Globals.PHRASES.GroupsTxt);
-
+//sections[0] = createSectionsForTable(Alloy.Globals.PHRASES.landingPageInviteBtnTop);
+sections[0] = createSectionsForTable(Alloy.Globals.PHRASES.FriendsTxt);
+//sections[2] = createSectionsForTable(Alloy.Globals.PHRASES.GroupsTxt);
+/*
 var fbFriendBtn = Titanium.UI.createTableViewRow({
     //title: Alloy.Globals.PHRASES.fbFriendsTxt,
     id : 'fbFriendBtn',
@@ -192,7 +192,7 @@ var fbLabel = Titanium.UI.createLabel({
     left : 50,
 });
 fbFriendBtn.add(fbLabel);
-
+*/
 var myFriendBtn = Titanium.UI.createTableViewRow({
     id : 'myFriendBtn',
     hasChild : child,
@@ -321,6 +321,7 @@ var aFriendLabel = Titanium.UI.createLabel({
 
 addFriendsBtn.add(aFriendLabel);
 
+/*
 var createGroupBtn = Titanium.UI.createTableViewRow({
     id : 'createGroupBtn',
     hasChild : child,
@@ -407,7 +408,7 @@ shareLabel = Titanium.UI.createLabel({
 });
 
 shareBtn.add(shareLabel);
-*/
+
 var fb;
 
 if (Alloy.Globals.FACEBOOKOBJECT != null) {
@@ -477,7 +478,8 @@ fbFriendBtn.addEventListener('click', function(e) {
      win = null;
      }
      */
-});
+//});
+
 myFriendBtn.addEventListener('click', function(e) {
     // check connection
     if (!Alloy.Globals.checkConnection()) {
@@ -498,6 +500,7 @@ myFriendBtn.addEventListener('click', function(e) {
     }
 });
 
+/*
 myGroupsBtn.addEventListener('click', function(e) {
     // check connection
     if (!Alloy.Globals.checkConnection()) {
@@ -517,7 +520,7 @@ myGroupsBtn.addEventListener('click', function(e) {
         win = null;
     }
 });
-
+*/
 addFriendsBtn.addEventListener('click', function(e) {
     // check connection
     if (!Alloy.Globals.checkConnection()) {
@@ -537,7 +540,7 @@ addFriendsBtn.addEventListener('click', function(e) {
         win = null;
     }
 });
-
+/*
 createGroupBtn.addEventListener('click', function(e) {
     // check connection
     if (!Alloy.Globals.checkConnection()) {
@@ -557,7 +560,7 @@ createGroupBtn.addEventListener('click', function(e) {
         win = null;
     }
 });
-
+*/
 /*
 shareBtn.addEventListener('click', function(e) {
     // check connection
@@ -581,11 +584,11 @@ shareBtn.addEventListener('click', function(e) {
 */
 
 //sections[0].add(shareBtn);
-sections[0].add(fbFriendBtn);
-sections[1].add(addFriendsBtn);
-sections[1].add(myFriendBtn);
-sections[2].add(createGroupBtn);
-sections[2].add(myGroupsBtn);
+//sections[0].add(fbFriendBtn);
+sections[0].add(addFriendsBtn);
+sections[0].add(myFriendBtn);
+//sections[2].add(createGroupBtn);
+//sections[2].add(myGroupsBtn);
 
 table.setData(sections);
 mainView.add(table);

@@ -31,32 +31,7 @@ function doLogin() {
         activity.finish();
     }
 }
-/*
-function doDowloadError() {
-    // display welcome dialog
-    var alertWindow = Titanium.UI.createAlertDialog({
-        title : Alloy.Globals.PHRASES.betbattleTxt,
-        message : "An error occured when downloading app tutorial content, retry?",
-        buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtnTxt]
-    });
 
-    alertWindow.addEventListener('click', function(ev) {
-        switch(ev.index) {
-        case 0:
-            //finally
-            startApp();
-            break;
-        case 1:
-            Ti.App.Properties.setString("appLaunch", JSON.stringify({
-                opened : true
-            }));
-            doLogin();
-            break;
-        }
-    });
-    alertWindow.show();
-}
-*/
 function startApp() {
     var hasLaunched = JSON.parse(Ti.App.Properties.getString("appLaunch"));
 

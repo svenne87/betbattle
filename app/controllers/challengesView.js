@@ -152,7 +152,7 @@ function updateProfileData(userInfo) {
     profilePointsLabel.setText(userInfo.totalPoints);
     profileWinsLabel.setText(userInfo.totalWins);  
     profileRankingLabel.setText(userInfo.position);
-    profileAchievementsLabel.setText(userInfo.achieved_achievements); // + '/' + userInfo.total_achievements + ' ');
+    profileAchievementsLabel.setText(userInfo.achieved_achievements);
     profileLevelImage.setImage(Alloy.Globals.BETKAMPENURL + "/" + userInfo.level.symbol);
  
     if(profileCoinsLabel.getText().length > 5) {
@@ -754,7 +754,7 @@ tableHeaderView.addEventListener('click', function() {
             return;
         }
 
-        var win = Alloy.createController('shareView').getView();
+        var win = Alloy.createController('newChallengeLeague').getView();
         if (OS_IOS) {
             Alloy.Globals.NAV.openWindow(win, {
                 animated : true
@@ -876,6 +876,13 @@ table.addEventListener('click', function(e) {
 
     } else if (e.rowData.id === 'new') {
         var win = Alloy.createController('challenges_new').getView();
+     
+        if(Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_otd_status !== 0 && Alloy.Globals.CHALLENGEOBJECTARRAY[0].length === 0 && Alloy.Globals.CHALLENGEOBJECTARRAY[1].length === 0) {
+        	// if no new challenges/no match otd and no pending, simply go to the league view
+        	win = Alloy.createController('newChallengeLeague').getView();
+        }
+       
+       
         Alloy.Globals.WINDOWS.push(win);
 
         if (!isAndroid) {
@@ -1435,7 +1442,7 @@ function constructTableData(array) {
     });
 
     var image;
-
+	
     if (Alloy.Globals.FACEBOOKOBJECT) {
         image = 'https://graph.facebook.com/' + Alloy.Globals.FACEBOOKOBJECT.id + '/picture';
     } else {
@@ -1575,17 +1582,6 @@ function constructTableData(array) {
     });
     
     secondRow.add(profileAchievementsLabel);
-    /*
-    secondRow.add(Ti.UI.createLabel({
-        left : 20,
-        font : {
-            fontFamily : font
-        },
-        text : fontawesome.icon('fa-star'),
-        color : Alloy.Globals.themeColor() //'#FFF'
-    }));
-    */
-   // TODO show ranking?
     
     profileRankingLabel = Ti.UI.createLabel({
        text : '        ',
@@ -1593,15 +1589,13 @@ function constructTableData(array) {
        left : 5,
        width : Ti.UI.SIZE,
        color : Alloy.Globals.themeColor()
-    });
-        
-   // secondRow.add(profileRankingLabel);
-  
+    });  
+
     centerProfilePart.add(secondRow);
 
     profileLevelImage = Ti.UI.createImageView({
-        left : ((widthParted - 50) / 2), // based on the image beeing 50 in height
-        top : 12.5, // based on the image beeing 50 in height
+        left : ((widthParted - 50) / 2), 
+        top : 12.5,
         height : 50,
         width : 50,
         borderRadius : 25,
@@ -2012,14 +2006,106 @@ if (args.refresh != 1) {
     getUserInfo();
 }
 
-//Alloy.Globals.getCoupon();
-
 var checkFirstTime = JSON.parse(Ti.App.Properties.getString("firstTimeAchievement"));
 
 if (!checkFirstTime) {
     if (Alloy.Globals.checkConnection()) {
         Alloy.Globals.unlockAchievement(13);
         Ti.App.Properties.setString("firstTimeAchievement", JSON.stringify(false));
+	
+	 	setTimeout(function() {
+	 		displayEnterInviteCodeDialog();
+	 		// TODO test android and only show first time.
+     	}, 2000);
     }
+} 
+
+function displayEnterInviteCodeDialog() {
+	var textFieldView = Ti.UI.createView({
+		 backgroundColor:'#111'
+	});
+	var codeField = Titanium.UI.createTextField({
+        hintText: '',
+        height: 35,
+        width: 250,
+        borderStyle: Titanium.UI.INPUT_BORDERSTYLE_ROUNDED
+    });
+    
+    textFieldView.add(codeField);
+	
+	var codeDialog = Titanium.UI.createAlertDialog({
+    	title : Alloy.Globals.PHRASES.codeTitleText,
+        message : Alloy.Globals.PHRASES.codeMessageText,
+        style: Ti.UI.iPhone.AlertDialogStyle.PLAIN_TEXT_INPUT,
+        androidView: textFieldView,
+       	buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtnTxt],
+        cancel : 1
+    });
+   	
+    codeDialog.addEventListener('click', function(e) {
+    	switch(e.index) {
+        	case 0:
+        		var codeValue = '';
+				
+				if(isAndroid) {
+					codeValue = codeField.value;
+				} else {
+					codeValue = e.text;
+				}
+				
+				codeValue = codeValue.replace(/^\s+|\s+$/g, "");
+				
+				if(codeValue.length < 3 || codeValue.length > 10) {
+					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.invalidCodeError);
+					codeDialog.show();
+					return;
+				}
+        	
+            	indicator.openIndicator();
+                var xhr = Ti.Network.createHTTPClient();
+
+                xhr.onerror = function(e) {
+                	indicator.closeIndicator();
+                	Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
+                   	Ti.API.error('Bad Sever =>' + e.error);
+                };
+				
+                try {
+                	xhr.open("POST", Alloy.Globals.JOINCODEURL);
+                	xhr.setRequestHeader("content-type", "application/json");
+                   	xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
+                    xhr.setTimeout(Alloy.Globals.TIMEOUT);
+                    
+                    var params = '{"challenge_code" : "' + codeValue + '", "lang" : "' + Alloy.Globals.LOCALE + '"}'; 
+                    xhr.send(params);
+                } catch(e) {
+                    Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+                    indicator.closeIndicator();
+                }
+
+                xhr.onload = function() {
+                	indicator.closeIndicator();
+                	
+                    if (this.status == '200') {
+                        if (this.readyState == 4) {
+							Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
+							indicator.openIndicator();
+							if (Alloy.Globals.checkConnection()) {
+								getChallenges();
+							}
+							codeDialog.hide();
+                        }
+                    } else {
+                    	Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
+                    }
+                };
+               	break;
+            case 1:
+                break;
+        }
+
+     });
+     codeDialog.show();	
 }
+
 

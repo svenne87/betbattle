@@ -220,6 +220,7 @@ Alloy.Globals.BETKAMPENPREVIOUSMATCHDAY = Alloy.Globals.BETKAMPENURL + '/api/get
 Alloy.Globals.SCOREBOARDURL = Alloy.Globals.BETKAMPENURL + '/api/get_scoreboard.php';
 Alloy.Globals.BETKAMPENGETTUTORIALURL = Alloy.Globals.BETKAMPENURL + '/webviews/tutorial.php';
 Alloy.Globals.FINISHEDCHALLENGESURL = Alloy.Globals.BETKAMPENURL + '/api/get_finished_challenges.php';
+Alloy.Globals.JOINCODEURL = Alloy.Globals.BETKAMPENURL + '/api/join_challenge_with_code.php';
 
 Alloy.Globals.performTimeout = function(func) {
     if (OS_ANDROID) {

@@ -10,6 +10,7 @@ var indicator = uie.createIndicatorWindow({
 
 var games = null;
 var amount_games = 0;
+var challengeCode = "";
 
 if (Alloy.Globals.COUPON === null || Alloy.Globals.COUPON.games === null) {
     Alloy.Globals.showToast(Alloy.Globals.PHRASES.commonErrorTxt);
@@ -18,10 +19,11 @@ if (Alloy.Globals.COUPON === null || Alloy.Globals.COUPON.games === null) {
     if (Alloy.Globals.COUPON && Alloy.Globals.COUPON.games.length > 0) {
         games = Alloy.Globals.COUPON.games;
         amount_games = games.length;
+        challengeCode = Alloy.Globals.COUPON.challenge_code;  
     } else {
         Alloy.Globals.showToast(Alloy.Globals.PHRASES.commonErrorTxt);
         $.showCoupon.close();
-    }
+    }    
 }
 
 var modalPickersToHide = [];
@@ -140,90 +142,32 @@ function removeCouponGame(gameID) {
     }
 }
 
-function checkFriends() {
-    if (Alloy.Globals.checkConnection()) {
-        var xhr = Titanium.Network.createHTTPClient();
-        xhr.onerror = function(e) {
-            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-            Ti.API.error('Bad Sever =>' + e.error);
-            added = false;
-        };
-
-        try {
-            xhr.open('GET', Alloy.Globals.BETKAMPENGETFRIENDSURL + '?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
-            xhr.setRequestHeader("challengesView-type", "application/json");
-            xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
-            xhr.setTimeout(Alloy.Globals.TIMEOUT);
-            xhr.send();
-        } catch(e) {
-            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-            added = false;
-        }
-        xhr.onload = function() {
-            added = false;
-            if (this.status == '200') {
-                if (this.readyState == 4) {
-                    var response = JSON.parse(this.responseText);
-                    // construct array with objects
-                    if (response.length > 0) {
-                        if (validate()) {
-                            var arg = {
-                                coins : coinsToJoin
-                            };
-                            var win = Alloy.createController('groupSelect', arg).getView();
-                            Alloy.Globals.CURRENTVIEW = win;
-                            if (OS_IOS) {
-                                Alloy.Globals.NAV.openWindow(win, {
-                                    animated : true
-                                });
-                            } else {
-                                win.open({
-                                    fullScreen : true
-                                });
-                            }
-                        } else {
-                            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.coinsNoBetError);
-                        }
-                    } else {
-
-                        var message = Alloy.Globals.PHRASES.noFriendsChallengePrompt;
-                        var my_alert = Ti.UI.createAlertDialog({
-                            title : Alloy.Globals.PHRASES.betbattleTxt,
-                            message : message
-                        });
-                        my_alert.show();
-                        my_alert.addEventListener('click', function(e) {
-
-                            my_alert.hide();
-
-                            var win = Alloy.createController('shareView').getView();
-                            if (OS_IOS) {
-                                Alloy.Globals.NAV.openWindow(win, {
-                                    animated : true
-                                });
-                            } else {
-                                win.open({
-                                    fullScreen : true
-                                });
-                                win = null;
-                            }
-                            $.showCoupon.close();
-                        });
-                    }
-                } else {
-                    Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-                }
-
+function challengeFriends() {
+	if (challengeCode !== "") {
+		if (validate()) {
+        	var arg = {
+            	coins : coinsToJoin,
+            	challengeCode : challengeCode
+            };
+             
+            var win = Alloy.createController('groupSelect', arg).getView();
+            Alloy.Globals.CURRENTVIEW = win;
+            
+            if (OS_IOS) {
+            	Alloy.Globals.NAV.openWindow(win, {
+                	animated : true
+                });
             } else {
-                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-                Ti.API.error("Error =>" + this.response);
+                win.open({
+                	fullScreen : true
+                });
             }
-        };
-    } else {
-        added = false;
-        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
-    }
-
+        } else {
+        	Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.coinsNoBetError);
+        }
+	} else {
+		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+	}
 }
 
 // When clicking the edit icon of a match
@@ -472,7 +416,6 @@ var coinsView = Ti.UI.createView({
 
         }, {
             color : "#2E2E2E",
-
         }]
     }
 });
@@ -795,11 +738,10 @@ submitButton.addEventListener('click', function() {
         if (now.getTime() > gameDate.getTime()) {
             gameDatesValid = false;
         }
-
     }
 
     if (!added && gameDatesValid) {
-        checkFriends();
+        challengeFriends();
         added = true;
     } else if (!gameDatesValid) {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.invalidDatesTxt);
