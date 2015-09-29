@@ -498,6 +498,7 @@ function login(auto) {
         user = emailReg;
         pass = passwordReg;
         hideShowLogin(true);
+        $.loginView.setOpacity(0);
     } else {
         user = $.loginEmail.value;
         pass = $.loginPass.value;
@@ -522,6 +523,10 @@ function login(auto) {
             indicator.closeIndicator();   
             signInBtn.enabled = true;
             hideShowLogin(false);
+            
+            if(auto) {
+            	$.loginView.setOpacity(1);
+            }
             
             if (e.source.status == 400) {
                 // OAuth return 400 on credentials error
@@ -552,6 +557,10 @@ function login(auto) {
                 hideShowLogin(false);
                 signInBtn.enabled = true;
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.loginCredentialsError);
+                
+                if(auto) {
+            		$.loginView.setOpacity(1);
+            	}
             }
         };
         loginReq.onerror = function(e) {
@@ -559,7 +568,11 @@ function login(auto) {
             signInBtn.enabled = true;
             hideShowLogin(false);
             indicator.closeIndicator();
- 
+ 			
+ 		    if(auto) {
+            	$.loginView.setOpacity(1);
+            }
+ 			
             if (e.source.status == 400) {
                 // OAuth return 400 on credentials error
                 showBadCredentialsAlert();

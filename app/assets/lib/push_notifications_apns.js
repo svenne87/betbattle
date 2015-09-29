@@ -181,7 +181,7 @@ var apns = function() {
                         if (Alloy.Globals.WINDOWS.length > 1) {
                             for (var w in Alloy.Globals.WINDOWS) {
                                 if (type !== 'message') {
-                                    if (Alloy.Globals.WINDOWS[w].id === 'challenges_finished' || Alloy.Globals.WINDOWS[w].id === 'challenges_pending' || Alloy.Globals.WINDOWS[w].id === 'challenges_accept') {
+                                    if (Alloy.Globals.WINDOWS[w].id === 'challenges_finished' || Alloy.Globals.WINDOWS[w].id === 'challenges_accept') {
                                         Alloy.Globals.WINDOWS[w].setOpacity(0);
                                     }
                                 }
@@ -190,7 +190,7 @@ var apns = function() {
                             for (var w in Alloy.Globals.WINDOWS) {
                                 if (Alloy.Globals.WINDOWS[w] !== win) {
                                     if (type !== 'message') {
-                                        if (Alloy.Globals.WINDOWS[w].id === 'challenges_finished' || Alloy.Globals.WINDOWS[w].id === 'challenges_pending' || Alloy.Globals.WINDOWS[w].id === 'challenges_accept') {
+                                        if (Alloy.Globals.WINDOWS[w].id === 'challenges_finished' || Alloy.Globals.WINDOWS[w].id === 'challenges_accept') {
                                             Alloy.Globals.WINDOWS[w].close();
                                         }
                                     }

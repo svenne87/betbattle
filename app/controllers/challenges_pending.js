@@ -1,3 +1,4 @@
+/*
 var args = arguments[0] || {};
 
 //if (args.refresh) {
@@ -896,3 +897,4 @@ if (OS_ANDROID) {
 
 indicator.openIndicator();
 getChallenges(); 
+*/

@@ -437,19 +437,10 @@ function constructChallengeRows(obj, index, type) {
         // not a mixed challenge, just get sport from league[0]
         if (obj.attributes.leagues[0].sport_id === '1') {
             // Hockey
-            if (isAndroid) {
-                imageLocation = '/images/ikonhockey.png';
-            } else {
-                imageLocation = '/images/Ikonhockey.png';
-            }
+            imageLocation = '/images/ikonhockey.png';
         } else if (obj.attributes.leagues[0].sport_id === '2') {
             // Soccer
-            if (isAndroid) {
-                imageLocation = '/images/ikonfotboll.png';
-            } else {
-                imageLocation = '/images/Ikonfotboll.png';
-            }
-
+            imageLocation = '/images/ikonfotboll.png';
         } else {
             imageLocation = '/images/ikoner_mix_sport.png';
         }
@@ -1636,7 +1627,7 @@ function constructTableData(array) {
 
     acceptTextLabel = Ti.UI.createLabel({
         font : Alloy.Globals.getFontCustom(16, 'Regular'),
-        text : Alloy.Globals.PHRASES.newChallengesTxt + ' ',
+        text : Alloy.Globals.PHRASES.challengesTxt + ' ',
         color : '#FFF',
         left : 60,
         height : Ti.UI.SIZE,
@@ -1676,7 +1667,7 @@ function constructTableData(array) {
         acceptLabel.setLeft(acceptTextLabel.toImage().width + 70);
         acceptRow.add(acceptLabel);
     }
-
+/*
     pendingRow.add(Ti.UI.createImageView({
         left : 10,
         width : 30,
@@ -1706,7 +1697,7 @@ function constructTableData(array) {
             width : 'auto',
         }));
     }
-
+*/
     finishedRow.add(Ti.UI.createImageView({
         left : 10,
         width : 30,
@@ -1781,7 +1772,7 @@ function constructTableData(array) {
 
     sections[0].add(profileRow);
     sections[0].add(acceptRow);
-    sections[0].add(pendingRow);
+    //sections[0].add(pendingRow);
     sections[0].add(finishedRow);
    // sections[0].add(matchOTDRow);
 
@@ -2011,101 +2002,11 @@ var checkFirstTime = JSON.parse(Ti.App.Properties.getString("firstTimeAchievemen
 if (!checkFirstTime) {
     if (Alloy.Globals.checkConnection()) {
         Alloy.Globals.unlockAchievement(13);
-        Ti.App.Properties.setString("firstTimeAchievement", JSON.stringify(false));
+        Ti.App.Properties.setString("firstTimeAchievement", JSON.stringify(true));  // was false before???
 	
 	 	setTimeout(function() {
-	 		displayEnterInviteCodeDialog();
+	 		Alloy.Globals.displayEnterInviteCodeDialog(indicator);
 	 		// TODO test android and only show first time.
-     	}, 2000);
+     	}, 2500);
     }
 } 
-
-function displayEnterInviteCodeDialog() {
-	var textFieldView = Ti.UI.createView({
-		 backgroundColor:'#111'
-	});
-	var codeField = Titanium.UI.createTextField({
-        hintText: '',
-        height: 35,
-        width: 250,
-        borderStyle: Titanium.UI.INPUT_BORDERSTYLE_ROUNDED
-    });
-    
-    textFieldView.add(codeField);
-	
-	var codeDialog = Titanium.UI.createAlertDialog({
-    	title : Alloy.Globals.PHRASES.codeTitleText,
-        message : Alloy.Globals.PHRASES.codeMessageText,
-        style: Ti.UI.iPhone.AlertDialogStyle.PLAIN_TEXT_INPUT,
-        androidView: textFieldView,
-       	buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtnTxt],
-        cancel : 1
-    });
-   	
-    codeDialog.addEventListener('click', function(e) {
-    	switch(e.index) {
-        	case 0:
-        		var codeValue = '';
-				
-				if(isAndroid) {
-					codeValue = codeField.value;
-				} else {
-					codeValue = e.text;
-				}
-				
-				codeValue = codeValue.replace(/^\s+|\s+$/g, "");
-				
-				if(codeValue.length < 3 || codeValue.length > 10) {
-					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.invalidCodeError);
-					codeDialog.show();
-					return;
-				}
-        	
-            	indicator.openIndicator();
-                var xhr = Ti.Network.createHTTPClient();
-
-                xhr.onerror = function(e) {
-                	indicator.closeIndicator();
-                	Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
-                   	Ti.API.error('Bad Sever =>' + e.error);
-                };
-				
-                try {
-                	xhr.open("POST", Alloy.Globals.JOINCODEURL);
-                	xhr.setRequestHeader("content-type", "application/json");
-                   	xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
-                    xhr.setTimeout(Alloy.Globals.TIMEOUT);
-                    
-                    var params = '{"challenge_code" : "' + codeValue + '", "lang" : "' + Alloy.Globals.LOCALE + '"}'; 
-                    xhr.send(params);
-                } catch(e) {
-                    Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-                    indicator.closeIndicator();
-                }
-
-                xhr.onload = function() {
-                	indicator.closeIndicator();
-                	
-                    if (this.status == '200') {
-                        if (this.readyState == 4) {
-							Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
-							indicator.openIndicator();
-							if (Alloy.Globals.checkConnection()) {
-								getChallenges();
-							}
-							codeDialog.hide();
-                        }
-                    } else {
-                    	Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
-                    }
-                };
-               	break;
-            case 1:
-                break;
-        }
-
-     });
-     codeDialog.show();	
-}
-
-

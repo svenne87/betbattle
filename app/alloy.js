@@ -375,6 +375,146 @@ Alloy.Globals.showAlertWithRestartNote = function(auto) {
     alertWindow.show();
 };
 
+Alloy.Globals.displayEnterInviteCodeDialog = function(indicator) {
+	var textFieldView = Ti.UI.createView({
+		 backgroundColor:'#111'
+	});
+	var codeField = Titanium.UI.createTextField({
+        hintText: '',
+        height: 35,
+        width: 250,
+        borderStyle: Titanium.UI.INPUT_BORDERSTYLE_ROUNDED
+    });
+    
+    textFieldView.add(codeField);
+	
+	var codeDialog = Titanium.UI.createAlertDialog({
+    	title : Alloy.Globals.PHRASES.codeTitleText,
+        message : Alloy.Globals.PHRASES.codeMessageText,
+        style: Ti.UI.iPhone.AlertDialogStyle.PLAIN_TEXT_INPUT,
+        androidView: textFieldView,
+       	buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtnTxt],
+        cancel : 1
+    });
+   	
+    codeDialog.addEventListener('click', function(e) {
+    	switch(e.index) {
+        	case 0:
+        		var codeValue = '';
+				
+				if(OS_ANDROID) {
+					codeValue = codeField.value;
+				} else {
+					codeValue = e.text;
+				}
+				
+				codeValue = codeValue.replace(/^\s+|\s+$/g, "");
+				
+				if(codeValue.length < 3 || codeValue.length > 10) {
+					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.invalidCodeError);
+					codeDialog.show();
+					return;
+				}
+        		
+        		if (indicator !== null) {
+                    indicator.openIndicator();
+                }
+            	
+                var xhr = Ti.Network.createHTTPClient();
+
+                xhr.onerror = function(e) {
+                	if (indicator !== null) {
+                		indicator.closeIndicator();
+                	}
+                	Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
+                   	Ti.API.error('Bad Sever =>' + e.error);
+                };
+				
+                try {
+                	xhr.open("POST", Alloy.Globals.JOINCODEURL);
+                	xhr.setRequestHeader("content-type", "application/json");
+                   	xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
+                    xhr.setTimeout(Alloy.Globals.TIMEOUT);
+                    
+                    var params = '{"challenge_code" : "' + codeValue + '", "lang" : "' + Alloy.Globals.LOCALE + '"}'; 
+                    xhr.send(params);
+                } catch(e) {
+                    Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+                    if (indicator !== null) {
+                		indicator.closeIndicator();
+                	}
+                }
+
+                xhr.onload = function() {
+                	if (indicator !== null) {
+                		indicator.closeIndicator();
+                	}
+                	
+                    if (this.status == '200') {
+                        if (this.readyState == 4) {
+                        	var data = JSON.parse(this.responseText);
+
+							if (Alloy.Globals.checkConnection()) {
+								
+								// 61tP
+								
+								if(data.data) {
+									var confirmDialog = Titanium.UI.createAlertDialog({
+    									title : Alloy.Globals.PHRASES.betbattleTxt,
+       		 							message : data.message,
+       									buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtnTxt],
+        								cancel : 1
+    								});
+    								
+    								confirmDialog.addEventListener('click', function(e) {
+    									switch(e.index) {
+        									case 0:
+        										var arg = {
+                            						answer : 1,
+                            						group : null,
+                            						push_cid : data.data.cid,
+                            						bet_amount : data.data.bet_amount
+                        						};
+                        			
+                        						var win = Alloy.createController('challenge', arg).getView();
+                        						Alloy.Globals.WINDOWS.push(win);
+                        			
+                       	 						if (!OS_ANDROID) {
+                            						Alloy.Globals.NAV.openWindow(win, {
+                                						animated : true
+                            						});
+                        						} else {
+                           	 						win.open({
+                                						fullScreen : true
+                            						});
+                        						}
+        										confirmDialog.hide();
+        									case 1:
+        										return;
+        								}
+        							});
+        							confirmDialog.show();
+								} else {
+									Alloy.Globals.showFeedbackDialog(data.message);
+								}
+								
+								Ti.App.fireEvent('challengesViewRefresh');
+							}
+							codeDialog.hide();
+                        }
+                    } else {
+                    	Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
+                    }
+                };
+               	break;
+            case 1:
+                break;
+        }
+
+     });
+     codeDialog.show();	
+};
+
 Alloy.Globals.getTutorial = function(indicator) {
     var platform = "";
     if (Alloy.Globals.checkConnection()) {

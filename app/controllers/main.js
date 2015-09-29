@@ -7,8 +7,8 @@ var centerImageView;
 var fontawesome = require('lib/IconicFont').IconicFont({
     font : 'lib/FontAwesome'
 });
-
-$.ds.contentview.add(Alloy.createController('challengesView', argu).getView());
+															//, argu  <- was // TODO 
+$.ds.contentview.add(Alloy.createController('challengesView').getView());
 
 var font = 'FontAwesome';
 var isAndroid = false;
@@ -614,15 +614,7 @@ function createSection() {
     }
 
     section.add(Alloy.createController('menurow', args).getView());
-	/*
-    var args1 = {
-        title : Alloy.Globals.PHRASES.inviteFriendsTxt,
-        customView : 'shareView',
-        image : '/images/sharethis.png'
-    };
-    section.add(Alloy.createController('menurow', args1).getView());
-	*/
-	
+
     var args2 = {
         title : Alloy.Globals.PHRASES.createChallengeTxt,
         customView : 'newChallengeLeague',
@@ -630,14 +622,13 @@ function createSection() {
     };
     section.add(Alloy.createController('menurow', args2).getView());
 
-    /*
-     var args3 = {
-     title : Alloy.Globals.PHRASES.myProfileTxt,
-     customView : 'profile',
-     image : '/images/Min_Profil.png'
-     };
-     section.add(Alloy.createController('menurow', args3).getView());
-     */
+   	var args3 = {
+    	title : Alloy.Globals.PHRASES.inviteCodeTxt,
+     	customView : 'challengesView',
+     	method : 'inviteCodeMethod',
+     	image : '/images/sharethis.png'
+    };
+    section.add(Alloy.createController('menurow', args3).getView());
 
     var args4 = {
         title : Alloy.Globals.PHRASES.friendZoneTxt,
@@ -647,16 +638,16 @@ function createSection() {
     section.add(Alloy.createController('menurow', args4).getView());
 
     var args5 = {
-        title : Alloy.Globals.PHRASES.storeTxt,
-        customView : 'store',
-        image : '/images/Store.png'
+        title : Alloy.Globals.PHRASES.scoreboardTxt,
+        customView : 'topplistan',
+        image : '/images/Topplista.png'
     };
     section.add(Alloy.createController('menurow', args5).getView());
 
     var args6 = {
-        title : Alloy.Globals.PHRASES.scoreboardTxt,
-        customView : 'topplistan',
-        image : '/images/Topplista.png'
+        title : Alloy.Globals.PHRASES.storeTxt,
+        customView : 'store',
+        image : '/images/Store.png'
     };
     section.add(Alloy.createController('menurow', args6).getView());
 
@@ -666,14 +657,6 @@ function createSection() {
         image : '/images/villkor.png'
     };
     section.add(Alloy.createController('menurow', args7).getView());
-    /*
-     var args8 = {
-     title : Alloy.Globals.PHRASES.settingsTxt,
-     customView : 'settings',
-     image : '/images/settings.png'
-     };
-     section.add(Alloy.createController('menurow', args8).getView());
-     */
 
     var args9 = {
         title : Alloy.Globals.PHRASES.signOutTxt,
@@ -686,6 +669,11 @@ function createSection() {
 }
 
 function rowSelect(e) {
+	if(e.row.customView === 'challengesView' && e.row.method === 'inviteCodeMethod') {
+		Ti.API.log("Show invite dialog...");
+		Alloy.Globals.displayEnterInviteCodeDialog(indicator);
+	}
+	
     if (!isAndroid && e.row.customView !== 'challengesView' && e.row.customView !== 'logout' && e.row.customView !== 'landingPage') {
 
         if (Alloy.Globals.checkConnection()) {

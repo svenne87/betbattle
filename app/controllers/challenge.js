@@ -1159,19 +1159,20 @@ function postAnswer(gameArray) {
                     Ti.App.fireEvent('app:updateView', obj);
 
                     for (var win in Alloy.Globals.WINDOWS) {
-                        Ti.API.log("Släck -> " + Alloy.Globals.WINDOWS[win].id);
-                        if (Alloy.Globals.WINDOWS[win].id === 'challenges_new' || Alloy.Globals.WINDOWS[win].id === 'challenges_pending' || Alloy.Globals.WINDOWS[win].id === 'challenges_accept') {
+                        if (Alloy.Globals.WINDOWS[win].id === 'challenges_finished' || Alloy.Globals.WINDOWS[win].id === 'challenges_accept' || Alloy.Globals.WINDOWS[win].id === 'challenges_new') {
+                            Ti.API.log("Släck -> " + Alloy.Globals.WINDOWS[win].id);
                             Alloy.Globals.WINDOWS[win].setOpacity(0);   
                         }      
                     }
-
-                    $.challengeWindow.close();
-                    
+             
                     for (var win in Alloy.Globals.WINDOWS) {
-                        if (Alloy.Globals.WINDOWS[win].id === 'challenges_finished' || Alloy.Globals.WINDOWS[win].id === 'challenges_pending' || Alloy.Globals.WINDOWS[win].id === 'challenges_accept') {
+                        if (Alloy.Globals.WINDOWS[win].id === 'challenges_finished' || Alloy.Globals.WINDOWS[win].id === 'challenges_accept' || Alloy.Globals.WINDOWS[win].id === 'challenges_new') {
+                            Ti.API.log("Stäng -> " + Alloy.Globals.WINDOWS[win].id);
                             Alloy.Globals.WINDOWS[win].close();
                         }
                     }
+                    
+                    $.challengeWindow.close();
 
                 } else {
                     Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);

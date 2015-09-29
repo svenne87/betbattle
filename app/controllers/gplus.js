@@ -1,3 +1,4 @@
+var args = arguments[0] || {};
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({
     top : 200,
@@ -8,6 +9,7 @@ var context;
 var url = Alloy.Globals.PHRASES.shareUrlLink;
 var win = $.gplus;
 var isAndroid = false;
+var inviteCode = args.inviteCode;
 
 if (OS_ANDROID) {
     isAndroid = true;
@@ -21,13 +23,13 @@ if (OS_ANDROID) {
             $.gplus = null;
         };
         $.gplus.activity.actionBar.displayHomeAsUp = true;
-        $.gplus.activity.actionBar.title = Alloy.Globals.PHRASES.shareGoogleTxt;
+        $.gplus.activity.actionBar.title = Alloy.Globals.PHRASES.shareGoogleTxt + "\n\n" + Alloy.Globals.inviteCodeText + ": " + inviteCode;
         indicator.openIndicator();
     });
 
 } else {
     $.gplus.titleControl = Ti.UI.createLabel({
-        text : Alloy.Globals.PHRASES.shareGoogleTxt,
+        text : Alloy.Globals.PHRASES.shareGoogleTxt + "\n\n" + Alloy.Globals.inviteCodeText + ": " + inviteCode,
         font : Alloy.Globals.getFontCustom(18, "Bold"),
         color : '#FFF'
     });

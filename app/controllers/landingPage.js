@@ -403,7 +403,7 @@ if (!isAndroid) {
             if (Alloy.Globals.WINDOWS.length > 0) {
                 for (var w in Alloy.Globals.WINDOWS) {
                     if(type !== 'message') {
-                        if (Alloy.Globals.WINDOWS[w].id === 'challenges_finished' || Alloy.Globals.WINDOWS[w].id === 'challenges_pending' || Alloy.Globals.WINDOWS[w].id === 'challenges_accept') {
+                        if (Alloy.Globals.WINDOWS[w].id === 'challenges_finished' || Alloy.Globals.WINDOWS[w].id === 'challenges_accept') {
                             Alloy.Globals.WINDOWS[w].setOpacity(0);
                         }
                     }
@@ -412,7 +412,7 @@ if (!isAndroid) {
                 for (var w in Alloy.Globals.WINDOWS) {
                     if (Alloy.Globals.WINDOWS[w] !== win) {
                         if(type !== 'message') {
-                            if (Alloy.Globals.WINDOWS[w].id === 'challenges_finished' || Alloy.Globals.WINDOWS[w].id === 'challenges_pending' || Alloy.Globals.WINDOWS[w].id === 'challenges_accept') {
+                            if (Alloy.Globals.WINDOWS[w].id === 'challenges_finished' || Alloy.Globals.WINDOWS[w].id === 'challenges_accept') {
                                 Alloy.Globals.WINDOWS[w].close();
                             }
                         }

@@ -442,18 +442,10 @@ function constructChallengeRows(obj, index) {
         // not a mixed challenge, just get sport from league[0]
         if (obj.attributes.leagues[0].sport_id === '1') {
             // Hockey
-            if (isAndroid) {
-                imageLocation = '/images/ikonhockey.png';
-            } else {
-                imageLocation = '/images/Ikonhockey.png';
-            }
+            imageLocation = '/images/ikonhockey.png';
         } else if (obj.attributes.leagues[0].sport_id === '2') {
             // Soccer
-            if (isAndroid) {
-                imageLocation = '/images/ikonfotboll.png';
-            } else {
-                imageLocation = '/images/Ikonfotboll.png';
-            }
+            imageLocation = '/images/ikonfotboll.png';
         } else {
             imageLocation = '/images/ikoner_mix_sport.png';
         }

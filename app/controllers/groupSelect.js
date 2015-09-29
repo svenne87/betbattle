@@ -22,7 +22,7 @@ Ti.App.addEventListener("sliderToggled", function(e) {
 var globalType = 0;
 
 var tableWrapper = Ti.UI.createView({
-    height : "65%",
+    height : "80%",
     width : Ti.UI.FILL
 });
 
@@ -41,7 +41,7 @@ function createSingleInviteRow(inviteType) {
 		inviteText = Alloy.Globals.PHRASES.shareFBTxt;
 	} else if (inviteType === 'twitter') {
 		 inviteIcon = fontawesome.icon('fa-twitter');
-		 inviteText = Alloy.Globals.PHRASES.shareTwitterTxt;
+		 inviteText = Alloy.Globals.PHRASES.shareTwitterTxt; 
 	} else if (inviteType === 'google-plus') {
 		inviteIcon = fontawesome.icon('fa-google-plus');
 		inviteText = Alloy.Globals.PHRASES.shareGoogleTxt;
@@ -83,7 +83,7 @@ function createSingleInviteRow(inviteType) {
    		right : 10,
         font : {
         	fontFamily : font,
-           	fontSize : 28
+           	fontSize : 20
         },
         id : 'icon',
         touchEnabled: false,
@@ -192,7 +192,7 @@ function createMemberRow(member, subRow) {
    		right : 10,
         font : {
         	fontFamily : font,
-           	fontSize : 28
+           	fontSize : 20
         },
         id : 'icon',
         touchEnabled: false,
@@ -441,8 +441,8 @@ function createSubmitButtons(type) {
     if (isAndroid) {
         if (Titanium.Platform.displayCaps.platformHeight < 600) {
             buttonHeight = 30;
-            table.setHeight('75%');
-            viewHeight = '25%';
+            table.setHeight('80%');
+            viewHeight = '20%';
         }
     }
 
@@ -487,9 +487,9 @@ function inviteSms() {
             sms.messageBody = Alloy.Globals.PHRASES.smsMsg + '.' + '\n' + Alloy.Globals.PHRASES.inviteCodeText + ": " + challengeCode + "\n" + Alloy.Globals.PHRASES.appLinkTxt;
 
             sms.addEventListener('complete', function(e) {
-                if (e.result == smsDialog.SENT) {
+                if (e.result == sms.SENT) {
                     Alloy.Globals.unlockAchievement(5);
-                } else if (e.result == smsDialog.FAILED) {
+                } else if (e.result == sms.FAILED) {
                     Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                 }
             });
@@ -563,7 +563,7 @@ function inviteFacebook() {
         fb.presentShareDialog({
             link: Alloy.Globals.PHRASES.appLinkTxt,
             name: Alloy.Globals.PHRASES.fbPostCaptionTxt,
-            description: Alloy.Globals.PHRASES.fbPostDescriptionTxt + "." + "\n" + Alloy.Globals.PHRASES.inviteCodeText + ": " + challengeCode,
+            description: Alloy.Globals.PHRASES.inviteCodeText + ": " + challengeCode, // Alloy.Globals.PHRASES.fbPostDescriptionTxt + "." + "\n" + 
             caption: Alloy.Globals.PHRASES.fbPostCaptionTxt,
             picture: 'http://31.216.36.213/betbattle/admin/images/logo_betkampen-150x150.png'   
         });
@@ -571,7 +571,7 @@ function inviteFacebook() {
         fb.presentWebShareDialog({
             link: Alloy.Globals.PHRASES.appLinkTxt,
             name: Alloy.Globals.PHRASES.fbPostCaptionTxt,
-            description: Alloy.Globals.PHRASES.fbPostDescriptionTxt + "." + "\n" + Alloy.Globals.PHRASES.inviteCodeText + ": " + challengeCode,
+            description: Alloy.Globals.PHRASES.inviteCodeText + ": " + challengeCode, // Alloy.Globals.PHRASES.fbPostDescriptionTxt + "." + "\n" + 
             caption: Alloy.Globals.PHRASES.fbPostCaptionTxt,
             picture: 'http://31.216.36.213/betbattle/admin/images/logo_betkampen-150x150.png'
         });
@@ -579,31 +579,21 @@ function inviteFacebook() {
 }
 
 function shareGoogle() {
-	hasInvited = true;
-	// Alloy.Globals.PHRASES.inviteCodeText
-// challengeCode
+	var goWin = Alloy.createController('gplus').getView();
 
-// TOOD hur blir det med koden man skickar med??
-
-/*
-var goWin = Alloy.createController('gplus').getView();
-
-googleBtn.addEventListener('click', function(e) {
     Alloy.Globals.unlockAchievement(5);
     if (OS_IOS) {
         Alloy.Globals.NAV.openWindow(goWin, {
-            animated : true
+       		animated : true,
+            inviteCode : challengeCode
         });
-    } else if (OS_ANDROID) {
+   	} else  {
         goWin.open({
-            fullScreen : true
-        });
+       		fullScreen : true,
+        	inviteCode : challengeCode
+       	});
     }
-});
-*/
-
 }
-
 
 function shareTwitter() {
 	if (!isAndroid) {
@@ -611,6 +601,8 @@ function shareTwitter() {
             Alloy.Globals.unlockAchievement(5);
             hasInvited = true;
             Titanium.Platform.openURL('twitter://post?message=' + Alloy.Globals.PHRASES.twitterMsg + "." + "\n" + Alloy.Globals.PHRASES.inviteCodeText + ": " + challengeCode + "\n" + Alloy.Globals.PHRASES.appLinkTxt);
+    	} else {
+    		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.twitterErrorMsg);
     	}
 	} else {
         try {
@@ -881,7 +873,7 @@ function createViews(array, type) {
     	right : 10,
         font : {
         	fontFamily : font,
-            fontSize : 28
+            fontSize : 20
         },
         id : 'icon',
         parent : friendsRow,
@@ -945,7 +937,7 @@ function createViews(array, type) {
     	right : 10,
         font : {
         	fontFamily : font,
-            fontSize : 28
+            fontSize : 20
         },
         id : 'icon',
         parent : inviteRow,
@@ -1070,7 +1062,7 @@ if (!isAndroid) {
 
     swipeRefresh = swipeRefreshModule.createSwipeRefresh({
         view : tableWrapper,
-        height : '65%',
+        height : '80%',
         width : Ti.UI.FILL,
         id : 'swiper'
     });

@@ -705,16 +705,30 @@ function createGUI(obj) {
 }
 
 function createBtn() {
+	var spaceView = Ti.UI.createView( {
+		height: 10,
+		width: Ti.UI.FILL,
+		backgroundColor : '#000'
+	});
+	mainView.add(spaceView);
+	
     var addFriendsLabel = Ti.UI.createLabel({
         text : Alloy.Globals.PHRASES.noFriendsTxt + " ",
         textAlign : "center",
-        top : 10,
+        top : 20,
         font : Alloy.Globals.getFontCustom(16, "Regular"),
         color : "#FFF"
     });
     mainView.add(addFriendsLabel);
 
-    var openFriendSearchBtn = Alloy.Globals.createButtonView("#FFF", "#000", Alloy.Globals.PHRASES.addFriendsTxt);
+	var secSpaceView = Ti.UI.createView( {
+		height: 40,
+		width: Ti.UI.FILL,
+		backgroundColor : '#000'
+	});
+	mainView.add(secSpaceView);
+
+    var openFriendSearchBtn = Alloy.Globals.createButtonView(Alloy.Globals.themeColor(), "#FFF", Alloy.Globals.PHRASES.addFriendsTxt);
     mainView.add(openFriendSearchBtn);
 
     openFriendSearchBtn.addEventListener('click', function(e) {
@@ -748,8 +762,6 @@ var xhr = Ti.Network.createHTTPClient({
                 var y = b.name.toLowerCase();
                 return ((x < y) ? -1 : ((x > y) ? 1 : 0));
             });
-
-            ///*******Create Table View*******///
 
             var tableHeaderView = Ti.UI.createView({
                 height : 0.1

@@ -323,7 +323,7 @@ for (var i in games) {
     var teamOne = games[i].team_1.team_name;
     var teamTwo = games[i].team_2.team_name;
 
-    if (teamOne.length + teamTwo.length > 26) {
+    if (teamOne.length + teamTwo.length > 24) {
         teamOne = teamOne.substring(0, 11);
         teamOne = teamOne + '...';
 
