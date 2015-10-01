@@ -1,3 +1,4 @@
+/*
 var args = arguments[0] || {};
 var context;
 var isAndroid = false;
@@ -217,3 +218,4 @@ var subscribeLabel = Ti.UI.createLabel({
     }
 });
 subscribeBtn.add(subscribeLabel);
+*/

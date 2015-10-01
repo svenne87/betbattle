@@ -1,3 +1,4 @@
+/*
 var args = arguments[0] || {};
 var pastRow = args.row;
 var pastRowName = args.rowName;
@@ -914,3 +915,4 @@ function getFriends(members) {
 
 getGroupMembers();
 $.editGroup.add(mainView);
+*/

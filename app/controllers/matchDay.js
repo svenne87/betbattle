@@ -1,3 +1,4 @@
+/*
 var args = arguments[0] || {};
 var isAndroid = false;
 var match = null;
@@ -373,3 +374,4 @@ table.setData(data);
 
 wrapperView.add(table);
 $.matchDay.add(wrapperView);
+*/

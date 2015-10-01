@@ -1,3 +1,4 @@
+/*
 var args = arguments[0] || {};
 var context;
 var isAndroid = false;
@@ -81,3 +82,4 @@ function getUserTickets() {
 
 getUserTickets();
 $.yourTickets.add(scrollView);
+*/

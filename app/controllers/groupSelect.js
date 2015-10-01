@@ -537,7 +537,7 @@ function inviteFacebook() {
 
 	if (Alloy.Globals.FACEBOOKOBJECT != null) {
     	if (isAndroid) {
-        	$.showCoupon.fbProxy = Alloy.Globals.FACEBOOK.createActivityWorker({lifecycleContainer : $.showCoupon});
+        	$.groupSelect.fbProxy = Alloy.Globals.FACEBOOK.createActivityWorker({lifecycleContainer : $.groupSelect});
         	fb = Alloy.Globals.FACEBOOK;
     	} else {
         	fb = Alloy.Globals.FACEBOOK;
@@ -545,7 +545,7 @@ function inviteFacebook() {
 	} else {
     	if (isAndroid) {
         	var fbModule = require('facebook');
-        	$.showCoupon.fbProxy = fbModule.createActivityWorker({lifecycleContainer : $.showCoupon});
+        	$.groupSelect.fbProxy = fbModule.createActivityWorker({lifecycleContainer : $.groupSelect});
         	fb = fbModule;
     	} else {
         	fb = require("facebook");

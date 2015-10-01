@@ -289,7 +289,7 @@ if (!isAndroid) {
             setTimeout(function() {
                 indicator.openIndicator();
                 fetchedFinishedChallenges = 0;
-                getFinishedChallenges(true, 0, 20);  // TODO
+                getFinishedChallenges(true, 0, 20);
 
             }, 800);
         } else {
@@ -589,7 +589,7 @@ function constructChallengeRows(obj, index) {
     if(participantsValueLabel.toImage() !== null && participantsValueLabel.toImage().width !== null && potTextLabel.toImage() !== null && potTextLabel.toImage().width !== null) {
         potValueLabelLeft = (180 + participantsValueLabel.toImage().width + 2 + potTextLabel.toImage().width + 4);
     } 
-// TODO
+
     var potValueLabel = Ti.UI.createLabel({
         left : potValueLabelLeft,
         text : '' + currentPot,

@@ -1,3 +1,4 @@
+/*
 var context;
 var sections = [];
 var table = null;
@@ -357,3 +358,4 @@ $.myGroups.addEventListener('close', function() {
 });
 
 $.myGroups.add(mainView);
+*/

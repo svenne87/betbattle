@@ -1,3 +1,4 @@
+/*
 var args = arguments[0] || {};
 
 var uie = require('lib/IndicatorWindow');
@@ -345,3 +346,4 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
 
 $.fbFriends.add(mainView);
 
+*/

@@ -1,3 +1,4 @@
+/*
 var fontawesome = require('lib/IconicFont').IconicFont({
     font : 'lib/FontAwesome'
 });
@@ -530,3 +531,4 @@ if (Alloy.Globals.checkConnection()) {
 
 $.createGroup.add(table);
 
+*/

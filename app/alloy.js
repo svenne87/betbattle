@@ -377,8 +377,8 @@ Alloy.Globals.showAlertWithRestartNote = function(auto) {
 
 Alloy.Globals.displayEnterInviteCodeDialog = function(indicator) {
 	var textFieldView = Ti.UI.createView({
-		 backgroundColor:'#111'
 	});
+	
 	var codeField = Titanium.UI.createTextField({
         hintText: '',
         height: 35,
@@ -391,11 +391,14 @@ Alloy.Globals.displayEnterInviteCodeDialog = function(indicator) {
 	var codeDialog = Titanium.UI.createAlertDialog({
     	title : Alloy.Globals.PHRASES.codeTitleText,
         message : Alloy.Globals.PHRASES.codeMessageText,
-        style: Ti.UI.iPhone.AlertDialogStyle.PLAIN_TEXT_INPUT,
         androidView: textFieldView,
        	buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtnTxt],
         cancel : 1
     });
+    
+    if(OS_IOS) {
+    	codeDialog.style = Ti.UI.iPhone.AlertDialogStyle.PLAIN_TEXT_INPUT;
+    }
    	
     codeDialog.addEventListener('click', function(e) {
     	switch(e.index) {
@@ -426,8 +429,9 @@ Alloy.Globals.displayEnterInviteCodeDialog = function(indicator) {
                 	if (indicator !== null) {
                 		indicator.closeIndicator();
                 	}
-                	Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
-                   	Ti.API.error('Bad Sever =>' + e.error);
+					
+					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.invalidCodeError);
+                   	Ti.API.error('Bad Sever => ' + e.error);
                 };
 				
                 try {
@@ -455,9 +459,6 @@ Alloy.Globals.displayEnterInviteCodeDialog = function(indicator) {
                         	var data = JSON.parse(this.responseText);
 
 							if (Alloy.Globals.checkConnection()) {
-								
-								// 61tP
-								
 								if(data.data) {
 									var confirmDialog = Titanium.UI.createAlertDialog({
     									title : Alloy.Globals.PHRASES.betbattleTxt,
@@ -495,7 +496,7 @@ Alloy.Globals.displayEnterInviteCodeDialog = function(indicator) {
         							});
         							confirmDialog.show();
 								} else {
-									Alloy.Globals.showFeedbackDialog(data.message);
+									Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
 								}
 								
 								Ti.App.fireEvent('challengesViewRefresh');

@@ -79,17 +79,23 @@ function createIndicatorWindow(args) {
 		if(OS_IOS){
 			win.open();
 		}
-		activityIndicator.show();
+		
+		setTimeout(function() {
+			activityIndicator.show();
+        }, 100);
 	}
 
 
 	win.openIndicator = openIndicator;
 
-	function closeIndicator() {
-		activityIndicator.hide();
+	function closeIndicator() {		
 		if(OS_IOS){
 			win.close();
 		}
+		
+		setTimeout(function() {
+			activityIndicator.hide();
+        }, 300);
 	}
 
 

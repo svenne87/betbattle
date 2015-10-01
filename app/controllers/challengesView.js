@@ -23,6 +23,8 @@ var profileWinsLabel = '';
 var profileRankingLabel = '';
 var profileAchievementsLabel = '';
 var profileLevelImage = '';
+var overlayView = '';
+var overlayLabel = '';
 
 //var matchOTDTextLabel;
 //var matchOTDRow;
@@ -154,7 +156,7 @@ function updateProfileData(userInfo) {
     profileRankingLabel.setText(userInfo.position);
     profileAchievementsLabel.setText(userInfo.achieved_achievements);
     profileLevelImage.setImage(Alloy.Globals.BETKAMPENURL + "/" + userInfo.level.symbol);
- 
+    
     if(profileCoinsLabel.getText().length > 5) {
         profileCoinsLabel.setText(profileCoinsLabel.getText().substring(0, 3) + '..');
     }
@@ -181,9 +183,14 @@ function updateProfileData(userInfo) {
     if (userInfo.team.data[0]) {
         Ti.App.Properties.setString("favorite_team", userInfo.team.data[0].name);
     }
-
+    
     firstRow.show();
     secondRow.show();
+	
+	setTimeout(function() { 
+		profileRow.remove(overlayView);
+    }, 600);
+	
 
     // update profile image
     if (Alloy.Globals.FACEBOOKOBJECT) {
@@ -195,10 +202,11 @@ function updateProfileData(userInfo) {
 
 // get coins for user
 function getUserInfo() {
+		
     var xhr = Titanium.Network.createHTTPClient();
     xhr.onerror = function(e) {
         Ti.API.error('Bad Sever 2 =>' + e.error);
-        profileNameLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
+        overlayLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
     };
 
     try {
@@ -213,7 +221,7 @@ function getUserInfo() {
             totalPoints : ''
         };
         Ti.App.fireEvent('app:coinsMenuInfo', error);
-        profileNameLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
+        overlayLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
     }
 
     xhr.onload = function() {
@@ -237,7 +245,7 @@ function getUserInfo() {
             }
         } else {
             Ti.API.error("Error =>" + this.response);
-            profileNameLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
+            overlayLabel.setText(Alloy.Globals.PHRASES.unknownErrorTxt);
         }
     };
 }
@@ -1361,7 +1369,7 @@ function constructTableData(array) {
         },
         hasChild : false,
         selectionStyle : 'none'
-    });
+    });    
 
     acceptRow = Ti.UI.createTableViewRow({
         //top : 0,
@@ -1463,7 +1471,7 @@ function constructTableData(array) {
     }
     
     profileNameLabel = Ti.UI.createLabel({
-        text : Alloy.Globals.PHRASES.loadingTxt,
+        text : '		',
         font : Alloy.Globals.getFontCustom(14, "Regular"),
         color : '#FFF',
         top : topPosRelative,
@@ -1480,8 +1488,6 @@ function constructTableData(array) {
         width : Ti.UI.FILL,
         height : 20
     });
-    
-    firstRow.hide();
     
     firstRow.add(Ti.UI.createLabel({
         left : 0,
@@ -1531,8 +1537,6 @@ function constructTableData(array) {
         width : Ti.UI.FILL,
         height : Ti.UI.SIZE
     });
-    
-    secondRow.hide();
     
     secondRow.add(Ti.UI.createLabel({
         left : 0,
@@ -1602,6 +1606,25 @@ function constructTableData(array) {
     profileRow.add(leftProfilePart);
     profileRow.add(centerProfilePart);
     profileRow.add(rightProfilePart);
+    
+    overlayView =  $.UI.create('View', {
+		height: 70,
+		width:Ti.UI.FILL,
+		classes : ['challengesSection'],
+	});
+
+	overlayLabel = Ti.UI.createLabel({
+		text : Alloy.Globals.PHRASES.loadingTxt,
+		color : '#FFF',
+		top: 20,
+    	textAlign : 'center',
+    	width: Ti.UI.FILL,
+   	 	height : Ti.UI.SIZE,
+
+	});
+	
+	overlayView.add(overlayLabel);
+	profileRow.add(overlayView);
 
     // open profile window when clicking profile row
     profileRow.addEventListener('click', function() {
@@ -2006,7 +2029,6 @@ if (!checkFirstTime) {
 	
 	 	setTimeout(function() {
 	 		Alloy.Globals.displayEnterInviteCodeDialog(indicator);
-	 		// TODO test android and only show first time.
      	}, 2500);
     }
 } 
