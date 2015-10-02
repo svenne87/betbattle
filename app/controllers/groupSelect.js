@@ -3,6 +3,7 @@ var args = arguments[0] || {};
 var coins = -1;
 var challengeCode = "";
 var hasInvited = false;
+var fb = args.fb;
 
 if ( typeof args.coins !== 'undefined' && typeof args.challengeCode !== 'undefined') {
     coins = args.coins;
@@ -533,24 +534,6 @@ function inviteEmail() {
 }
 
 function inviteFacebook() {	
-	var fb;
-
-	if (Alloy.Globals.FACEBOOKOBJECT != null) {
-    	if (isAndroid) {
-        	$.groupSelect.fbProxy = Alloy.Globals.FACEBOOK.createActivityWorker({lifecycleContainer : $.groupSelect});
-        	fb = Alloy.Globals.FACEBOOK;
-    	} else {
-        	fb = Alloy.Globals.FACEBOOK;
-    	}
-	} else {
-    	if (isAndroid) {
-        	var fbModule = require('facebook');
-        	$.groupSelect.fbProxy = fbModule.createActivityWorker({lifecycleContainer : $.groupSelect});
-        	fb = fbModule;
-    	} else {
-        	fb = require("facebook");
-    	}
-	}
 
     fb.addEventListener('shareCompleted', function (e) {
         if (e.success) {

@@ -145,9 +145,13 @@ function removeCouponGame(gameID) {
 function challengeFriends() {
 	if (challengeCode !== "") {
 		if (validate()) {
+			
+			var fb = require('facebook');;
+
         	var arg = {
             	coins : coinsToJoin,
-            	challengeCode : challengeCode
+            	challengeCode : challengeCode,
+            	fb : fb
             };
              
             var win = Alloy.createController('groupSelect', arg).getView();
@@ -158,6 +162,8 @@ function challengeFriends() {
                 	animated : true
                 });
             } else {
+        		win.fbProxy = fb.createActivityWorker({lifecycleContainer : win});
+          	
                 win.open({
                 	fullScreen : true
                 });

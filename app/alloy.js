@@ -221,6 +221,7 @@ Alloy.Globals.SCOREBOARDURL = Alloy.Globals.BETKAMPENURL + '/api/get_scoreboard.
 Alloy.Globals.BETKAMPENGETTUTORIALURL = Alloy.Globals.BETKAMPENURL + '/webviews/tutorial.php';
 Alloy.Globals.FINISHEDCHALLENGESURL = Alloy.Globals.BETKAMPENURL + '/api/get_finished_challenges.php';
 Alloy.Globals.JOINCODEURL = Alloy.Globals.BETKAMPENURL + '/api/join_challenge_with_code.php';
+Alloy.Globals.RESETPASSWORDURL = Alloy.Globals.BETKAMPENURL + '/api/request_password_reset.php';
 
 Alloy.Globals.performTimeout = function(func) {
     if (OS_ANDROID) {
@@ -453,7 +454,7 @@ Alloy.Globals.displayEnterInviteCodeDialog = function(indicator) {
                 	if (indicator !== null) {
                 		indicator.closeIndicator();
                 	}
-                	
+        			
                     if (this.status == '200') {
                         if (this.readyState == 4) {
                         	var data = JSON.parse(this.responseText);
@@ -496,10 +497,10 @@ Alloy.Globals.displayEnterInviteCodeDialog = function(indicator) {
         							});
         							confirmDialog.show();
 								} else {
-									Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
+									Alloy.Globals.showFeedbackDialog(data.message);
 								}
 								
-								Ti.App.fireEvent('challengesViewRefresh');
+							 	Ti.App.fireEvent('challengesViewRefresh');
 							}
 							codeDialog.hide();
                         }

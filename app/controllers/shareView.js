@@ -1,3 +1,4 @@
+/*
 var fontawesome = require('lib/IconicFont').IconicFont({
     font : 'lib/FontAwesome'
 });
@@ -175,20 +176,6 @@ if (Alloy.Globals.FACEBOOKOBJECT != null) {
     }
 }
 
-/*
- 
- var fb = require('facebook');
-        fb.dialog('apprequests', {
-            title: 'My title',
-            message: 'My message'
-        }, function (e) {
-            Ti.API.debug(JSON.stringify(e));     
-        });
-        
-        Request Dialog
- * */
-
-
 
 fbUserBtn.addEventListener('click', function(e) {
     if (Alloy.Globals.checkConnection()) {
@@ -226,20 +213,7 @@ function performFacebookPost(fb) {
         }
     });
 
-/*
-    var data = {
-        url : Alloy.Globals.PHRASES.appLinkTxt,
-        namespaceObject : 'betbattle:bet',
-        objectName : 'bet',
-        imageUrl : Alloy.Globals.BETKAMPENURL + '/images/betbattle.png',
-        title : Alloy.Globals.PHRASES.fbPostCaptionTxt,
-        description : Alloy.Globals.PHRASES.fbPostDescriptionTxt + "." + "\n" + Alloy.Globals.PHRASES.myNameIsTxt + ": " + Alloy.Globals.PROFILENAME,
-        namespaceAction : 'betbattle:place'
-    };
 
-    Alloy.Globals.unlockAchievement(5);
-    fb.share(data);
-  */
 }
 
 // --------------------------------------------------------------- Share to TWITTER  -------------------------------------------------------------------------------
@@ -307,18 +281,6 @@ mailBtn.addEventListener('click', function(e) {
 // --------------------------------------------------------------- Send SMS  -------------------------------------------------------------------------------
 if (OS_IOS) {
 
-    /*
-     var sms = require('bencoding.sms').createSMSDialog({
-     barColor : '#336699'
-     });
-     sms.setMessageBody(Alloy.Globals.PHRASES.smsMsg + '.' + '\n' + Alloy.Globals.PHRASES.myNameIsTxt + ": " + Alloy.Globals.PROFILENAME + "\n" + Alloy.Globals.PHRASES.appLinkTxt);
-
-     smsBtn.addEventListener('click', function(e) {
-     Alloy.Globals.unlockAchievement(5);
-     sms.open();
-     });
-     */
-
     var module = require('com.omorandi');
     var sms = module.createSMSDialog();
 
@@ -366,3 +328,4 @@ mainView.add(Ti.UI.createLabel({
 }));
 
 $.share.add(mainView);
+*/

@@ -103,6 +103,109 @@ signInBtn.top = 0;
 $.abort_row.add(abortBtn);
 $.sign_in_row.add(signInBtn);
 
+// TODO start
+
+var resetPasswordView = Ti.UI.createView({
+	height: 10,
+	top: 10,
+	width: Ti.UI.FILL,
+});
+
+var resetPasswordViewLabel = Ti.UI.createLabel({
+	text : Alloy.Globals.PHRASES.resetPasswordTxt',
+	textAlign: 'center',
+   	font : Alloy.Globals.getFontCustom(16, 'Regular'),
+    color : '#FFF'
+});
+
+resetPasswordView.add(resetPasswordViewLabel);
+
+resetPasswordView.addEventListener('click', function(e) {
+	
+	var textFieldView = Ti.UI.createView({
+	});
+	
+	var emailField = Titanium.UI.createTextField({
+        hintText: '',
+        height: 35,
+        width: 250,
+        borderStyle: Titanium.UI.INPUT_BORDERSTYLE_ROUNDED
+    });
+    
+    textFieldView.add(emailField);
+	
+	var emailDialog = Titanium.UI.createAlertDialog({
+    	title : Alloy.Globals.PHRASES.resetPasswordTxt,
+        message : Alloy.Globals.PHRASES.emailTxt,
+        androidView: textFieldView,
+       	buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtnTxt],
+        cancel : 1
+    });
+    
+    if(OS_IOS) {
+    	emailDialog.style = Ti.UI.iPhone.AlertDialogStyle.PLAIN_TEXT_INPUT;
+    }
+   	
+    emailDialog.addEventListener('click', function(e) {
+    	switch(e.index) {
+        	case 0:
+        		var emailValue = '';
+				
+				if(OS_ANDROID) {
+					emailValue = emailField.value;
+				} else {
+					emailValue = e.text;
+				}
+
+                indicator.openIndicator();
+            	
+                var xhr = Ti.Network.createHTTPClient();
+
+                xhr.onerror = function(e) {
+                	indicator.closeIndicator();
+					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.passwordResetErrorTxt);
+                   	Ti.API.error('Bad Sever => ' + e.error);
+                };
+				
+                try {
+                	xhr.open("POST", Alloy.Globals.RESETPASSWORDURL);
+                	xhr.setRequestHeader("content-type", "application/json");
+                    xhr.setTimeout(Alloy.Globals.TIMEOUT);
+                    
+                    var params = '{"email" : "' + emailValue + '", "lang" : "' + Alloy.Globals.LOCALE + '"}'; 
+                    xhr.send(params);
+                } catch(e) {
+                    Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+					indicator.closeIndicator();
+                }
+
+                xhr.onload = function() {
+                	indicator.closeIndicator();
+      
+                    if (this.status == '200') {
+                        if (this.readyState == 4) {
+                        	var data = JSON.parse(this.responseText);
+							
+							Alloy.Globals.showFeedbackDialog(data);
+							emailDialog.hide();
+                        }
+                    } else {
+                    	Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
+                    }
+                };
+               	break;
+            case 1:
+                break;
+        }
+
+     });
+     emailDialog.show();
+});
+
+//$.sign_in_row.add(resetPasswordView);
+
+// TODO end
+
 // Event Listeners to simulate hint text
 var passChange = false;
 var emailChange = false;
