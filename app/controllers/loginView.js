@@ -11,7 +11,7 @@ var deviceHeight = Ti.Platform.displayCaps.platformHeight;
 if(deviceHeight <= 480) {
     $.space_row.height  = 5;
 } else if(deviceHeight >= 667) {
-    $.space_row.height  = 65;
+    $.space_row.height  = 60;
 }
 
 var user_team;
@@ -59,14 +59,6 @@ if (OS_ANDROID) {
         layout : 'vertical',
         backgroundColor : "#303030",
     });
-
-    var footerView = Ti.UI.createView({
-        height : 1,
-        top : 5,
-        width : Ti.UI.FILL,
-        layout : 'vertical',
-        backgroundColor : "#303030",
-    });
 } else {
     $.loginEmail.autocapitalization = Titanium.UI.TEXT_AUTOCAPITALIZATION_NONE;
     
@@ -83,18 +75,9 @@ if (OS_ANDROID) {
         layout : 'vertical',
         backgroundColor : '#303030',
     });
-
-    var footerView = Ti.UI.createView({
-        height : 0,
-        top : 0,
-        width : Ti.UI.FILL,
-        layout : 'vertical',
-        backgroundColor : "transparent",
-    });
 }
 
 $.table.setHeaderView(headerView);
-$.table.setFooterView(footerView);
 $.info_label.text = $.info_label.text + ':';
 
 abortBtn.top = -2;
@@ -103,20 +86,36 @@ signInBtn.top = 0;
 $.abort_row.add(abortBtn);
 $.sign_in_row.add(signInBtn);
 
-// TODO start
 
 var resetPasswordView = Ti.UI.createView({
-	height: 10,
-	top: 10,
-	width: Ti.UI.FILL,
+	width : Ti.UI.FILL,
+    layout : 'vertical',
+    backgroundColor : "transparent",
+	height: Ti.UI.SIZE
 });
 
+if(isAndroid) {
+    var footerView = Ti.UI.createView({
+        height : 1,
+        top : 5,
+        width : Ti.UI.FILL,
+        layout : 'vertical',
+        backgroundColor : "#303030",
+    });
+	resetPasswordView.add(footerView);
+}
+
 var resetPasswordViewLabel = Ti.UI.createLabel({
-	text : Alloy.Globals.PHRASES.resetPasswordTxt',
-	textAlign: 'center',
+	text : Alloy.Globals.PHRASES.resetPasswordTxt + '?',
+	left: 20,
+	width: "90%",
    	font : Alloy.Globals.getFontCustom(16, 'Regular'),
     color : '#FFF'
 });
+
+if(!isAndroid) {
+	resetPasswordViewLabel.autocapitalization = Titanium.UI.TEXT_AUTOCAPITALIZATION_NONE;
+}
 
 resetPasswordView.add(resetPasswordViewLabel);
 
@@ -142,7 +141,7 @@ resetPasswordView.addEventListener('click', function(e) {
         cancel : 1
     });
     
-    if(OS_IOS) {
+    if(!isAndroid) {
     	emailDialog.style = Ti.UI.iPhone.AlertDialogStyle.PLAIN_TEXT_INPUT;
     }
    	
@@ -151,7 +150,7 @@ resetPasswordView.addEventListener('click', function(e) {
         	case 0:
         		var emailValue = '';
 				
-				if(OS_ANDROID) {
+				if(isAndroid) {
 					emailValue = emailField.value;
 				} else {
 					emailValue = e.text;
@@ -202,9 +201,7 @@ resetPasswordView.addEventListener('click', function(e) {
      emailDialog.show();
 });
 
-//$.sign_in_row.add(resetPasswordView);
-
-// TODO end
+$.table.setFooterView(resetPasswordView);
 
 // Event Listeners to simulate hint text
 var passChange = false;
