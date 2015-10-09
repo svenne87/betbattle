@@ -33,7 +33,7 @@ var args = arguments[0] || {};
 if (args.refresh == 1) {
     if (Alloy.Globals.checkConnection()) {
         // refresh table with challenges
-        indicator.openIndicator();
+        //indicator.openIndicator();
         getChallenges();
         if (args.sent_challenge == 1) {
             Alloy.Globals.unlockAchievement(11);
@@ -125,7 +125,7 @@ Alloy.Globals.challengesViewRefreshEvent = function(e) {
     Ti.API.log("refresh körs!!!!!!!!!");
     
     if (Alloy.Globals.checkConnection()) {
-        indicator.openIndicator();
+        //indicator.openIndicator();
         getChallenges();
     } else {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
@@ -137,6 +137,9 @@ Ti.App.addEventListener("challengesViewRefresh", Alloy.Globals.challengesViewRef
 
 // update profile info row
 function updateProfileData(userInfo) {
+    firstRow.setOpacity(0);
+    secondRow.setOpacity(0);
+   
     // check if language or tutorial has been changed, if it has download the new version
     Alloy.Globals.checkVersions(indicator);
     
@@ -184,12 +187,13 @@ function updateProfileData(userInfo) {
         Ti.App.Properties.setString("favorite_team", userInfo.team.data[0].name);
     }
     
-    firstRow.show();
-    secondRow.show();
+	profileRow.setOpacity(0);
 	
-	setTimeout(function() { 
+    setTimeout(function() { 
+    	firstRow.setOpacity(1);
+    	secondRow.setOpacity(1);
 		profileRow.remove(overlayView);
-    }, 600);
+    }, 1000);
 	
 
     // update profile image
@@ -705,7 +709,7 @@ if (!isAndroid) {
     // will refresh on pull
     refresher.addEventListener('refreshstart', function(e) {
         if (Alloy.Globals.checkConnection()) {
-            indicator.openIndicator();
+            //indicator.openIndicator();
             getChallenges();
         } else {
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
@@ -1029,7 +1033,7 @@ if (isAndroid) {
 
     swipeRefresh.addEventListener('refreshing', function() {
         if (Alloy.Globals.checkConnection()) {
-            indicator.openIndicator();
+            //indicator.openIndicator();
             setTimeout(function() {
                 getChallenges();
             }, 800);
@@ -1868,7 +1872,7 @@ function getDynamicTopImage() {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
         return;
     }
-
+	
     var xhr = Titanium.Network.createHTTPClient();
     xhr.onerror = function(e) {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
@@ -1888,34 +1892,45 @@ function getDynamicTopImage() {
         if (this.status == '200') {
             if (this.readyState == 4) {
                 var response = JSON.parse(this.responseText);
-
-                var header = table.getHeaderView();
-                header.removeAllChildren();
+                
                 webViewUrl = response.url;
-                webViewTitle = response.title;
+				webViewTitle = response.title;
 
-                var imageView = Ti.UI.createImageView({
-                    defaultImage : '/images/h_image.jpg',
-                    image : Alloy.Globals.BETKAMPENURL + response.image,
-                    width : Ti.UI.FILL,
-                    height : 140,
-                    backgroundColor : '#000'
-                });
+				var header = table.getHeaderView();
 
-                imageView.addEventListener('error', function(e) {
-                    e.image = '/images/h_images.jpg';
-                });
+				// at app start we will need to add the image
+				// on refresh there will be children elements and image only need to change if there is a image in the response
+				if(response.image != '' || header.children.length == 0) {
+					header.removeAllChildren();
 
-                header.add(imageView);
+					var imageView = Ti.UI.createImageView({
+						defaultImage : '/images/h_image.jpg',
+						image : Alloy.Globals.BETKAMPENURL + response.image,
+						width : Ti.UI.FILL,
+						height : 140,
+						backgroundColor : '#000'
+					});
 
-                if (isAndroid) {
-                    header.add(Ti.UI.createView({
-                        height : 0.5,
-                        width : Ti.UI.FILL,
-                        backgroundColor : '#303030'
-                    }));
-                }
+					if (response.image != '') {
+						imageView.setImage(Alloy.Globals.BETKAMPENURL + response.image);
+					} else {
+						imageView.setImage('/images/h_image.jpg');
+					}
 
+					imageView.addEventListener('error', function(e) {
+						e.image = '/images/h_images.jpg';
+					});
+
+					header.add(imageView);
+
+					if (isAndroid) {
+						header.add(Ti.UI.createView({
+							height : 0.5,
+							width : Ti.UI.FILL,
+							backgroundColor : '#303030'
+						}));
+					}
+				}
             } else {
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             }
@@ -1951,7 +1966,7 @@ function getChallenges() {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
         endRefresher();
         Ti.API.error('Bad Sever 1 =>' + e.error);
-        indicator.closeIndicator();
+        //indicator.closeIndicator();
     };
 
     try {
@@ -1963,7 +1978,7 @@ function getChallenges() {
     } catch(e) {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
         endRefresher();
-        indicator.closeIndicator();
+        //indicator.closeIndicator();
     }
     xhr.onload = function() {
         if (this.status == '200') {
@@ -2005,10 +2020,10 @@ function getChallenges() {
                 }
             }
 
-            indicator.closeIndicator();
+            //indicator.closeIndicator();
         } else {
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-            indicator.closeIndicator();
+            //indicator.closeIndicator();
             endRefresher();
             Ti.API.error("Error =>" + this.response);
         }

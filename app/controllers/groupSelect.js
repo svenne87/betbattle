@@ -408,12 +408,14 @@ function challengeFriends() {
                     for (var win in Alloy.Globals.WINDOWS) {
                         Alloy.Globals.WINDOWS[win].setOpacity(0);
                     }
-
-                    $.groupSelectWindow.close();
-
+                    
+                    $.groupSelectWindow.setOpacity(0);
+                    
                     for (var win in Alloy.Globals.WINDOWS) {
                         Alloy.Globals.WINDOWS[win].close();
                     }
+                    
+                    $.groupSelectWindow.close();
 
                 } else {
                     isSubmitting = false;
@@ -614,14 +616,14 @@ function addRowEventListener(row, type) {
        		
             //Is it opened?
             if (e.row.opened) {
-                table.deleteRow(e.index + 1);
+            	table.deleteRow(e.index + 1);
                 e.row.opened = false;
             } else {
                 //Add the children.
                 var currentIndex = table.data[0].rows.indexOf(e.row);
                 table.insertRowAfter(currentIndex, e.row.sub);
 				iconText = fontawesome.icon('fa-chevron-up');
-                e.row.opened = true;
+                e.row.opened = true;               
             }
             
             for (var k in row.children) {
@@ -633,10 +635,6 @@ function addRowEventListener(row, type) {
         } else {
         	// sub row was clicked.
         	if(e.source.type !== 'friend') {
-
-        		// Kolla igenom och testa så att alla olika dela funkar...
-        		// TODO
-        		
         		if(e.source.inviteType === 'sms') {
         			// sms invite
         			inviteSms();

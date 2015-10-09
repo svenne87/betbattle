@@ -1154,7 +1154,6 @@ function postAnswer(gameArray) {
                         arg : arg
                     };
                     
-                    Ti.API.log("svaraaaa");
                     
                     Ti.App.fireEvent('app:updateView', obj);
 
@@ -1164,6 +1163,8 @@ function postAnswer(gameArray) {
                             Alloy.Globals.WINDOWS[win].setOpacity(0);   
                         }      
                     }
+                    
+                    $.challengeWindow.setOpacity(0);
              
                     for (var win in Alloy.Globals.WINDOWS) {
                         if (Alloy.Globals.WINDOWS[win].id === 'challenges_finished' || Alloy.Globals.WINDOWS[win].id === 'challenges_accept' || Alloy.Globals.WINDOWS[win].id === 'challenges_new') {

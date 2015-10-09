@@ -382,7 +382,7 @@ Alloy.Globals.displayEnterInviteCodeDialog = function(indicator) {
 	
 	var codeField = Titanium.UI.createTextField({
         hintText: '',
-        height: 35,
+        height: 45,
         width: 250,
         borderStyle: Titanium.UI.INPUT_BORDERSTYLE_ROUNDED
     });
