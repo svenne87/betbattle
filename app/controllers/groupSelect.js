@@ -245,27 +245,21 @@ function getFriends() {
         if (this.status == '200') {
             if (this.readyState == 4) {
                 var response = JSON.parse(this.responseText);
+                friendObjects = [];
+                
+                for (var i = 0; i < response.length; i++) {
+					var friendObject = Alloy.createModel('friend', {
+                    	fbid : response[i].fbid,
+                        id : response[i].id,
+                        name : response[i].name
+                    });
 
-                if (response.length > 0) {
-                    friendObjects = [];
-                    for (var i = 0; i < response.length; i++) {
-
-                        var friendObject = Alloy.createModel('friend', {
-                            fbid : response[i].fbid,
-                            id : response[i].id,
-                            name : response[i].name
-                        });
-
-                        // add to array
-                        friendObjects.push(friendObject);
-                    }
-
-                    // create the views
-                    createViews(friendObjects, '2');
-                } else {
-                    Ti.API.info("Inga Vänner");
+                    // add to array
+                    friendObjects.push(friendObject);
                 }
 
+                // create the views
+                createViews(friendObjects, '2');
             } else {
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
             }

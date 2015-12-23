@@ -79,7 +79,8 @@
     returnKeyType:Titanium.UI.RETURNKEY_DEFAULT,
     borderRadius : 5,
     font : Alloy.Globals.FONT,
-    enabled:false
+    enabled : false,
+    bubbleParent: false,
 },
 "#regPassAgain":{
 	color:'#CCC',
@@ -93,7 +94,8 @@
     returnKeyType:Titanium.UI.RETURNKEY_DEFAULT,
     borderRadius : 5,
     font : Alloy.Globals.FONT,
-    enabled:false
+    enabled : false,
+    bubbleParent : false,
 },
 "#regEmail":{
 	color:'#CCC',
@@ -107,5 +109,6 @@
     returnKeyType:Titanium.UI.RETURNKEY_DEFAULT,
     borderRadius : 5,
     font : Alloy.Globals.FONT,
-    enabled:false
+    enabled : false,
+    bubbleParent : false,
 }

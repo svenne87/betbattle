@@ -202,6 +202,8 @@ $.regPass.addEventListener('return', function() {
     if (!passChange) {
         $.regPass.setValue(Alloy.Globals.PHRASES.passwordTxt);
         $.regPass.passwordMask = false;
+    } else {
+    	$.regPassAgain.focus();
     }
 });
 
@@ -260,6 +262,12 @@ $.regPassAgain.addEventListener('return', function() {
     if (!passAgainChange) {
         $.regPassAgain.setValue(Alloy.Globals.PHRASES.passwordAgainTxt);
         $.regPassAgain.passwordMask = false;
+    } else {
+  		if ($.regPass.value != '' && $.regPassAgain.value != '' && $.regEmail.value != '') {
+        	if ($.regPass.value === $.regPassAgain.value) {
+        		signUpBtn.fireEvent('click');
+        	}
+    	}
     }
 });
 
@@ -312,6 +320,8 @@ $.regEmail.addEventListener('return', function() {
 
     if (!emailChange) {
         $.regEmail.setValue(Alloy.Globals.PHRASES.emailTxt);
+    } else {
+    	$.regPass.focus();
     }
 });
 

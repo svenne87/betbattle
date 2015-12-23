@@ -781,5 +781,8 @@ if (isAndroid) {
         $.showCoupon.activity.actionBar.displayHomeAsUp = true;
         $.showCoupon.activity.actionBar.title = Alloy.Globals.PHRASES.couponTxt;
     });
-
 }
+
+$.showCoupon.addEventListener('focus', function(e) {
+	added = false;
+});

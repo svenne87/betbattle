@@ -555,7 +555,7 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
                     borderRadius : 3,
                     backgroundColor : '#FFF',
                     width : '36%',
-                    height : 40,
+                    height : 50,
                     textAlign : 'center'
                 };
             } else if (layoutType == 'absolute') {

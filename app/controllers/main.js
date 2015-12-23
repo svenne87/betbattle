@@ -176,11 +176,31 @@ if (!isAndroid) {
                     // will rebuild menu and keep coupon up to date
                     $.mainWin.activity.invalidateOptionsMenu();
                 });
-
+				/*
                 actionBar.onHomeIconItemSelected = function() {
                     // show / hide slide menu
                     $.ds.toggleLeftSlider();
                 };
+                */
+                                                 
+                    actionBar.setHomeButtonEnabled(true); 
+    				actionBar.setDisplayShowTitleEnabled(true);
+    				//actionBar.setDisplayShowHomeEnabled(true); 
+    				actionBar.setDisplayHomeAsUp(true);
+    			
+    				// Set title
+
+                    
+                    actionBar.setOnHomeIconItemSelected(function() {
+       					// show / hide slide menu
+       					Ti.API.log("aaafff");
+                    	$.ds.toggleLeftSlider();                	
+					});
+                    
+                    
+                    
+               
+               
             }
         }
 

@@ -6,10 +6,10 @@ function ModalPicker(prefs, data, selectTxt, closeTxt, id) {
 
 
     var subWin = Ti.UI.createWindow({
-        backgroundColor: 'blue',
+        backgroundColor: '#000',
         top: Ti.Platform.displayCaps.platformHeight - 1,
-        height: 256,
-        width: 320,
+        height: ((Ti.Platform.displayCaps.platformHeight / 2) - 20), // 274 256
+        width: Ti.Platform.displayCaps.platformWidth, // 320,
         navBarHidden: true
     });
 
@@ -36,7 +36,6 @@ function ModalPicker(prefs, data, selectTxt, closeTxt, id) {
     var flexSpace = Ti.UI.createButton({
         systemButton: Ti.UI.iPhone.SystemButton.FLEXIBLE_SPACE
     });
-
 
     var toolbar = Ti.UI.iOS.createToolbar({
         items: [close, flexSpace, select],

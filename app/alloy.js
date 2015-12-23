@@ -126,14 +126,16 @@ Alloy.Globals.TiBeacon = require('miga.tibeacon');
 var lang = JSON.parse(Ti.App.Properties.getString('language'));
 
 if ( typeof lang == 'undefined' || lang == '' || lang == null) {
-    Alloy.Globals.LOCALE = Titanium.Locale.getCurrentLanguage().toLowerCase();  
+	var localeString = Titanium.Locale.getCurrentLanguage().toLowerCase();
+	
+	if(localeString.length > 2) {
+		localeString = localeString.substring(0, 2);
+	}
+	
+    Alloy.Globals.LOCALE = localeString;  
 } else {
     lang = lang.language;
     Alloy.Globals.LOCALE = lang;
-}
-
-if(Alloy.Globals.LOCALE.length > 2) {
-	Alloy.Globals.LOCALE  = Alloy.Globals.LOCALE.substring(0, 2); 
 }
 
 // urls. Everything live needs to be done over SSL
