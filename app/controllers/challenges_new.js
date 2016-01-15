@@ -341,15 +341,18 @@ function buildTableRows() {
         }
     }
     
+    /*
     if (arrayAcceptObj.length === 0 && !createdMatchOTDRow) {
         data[0].add(createEmptyTableRow(Alloy.Globals.PHRASES.challengesSmallTxt));
     }
+    */
     
     if(arrayPendingObj.length === 0 && !createdPendingMatchOTD) {
     	data[1].add(createEmptyTableRow(Alloy.Globals.PHRASES.challengesSmallTxt));
     }
 
     data[0].add(createNewChallengeRow());
+    data[0].add(createFinishedChallengeRow());
     table.setData(data);
 }
 
@@ -1186,7 +1189,7 @@ function createNewChallengeRow() {
     });
 
     tableFooterView.add(Ti.UI.createImageView({
-        image : '/images/Skapa_Utmaning.png',
+        image : '/images/ikoner_utmaning_ny.png',
         width : 40,
         height : 40,
         left : 10,
@@ -1194,7 +1197,7 @@ function createNewChallengeRow() {
 
     tableFooterView.add(Ti.UI.createLabel({
         text : Alloy.Globals.PHRASES.createChallengeTxt + ' ',
-        font : Alloy.Globals.getFontCustom(16, "Regular"),
+        font : Alloy.Globals.getFontCustom(16, "Bold"),
         color : "#FFF",
         left : 65,
     }));
@@ -1230,6 +1233,73 @@ function createNewChallengeRow() {
     });
 
     return tableFooterView;
+}
+
+
+function createFinishedChallengeRow() {
+    child = true;
+
+    if (isAndroid) {
+        child = false;
+    }
+
+	var finishedRow = Ti.UI.createTableViewRow({
+        height : 75,
+        id : "finished",
+        width : Ti.UI.FILL,
+        color : "#FFF",
+        backgroundColor : 'transparent',
+        font : Alloy.Globals.getFont(),
+        hasChild : child,
+        selectionStyle : 'none'
+    });
+    
+    finishedRow.add(Ti.UI.createImageView({
+        left : 10,
+        width : 30,
+        height : 30,
+        image : '/images/ikoner_utmaning_klar.png',
+    }));
+
+    finishedRow.add(Ti.UI.createLabel({
+        font : Alloy.Globals.getFontCustom(16, 'Bold'),
+        text : Alloy.Globals.PHRASES.finishedChallengesTxt + ' ',
+        color : '#FFF',
+        left : 60,
+        height : 'auto',
+        width : 'auto'
+    }));
+
+    if (isAndroid) {
+        finishedRow.add(Ti.UI.createLabel({
+            font : {
+                fontFamily : font
+            },
+            text : fontawesome.icon('icon-chevron-right'),
+            right : rightPercentage,
+            color : '#c5c5c5',
+            fontSize : 80,
+            height : 'auto',
+            width : 'auto',
+        }));
+    }
+    
+    finishedRow.addEventListener("click", function(e) {
+        var win = Alloy.createController('challenges_finished').getView();
+        Alloy.Globals.WINDOWS.push(win);
+
+        if (!isAndroid) {
+            Alloy.Globals.NAV.openWindow(win, {
+                animated : true,
+            });
+        } else {
+            win.open({
+                fullScreen : true,
+            });
+        }
+    });
+
+    return finishedRow;
 }
 
 if (isAndroid) {

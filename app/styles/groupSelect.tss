@@ -11,30 +11,26 @@
 	width: '100%',
 	layout: 'vertical'
 },
-".challengesSectionDefault":{
-	width: '100%',
-	backgroundColor: '#000',
-	backgroundGradient: {
-		type: "linear",
-		startPoint: {
-			x: "0%",
-			y: "0%"
+".challengesSection":{
+	height : 75,
+	backgroundColor : '#303030',
+	backgroundGradient : {
+		type : "linear",
+		startPoint : {
+			x : "0%",
+			y : "0%"
 		},
-		endPoint: {
-			x: "0%",
-			y: "100%"
+		endPoint : {
+			x : "0%",
+			y : "100%"
 		},
-		/*
-		colors: [
-			{
-				color: "#2E2E2E",
-				offset: 0.0
-			}, {
-				color: "#151515",
-				offset: 1.0
-			}
-		]
-		*/
-	}
+		colors : [{
+			color : "#151515",
+			
+		},{
+			color : "#2E2E2E",
+			
+		}]
+	},
+	layout : 'vertical'
 }
-

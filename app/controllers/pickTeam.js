@@ -29,12 +29,12 @@ if (OS_ANDROID) {
             $.pickTeam = null;
         };
         $.pickTeam.activity.actionBar.displayHomeAsUp = true;
-        $.pickTeam.activity.actionBar.title = Alloy.Globals.PHRASES.leagueChooseTxt;
+        $.pickTeam.activity.actionBar.title = Alloy.Globals.PHRASES.selectFavoriteTeamTxt;
     });
 
 } else {
     $.pickTeam.titleControl = Ti.UI.createLabel({
-        text : Alloy.Globals.PHRASES.leagueChooseTxt,
+        text : Alloy.Globals.PHRASES.selectFavoriteTeamTxt,
         font : Alloy.Globals.getFontCustom(18, "Bold"),
         color : '#FFF'
     });
@@ -100,7 +100,7 @@ var pickLabel = Ti.UI.createLabel({
     height : Ti.UI.SIZE,
     textAlign : 'center',
     top : 20,
-    text : Alloy.Globals.PHRASES.leagueChooseTxt + ' ',
+    text : Alloy.Globals.PHRASES.selectFavoriteTeamTxt + ' ',
     font : Alloy.Globals.getFontCustom(18, 'Bold'),
     color : '#FFF'
 });
@@ -114,10 +114,16 @@ table = Titanium.UI.createTableView({
     width : Ti.UI.FILL,
     left : 0,
     headerView : tableHeaderView,
-    height : '100%',
+    height : '70%',
     backgroundColor : '#000',
     separatorColor : '#303030'
 });
+
+if (showNav) {
+	table.setHeight('85%');
+}
+
+$.pickTeam.setBackgroundColor('#000');
 
 if (!isAndroid) {
     var iOSVersion = parseInt(Ti.Platform.version);
@@ -173,7 +179,7 @@ function compare(a, b) {
 }
 
 function displaySports() {
-    pickLabel.setText(Alloy.Globals.PHRASES.leagueChooseTxt + ' ');
+    pickLabel.setText(Alloy.Globals.PHRASES.selectFavoriteTeamTxt + ' ');
     sections = [];
 
     if (isAndroid) {
@@ -273,8 +279,6 @@ function displaySports() {
 }
 
 function createTeamUI(teams) {
-    pickLabel.setText("");
-
     if (isAndroid) {
         child = false;
     } else {
@@ -476,8 +480,10 @@ function teamPicked(tid, name) {
             Ti.App.Properties.setString("favorite_team", name);
 
             //show toast of your favorite team
-            Alloy.Globals.showToast(Alloy.Globals.PHRASES.youTeamTxt + ' ' + name);
-
+            if(name != ' ') {
+            	Alloy.Globals.showToast(Alloy.Globals.PHRASES.youTeamTxt + ' ' + name);
+			}
+			
             if (!showNav) {
                 // kepp in memory
                 var tmp = Alloy.createController('landingPage', args).getView();
@@ -543,3 +549,22 @@ function teamPicked(tid, name) {
 }
 
 $.pickTeam.add(table);
+
+
+var skipView = Ti.UI.createView({
+	height : '15%',
+	width: Ti.UI.FILL,
+	backgroundColor: '#000'
+});
+
+var skipBtn = Alloy.Globals.createButtonView(Alloy.Globals.themeColor(), '#FFF', Alloy.Globals.PHRASES.skipBtnTxt + ' ');
+
+skipBtn.addEventListener('click', function() {
+	teamPicked(-1, " ");
+});
+
+skipView.add(skipBtn);
+
+$.pickTeam.add(skipView);
+
+

@@ -64,142 +64,148 @@ function createNoGamesView() {
 
 // create sinle table row
 function createTableRow(obj) {
-    // error in json sent, date in milliseconds is missing 000 at the end?
-    var dateFix = parseInt(obj.attributes.game_date + '000');
-
-    var date = obj.attributes.date_string;
-
-    date = date.substring(0, 10);
-    date = date.substring(5);
-
-    // check first char
-    if (date.charAt(0) == '0') {
-        date = date.substring(1);
-    }
-
-    // change position
-    var datePartOne = date.substring(date.lastIndexOf('-'));
-    datePartOne = datePartOne.replace('-', '');
-    if (datePartOne.charAt(0) == '0') {
-        datePartOne = datePartOne.substring(1);
-    }
-
-    var datePartTwo = date.substring(0, date.indexOf('-'));
-    date = datePartOne + '/' + datePartTwo;
-
-    var time = obj.attributes.date_string;
-    time = time.substring(time.length - 8);
-    time = time.substring(0, 5);
-
-    var dateString = date + ' ' + time;
-
-    var child;
-
-    if (OS_IOS) {
-        child = true;
-    } else if (OS_ANDROID) {
-        child = false;
-    }
-
-    var row = $.UI.create('TableViewRow', {
-        backgroundColor : '#000',
-        id : obj.attributes.round,
-        hasChild : child,
-        height : 75,
-        width : Ti.UI.FILL
-    });
-
-    var fontawesome = require('lib/IconicFont').IconicFont({
-        font : 'lib/FontAwesome'
-    });
-
-    var font = 'FontAwesome';
-
-    // add custom icon on Android to symbol that the row has child
-    if (child != true) {
-        var rightPercentage = '5%';
-
-        font = 'fontawesome-webfont';
-
-        if (Titanium.Platform.displayCaps.platformWidth < 350) {
-            rightPercentage = '3%';
-        }
-
-        row.add(Ti.UI.createLabel({
-            font : {
-                fontFamily : font
-            },
-            text : fontawesome.icon('icon-chevron-right'),
-            right : rightPercentage,
-            color : '#FFF',
-            fontSize : 80,
-            height : 'auto',
-            width : 'auto'
-        }));
-    }
-
-    var teamOne = obj.attributes.team_1.team_name;
+	var teamOne = obj.attributes.team_1.team_name;
     var teamTwo = obj.attributes.team_2.team_name;
+    
+    if(teamOne && teamTwo) {
+    	
+    	// error in json sent, date in milliseconds is missing 000 at the end?
+    	var dateFix = parseInt(obj.attributes.game_date + '000');
 
-    if (teamOne.length + teamTwo.length > 35) {
-        teamOne = teamOne.substring(0, 13);
-        teamOne = teamOne + '...';
+    	var date = obj.attributes.date_string;
 
-        teamTwo = teamTwo.substring(0, 13);
-        teamTwo = teamTwo + '...';
+		date = date.substring(0, 10);
+		date = date.substring(5);
+
+		// check first char
+		if (date.charAt(0) == '0') {
+			date = date.substring(1);
+		}
+
+		// change position
+		var datePartOne = date.substring(date.lastIndexOf('-'));
+		datePartOne = datePartOne.replace('-', '');
+		if (datePartOne.charAt(0) == '0') {
+			datePartOne = datePartOne.substring(1);
+		}
+
+		var datePartTwo = date.substring(0, date.indexOf('-'));
+		date = datePartOne + '/' + datePartTwo;
+
+		var time = obj.attributes.date_string;
+		time = time.substring(time.length - 8);
+		time = time.substring(0, 5);
+
+		var dateString = date + ' ' + time;
+
+		var child;
+
+		if (OS_IOS) {
+			child = true;
+		} else if (OS_ANDROID) {
+			child = false;
+		}
+
+		var row = $.UI.create('TableViewRow', {
+			backgroundColor : '#000',
+			id : obj.attributes.round,
+			hasChild : child,
+			height : 75,
+			width : Ti.UI.FILL
+		});
+
+		var fontawesome = require('lib/IconicFont').IconicFont({
+			font : 'lib/FontAwesome'
+		});
+
+		var font = 'FontAwesome';
+
+		// add custom icon on Android to symbol that the row has child
+		if (child != true) {
+			var rightPercentage = '5%';
+
+			font = 'fontawesome-webfont';
+
+			if (Titanium.Platform.displayCaps.platformWidth < 350) {
+				rightPercentage = '3%';
+			}
+
+			row.add(Ti.UI.createLabel({
+				font : {
+					fontFamily : font
+				},
+				text : fontawesome.icon('icon-chevron-right'),
+				right : rightPercentage,
+				color : '#FFF',
+				fontSize : 80,
+				height : 'auto',
+				width : 'auto'
+			}));
+		}
+
+		if (teamOne.length + teamTwo.length > 35) {
+			teamOne = teamOne.substring(0, 13);
+			teamOne = teamOne + '...';
+
+			teamTwo = teamTwo.substring(0, 13);
+			teamTwo = teamTwo + '...';
+		} else {
+			if (teamOne.length > 17) {
+				teamOne = teamOne.substring(0, 14);
+				teamOne = teamOne + '...';
+			}
+
+			if (teamTwo.length > 17) {
+				teamTwo = teamTwo.substring(0, 14);
+				teamTwo = teamTwo + '...';
+			}
+		}
+
+		row.add(Ti.UI.createLabel({
+			text : teamOne + " - " + teamTwo + " ",
+			top : 15,
+			left : 20,
+			font : Alloy.Globals.getFontCustom(16, 'Regular'),
+			color : '#FFF'
+		}));
+
+		row.add(Ti.UI.createLabel({
+			left : 20,
+			top : 40,
+			font : {
+				fontFamily : font
+			},
+			text : fontawesome.icon('fa-clock-o'),
+			color : Alloy.Globals.themeColor()
+		}));
+
+		row.add(Ti.UI.createLabel({
+			text : dateString + " ",
+			top : 38,
+			left : 35,
+			font : Alloy.Globals.getFontCustom(12, 'Regular'),
+			color : Alloy.Globals.themeColor()
+		}));
+
+		row.add(Ti.UI.createView({
+			top : 50,
+			layout : 'vertical',
+			height : 12
+		}));
+
+		if (OS_IOS) {
+			// keep track of the table total heigth, to decide when to start fetching more
+			currentSize += row.toImage().height;
+		}
+
+		row.gameID = obj.attributes.game_id;
+		row.teamNames = obj.attributes.team_1.team_name + " - " + obj.attributes.team_2.team_name;
+		row.className = 'matchRow';
+		return row;
+		
     } else {
-        if (teamOne.length > 17) {
-            teamOne = teamOne.substring(0, 14);
-            teamOne = teamOne + '...';
-        }
-
-        if (teamTwo.length > 17) {
-            teamTwo = teamTwo.substring(0, 14);
-            teamTwo = teamTwo + '...';
-        }
+    	return false;
     }
-
-    row.add(Ti.UI.createLabel({
-        text : teamOne + " - " + teamTwo + " ",
-        top : 15,
-        left : 20,
-        font : Alloy.Globals.getFontCustom(16, 'Regular'),
-        color : '#FFF'
-    }));
-
-    row.add(Ti.UI.createLabel({
-        left : 20,
-        top : 40,
-        font : {
-            fontFamily : font
-        },
-        text : fontawesome.icon('fa-clock-o'),
-        color : Alloy.Globals.themeColor()
-    }));
-
-    row.add(Ti.UI.createLabel({
-        text : dateString + " ",
-        top : 38,
-        left : 35,
-        font : Alloy.Globals.getFontCustom(12, 'Regular'),
-        color : Alloy.Globals.themeColor()
-    }));
-
-    row.add(Ti.UI.createView({
-        top : 50,
-        layout : 'vertical',
-        height : 12
-    }));
-
-    if (OS_IOS) {
-        // keep track of the table total heigth, to decide when to start fetching more
-        currentSize += row.toImage().height;
-    }
-
-    row.gameID = obj.attributes.game_id;
-    row.teamNames = obj.attributes.team_1.team_name + " - " + obj.attributes.team_2.team_name;
-    row.className = 'matchRow';
-    return row;
 }
 
 // show the tableView
@@ -333,7 +339,10 @@ function createAndShowTableView(league, array) {
     // Rows
     for (var i = 0; i < array.length; i++) {
         // each row is created
-        data.push(createTableRow(array[i]));
+        var row = createTableRow(array[i]);
+        if(row) {
+        	data.push(row);
+        }
     }
 
     table.setData(data);
@@ -464,7 +473,10 @@ function createAndShowTableView(league, array) {
 /* Create Rows and add to table */
 function appendToRow(array) {
     for (var i = 0; i < array.length; i++) {
-        table.appendRow(createTableRow(array[i]));
+    	var row = createTableRow(array[i]);
+    	if(row) {
+    		 table.appendRow(row);
+    	}   
     }
 }
 

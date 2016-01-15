@@ -416,6 +416,10 @@ Alloy.Globals.displayEnterInviteCodeDialog = function(indicator) {
 				
 				codeValue = codeValue.replace(/^\s+|\s+$/g, "");
 				
+				if(!codeValue) {
+					return;	
+				}
+			
 				if(codeValue.length < 3 || codeValue.length > 10) {
 					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.invalidCodeError);
 					codeDialog.show();

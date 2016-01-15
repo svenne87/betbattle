@@ -507,7 +507,8 @@ function createLastMatchOTDRow(obj, index) {
     var currentPot = Alloy.Globals.PHRASES.unknownSmallTxt;
 
     try {
-        currentPot = (obj.stats.bet_amount * oppCount);
+        currentPot = (obj.stats.bet_amount * oppCount); 
+        currentPot = (currentPot - 0) + (obj.stats.extra_pot - 0);
     } catch (e) {
         currentPot = Alloy.Globals.PHRASES.unknownSmallTxt;
     }

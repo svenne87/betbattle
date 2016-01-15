@@ -628,6 +628,8 @@ function createLayout(resp) {
     });
 
     var potSize = resp.stats.count * resp.stats.bet_amount;
+    potSize = (potSize - 0) + (resp.stats.extra_pot - 0);
+    
     var potSizeLabel = Ti.UI.createLabel({
         text : Alloy.Globals.PHRASES.showMatchOTDpot + potSize,
         font : Alloy.Globals.getFontCustom(18, "Regular"),

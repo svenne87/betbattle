@@ -117,4 +117,10 @@
 	message : Alloy.Globals.PHRASES.imageUploadTxt,
 	font : Alloy.Globals.FONT,
 	color : '#FFF'
-}
+},
+"#show_invite_settings_row[platform=ios]": {
+	hasChild : false
+},
+"#show_invite_settings_label":{
+	text : Alloy.Globals.PHRASES.settingsshowInviteTxt
+},

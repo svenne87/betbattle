@@ -4,15 +4,20 @@ function ModalPicker(prefs, data, selectTxt, closeTxt, id) {
 
     self.id = id;
 
-
+	
+	var marginHeight = 20;
+	
+	if(Ti.Platform.displayCaps.platformHeight > 600) {
+		marginHeight = 60;
+	}
+	
     var subWin = Ti.UI.createWindow({
         backgroundColor: '#000',
         top: Ti.Platform.displayCaps.platformHeight - 1,
-        height: ((Ti.Platform.displayCaps.platformHeight / 2) - 20), // 274 256
+        height: ((Ti.Platform.displayCaps.platformHeight / 2) - marginHeight), // 274 256
         width: Ti.Platform.displayCaps.platformWidth, // 320,
         navBarHidden: true
     });
-
 
     var select = Ti.UI.createButton({
         title: selectTxt,
@@ -20,7 +25,8 @@ function ModalPicker(prefs, data, selectTxt, closeTxt, id) {
         style: Ti.UI.iPhone.SystemButtonStyle.PLAIN,
         color : '#FFF',
         backgroundImage : 'none',
-        width : 100
+        width : 100,
+        height: Ti.UI.SIZE
     });
     
     var close = Ti.UI.createButton({
@@ -29,7 +35,8 @@ function ModalPicker(prefs, data, selectTxt, closeTxt, id) {
         style: Ti.UI.iPhone.SystemButtonStyle.PLAIN,
         color : '#FFF',
         backgroundImage : 'none',
-        width : 100
+        width : 100,
+        height: Ti.UI.SIZE
     });
 
 

@@ -146,13 +146,15 @@ function challengeFriends() {
 	if (challengeCode !== "") {
 		if (validate()) {
 			
-			var fb = require('facebook');;
+			var fb = require('facebook');
 
         	var arg = {
             	coins : coinsToJoin,
             	challengeCode : challengeCode,
             	fb : fb
             };
+            
+            added = true;
              
             var win = Alloy.createController('groupSelect', arg).getView();
             Alloy.Globals.CURRENTVIEW = win;
@@ -443,140 +445,20 @@ sections[1] = Ti.UI.createTableViewSection({
     })
 });
 
-var coinsRow = Ti.UI.createTableViewRow({
-    hasChild : false,
-    className : 'coinsRow',
-    selectionStyle : 'none',
-    height : 75,
-    backgroundColor : "#000",
-    layout : "absolute",
-});
-
-// create 20, 40, 60, 80, 100 values
-var betArray = ['20', '40', '60', '80', '100'];
-var data = [];
-
 function coinsFastSelectDefault() {
     coinsFastSelectViewOne.backgroundColor = '#000';
     coinsFastSelectViewTwo.backgroundColor = '#000';
     coinsFastSelectViewThree.backgroundColor = '#000';
+    coinsFastSelectViewFour.backgroundColor = '#000';
+    coinsFastSelectViewFive.backgroundColor = '#000';
+    coinsFastSelectViewSix.backgroundColor = '#000';
     coinsIconOne.color = Alloy.Globals.themeColor();
     coinsIconTwo.color = Alloy.Globals.themeColor();
     coinsIconThree.color = Alloy.Globals.themeColor();
+    coinsIconFour.color = Alloy.Globals.themeColor();
+    coinsIconFive.color = Alloy.Globals.themeColor();
+    coinsIconSix.color = Alloy.Globals.themeColor();
 }
-
-if (isAndroid) {
-    coinsToJoin = -1;
-    betPicker = Ti.UI.createLabel({
-        top : 18,
-        backgroundColor : '#FFF',
-        borderRadius : 2,
-        width : 120,
-        height : 40,
-        text : Alloy.Globals.PHRASES.chooseConfirmBtnTxt,
-        textAlign : 'center'
-    });
-
-    betPicker.addEventListener('click', function() {
-        betPicker.open = true;
-        Alloy.createWidget('danielhanold.pickerWidget', {
-            id : 'sColumnBetPicker',
-            outerView : $.showCoupon,
-            hideNavBar : false,
-            type : 'single-column',
-            selectedValues : [20],
-            pickerValues : [{
-                20 : '20',
-                40 : '40',
-                60 : '60',
-                80 : '80',
-                100 : '100'
-            }],
-            onDone : function(e) {
-                if (e.data) {
-                    betPicker.setText(e.data[0].value);
-                    coinsToJoin = e.data[0].value;
-
-                    switch(e.data[0].value) {
-                    case '20':
-                        coinsFastSelectViewOne.fireEvent('click');
-                        break;
-                    case '40':
-                        coinsFastSelectViewTwo.fireEvent('click');
-                        break;
-                    case '100':
-                        coinsFastSelectViewThree.fireEvent('click');
-                        break;
-                    default : 
-                        coinsFastSelectDefault();
-                        break;
-                    }
-                }
-                betPicker.open = false;
-            },
-        });
-    });
-} else {
-    // default
-    data.push(Titanium.UI.createPickerRow({
-        title : Alloy.Globals.PHRASES.chooseConfirmBtnTxt,
-        value : -1
-    }));
-
-    for (var i = 0; i < betArray.length; i++) {
-        data.push(Titanium.UI.createPickerRow({
-            title : '' + betArray[i],
-            value : betArray[i]
-        }));
-    }
-
-    var ModalPicker = require("lib/ModalPicker");
-    var visualPrefs = {
-        top : 18,
-        opacity : 0.85,
-        borderRadius : 3,
-        backgroundColor : '#FFF',
-        width : 140,
-        height : 40,
-        textAlign : 'center'
-    };
-
-    betPicker = new ModalPicker(visualPrefs, data, Alloy.Globals.PHRASES.chooseConfirmBtnTxt, Alloy.Globals.PHRASES.closeBtnTxt);
-    modalPickersToHide.push(betPicker);
-
-    betPicker.text = Alloy.Globals.PHRASES.chooseConfirmBtnTxt;
-
-    betPicker.self.addEventListener('change', function(e) {
-        coinsToJoin = betPicker.value;
-
-        switch(coinsToJoin) {
-            case '20':
-                coinsFastSelectViewOne.fireEvent('click');
-                break;
-            case '40':
-                coinsFastSelectViewTwo.fireEvent('click');
-                break;
-            case '100':
-                coinsFastSelectViewThree.fireEvent('click');
-                break;
-            default : 
-                coinsFastSelectDefault();
-                break;
-        }
-    });
-}
-
-coinsRow.add(betPicker);
-
-coinsRow.addEventListener('click', function() {
-    if (betPicker.open) {
-        // the picker is visible, don't do anything
-        return;
-    }
-    betPicker.fireEvent('click');
-});
-
-sections[1].add(coinsRow);
 
 var coinsFastSelectRow = Ti.UI.createTableViewRow({
     hasChild : false,
@@ -614,14 +496,10 @@ coinsFastSelectViewOne.add(Ti.UI.createLabel({
 
 coinsFastSelectViewOne.addEventListener('click', function() {
     coinsToJoin = 20;
-    betPicker.text = '20';
-
+    // betPicker.text = '20';  
+    coinsFastSelectDefault();
     coinsFastSelectViewOne.backgroundColor = Alloy.Globals.themeColor();
     coinsIconOne.color = '#FFF';
-    coinsFastSelectViewTwo.backgroundColor = '#000';
-    coinsIconTwo.color = Alloy.Globals.themeColor();
-    coinsFastSelectViewThree.backgroundColor = '#000';
-    coinsIconThree.color = Alloy.Globals.themeColor();
 });
 
 coinsFastSelectRow.add(coinsFastSelectViewOne);
@@ -658,14 +536,10 @@ coinsFastSelectViewTwo.add(Ti.UI.createLabel({
 
 coinsFastSelectViewTwo.addEventListener('click', function() {
     coinsToJoin = 40;
-    betPicker.text = '40';
-
+    // betPicker.text = '40';
+    coinsFastSelectDefault();
     coinsFastSelectViewTwo.backgroundColor = Alloy.Globals.themeColor();
     coinsIconTwo.color = '#FFF';
-    coinsFastSelectViewOne.backgroundColor = '#000';
-    coinsIconOne.color = Alloy.Globals.themeColor();
-    coinsFastSelectViewThree.backgroundColor = '#000';
-    coinsIconThree.color = Alloy.Globals.themeColor();
 });
 
 coinsFastSelectRow.add(coinsFastSelectViewTwo);
@@ -695,26 +569,149 @@ coinsFastSelectViewThree.add(coinsIconThree);
 
 coinsFastSelectViewThree.add(Ti.UI.createLabel({
     left : (phoneWidth / 3) + 5 + coinsIconThree.toImage().width,
-    text : '100',
+    text : '60',
     font : Alloy.Globals.getFontCustom(16, 'Regular'),
     color : '#FFF'
 }));
 
 coinsFastSelectViewThree.addEventListener('click', function() {
-    coinsToJoin = 100;
-    betPicker.text = '100';
-
+    coinsToJoin = 60;
+    // betPicker.text = '60';
+	coinsFastSelectDefault();
     coinsFastSelectViewThree.backgroundColor = Alloy.Globals.themeColor();
     coinsIconThree.color = '#FFF';
-    coinsFastSelectViewTwo.backgroundColor = '#000';
-    coinsIconTwo.color = Alloy.Globals.themeColor();
-    coinsFastSelectViewOne.backgroundColor = '#000';
-    coinsIconOne.color = Alloy.Globals.themeColor();
 });
 
 coinsFastSelectRow.add(coinsFastSelectViewThree);
 
 sections[1].add(coinsFastSelectRow);
+
+
+ var coinsFastSelectSecondRow = Ti.UI.createTableViewRow({
+    hasChild : false,
+    className : 'coinsFastSelectSecondRow',
+    selectionStyle : 'none',
+    height : 75,
+    backgroundColor : "#000",
+    layout : "horizontal",
+});
+
+var coinsFastSelectViewFour = Ti.UI.createView({
+    width : (phoneWidth - 0.5),
+    height : 75
+});
+
+var coinsIconFour = Ti.UI.createLabel({
+    font : {
+        fontFamily : font
+    },
+    left : (phoneWidth / 3),
+    text : fontawesome.icon('fa-database'),
+    color : Alloy.Globals.themeColor()
+});
+
+coinsFastSelectViewFour.add(coinsIconFour);
+
+coinsFastSelectViewFour.add(Ti.UI.createLabel({
+    left : (phoneWidth / 3) + 5 + coinsIconFour.toImage().width,
+    text : '80',
+    font : Alloy.Globals.getFontCustom(16, 'Regular'),
+    color : '#FFF'
+}));
+
+coinsFastSelectViewFour.addEventListener('click', function() {
+    coinsToJoin = 80;
+    // betPicker.text = '80';
+	coinsFastSelectDefault();
+    coinsFastSelectViewFour.backgroundColor = Alloy.Globals.themeColor();
+    coinsIconFour.color = '#FFF';
+});
+
+coinsFastSelectSecondRow.add(coinsFastSelectViewFour);
+
+coinsFastSelectSecondRow.add(Ti.UI.createView({
+    height : 75,
+    left : 0,
+    width : 0.5,
+    backgroundColor : '#303030',
+}));
+
+var coinsFastSelectViewFive = Ti.UI.createView({
+    width : (phoneWidth - 0.5),
+    height : 75
+});
+
+var coinsIconFive = Ti.UI.createLabel({
+    font : {
+        fontFamily : font
+    },
+    left : (phoneWidth / 3),
+    text : fontawesome.icon('fa-database'),
+    color : Alloy.Globals.themeColor()
+});
+
+coinsFastSelectViewFive.add(coinsIconFive);
+
+coinsFastSelectViewFive.add(Ti.UI.createLabel({
+    left : (phoneWidth / 3) + 5 + coinsIconFive.toImage().width,
+    text : '100',
+    font : Alloy.Globals.getFontCustom(16, 'Regular'),
+    color : '#FFF'
+}));
+
+coinsFastSelectViewFive.addEventListener('click', function() {
+	
+    coinsToJoin = 100;
+    // betPicker.text = '100';
+    coinsFastSelectDefault();
+    coinsFastSelectViewFive.backgroundColor = Alloy.Globals.themeColor();
+    coinsIconFive.color = '#FFF';
+});
+
+coinsFastSelectSecondRow.add(coinsFastSelectViewFive);
+
+coinsFastSelectSecondRow.add(Ti.UI.createView({
+    height : 75,
+    left : 0,
+    width : 0.5,
+    backgroundColor : '#303030',
+}));
+
+var coinsFastSelectViewSix = Ti.UI.createView({
+    width : (phoneWidth - 2),
+    height : 75
+});
+
+var coinsIconSix = Ti.UI.createLabel({
+    font : {
+        fontFamily : font
+    },
+    left : (phoneWidth / 3),
+    text : fontawesome.icon('fa-database'),
+    color : Alloy.Globals.themeColor()
+});
+
+coinsFastSelectViewSix.add(coinsIconSix);
+
+coinsFastSelectViewSix.add(Ti.UI.createLabel({
+    left : (phoneWidth / 3) + 5 + coinsIconSix.toImage().width,
+    text : '150',
+    font : Alloy.Globals.getFontCustom(16, 'Regular'),
+    color : '#FFF'
+}));
+
+coinsFastSelectViewSix.addEventListener('click', function() {
+    coinsToJoin = 150;
+    // betPicker.text = '150';
+	coinsFastSelectDefault();
+    coinsFastSelectViewSix.backgroundColor = Alloy.Globals.themeColor();
+    coinsIconSix.color = '#FFF';
+});
+
+coinsFastSelectSecondRow.add(coinsFastSelectViewSix);
+
+sections[1].add(coinsFastSelectSecondRow);
+
 
 var footerView = Ti.UI.createView({
     height : Ti.UI.SIZE,
@@ -723,7 +720,7 @@ var footerView = Ti.UI.createView({
     backgroundColor : '#000'
 });
 
-var submitButton = Alloy.Globals.createButtonView(Alloy.Globals.themeColor(), '#FFF', Alloy.Globals.PHRASES.challengeBtnTxt);
+var submitButton = Alloy.Globals.createButtonView(Alloy.Globals.themeColor(), '#FFF', Alloy.Globals.PHRASES.createChallengeTxt);
 
 if (isAndroid) {
     submitButton.top = 15;
@@ -733,7 +730,7 @@ if (isAndroid) {
 
 submitButton.addEventListener('click', function() {
     var gameDatesValid = true;
-
+	
     var games = Alloy.Globals.COUPON.games;
     // check if any of the games in the coupon has started / already finished.
     for (var i = 0; i < games.length; i++) {
@@ -748,7 +745,6 @@ submitButton.addEventListener('click', function() {
 
     if (!added && gameDatesValid) {
         challengeFriends();
-        added = true;
     } else if (!gameDatesValid) {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.invalidDatesTxt);
     }

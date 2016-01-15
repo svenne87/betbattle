@@ -18,11 +18,9 @@
 				<TableViewRow class="settings_row" id="favorite_team_settings_row">
 					<Label class="info_label" id="favorite_team_settings_label"></Label>
 				</TableViewRow>
-				<!--
-				<TableViewRow class="settings_row" id="bluetooth_settings_row">
-					<Label class="info_label" id="bluetooth_settings_label"></Label>
+				<TableViewRow class="settings_row" id="show_invite_settings_row">
+					<Label class="info_label" id="show_invite_settings_label"></Label>
 				</TableViewRow>
-				-->
 			</TableView>
 			<ProgressBar id="upload_indicator"></ProgressBar>
 		</View>

@@ -925,6 +925,7 @@ table.addEventListener('click', function(e) {
             });
         }
     */
+   /*
     } else if (e.rowData.id === 'finished') {
         var win = Alloy.createController('challenges_finished').getView();
         Alloy.Globals.WINDOWS.push(win);
@@ -938,6 +939,7 @@ table.addEventListener('click', function(e) {
                 fullScreen : true,
             });
         }
+    */
     } else if (e.rowData.className === 'pending') {
           // TEST
         Alloy.Globals.CHALLENGEOBJECTARRAY[1].sort(compare);
@@ -1185,6 +1187,7 @@ function createMatchOTDRow() {
 
     try {
         currentPot = (oppCount * Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_data.participants.bet_amount);
+        currentPot = (currentPot - 0) + (Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_data.participants.extra_pot - 0);    
     } catch (e) {
         currentPot = Alloy.Globals.PHRASES.unknownSmallTxt;
     }
@@ -1398,6 +1401,7 @@ function constructTableData(array) {
         selectionStyle : 'none'
     });
 
+/*
     var finishedRow = Ti.UI.createTableViewRow({
         height : 75,
         id : "finished",
@@ -1408,6 +1412,7 @@ function constructTableData(array) {
         hasChild : child,
         selectionStyle : 'none'
     });
+*/
 /*
     matchOTDRow = Ti.UI.createTableViewRow({
         height : 75,
@@ -1653,7 +1658,7 @@ function constructTableData(array) {
     }));
 
     acceptTextLabel = Ti.UI.createLabel({
-        font : Alloy.Globals.getFontCustom(16, 'Regular'),
+        font : Alloy.Globals.getFontCustom(16, 'Bold'),
         text : Alloy.Globals.PHRASES.challengesTxt + ' ',
         color : '#FFF',
         left : 60,
@@ -1725,6 +1730,7 @@ function constructTableData(array) {
         }));
     }
 */
+/*
     finishedRow.add(Ti.UI.createImageView({
         left : 10,
         width : 30,
@@ -1754,7 +1760,7 @@ function constructTableData(array) {
             width : 'auto',
         }));
     }
-    
+    */
     /*
     matchOTDRow.add(Ti.UI.createImageView({
         left : 10,
@@ -1800,8 +1806,8 @@ function constructTableData(array) {
     sections[0].add(profileRow);
     sections[0].add(acceptRow);
     //sections[0].add(pendingRow);
-    sections[0].add(finishedRow);
-   // sections[0].add(matchOTDRow);
+    //sections[0].add(finishedRow);
+    //sections[0].add(matchOTDRow);
 
     sections[1] = createSectionsForTable(Alloy.Globals.PHRASES.challengesViewHot);
 
@@ -2040,10 +2046,19 @@ var checkFirstTime = JSON.parse(Ti.App.Properties.getString("firstTimeAchievemen
 if (!checkFirstTime) {
     if (Alloy.Globals.checkConnection()) {
         Alloy.Globals.unlockAchievement(13);
-        Ti.App.Properties.setString("firstTimeAchievement", JSON.stringify(true));  // was false before???
-	
-	 	setTimeout(function() {
-	 		Alloy.Globals.displayEnterInviteCodeDialog(indicator);
-     	}, 2500);
+        Ti.App.Properties.setString("firstTimeAchievement", JSON.stringify(true));
     }
 } 
+
+
+if (!Ti.App.Properties.hasProperty("showInviteSetting")) {
+	Ti.App.Properties.setBool("showInviteSetting", true);
+}
+
+var showInviteCodeBox = Ti.App.Properties.getBool('showInviteSetting');
+
+if(showInviteCodeBox) {
+	setTimeout(function() {
+		Alloy.Globals.displayEnterInviteCodeDialog(indicator);
+    }, 2500);
+}

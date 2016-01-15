@@ -378,23 +378,8 @@ function createGUI() {
         });
         dialog.show();
     });
-    /*
-    // Fifth row
-    $.bluetooth_settings_row.addEventListener('click', function() {
-    if (!isAndroid) {
-    Ti.Platform.openURL('prefs:root=Brightness prefs:root=General&path=Bluetooth');
-    } else {
-    var intent = Ti.Android.createIntent({
-    className : 'com.android.settings.bluetooth.BluetoothSettings',
-    packageName : 'com.android.settings',
-    action : Ti.Android.ACTION_MAIN,
-    });
-    Ti.Android.currentActivity.startActivity(intent);
-    }
-    });
-    */
-
-    // sixth row
+   
+   	/* Fifth Row */
     $.favorite_team_settings_row.addEventListener('click', function() {
         var args = {navOpen : true, label : favoriteTeamLabel};
         var loginSuccessWindow = Alloy.createController('pickTeam', args).getView();
@@ -430,7 +415,46 @@ function createGUI() {
     });
     
     $.favorite_team_settings_row.add(favoriteTeamLabel);
+    
+  	/* Sixth row */
+    var showInviteEnabled;
 
+    // true will be set if no stored value is found
+    if (!Ti.App.Properties.hasProperty("showInviteSetting")) {
+        Ti.App.Properties.setBool("showInviteSetting", true);
+    }
+
+    showInviteEnabled = Ti.App.Properties.getBool('showInviteSetting');
+    var basicInviteSwitch;
+
+    if (!isAndroid) {
+        basicInviteSwitch = Ti.UI.createSwitch({
+            right : 10,
+            width : 40,
+            titleOn : Alloy.Globals.PHRASES.onTxt,
+            titleOff : Alloy.Globals.PHRASES.offTxt,
+            value : showInviteEnabled
+        });
+    } else {
+        var RealSwitch = require('com.yydigital.realswitch');
+
+        basicInviteSwitch = RealSwitch.createRealSwitch({
+            right : 20,
+            width : 90,
+            value : pushEnabled
+        });
+    }
+
+    basicInviteSwitch.addEventListener('change', function(e) {
+        var value = 0;
+        if (basicInviteSwitch.value) {
+            value = 1;
+        }
+
+        Ti.App.Properties.setBool("showInviteSetting", value);
+    });
+    $.show_invite_settings_row.selectionStyle = 'none';
+    $.show_invite_settings_row.add(basicInviteSwitch);  
 }
 
 function createPickers() {

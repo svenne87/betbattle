@@ -8,8 +8,10 @@ var indicator = uie.createIndicatorWindow({
 
 function doLogin() {
     var login = Alloy.createController('login').getView();
-
+    
     if (OS_IOS) {
+    	Ti.App.removeEventListener('resume', iosStartResumeEvent);
+    	
         login.open({
             modal : false
         });
@@ -32,13 +34,20 @@ function doLogin() {
     }
 }
 
+if(OS_IOS) {
+	var iosStartResumeEvent = function() {
+		startApp();
+	};
+	Ti.App.addEventListener('resume', iosStartResumeEvent);
+}
+
+
 function startApp() {
     var hasLaunched = JSON.parse(Ti.App.Properties.getString("appLaunch"));
 
     if (hasLaunched) {
         doLogin();
     } else {
-
         // display welcome dialog
         var alertWindow = Titanium.UI.createAlertDialog({
             title : Alloy.Globals.PHRASES.betbattleTxt,

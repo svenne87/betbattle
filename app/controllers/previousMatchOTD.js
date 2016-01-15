@@ -728,10 +728,16 @@ function constructTableView(obj) {
     }
 
     var bet_amount = obj.match.bet_amount;
+    var extra_pot = obj.match.extra_pot;
     var count = obj.stats.count;
     var winners_count = obj.winners.length;
 
     var total_pot = bet_amount * count;
+    
+    if( (count - 0) > 1) {
+    	total_pot = (total_pot - 0) + (extra_pot - 0);
+    }
+    
     var win_amount = 0;
     if (winners_count > 0) {
         win_amount = Math.floor(total_pot / winners_count);

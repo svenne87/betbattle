@@ -122,7 +122,7 @@ var createReq = Titanium.Network.createHTTPClient();
     } else {
         signUpBtn.touchEnabled = true;
         signUpBtn.opacity = 1;
-        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.regErrorTxt);
         Ti.API.error("Error =>" + this.response);
     }
 };
@@ -130,8 +130,8 @@ createReq.onerror = function(e) {
     indicator.closeIndicator();
     signUpBtn.touchEnabled = true;
     signUpBtn.opacity = 1;
-    Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-    Ti.API.error("Error =>" + e.error);
+    Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.regErrorTxt);
+    Ti.API.error("Error =>" + e.error);    
 };
 
 var abortBtn = Alloy.Globals.createButtonView('#d50f25', '#FFF', Alloy.Globals.PHRASES.abortBtnTxt + ' ');
@@ -361,7 +361,7 @@ signUpBtn.addEventListener('click', function(e) {
                     signUpBtn.touchEnabled = true;
                     signUpBtn.opacity = 1;
                     Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
-                    Ti.API.error("Error");
+                    Ti.API.error("Error =>" + e.error);
                 }
             }
         }
