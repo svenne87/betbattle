@@ -627,7 +627,7 @@ function getChallenges() {
 
     try {
         xhr.open('GET', Alloy.Globals.BETKAMPENCHALLENGESURL + '/?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE);
-        xhr.setRequestHeader("challengesView-type", "application/json");
+        xhr.setRequestHeader("content-type", "application/json");
         xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
         xhr.setTimeout(Alloy.Globals.TIMEOUT);
         xhr.send();

@@ -879,12 +879,6 @@ table.addEventListener('click', function(e) {
 
     } else if (e.rowData.id === 'new') {
         var win = Alloy.createController('challenges_new').getView();
-     
-        if(Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_otd_status !== 0 && Alloy.Globals.CHALLENGEOBJECTARRAY[0].length === 0 && Alloy.Globals.CHALLENGEOBJECTARRAY[1].length === 0) {
-        	// if no new challenges/no match otd and no pending, simply go to the league view
-        	win = Alloy.createController('newChallengeLeague').getView();
-        }
-       
        
         Alloy.Globals.WINDOWS.push(win);
 
@@ -2057,7 +2051,7 @@ if (!Ti.App.Properties.hasProperty("showInviteSetting")) {
 
 var showInviteCodeBox = Ti.App.Properties.getBool('showInviteSetting');
 
-if(showInviteCodeBox) {
+if(showInviteCodeBox && !args.refresh) {
 	setTimeout(function() {
 		Alloy.Globals.displayEnterInviteCodeDialog(indicator);
     }, 2500);
