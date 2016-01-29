@@ -93,9 +93,11 @@ function sendSettingsServer(param, type, valueToStore) {
         xhr.onerror = function(e) {
             indicator.closeIndicator();
             Ti.API.error('Bad Sever =>' + JSON.stringify(e));
-            if (e.code === 400) {
-                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.nameUnique);
-            }
+            Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
+            
+            //if (e.code === 400) {
+                // Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.nameUnique);
+            //}
         };
 
         try {
@@ -115,6 +117,9 @@ function sendSettingsServer(param, type, valueToStore) {
                     if (type === 0) {
                         // store value about push
                         Ti.App.Properties.setBool("pushSetting", valueToStore);
+                        if (isAndroid) {
+        					$.table.setData($.table.data);
+        				}  
                     } else if (type === 1) {
                         // name change
                         Alloy.Globals.PROFILENAME = valueToStore;
@@ -212,13 +217,14 @@ function createGUI() {
             value : pushEnabled
         });
     } else {
-        var RealSwitch = require('com.yydigital.realswitch');
-
-        basicSwitch = RealSwitch.createRealSwitch({
-            right : 20,
-            width : 90,
-            value : pushEnabled
-        });
+        basicSwitch = Ti.UI.createSwitch({
+  			style: Titanium.UI.Android.SWITCH_STYLE_SWITCH,
+            titleOn : Alloy.Globals.PHRASES.onTxt,
+            titleOff : Alloy.Globals.PHRASES.offTxt,
+  			value: pushEnabled,
+            right : 10,
+            width : 80,
+		});
     }
 
     basicSwitch.addEventListener('change', function(e) {
@@ -436,19 +442,24 @@ function createGUI() {
             value : showInviteEnabled
         });
     } else {
-        var RealSwitch = require('com.yydigital.realswitch');
-
-        basicInviteSwitch = RealSwitch.createRealSwitch({
-            right : 20,
-            width : 90,
-            value : pushEnabled
-        });
+        basicInviteSwitch = Ti.UI.createSwitch({
+  			style: Titanium.UI.Android.SWITCH_STYLE_SWITCH,
+            titleOn : Alloy.Globals.PHRASES.onTxt,
+            titleOff : Alloy.Globals.PHRASES.offTxt,
+  			value: showInviteEnabled,
+            right : 10,
+            width : 80,
+		});     
     }
 
     basicInviteSwitch.addEventListener('change', function(e) {
-        var value = 0;
+       	if (isAndroid) {
+        	$.table.setData($.table.data);
+        }
+    	
+        var value = false;
         if (basicInviteSwitch.value) {
-            value = 1;
+            value = true;
         }
 
         Ti.App.Properties.setBool("showInviteSetting", value);

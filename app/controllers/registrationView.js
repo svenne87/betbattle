@@ -130,7 +130,9 @@ createReq.onerror = function(e) {
     indicator.closeIndicator();
     signUpBtn.touchEnabled = true;
     signUpBtn.opacity = 1;
-    Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.regErrorTxt);
+    // Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.regErrorTxt);
+    Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
+    
     Ti.API.error("Error =>" + e.error);    
 };
 

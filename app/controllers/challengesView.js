@@ -720,7 +720,7 @@ if (!isAndroid) {
 }
 
 var tableHeaderView = Ti.UI.createView({
-    height : 140,
+    height : 120,
     width : Ti.UI.FILL,
     layout : "vertical",
 });
@@ -1907,7 +1907,7 @@ function getDynamicTopImage() {
 						defaultImage : '/images/h_image.jpg',
 						image : Alloy.Globals.BETKAMPENURL + response.image,
 						width : Ti.UI.FILL,
-						height : 140,
+						height : 120,
 						backgroundColor : '#000'
 					});
 

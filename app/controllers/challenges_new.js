@@ -15,7 +15,7 @@ if (OS_IOS) {
     iOSVersion = parseInt(Ti.Platform.version);
 
     $.challenges_new.titleControl = Ti.UI.createLabel({
-        text : Alloy.Globals.PHRASES.challengesTxt,
+        // text : Alloy.Globals.PHRASES.challengesTxt,
         font : Alloy.Globals.getFontCustom(18, "Bold"),
         color : '#FFF'
     });
@@ -1055,6 +1055,7 @@ function createMatchOTDRow() {
 
     try {
         currentPot = (oppCount * Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_data.participants.bet_amount);
+        currentPot = (currentPot - 0) + (Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_data.participants.extra_pot - 0);
     } catch (e) {
         currentPot = Alloy.Globals.PHRASES.unknownSmallTxt;
     }
@@ -1313,7 +1314,7 @@ if (isAndroid) {
             $.challenges_new = null;
         };
         $.challenges_new.activity.actionBar.displayHomeAsUp = true;
-        $.challenges_new.activity.actionBar.title = Alloy.Globals.PHRASES.newTxt;
+        // $.challenges_new.activity.actionBar.title = Alloy.Globals.PHRASES.newTxt;
     });
 }
 

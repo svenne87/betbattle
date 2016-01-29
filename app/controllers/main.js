@@ -7,7 +7,7 @@ var centerImageView;
 var fontawesome = require('lib/IconicFont').IconicFont({
     font : 'lib/FontAwesome'
 });
-															//, argu  <- was // TODO 
+
 $.ds.contentview.add(Alloy.createController('challengesView').getView());
 
 var font = 'FontAwesome';
@@ -118,7 +118,8 @@ if (!isAndroid) {
     Ti.Gesture.addEventListener('orientationchange', function(e) {
         Ti.Android.currentActivity.setRequestedOrientation(Ti.Android.SCREEN_ORIENTATION_PORTRAIT);
     });
-
+	
+	var abx = require('com.alcoapps.actionbarextras');
     $.mainWin.orientationModes = [Titanium.UI.PORTRAIT];
     $.mainWin.addEventListener('open', function() {
 
@@ -128,10 +129,13 @@ if (!isAndroid) {
             actionBar = $.mainWin.activity.actionBar;
 
             if (actionBar) {
-                actionBar.icon = "images/ButtonMenu.png";
-                actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;
-
                 $.mainWin.activity.onCreateOptionsMenu = function(e) {
+                	e.menu.clear();
+					actionBar.displayHomeAsUp = true;
+
+				
+					abx.title = Alloy.Globals.PHRASES.betbattleTxt;
+    				abx.setHomeAsUpIcon("/images/ic_launcher.png");
 
                     ticket = e.menu.add( ticketIcon = {
                         showAsAction : Ti.Android.SHOW_AS_ACTION_ALWAYS,
@@ -166,41 +170,23 @@ if (!isAndroid) {
                         //menu.findItem(1).setOpacity(0);
                         menu.findItem(1).setVisible(false);
                     }
-
                 };
-
-                $.mainWin.activity.invalidateOptionsMenu();
-
+              
                 // set onResume for each activity in order to keep them updated with correct coupon
                 $.mainWin.activity.addEventListener("resume", function() {
                     // will rebuild menu and keep coupon up to date
                     $.mainWin.activity.invalidateOptionsMenu();
                 });
-				/*
-                actionBar.onHomeIconItemSelected = function() {
-                    // show / hide slide menu
-                    $.ds.toggleLeftSlider();
-                };
-                */
-                                                 
-                    actionBar.setHomeButtonEnabled(true); 
-    				actionBar.setDisplayShowTitleEnabled(true);
-    				//actionBar.setDisplayShowHomeEnabled(true); 
-    				actionBar.setDisplayHomeAsUp(true);
-    			
-    				// Set title
 
-                    
-                    actionBar.setOnHomeIconItemSelected(function() {
-       					// show / hide slide menu
-       					Ti.API.log("aaafff");
-                    	$.ds.toggleLeftSlider();                	
-					});
-                    
-                    
-                    
-               
-               
+				actionBar.onHomeIconItemSelected = function() {
+                    // show / hide slide menu
+                     setTimeout(function() {
+                     	// fix layout issues. Might be sdk version.
+                      	$.ds.toggleLeftSlider();
+        			}, 300);
+                };
+                
+    			$.mainWin.activity.invalidateOptionsMenu();
             }
         }
 
@@ -576,7 +562,7 @@ function logoutBetbattle() {
             
                         // remove old event listeners
                         Ti.App.removeEventListener('paused', Alloy.Globals.androidPauseEvent);
-                        Ti.App.removeEventListener('resumed', Alloy.Globals.androidResumeEvent); // TODO
+                        Ti.App.removeEventListener('resumed', Alloy.Globals.androidResumeEvent); 
                         Ti.App.removeEventListener('challengesViewRefresh', Alloy.Globals.challengesViewRefreshEvent);
                         Ti.App.removeEventListener('userInfoUpdate', Alloy.Globals.userInfoUpdateEvent);
                         
@@ -782,7 +768,7 @@ function rowSelect(e) {
                                                                      
                         // remove old event listeners
                         Ti.App.removeEventListener('paused', Alloy.Globals.androidPauseEvent);
-                        Ti.App.removeEventListener('resumed', Alloy.Globals.androidResumeEvent); // TODO
+                        Ti.App.removeEventListener('resumed', Alloy.Globals.androidResumeEvent);
                         Ti.App.removeEventListener('challengesViewRefresh', Alloy.Globals.challengesViewRefreshEvent);
                         Ti.App.removeEventListener('userInfoUpdate', Alloy.Globals.userInfoUpdateEvent);
 
