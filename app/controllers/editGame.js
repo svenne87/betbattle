@@ -832,7 +832,7 @@ function createLayout(gameObject) {
             }
 
             if (gametypes[y].option_type == "button") {
-                if (gametypes[y].type === '1') {
+                if (gametypes[y].fast_select === '1') {
                     sections[y].add(createGameTypeWinnerResult(gametypes[y], gameObject, i, gameArray, index));
                 } else {
                     for (var i = 0; i < gametypes[y].options; i++) {

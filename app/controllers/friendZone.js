@@ -500,7 +500,6 @@ myFriendBtn.addEventListener('click', function(e) {
     }
 });
 
-/*
 myGroupsBtn.addEventListener('click', function(e) {
     // check connection
     if (!Alloy.Globals.checkConnection()) {
@@ -520,7 +519,7 @@ myGroupsBtn.addEventListener('click', function(e) {
         win = null;
     }
 });
-*/
+
 addFriendsBtn.addEventListener('click', function(e) {
     // check connection
     if (!Alloy.Globals.checkConnection()) {
@@ -587,8 +586,8 @@ shareBtn.addEventListener('click', function(e) {
 //sections[0].add(fbFriendBtn);
 sections[0].add(addFriendsBtn);
 sections[0].add(myFriendBtn);
+sections[0].add(myGroupsBtn);
 //sections[2].add(createGroupBtn);
-//sections[2].add(myGroupsBtn);
 
 table.setData(sections);
 mainView.add(table);

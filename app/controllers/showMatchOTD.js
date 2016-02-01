@@ -607,7 +607,8 @@ function createLayout(resp) {
             headerView : matchHeader
         });
     }
-
+	
+	/*
     var rowUser = Ti.UI.createTableViewRow({
         height : 65,
         width : Ti.UI.FILL,
@@ -621,7 +622,7 @@ function createLayout(resp) {
     });
 
     rowUser.add(usersCountLabel);
-
+	*/
     var rowPot = Ti.UI.createTableViewRow({
         height : 65,
         width : Ti.UI.FILL,
@@ -639,7 +640,7 @@ function createLayout(resp) {
 
     rowPot.add(potSizeLabel);
 
-    sections[0].add(rowUser);
+   // sections[0].add(rowUser);
     sections[0].add(rowPot);
 
     // create each game type

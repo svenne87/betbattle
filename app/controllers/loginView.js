@@ -162,7 +162,7 @@ resetPasswordView.addEventListener('click', function(e) {
 
                 xhr.onerror = function(e) {
                 	indicator.closeIndicator();
-					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.passwordResetErrorTxt);
+					Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText)); // Alloy.Globals.PHRASES.passwordResetErrorTxt
                    	Ti.API.error('Bad Sever => ' + e.error);
                 };
 				
@@ -174,7 +174,7 @@ resetPasswordView.addEventListener('click', function(e) {
                     var params = '{"email" : "' + emailValue + '", "lang" : "' + Alloy.Globals.LOCALE + '"}'; 
                     xhr.send(params);
                 } catch(e) {
-                    Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+                    Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText)); // Alloy.Globals.PHRASES.commonErrorTxt
 					indicator.closeIndicator();
                 }
 

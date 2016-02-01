@@ -206,7 +206,6 @@ function createGameTypeWinnerResult(gameType, gameObject, i, gameArray, index) {
     }));
     
     // add event click listener for these to set option value
-    
     optionOne.addEventListener('click', function(e) {
         if(isAndroid) {
             e.row = e.source;
@@ -1529,7 +1528,7 @@ function createLayout(gameObject) {
             }
 
             if (gametypes[y].option_type == "button") {
-                if(gametypes[y].type === '1') {
+                if(gametypes[y].fast_select === '1') {
                     sections[sectionIndexen].add(createGameTypeWinnerResult(gametypes[y], gameObject, i, gameArray, index));
                 } else {
                     for (var i = 0; i < gametypes[y].options; i++) {

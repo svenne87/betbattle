@@ -742,17 +742,17 @@ function constructTableView(obj) {
     if (winners_count > 0) {
         win_amount = Math.floor(total_pot / winners_count);
     }
-
+	/*
     var participantRow = Ti.UI.createTableViewRow({
         height : 65,
         width : Ti.UI.FILL,
     });
-
+	*/
     var winAmountRow = Ti.UI.createTableViewRow({
         height : 65,
         width : Ti.UI.FILL
     });
-
+	/*
     var matchParticipantsLabel = Ti.UI.createLabel({
         text : Alloy.Globals.PHRASES.matchOTDparticipants + ': ' + count + ' ',
         left : 20,
@@ -761,7 +761,7 @@ function constructTableView(obj) {
     });
 
     participantRow.add(matchParticipantsLabel);
-
+	*/
     var matchWinnersPot = Ti.UI.createLabel({
         text : Alloy.Globals.PHRASES.matchOTDwinAmount + ': ' + win_amount + ' ',
         left : 20,
@@ -771,7 +771,7 @@ function constructTableView(obj) {
 
     winAmountRow.add(matchWinnersPot);
 
-    sections[0].add(participantRow);
+    // sections[0].add(participantRow);
     sections[0].add(winAmountRow);
 
     sections[1] = createSectionsForTable(Alloy.Globals.PHRASES.matchOTDwinners);

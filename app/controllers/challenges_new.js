@@ -1018,6 +1018,7 @@ function createMatchOTDRow() {
 
     secondRowView.add(startTextValueLabel);
 
+	/*
     var participantsTextLabel = Ti.UI.createLabel({
         left : 160,
         font : {
@@ -1028,9 +1029,10 @@ function createMatchOTDRow() {
     });
 
     secondRowView.add(participantsTextLabel);
-
+	*/
     var oppCount = parseInt(Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_data.participants.count);
-
+	
+	/*
     var participantsValueLabel = Ti.UI.createLabel({
         left : 175,
         text : oppCount.toString() + ' ',
@@ -1039,9 +1041,9 @@ function createMatchOTDRow() {
     });
 
     secondRowView.add(participantsValueLabel);
-
+	*/
     var potTextLabel = Ti.UI.createLabel({
-        left : (160 + participantsValueLabel.toImage().width + 5 + participantsTextLabel.toImage().width + 2),
+        left : 160, // + participantsValueLabel.toImage().width + 5 + participantsTextLabel.toImage().width + 2),
         font : {
             fontFamily : font
         },
@@ -1061,7 +1063,7 @@ function createMatchOTDRow() {
     }
 
     var potValueLabel = Ti.UI.createLabel({
-        left : (160 + participantsValueLabel.toImage().width + 2 + participantsTextLabel.toImage().width + 6 + potTextLabel.toImage().width + 2),
+        left : (160 + potTextLabel.toImage().width + 2), //  participantsValueLabel.toImage().width + 2 + participantsTextLabel.toImage().width + 6 + 
         text : '' + currentPot,
         font : Alloy.Globals.getFontCustom(12, 'Regular'),
         color : Alloy.Globals.themeColor()
