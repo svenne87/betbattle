@@ -1,4 +1,3 @@
-/*
 var args = arguments[0] || {};
 var pastRow = args.row;
 var pastRowName = args.rowName;
@@ -8,7 +7,7 @@ var groupTable = args.table;
 var gID = args.gID;
 var friends = null;
 var iOSVersion;
-var child = true;
+var child = false;
 var isAndroid = true;
 var context;
 
@@ -915,4 +914,3 @@ function getFriends(members) {
 
 getGroupMembers();
 $.editGroup.add(mainView);
-*/

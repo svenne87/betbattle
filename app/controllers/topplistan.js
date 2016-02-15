@@ -224,19 +224,7 @@ function createPopupLayout(win, playerObj, isFriend, isMe, friendIndex) {
     win.add(friendStats);
 
     var friend;
-    
-    /*  Old work around
-    if (OS_IOS) {
-        friend = Ti.UI.createView({
-            top : 2,
-            width : Ti.UI.FILL,
-            height : 45,
-        });
-        win.add(friend);
-    } else {
-        friend = win;
-    } */
-   
+
     friend = win;
     
     var image;
@@ -353,50 +341,54 @@ function createPopupLayout(win, playerObj, isFriend, isMe, friendIndex) {
     }
     
     if (playerObj.team.data[0]) {
-        var favTeam = Ti.UI.createLabel({
-            text : Alloy.Globals.PHRASES.favTeamTxt + " ",
-            left : 10,
-            color : "#000",
-            font : Alloy.Globals.getFontCustom(16, 'Regular'),
-            top : 190,
-        });
-        friend.add(favTeam);
-
-        var teamName = playerObj.team.data[0].name;
-        if (teamName.length > 22) {
-            teamName = teamName.substring(0, 19) + '...';
-        }
-
-        var frTeam = Ti.UI.createLabel({
-            text : teamName + " ",
-            font : Alloy.Globals.getFontCustom(16, 'Regular'),
-            left : 10,
-            color : "#000",
-            top : 210,
-        });
-        friend.add(frTeam);
-
-        var images = Alloy.Globals.BETKAMPENURL + playerObj.team.data[0].team_logo;
-
-        var profilePics = Titanium.UI.createImageView({
-            defaultImage : '/images/no_team.png',
-            image : images,
-            height : 70,
-            width : 70,
-            right : 5,
-            top : 170
-        });
-
-        profilePics.addEventListener('error', logoImageErrorHandler);
         
-        // fix for images delivered from us/api
-        if (!isLowerCase(playerObj.team.data[0].team_logo)) {
-            profilePics.width = 50;
-            profilePics.height = 50;
-            profilePics.top = 190;
-        }
+        if(playerObj.team.data[0].name) {
+        	var favTeam = Ti.UI.createLabel({
+            	text : Alloy.Globals.PHRASES.favTeamTxt + " ",
+            	left : 10,
+            	color : "#000",
+            	font : Alloy.Globals.getFontCustom(16, 'Regular'),
+            	top : 190,
+        	});
+        	friend.add(favTeam);
+
+        	var teamName = playerObj.team.data[0].name;
+        	if (teamName.length > 22) {
+            	teamName = teamName.substring(0, 19) + '...';
+        	}
+	
+        	var frTeam = Ti.UI.createLabel({
+            	text : teamName + " ",
+            	font : Alloy.Globals.getFontCustom(16, 'Regular'),
+            	left : 10,
+            	color : "#000",
+            	top : 210,
+        	});
+        	friend.add(frTeam);
+		}
+		if(playerObj.team.data[0].team_logo) {
+        	var images = Alloy.Globals.BETKAMPENURL + playerObj.team.data[0].team_logo;
+
+        	var profilePics = Titanium.UI.createImageView({
+         	   defaultImage : '/images/no_team.png',
+         	   image : images,
+         	   height : 70,
+         	   width : 70,
+         	   right : 5,
+         	   top : 170
+        	});
+
+        	profilePics.addEventListener('error', logoImageErrorHandler);
+        
+        	// fix for images delivered from us/api
+        	if (!isLowerCase(playerObj.team.data[0].team_logo)) {
+            	profilePics.width = 50;
+            	profilePics.height = 50;
+            	profilePics.top = 190;
+        	}
        
-        friend.add(profilePics);
+        	friend.add(profilePics);
+       }
     }
 }
 
@@ -432,15 +424,7 @@ function popupAndroid(objId, playerIndex) {
     });
 
     w.add(modal);
-/*
-    var textWrapper = Ti.UI.createView({
-        id : 'wrapper',
-        height : 250,
-        width : "85%"
-    });
 
-    w.add(textWrapper);
-*/
     var friendIndex = getFriendIndex(objId);
 
     if (objId === Alloy.Globals.BETKAMPENUID) {
@@ -453,16 +437,7 @@ function popupAndroid(objId, playerIndex) {
         // some one else
         createPopupLayout(modal, players[playerIndex], false, false, -1);
     }
-/*
-    // When clicking on the modal
-    textWrapper.addEventListener("click", function(e) {
-        Ti.API.log(JSON.stringify(e.source.id));
-
-        winOpen = false;
-        modal.hide();
-        modal = null;
-    });
-*/   
+ 
     // When clicking outside of the modal
     w.addEventListener('click', function(e) { 
         winOpen = false;

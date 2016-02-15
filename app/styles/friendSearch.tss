@@ -6,4 +6,27 @@
   backgroundColor : "#000",
   translucent: false,
   barColor : 'black'
+},
+".challengesSection":{
+	height : 75,
+	backgroundColor : '#303030',
+	backgroundGradient : {
+		type : "linear",
+		startPoint : {
+			x : "0%",
+			y : "0%"
+		},
+		endPoint : {
+			x : "0%",
+			y : "100%"
+		},
+		colors : [{
+			color : "#151515",
+			
+		},{
+			color : "#2E2E2E",
+			
+		}]
+	},
+	layout : 'vertical'
 }

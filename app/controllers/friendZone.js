@@ -145,54 +145,8 @@ if (!isAndroid) {
     });
 }
 
-//sections[0] = createSectionsForTable(Alloy.Globals.PHRASES.landingPageInviteBtnTop);
 sections[0] = createSectionsForTable(Alloy.Globals.PHRASES.FriendsTxt);
-//sections[2] = createSectionsForTable(Alloy.Globals.PHRASES.GroupsTxt);
-/*
-var fbFriendBtn = Titanium.UI.createTableViewRow({
-    //title: Alloy.Globals.PHRASES.fbFriendsTxt,
-    id : 'fbFriendBtn',
-    hasChild : child,
-    width : Ti.UI.FILL,
-    left : 0,
-    className : 'gameTypeRow',
-    height : 75,
 
-});
-
-if (!child) {
-    fbFriendBtn.add(Ti.UI.createLabel({
-        font : {
-            fontFamily : font
-        },
-        text : fontawesome.icon('icon-chevron-right'),
-        right : rightPercentage,
-        color : '#FFF',
-        fontSize : 80,
-        height : 'auto',
-        width : 'auto'
-    }));
-}
-
-var fbIconLabel = Titanium.UI.createLabel({
-    font : {
-        fontFamily : font,
-        fontSize : 22
-    },
-    text : fontawesome.icon('fa-facebook'),
-    left : 20,
-    color : '#fff',
-});
-fbFriendBtn.add(fbIconLabel);
-
-var fbLabel = Titanium.UI.createLabel({
-    text : Alloy.Globals.PHRASES.fbFriendsTxt,
-    font : Alloy.Globals.getFontCustom(16, "Regular"),
-    color : "#fff",
-    left : 50,
-});
-fbFriendBtn.add(fbLabel);
-*/
 var myFriendBtn = Titanium.UI.createTableViewRow({
     id : 'myFriendBtn',
     hasChild : child,
@@ -321,7 +275,7 @@ var aFriendLabel = Titanium.UI.createLabel({
 
 addFriendsBtn.add(aFriendLabel);
 
-/*
+
 var createGroupBtn = Titanium.UI.createTableViewRow({
     id : 'createGroupBtn',
     hasChild : child,
@@ -365,120 +319,6 @@ cGroupLabel = Titanium.UI.createLabel({
 
 createGroupBtn.add(cGroupLabel);
 
-/*
-var shareBtn = Titanium.UI.createTableViewRow({
-    id : 'shareBtn',
-    hasChild : child,
-    width : Ti.UI.FILL,
-    left : 0,
-    className : 'gameTypeRow',
-    height : 75,
-});
-
-if (!child) {
-    shareBtn.add(Ti.UI.createLabel({
-        font : {
-            fontFamily : font
-        },
-        text : fontawesome.icon('icon-chevron-right'),
-        right : rightPercentage,
-        color : '#FFF',
-        fontSize : 80,
-        height : 'auto',
-        width : 'auto'
-    }));
-}
-
-var sIconLabel = Titanium.UI.createLabel({
-    font : {
-        fontFamily : font,
-        fontSize : 22
-    },
-    text : fontawesome.icon('fa-share-alt'),
-    left : 20,
-    color : '#FFF',
-});
-shareBtn.add(sIconLabel);
-
-shareLabel = Titanium.UI.createLabel({
-    text : Alloy.Globals.PHRASES.inviteFriendsTxt,
-    font : Alloy.Globals.getFontCustom(16, "Regular"),
-    color : "#FFF",
-    left : 50,
-});
-
-shareBtn.add(shareLabel);
-
-var fb;
-
-if (Alloy.Globals.FACEBOOKOBJECT != null) {
-    if (isAndroid) {
-        $.friendZone.fbProxy = Alloy.Globals.FACEBOOK.createActivityWorker({lifecycleContainer : $.friendZone});
-        fb = Alloy.Globals.FACEBOOK;
-    } else {
-        fb = Alloy.Globals.FACEBOOK;
-    }
-
-} else {
-    if(isAndroid) {
-        var fbModule = require('facebook');
-        $.friendZone.fbProxy = fbModule.createActivityWorker({lifecycleContainer : $.friendZone});
-        fb = fbModule;
-    } else {
-        fb = require("facebook");
-    }
-}
-
-fbFriendBtn.addEventListener('click', function(e) {
-
-    if (Alloy.Globals.checkConnection()) {
-        if (isAndroid) {
-            if (fb.canPresentOpenGraphActionDialog) {
-                performFacebookPost(fb);
-            } else {
-                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.fbShareErrorTxt);
-            }
-        } else {
-            if (fb.getCanPresentShareDialog()) {
-                performFacebookPost(fb);
-            } else {
-                Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.fbShareErrorTxt);
-            }
-        }
-    } else {
-        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
-    }
-
-    function performFacebookPost(fb) {
-
-        var data = {
-            url : Alloy.Globals.PHRASES.appLinkTxt,
-            namespaceObject : 'betbattle:bet',
-            objectName : 'bet',
-            imageUrl : Alloy.Globals.BETKAMPENURL + '/images/betbattle.png',
-            title : Alloy.Globals.PHRASES.fbPostCaptionTxt,
-            description : Alloy.Globals.PHRASES.fbPostDescriptionTxt + "." + "\n" + Alloy.Globals.PHRASES.myNameIsTxt + ": " + Alloy.Globals.PROFILENAME,
-            namespaceAction : 'betbattle:place'
-        };
-
-        Alloy.Globals.unlockAchievement(5);
-        fb.share(data);
-    }
-
-    /*
-     var win = Alloy.createController('fbFriends').getView();
-     if (OS_IOS) {
-     Alloy.Globals.NAV.openWindow(win, {
-     animated : true
-     });
-     } else {
-     win.open({
-     fullScreen : true
-     });
-     win = null;
-     }
-     */
-//});
 
 myFriendBtn.addEventListener('click', function(e) {
     // check connection
@@ -539,7 +379,7 @@ addFriendsBtn.addEventListener('click', function(e) {
         win = null;
     }
 });
-/*
+
 createGroupBtn.addEventListener('click', function(e) {
     // check connection
     if (!Alloy.Globals.checkConnection()) {
@@ -559,35 +399,11 @@ createGroupBtn.addEventListener('click', function(e) {
         win = null;
     }
 });
-*/
-/*
-shareBtn.addEventListener('click', function(e) {
-    // check connection
-    if (!Alloy.Globals.checkConnection()) {
-        Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
-        return;
-    }
 
-    var win = Alloy.createController('shareView').getView();
-    if (OS_IOS) {
-        Alloy.Globals.NAV.openWindow(win, {
-            animated : true
-        });
-    } else {
-        win.open({
-            fullScreen : true
-        });
-        win = null;
-    }
-});
-*/
-
-//sections[0].add(shareBtn);
-//sections[0].add(fbFriendBtn);
 sections[0].add(addFriendsBtn);
 sections[0].add(myFriendBtn);
 sections[0].add(myGroupsBtn);
-//sections[2].add(createGroupBtn);
+sections[0].add(createGroupBtn);
 
 table.setData(sections);
 mainView.add(table);

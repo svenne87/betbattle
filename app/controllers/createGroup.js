@@ -1,4 +1,3 @@
-/*
 var fontawesome = require('lib/IconicFont').IconicFont({
     font : 'lib/FontAwesome'
 });
@@ -14,7 +13,7 @@ var friends = [];
 var sections = [];
 var selectedFriends = [];
 var table;
-var hasChild = true;
+var hasChild = false;
 var groupName;
 var isSubmitting = false;
 var isAndroid = false;
@@ -530,5 +529,3 @@ if (Alloy.Globals.checkConnection()) {
 }
 
 $.createGroup.add(table);
-
-*/

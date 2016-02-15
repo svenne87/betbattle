@@ -76,7 +76,15 @@ function createGUI(obj) {
         obj.team.data[0].name = '';
         obj.team.data[0].team_logo = '';
     }
-
+    
+    if(obj.team.data[0].name == null) {
+    	obj.team.data[0].name = "";
+    }
+    
+    if(obj.team.data[0].team_logo == null) {
+    	obj.team.data[0].team_logo = "";
+    }
+	
     var friend = Ti.UI.createTableViewRow({
         hasChild : child,
         width : Ti.UI.FILL,
