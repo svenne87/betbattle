@@ -100,6 +100,7 @@ function getFriendsAndGroups() {
 	};
 }
 
+/*
 // challenge friends
 function challengeFriends() {
 	if (Alloy.Globals.checkConnection()) {
@@ -250,7 +251,174 @@ function challengeFriends() {
 		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 	}
 }
+*/
+function challengeFriendsAndGroups() {
+	if (Alloy.Globals.checkConnection()) {
+		// show indicator and disable button
+		indicator.openIndicator();
+		isSubmitting = true;
 
+		var xhr = Titanium.Network.createHTTPClient();
+		xhr.onerror = function(e) {
+			indicator.closeIndicator();
+			isSubmitting = false;
+			Ti.API.info("ERROR PARSE : " + JSON.stringify(this.responseText));
+
+			var errorTxt = "";
+			try {
+				errorTxt = JSON.parse(this.responseText);
+			} catch(e) {
+				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+			}
+
+			if (errorTxt.indexOf(Alloy.Globals.PHRASES.coinsInfoTxt.toLowerCase()) != -1) {
+				// not enough coins
+				// show dialog with "link" to the store
+				var alertWindow = Titanium.UI.createAlertDialog({
+					title : Alloy.Globals.PHRASES.betbattleTxt,
+					message : JSON.parse(this.responseText),
+					buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.storeTxt]
+				});
+
+				alertWindow.addEventListener('click', function(e) {
+					switch (e.index) {
+					case 0:
+						alertWindow.hide();
+						break;
+					case 1:
+						var win = Alloy.createController('store').getView();
+						Alloy.Globals.WINDOWS.push(win);
+
+						if (OS_IOS) {
+							Alloy.Globals.NAV.openWindow(win, {
+								animated : true
+							});
+						} else if (OS_ANDROID) {
+							win.open({
+								fullScreen : false
+							});
+							win = null;
+						}
+						alertWindow.hide();
+						break;
+					}
+				});
+				alertWindow.show();
+
+			} else {
+				// any other "bad request error"
+				var errorText = "";
+				try {
+					errorText = JSON.parse(this.responseText);
+					Alloy.Globals.showFeedbackDialog(errorText);
+				} catch(e) {
+					//
+				}
+
+				if (errorText === "") {
+					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+				}
+			}
+
+			Ti.API.error('Bad Sever =>' + e.error);
+		};
+
+		try {
+			xhr.open('POST', Alloy.Globals.BETKAMPENCHALLENGEFRIENDSANDGROUPSURL + '/?lang=' + Alloy.Globals.LOCALE);
+			xhr.setRequestHeader("content-type", "application/json");
+			xhr.setRequestHeader("Authorization", Alloy.Globals.BETKAMPEN.token);
+			xhr.setTimeout(Alloy.Globals.TIMEOUT);
+				
+			var param = "";
+			param += '{"coins": ' + coins + ', "lang" :"' + Alloy.Globals.LOCALE + '", "cid":"' + Alloy.Globals.COUPON.id + '", "friends":[{';
+
+			if (friendsChallenge.length > 0) {
+				for (var i = 0; i < friendsChallenge.length; i++) {
+					param += '"' + friendsChallenge[i].id + '":"' + friendsChallenge[i].name;
+
+					if (i == (friendsChallenge.length - 1)) {
+						// last one
+						param += '"';
+					} else {
+						param += '", ';
+					}
+				}
+			}
+
+			param += '}]';
+			
+			param += ', "groups": [{';
+
+            for (var x = 0; x < selectedGroups.length; x++) {
+     			param += '"' + selectedGroups[x].id + '":"' + selectedGroups[x].name;
+
+                if (x != (selectedGroups.length - 1)) {
+                	param += '", ';
+                } else {
+                    // last one
+                    param += '"';
+                }
+            }
+
+            param += '}]}';
+			xhr.send(param);
+		} catch(e) {
+			indicator.closeIndicator();
+			isSubmitting = false;
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+		}
+		xhr.onload = function() {
+			if (this.status == '200') {
+				indicator.closeIndicator();
+
+				if (this.readyState == 4) {
+					var response = JSON.parse(this.responseText);
+
+					response = response.replace(/(<br \/>)+/g, "\n");
+					// show dialog and if ok close window
+					Alloy.Globals.showToast(response, true);
+
+					// change view
+					var arg = {
+						refresh : true
+					};
+					var obj = {
+						controller : 'challengesView',
+						arg : arg
+					};
+
+					Ti.App.fireEvent('app:updateView', obj);
+
+					for (var win in Alloy.Globals.WINDOWS) {
+						Alloy.Globals.WINDOWS[win].setOpacity(0);
+					}
+
+					$.groupSelectWindow.setOpacity(0);
+
+					for (var win in Alloy.Globals.WINDOWS) {
+						Alloy.Globals.WINDOWS[win].close();
+					}
+
+					$.groupSelectWindow.close();
+
+				} else {
+					isSubmitting = false;
+					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
+				}
+			} else {
+				indicator.closeIndicator();
+				isSubmitting = false;
+				Ti.API.error("Error =>" + this.response);
+				Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
+			}
+		};
+
+	} else {
+		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+	}
+}
+
+/*
 function challengeGroups() {
 	if (Alloy.Globals.checkConnection()) {
 		// show indicator and disable button
@@ -399,6 +567,7 @@ function challengeGroups() {
 		Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
 	}
 }
+*/
 
 function createSubmitButtons() {
 	submitButton = null;
@@ -431,7 +600,15 @@ function createSubmitButtons() {
 		if (isSubmitting) {
 			return;
 		}
-
+	
+		if (friendsChallenge.length > 0 || selectedGroups.length > 0 || hasInvited) {
+			challengeFriendsAndGroups();
+		} else {
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.friendChallengeErrorTxt);
+		}
+	
+	
+		/*
 		if(selectedGroups.length > 0) {
 			challengeGroups();
 		} else {
@@ -441,6 +618,7 @@ function createSubmitButtons() {
 				Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.friendChallengeErrorTxt);
 			}
 		}
+		*/
 	});
 
 	botView.add(submitButton);
@@ -453,7 +631,7 @@ function inviteSms() {
 
 		//check if the feature is available on the device at hand
 		if (!sms.isSupported()) {
-			//falls here when executed on iOS versions < 4.0 and in the emulator
+			// when executed on iOS versions < 4.0 and in the emulator
 			Alloy.Globals.showFeedbackDialog('This device does not support sending sms!');
 		} else {
 			sms.barColor = '#336699';
@@ -565,9 +743,10 @@ function addRowEventListener(row, type) {
 			var index = -1;
 			
 			// clear all selected groups and store friend rows clicked
-			selectedGroups = [];
+			// selectedGroups = [];
 			selectedFriendRows.push(e.source);
-
+			
+			/*
 			for(var x in selectedGroupRows) {
 				for(var z in selectedGroupRows[x].children) {
 					if(selectedGroupRows[x].children[z].id === 'icon') {
@@ -577,7 +756,8 @@ function addRowEventListener(row, type) {
 					}
 				}
 			}
-
+			*/
+			
 			// remove friend if already in list
 			for (var i in friendsChallenge) {
 				if (friendsChallenge[i].id == friend.id) {
@@ -617,36 +797,28 @@ function addRowEventListener(row, type) {
 				id : e.source.id
 			};
 			
-			// clear groups, we only allow one.
-			selectedGroups = [];
-			for(var x in selectedGroupRows) {
-				for(var z in selectedGroupRows[x].children) {
-					if(selectedGroupRows[x].children[z].id === 'icon') {
-						selectedGroupRows[x].children[z].text = fontawesome.icon('fa-plus');
-						selectedGroupRows[x].children[z].color = '#FFF';
-						break;
-					}
-				}
-			}
-			
-			// clear all selected friens and store group rows clicked
-			friendsChallenge = [];
-			selectedGroupRows.push(e.source);
-
-			for(var x in selectedFriendRows) {
-				for(var z in selectedFriendRows[x].children) {
-					if(selectedFriendRows[x].children[z].id === 'icon') {
-						selectedFriendRows[x].children[z].text = fontawesome.icon('fa-plus');
-						selectedFriendRows[x].children[z].color = '#FFF';
-						break;
-					}
-				}
-			}
-		
 			var iconText = fontawesome.icon('fa-check');
 			var iconColor = '#FF7D40';
+			var index = -1;
+			
+			selectedGroupRows.push(e.source);
 
-			selectedGroups.push(group);
+			// remove group if already in list
+			for (var i in selectedGroups) {
+				if (selectedGroups[i].id == group.id) {
+					// group already in list, store index to remove
+					iconText = fontawesome.icon('fa-plus');
+					iconColor = '#FFF';
+					index = i;
+					break;
+				}
+			}
+
+			if (index != -1) {
+				selectedGroups.splice(index, 1);
+			} else {
+				selectedGroups.push(group);
+			}
 
 			for (var k in e.source.children) {
 				if (e.source.children[k].id === 'icon') {
@@ -655,7 +827,7 @@ function addRowEventListener(row, type) {
 					break;
 				}
 			}
-			
+
 			if(selectedGroups.length > 0) {
 				submitButton.setVisible(true);
 				tableWrapper.setHeight('80%');

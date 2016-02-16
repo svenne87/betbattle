@@ -197,6 +197,7 @@ Alloy.Globals.BETKAMPENUPDATECHALLENGEURL = Alloy.Globals.BETKAMPENURL + '/api/u
 Alloy.Globals.BETKAMPENGETCOUPONURL = Alloy.Globals.BETKAMPENURL + '/api/get_coupon.php';
 Alloy.Globals.BETKAMPENDELETECOUPONGAMEURL = Alloy.Globals.BETKAMPENURL + '/api/delete_coupon_game.php';
 Alloy.Globals.BETKAMPENCHALLENGEGROUPURL = Alloy.Globals.BETKAMPENURL + '/api/challenge_group.php';
+Alloy.Globals.BETKAMPENCHALLENGEFRIENDSANDGROUPSURL = Alloy.Globals.BETKAMPENURL + '/api/challenge_friends_and_groups.php';
 Alloy.Globals.BETKAMPENCHALLENGEFRIENDSURL = Alloy.Globals.BETKAMPENURL + '/api/challenge_friend.php';
 Alloy.Globals.BETKAMPENGAMETOEDITURL = Alloy.Globals.BETKAMPENURL + '/api/get_game_edit.php';
 Alloy.Globals.BETKAMPENSAVEEDITURL = Alloy.Globals.BETKAMPENURL + '/api/save_game_edit.php';
@@ -438,7 +439,7 @@ Alloy.Globals.displayEnterInviteCodeDialog = function(indicator) {
                 		indicator.closeIndicator();
                 	}
 					
-					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.invalidCodeError);
+					Alloy.Globals.showFeedbackDialog(JSON.parse(this.responseText));
                    	Ti.API.error('Bad Sever => ' + e.error);
                 };
 				
