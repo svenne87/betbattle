@@ -70,7 +70,9 @@
 		contentTitle: title,
 		contentText: message,
 		tickerText: statusBarMessage,
-		icon: Ti.App.Android.R.drawable.appicon,
+		icon: Ti.App.Android.R.drawable.ic_launcher,
+		largeIcon: Ti.App.Android.R.drawable.appicon,
+		smallIcon: Ti.App.Android.R.drawable.ic_launcher,
 		flags: Ti.Android.FLAG_AUTO_CANCEL | Ti.Android.FLAG_SHOW_LIGHTS,
 		defaults : Titanium.Android.NotificationManager.DEFAULT_VIBRATE
 	});

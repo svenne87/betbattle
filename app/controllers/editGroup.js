@@ -525,16 +525,21 @@ function createGUI(obj) {
         }
 
         var profilePic = Titanium.UI.createImageView({
-            defaultImage : '/images/no_pic.png',
+            //defaultImage : '/images/no_pic.png',
             image : image,
             height : 40,
             width : 40,
             left : 10,
             borderRadius : 20
         });
+        
+       	if(!isAndroid) {
+       		profilePic.setDefaultImage('/images/no_pic.png');
+       	}
+       	
         profilePic.addEventListener('error', function(e) {
             // fallback for image
-            profilePic.image = '/images/no_pic.png';
+            e.source.image = '/images/no_pic.png';
         });
 
         row.add(profilePic);
@@ -579,16 +584,21 @@ function createGUI(obj) {
         }
 
         var profilePic = Titanium.UI.createImageView({
-            defaultImage : "/images/no_pic.png",
+            //defaultImage : "/images/no_pic.png",
             image : image,
             height : 40,
             width : 40,
             left : 10,
             borderRadius : 20
         });
+        
+        if(!isAndroid) {
+       		profilePic.setDefaultImage('/images/no_pic.png');
+       	}
+        
         profilePic.addEventListener('error', function(e) {
             // fallback for image
-            profilePic.image = '/images/no_pic.png';
+            e.source.image = '/images/no_pic.png';
         });
         row.add(profilePic);
 
@@ -642,16 +652,21 @@ function createFriendGUI(friend, members) {
         }
 
         var profilePic = Titanium.UI.createImageView({
-            defaultImage : "/images/no_pic.png",
+            //defaultImage : "/images/no_pic.png",
             image : image,
             height : 40,
             width : 40,
             left : 10,
             borderRadius : 20
         });
+        
+        if(!isAndroid) {
+       		profilePic.setDefaultImage('/images/no_pic.png');
+       	}       
+        
         profilePic.addEventListener('error', function(e) {
             // fallback for image
-            profilePic.image = '/images/no_pic.png';
+            e.source.image = '/images/no_pic.png';
         });
         row.add(profilePic);
 

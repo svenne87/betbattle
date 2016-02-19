@@ -238,7 +238,7 @@ var rowClick = function(e) {
 };
 
 var imageErrorHandler = function(e) {
-    e.image = '/images/no_pic.png';
+    e.source.image = '/images/no_pic.png';
 };
 
 function createEmptyRow() {
@@ -311,13 +311,17 @@ function createFriendRow(friendObj) {
     }
 
     var profileImage = Ti.UI.createImageView({
-        defaultImage : '/images/no_pic.png',
+        //defaultImage : '/images/no_pic.png',
         image : image,
         width : 40,
         left : 10,
         height : 40,
         borderRadius : 20
     });
+    
+    if(!isAndroid) {
+    	profileImage.setDefaultImage('/images/no_pic.png');
+    }
 
     profileImage.addEventListener('error', imageErrorHandler);
 

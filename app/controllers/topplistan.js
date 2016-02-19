@@ -24,11 +24,11 @@ var overlap = 62;
 var isAdding = false;
 
 var imageErrorHandler = function(e) {
-    e.image = '/images/no_pic.png';
+    e.source.image = '/images/no_pic.png';
 };
 
 var logoImageErrorHandler = function(e) {
-     e.image = '/images/no_team.png';
+     e.source.image = '/images/no_team.png';
 };
 
 var footerView = Ti.UI.createView({
@@ -237,7 +237,7 @@ function createPopupLayout(win, playerObj, isFriend, isMe, friendIndex) {
     }
 
     var profilePic = Titanium.UI.createImageView({
-        defaultImage : '/images/no_pic.png',
+        //defaultImage : '/images/no_pic.png',
         image : image,
         height : 90,
         width : 90,
@@ -245,9 +245,13 @@ function createPopupLayout(win, playerObj, isFriend, isMe, friendIndex) {
         top : 10,
         borderRadius : 45
     });
-
+    
     profilePic.addEventListener('error', imageErrorHandler);
-
+	
+	if(!isAndroid) {
+		profilePic.setDefaultImage('/images/no_pic.png');
+	}
+	
     friend.add(profilePic);
 
     if (isFriend || isMe) {
@@ -370,7 +374,7 @@ function createPopupLayout(win, playerObj, isFriend, isMe, friendIndex) {
         	var images = Alloy.Globals.BETKAMPENURL + playerObj.team.data[0].team_logo;
 
         	var profilePics = Titanium.UI.createImageView({
-         	   defaultImage : '/images/no_team.png',
+         	   //defaultImage : '/images/no_team.png',
          	   image : images,
          	   height : 70,
          	   width : 70,
@@ -379,7 +383,11 @@ function createPopupLayout(win, playerObj, isFriend, isMe, friendIndex) {
         	});
 
         	profilePics.addEventListener('error', logoImageErrorHandler);
-        
+        	
+        	if(!isAndroid) {
+        		profilePics.setDefaultImage('/images/no_team.png');
+        	}
+        	
         	// fix for images delivered from us/api
         	if (!isLowerCase(playerObj.team.data[0].team_logo)) {
             	profilePics.width = 50;
@@ -582,8 +590,8 @@ function createRow(obj, friends, index) {
     }
 
     var profileImage = Ti.UI.createImageView({
-        defaultImage : '/images/no_pic.png',
-        image : image,
+        //defaultImage : '/images/no_pic.png', // strul
+       	image : image,
         width : 40,
         left : 10,
         height : 40,
@@ -591,8 +599,10 @@ function createRow(obj, friends, index) {
     });
 
     profileImage.addEventListener('error', imageErrorHandler);
-
-    row.add(profileImage);
+    if(!isAndroid) {
+    	profileImage.setDefaultImage('/images/no_pic.png');
+    }
+	row.add(profileImage);
 
     var profileName = obj.name;
 

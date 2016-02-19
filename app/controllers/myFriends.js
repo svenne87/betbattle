@@ -58,11 +58,11 @@ var mainView = Ti.UI.createView({
 });
 
 var imageErrorHandler = function(e) {
-    e.image = '/images/no_pic.png';
+    e.source.image = '/images/no_pic.png';
 };
 
 var logoImageErrorHandler = function(e) {
-    e.image = '/images/no_team.png';
+    e.source.image = '/images/no_team.png';
 };
 
 function isLowerCase(str) {
@@ -153,7 +153,7 @@ function createGUI(obj) {
             }
 
             var profilePic = Titanium.UI.createImageView({
-                defaultImage : '/images/no_pic.png',
+               // defaultImage : '/images/no_pic.png',
                 image : image,
                 height : 90,
                 width : 90,
@@ -161,6 +161,10 @@ function createGUI(obj) {
                 top : 10,
                 borderRadius : 45
             });
+            
+            if(!isAndroid) {
+            	profilePic.setDefaultImage('/images/no_pic.png');
+            }
 
             profilePic.addEventListener('error', imageErrorHandler);
 
@@ -219,13 +223,18 @@ function createGUI(obj) {
                 var images = Alloy.Globals.BETKAMPENURL + e.source.teamLogo;
 
                 var profilePics = Titanium.UI.createImageView({
-                    defaultImage : '/images/no_team.png',
+                    //defaultImage : '/images/no_team.png',
                     image : images,
                     height : 70,
                     width : 70,
                     right : '2%',
                     top : 170
                 });
+                
+                if(!isAndroid) {
+            		profilePics.setDefaultImage('/images/no_team.png');
+            	}
+                
                 profilePics.addEventListener('error', logoImageErrorHandler);
 
                 // fix for images delivered from us/api
@@ -421,7 +430,7 @@ function createGUI(obj) {
             }
 
             var profilePic = Titanium.UI.createImageView({
-                defaultImage : '/images/no_pic.png',
+                // defaultImage : '/images/no_pic.png',
                 image : image,
                 height : 90,
                 width : 90,
@@ -429,7 +438,11 @@ function createGUI(obj) {
                 top : 10,
                 borderRadius : 45
             });
-
+			
+			if(!isAndroid) {
+            	profilePic.setDefaultImage('/images/no_pic.png');
+            }
+			
             profilePic.addEventListener('error', imageErrorHandler);
 
             friend.add(profilePic);
@@ -487,7 +500,7 @@ function createGUI(obj) {
                 var images = Alloy.Globals.BETKAMPENURL + e.source.teamLogo;
 
                 var profilePics = Titanium.UI.createImageView({
-                    defaultImage : '/images/no_team.png',
+                    // defaultImage : '/images/no_team.png',
                     image : images,
                     height : 70,
                     width : 70,
@@ -495,7 +508,11 @@ function createGUI(obj) {
                     top : 170,
                     borderRadius : 35
                 });
-
+                
+                if(!isAndroid) {
+            		profilePics.setDefaultImage('/images/no_team.png');
+           	 	}
+			
                 profilePics.addEventListener('error', logoImageErrorHandler);
                 
                 // fix for images delivered from us/api
@@ -643,7 +660,7 @@ function createGUI(obj) {
     }
 
     var profilePic = Titanium.UI.createImageView({
-        defaultImage : '/images/no_pic.png',
+        // defaultImage : '/images/no_pic.png',
         image : image,
         width : 40,
         left : 10,
@@ -659,6 +676,12 @@ function createGUI(obj) {
         teamLogo : obj.team.data[0].team_logo,
         borderRadius : 17
     });
+    
+                    
+    if(!isAndroid) {
+    	profilePic.setDefaultImage('/images/no_pic.png');
+    }
+    
     profilePic.addEventListener('error', function(e) {
         // fallback for image
         e.source.image = '/images/no_pic.png';

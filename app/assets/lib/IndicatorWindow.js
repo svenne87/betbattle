@@ -32,7 +32,7 @@ function createIndicatorWindow(args) {
 	});
 
 	function osIndicatorStyle() {
-		style = Ti.UI.iPhone.ActivityIndicatorStyle.PLAIN;
+		style = Ti.UI.ActivityIndicatorStyle.PLAIN;
 
 		if ('iPhone OS' !== Ti.Platform.name) {
 			style = Ti.UI.ActivityIndicatorStyle.DARK;

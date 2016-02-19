@@ -132,10 +132,13 @@ if (!isAndroid) {
                 $.mainWin.activity.onCreateOptionsMenu = function(e) {
                 	e.menu.clear();
 					actionBar.displayHomeAsUp = true;
-
 				
 					abx.title = Alloy.Globals.PHRASES.betbattleTxt;
-    				abx.setHomeAsUpIcon("/images/ic_launcher.png");
+					
+					if(typeof(Alloy.Globals.CURRENTVIEW) === 'undefined') {
+						abx.setHomeAsUpIcon("/images/ic_launcher.png");
+					}
+    				// abx.setHomeAsUpIcon("/images/ic_launcher.png");
 
                     ticket = e.menu.add( ticketIcon = {
                         showAsAction : Ti.Android.SHOW_AS_ACTION_ALWAYS,
@@ -258,6 +261,7 @@ var updateCoins = function(coins) {
     try {
         var currentCoinsText = coinsLabel.getText();
         currentCoins = parseInt(currentCoinsText);
+
         coins = parseInt(coins.coins);
     } catch (e) {
 
@@ -336,7 +340,7 @@ function createMenuHeader() {
 
     centerImageView.addEventListener('error', function(e) {
         // fallback for image
-        centerImageView.image = '/images/no_pic.png';
+        e.source.image = '/images/no_pic.png';
     });
 
     leftViewPart.add(centerImageView);

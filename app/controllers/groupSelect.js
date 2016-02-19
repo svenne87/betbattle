@@ -864,7 +864,7 @@ function createMemberRow(member) {
     }
       
     var detailsImg = Ti.UI.createImageView({
-     	defaultImage : '/images/no_pic.png',
+     	//defaultImage : '/images/no_pic.png',
         name : 'profilePic',
         width : 35,
         height : 35,
@@ -873,6 +873,10 @@ function createMemberRow(member) {
 		touchEnabled: false,
         image : image
     });
+    
+    if(!isAndroid) {
+    	detailsImg.setDefaultImage('/images/no_pic.png');
+    }
     
     detailsImg.addEventListener('error', imageErrorHandler);
     memberRow.add(detailsImg);
@@ -1181,7 +1185,7 @@ function endRefresher() {
 }
 
 var imageErrorHandler = function(e) {
-	e.image = '/images/no_pic.png';
+	e.source.image = '/images/no_pic.png';
 };
 
 var context;

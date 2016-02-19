@@ -1464,7 +1464,7 @@ function constructTableData(array) {
 
     profileImageView.addEventListener('error', function(e) {
         // fallback for image
-        profileImageView.image = '/images/no_pic.png';
+        e.source.image = '/images/no_pic.png';
     });
 
     leftProfilePart.add(profileImageView);
@@ -1599,11 +1599,15 @@ function constructTableData(array) {
         height : 50,
         width : 50,
         borderRadius : 25,
-        defaultImage : '/images/no_team.png'
+        //defaultImage : '/images/no_team.png'
     });
+  
+    if(!isAndroid) {
+    	profileLevelImage.setDefaultImage('/images/no_team.png');
+    }
     
     profileLevelImage.addEventListener('error', function() {
-        profileLevelImage.image = '/images/no_team.png';
+        e.source.image = '/images/no_team.png';
     });
     
     rightProfilePart.add(profileLevelImage);
@@ -1906,12 +1910,16 @@ function getDynamicTopImage() {
 					header.removeAllChildren();
 
 					var imageView = Ti.UI.createImageView({
-						defaultImage : '/images/h_image.jpg',
+						// defaultImage : '/images/h_image.jpg',
 						image : Alloy.Globals.BETKAMPENURL + response.image,
 						width : Ti.UI.FILL,
 						height : 120,
 						backgroundColor : '#000'
 					});
+					
+					if(!isAndroid) {
+						imageView.setDefaultImage('/images/h_image.jpg');
+					}
 
 					if (response.image != '') {
 						imageView.setImage(Alloy.Globals.BETKAMPENURL + response.image);
@@ -1920,7 +1928,7 @@ function getDynamicTopImage() {
 					}
 
 					imageView.addEventListener('error', function(e) {
-						e.image = '/images/h_images.jpg';
+						e.source.image = '/images/h_images.jpg';
 					});
 
 					header.add(imageView);

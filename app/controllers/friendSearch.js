@@ -56,6 +56,7 @@ function onClose(evt) {
 $.friendSearch.addEventListener('close', function() {
     indicator.closeIndicator();
 });
+
 var mainView = Ti.UI.createView({
     class : "topView",
     height : "100%",
@@ -71,6 +72,7 @@ var searchView = Ti.UI.createView({
     height : 50,
     top : 30
 });
+
 mainView.add(searchView);
 
 var searchText = Ti.UI.createTextField({
@@ -91,8 +93,10 @@ var searchBtn = Alloy.Globals.createButtonView(Alloy.Globals.themeColor(), "#FFF
 
 var searchIcon = Ti.UI.createLabel({
     left : 20,
+   	font : {
+   		fontFamily : font
+    },
     text : fontawesome.icon('fa-search'),
-    font : font,
     color : "#FFF",
 });
 
@@ -156,6 +160,10 @@ mainView.add(table);
 
 //search starting when you click searchbutton
 searchBtn.addEventListener('click', function(e) {
+	if(isAndroid) {
+		searchText.blur();
+	}
+	
 	getSearchResult(); 
 });
 
@@ -206,17 +214,21 @@ function createFriendsGUI(obj) {
     }
 
     var profilePic = Titanium.UI.createImageView({
-        defaultImage : '/images/no_pic.png',
+       // defaultImage : '/images/no_pic.png',
         image : image,
         width : 40,
         left : 10,
         height : 40,
         borderRadius : 20
     });
+    
+    if(!isAndroid) {
+    	profilePic.setDefaultImage('/images/no_pic.png');
+    }
 
     profilePic.addEventListener('error', function(e) {
         // fallback for image
-        profilePic.image = '/images/no_pic.png';
+        e.source.image = '/images/no_pic.png';
     });
 
     row.add(profilePic);

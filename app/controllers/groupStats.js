@@ -183,7 +183,7 @@ function createGUI(obj, i) {
     });
     profilePic.addEventListener('error', function(e) {
         // fallback for image
-        profilePic.image = '/images/no_pic.png';
+        e.source.image = '/images/no_pic.png';
     });
 
     totalLeader.add(profilePic);

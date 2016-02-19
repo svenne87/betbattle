@@ -454,12 +454,16 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
         });
 
         var team_logo = Ti.UI.createImageView({
-            defaultImage : '/images/no_team.png',
+            //defaultImage : '/images/no_team.png',
             image : Alloy.Globals.BETKAMPENURL + gameObject.attributes.team_1.team_logo,
             width : 50,
             height : 50
         });
-
+			
+		if(!isAndroid) {
+			team_logo.setDefaultImage('/images/no_team.png');
+		}	
+			
         // fix for images delivered from us/api
         if (!isLowerCase(gameObject.attributes.team_1.team_logo)) {
             team_logo.width = 30;
@@ -467,11 +471,15 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
         }
 
         var team2_logo = Ti.UI.createImageView({
-            defaultImage : '/images/no_team.png',
+            //defaultImage : '/images/no_team.png',
             image : Alloy.Globals.BETKAMPENURL + gameObject.attributes.team_2.team_logo,
             width : 50,
             height : 50
         });
+               			
+		if(!isAndroid) {
+			team2_logo.setDefaultImage('/images/no_team.png');
+		}	
 
         // fix for images delivered from us/api
         if (!isLowerCase(gameObject.attributes.team_2.team_logo)) {
@@ -480,11 +488,11 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
         }
 
         team_logo.addEventListener('error', function(e) {
-            team_logo.image = '/images/no_team.png';
+            e.source.image = '/images/no_team.png';
         });
 
         team2_logo.addEventListener('error', function(e) {
-            team2_logo.image = '/images/no_team.png';
+            e.source.image = '/images/no_team.png';
         });
 
         logoWrapper.add(team_logo);

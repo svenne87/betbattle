@@ -251,7 +251,7 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
             width : 40,
             borderRadius : 20,
             image : obj.picture.data.url,
-            defaultImage : '/images/np_pic.png'
+            defaultImage : '/images/no_pic.png'
         });
         
         profileImageView.addEventListener('error', function(e) {

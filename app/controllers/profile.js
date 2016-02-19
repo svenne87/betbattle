@@ -150,7 +150,7 @@ mainProfileRow.add(mainProfileCover);
 
 profileImageView = Ti.UI.createImageView({
     top : 20,
-    defaultImage : '/images/no_pic.png',
+    // defaultImage : '/images/no_pic.png',
     width : 120,
     height : 120,
     borderRadius : 60,
@@ -158,6 +158,10 @@ profileImageView = Ti.UI.createImageView({
     borderColor : '#FFF',
     borderWidth : 2
 });
+
+if(!isAndroid) {
+	profileImageView.setDefaultImage('/images/no_pic.png');
+}
 
 //profilepicture
 var image;
@@ -170,7 +174,7 @@ if (Alloy.Globals.FACEBOOKOBJECT) {
 
 profileImageView.addEventListener('error', function(e) {
     // fallback for image
-    profileImageView.image = '/images/no_pic.png';
+    e.source.image = '/images/no_pic.png';
 });
 
 mainProfileCover.add(profileImageView);

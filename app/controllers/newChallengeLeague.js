@@ -208,8 +208,12 @@ for (var z in sports) {
             borderRadius : 20,
             backgroundColor : "white",
             image : imageLocation,
-            defaultImage : '/images/Liga_Default.png'
+            // defaultImage : '/images/Liga_Default.png'
         });
+        
+       	if(!isAndroid) {
+    		leagueImageView.setDefaultImage('/images/Liga_Default.png');
+    	}   
 
         leagueImageView.addEventListener('error', function(e) {
             e.source.image = '/images/Liga_Default.png';

@@ -71,7 +71,7 @@ function onClose(evt) {
 }
 
 var imageErrorHandler = function(e) {
-    e.image = '/images/no_pic.png';
+    e.source.image = '/images/no_pic.png';
 };
 
 function checkDate(date) {
@@ -355,13 +355,17 @@ function createGameType(gameType, game, values, index, sections) {
             }
 
             var profileImgView = Ti.UI.createImageView({
-                defaultImage : '/images/no_pic.png',
+                // defaultImage : '/images/no_pic.png',
                 image : image,
                 left : 10,
                 height : 20,
                 width : 20,
                 borderRadius : 10,
             });
+            
+            if(!isAndroid) {
+				profileImgView.setDefaultImage('/images/no_pic.png');
+			}
 
             profileImgView.addEventListener('error', imageErrorHandler);
 
