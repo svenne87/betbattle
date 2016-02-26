@@ -340,7 +340,7 @@ Alloy.Globals.showAlertWithRestartNote = function(auto) {
                 // close
                 Alloy.Globals.MAINWIN.close();
                 Alloy.Globals.CURRENTVIEW.close();
-				            Alloy.Globals.CURRENTVIEW = null;
+				Alloy.Globals.CURRENTVIEW = null;
                 var activity = Titanium.Android.currentActivity;
 
                 // remove old event listeners
