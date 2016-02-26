@@ -340,7 +340,7 @@ Alloy.Globals.showAlertWithRestartNote = function(auto) {
                 // close
                 Alloy.Globals.MAINWIN.close();
                 Alloy.Globals.CURRENTVIEW.close();
-
+				            Alloy.Globals.CURRENTVIEW = null;
                 var activity = Titanium.Android.currentActivity;
 
                 // remove old event listeners
@@ -707,56 +707,72 @@ Alloy.Globals.createButtonView = function(buttonColor, fontColor, text) {
     return buttonView;
 };
 
+
 Alloy.Globals.setAndroidCouponMenu = function(activity) {
-    activity.onCreateOptionsMenu = function(e) {
-        ticket = e.menu.add( ticketIcon = {
-            showAsAction : Ti.Android.SHOW_AS_ACTION_ALWAYS,
-            icon : 'images/ticketBtn.png',
-            itemId : 1
-        });
+	setTimeout(function() {
+		var ticket;
+		activity.onCreateOptionsMenu = function(e) {
+			ticket = e.menu.add( ticketIcon = {
+				showAsAction : Ti.Android.SHOW_AS_ACTION_ALWAYS,
+				//icon : 'images/ticketBtn.png',
+				itemId : 1
+			});
 
-        var couponOpen = false;
-        //Add event listener to ticket button
-        ticket.addEventListener("click", function() {
-            if (couponOpen)
-                return;
-            if (Alloy.Globals.hasCoupon) {
-                couponOpen = true;
-                var win = Alloy.createController('showCoupon').getView();
-                win.addEventListener('close', function() {
-                    win = null;
-                    couponOpen = false;
-                });
-                win.open({
-                    fullScreen : true
-                });
-                win = null;
-            }
-        });
-    };
+			var couponOpen = false;
+			//Add event listener to ticket button
+			ticket.addEventListener("click", function() {
+				if (couponOpen)
+					return;
+				if (Alloy.Globals.hasCoupon) {
+					couponOpen = true;
+					var win = Alloy.createController('showCoupon').getView();
+					win.addEventListener('close', function() {
+						win = null;
+						couponOpen = false;
+					});
+					win.open({
+						fullScreen : true
+					});
+					win = null;
+				}
+			});
+		};
 
-    activity.onPrepareOptionsMenu = function(e) {
-        var menu = e.menu;
+		activity.onPrepareOptionsMenu = function(e) {
+			var menu = e.menu;
+			var fontawesome = require('lib/IconicFont').IconicFont({
+				font : 'lib/FontAwesome'
+			});
 
-        if (Alloy.Globals.hasCoupon) {
-            menu.findItem(1).setIcon('images/ikoner_kupong_red.png');
-            // menu.findItem(1).setOpacity(1);
-            menu.findItem(1).setVisible(true);
-        } else {
-            menu.findItem(1).setIcon('images/ikoner_kupong.png');
-            // menu.findItem(1).setOpacity(0);
-            menu.findItem(1).setVisible(false);
-        }
-    };
+			var abx = require('com.alcoapps.actionbarextras');
+			color = '#FFF';
+			if (Alloy.Globals.hasCoupon) {
 
-    activity.invalidateOptionsMenu();
+				color = '#F00';
 
-    // set onResume for each activity in order to keep them updated with correct coupon
-    activity.addEventListener("resume", function() {
-        // will rebuild menu and keep coupon up to date
-        activity.invalidateOptionsMenu();
-    });
-};
+			} 
+			
+			abx.setMenuItemIcon({
+				menu : e.menu,
+				menuItem : ticket,
+				fontFamily : 'fontawesome-webfont',
+				icon : fontawesome.icon('fa-ticket'),
+				color : color,
+				size : 30
+			});
+
+		};
+
+		activity.invalidateOptionsMenu();
+
+		// set onResume for each activity in order to keep them updated with correct coupon
+		activity.addEventListener("resume", function() {
+			// will rebuild menu and keep coupon up to date
+			activity.invalidateOptionsMenu();
+		});
+	}, 300);
+}; 
+
 
 Alloy.Globals.themeColor = function() {
     var theme = 2;

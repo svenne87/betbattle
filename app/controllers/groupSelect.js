@@ -576,6 +576,7 @@ function createSubmitButtons() {
 
 	botView.removeAllChildren();
 
+	/*
 	if (isAndroid) {
 		if (Titanium.Platform.displayCaps.platformHeight < 600) {
 			buttonHeight = 30;
@@ -583,6 +584,7 @@ function createSubmitButtons() {
 			viewHeight = '20%';
 		}
 	}
+	*/
 
 	var submitButtonsView = Ti.UI.createView({
 		height : viewHeight,
@@ -1152,10 +1154,18 @@ function createSectionsForTable(sectionText, visible) {
 			color : '#FFF'
 		}));
 	} else {
-		sectionView = Ti.UI.createView({
-			height : 0.5,
-			backgroundColor : '#303030',
-		});
+		if(!isAndroid) {
+			sectionView = Ti.UI.createView({
+				height : 0.5,
+				backgroundColor : '#303030',
+			});
+		} else {
+			sectionView = Ti.UI.createView({
+				height : 1,
+				backgroundColor : 'transparent',
+				backgroundColor : '#303030',
+			});
+		}
 	}
 	
 	if (!isAndroid) {

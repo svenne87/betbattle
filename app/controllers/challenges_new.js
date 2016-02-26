@@ -1316,7 +1316,7 @@ if (isAndroid) {
             $.challenges_new = null;
         };
         $.challenges_new.activity.actionBar.displayHomeAsUp = true;
-        // $.challenges_new.activity.actionBar.title = Alloy.Globals.PHRASES.newTxt;
+        $.challenges_new.activity.actionBar.title = Alloy.Globals.PHRASES.challengesTxt;
     });
 }
 

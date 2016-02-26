@@ -120,6 +120,7 @@ if (!isAndroid) {
     });
 	
 	var abx = require('com.alcoapps.actionbarextras');
+    var ticket;
     $.mainWin.orientationModes = [Titanium.UI.PORTRAIT];
     $.mainWin.addEventListener('open', function() {
 
@@ -133,18 +134,26 @@ if (!isAndroid) {
                 	e.menu.clear();
 					actionBar.displayHomeAsUp = true;
 				
-					abx.title = Alloy.Globals.PHRASES.betbattleTxt;
+					abx.title = Alloy.Globals.PHRASES.betbattleTxt + ' ';
 					
-					if(typeof(Alloy.Globals.CURRENTVIEW) === 'undefined') {
+					if(typeof(Alloy.Globals.CURRENTVIEW) === 'undefined' || Alloy.Globals.CURRENTVIEW === null) {
 						abx.setHomeAsUpIcon("/images/ic_launcher.png");
 					}
-    				// abx.setHomeAsUpIcon("/images/ic_launcher.png");
-
+			
                     ticket = e.menu.add( ticketIcon = {
                         showAsAction : Ti.Android.SHOW_AS_ACTION_ALWAYS,
-                        icon : 'images/ikoner_kupong.png',
                         itemId : 1
                     });
+                
+                    
+                    abx.setMenuItemIcon({
+   				 		menu: e.menu,
+    					menuItem: ticket,
+    					fontFamily: font,
+   						icon: fontawesome.icon('fa-ticket'), 
+   						color: '#FFF',
+    					size: 30
+  					});
 
                     //Add event listener to ticket button
                     ticket.addEventListener("click", function() {
@@ -160,21 +169,26 @@ if (!isAndroid) {
                         }
                     });
                 };
-
+				
                 $.mainWin.activity.onPrepareOptionsMenu = function(e) {
                     var menu = e.menu;
-
+					var color = '#FFF';
                     if (Alloy.Globals.hasCoupon) {
-                        menu.findItem(1).setIcon('images/ikoner_kupong_red.png');
-                        //menu.findItem(1).setOpacity(1);
-                        menu.findItem(1).setVisible(true);
-                    } else {
-                        menu.findItem(1).setIcon('images/ikoner_kupong.png');
-                        //menu.findItem(1).setOpacity(0);
-                        menu.findItem(1).setVisible(false);
+                      color = '#F00';
                     }
+                    
+                     abx.setMenuItemIcon({
+   				 		menu: e.menu,
+    					menuItem: ticket,
+    					fontFamily: font,
+   						icon: fontawesome.icon('fa-ticket'), 
+   						color: color,
+    					size: 30
+  					});
+                    
                 };
-              
+              	$.mainWin.activity.invalidateOptionsMenu();
+            
                 // set onResume for each activity in order to keep them updated with correct coupon
                 $.mainWin.activity.addEventListener("resume", function() {
                     // will rebuild menu and keep coupon up to date

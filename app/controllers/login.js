@@ -493,7 +493,6 @@ if(isAndroid) {
      fb.initialize(5000); 
 } else {
     if(!reOpen) {
- 
         // TODO ERROR fb.initialize causes the app to load twice...
        fb.initialize(5000); // , false
 
@@ -520,7 +519,7 @@ if (Alloy.Globals.checkConnection()) {
             
             setTimeout(function() {
               //  loginAuthenticated(fb);
-                // fb.authorize(); TODO Issue with fb module?
+                fb.authorize();//  TODO Issue with fb module?
             }, 300);
         } else if (OS_IOS) {
             if (!args.reauth) {
@@ -532,7 +531,6 @@ if (Alloy.Globals.checkConnection()) {
             } else {
                 addEvent();
             }
-
         }
     } else if (Alloy.Globals.BETKAMPEN) {
         setButtonOpacity(0);      
