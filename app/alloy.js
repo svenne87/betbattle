@@ -878,7 +878,7 @@ Alloy.Globals.sendLocalNotification = function(msgTitle, msgContent, beaconID) {
 Alloy.Globals.showFeedbackDialog = function(msg) {
     var alertWindow = Titanium.UI.createAlertDialog({
         title : Alloy.Globals.PHRASES.betbattleTxt,
-        message : msg,
+        message : msg + " ",
         buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt]
     });
 
