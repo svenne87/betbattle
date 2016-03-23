@@ -25,8 +25,10 @@ if (OS_ANDROID) {
         Alloy.Globals.setAndroidCouponMenu($.friendSearch.activity);
 
         $.friendSearch.activity.actionBar.onHomeIconItemSelected = function() {
-            $.friendSearch.close();
-            $.friendSearch = null;
+            if($.friendSearch) {
+            	$.friendSearch.close();
+            	$.friendSearch = null;
+            }
         };
         $.friendSearch.activity.actionBar.displayHomeAsUp = true;
         $.friendSearch.activity.actionBar.title = Alloy.Globals.PHRASES.searchBtnTxt;

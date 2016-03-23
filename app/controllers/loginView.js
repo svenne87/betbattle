@@ -43,8 +43,10 @@ if (OS_ANDROID) {
 
     $.loginView.addEventListener('open', function() {
         $.loginView.activity.actionBar.onHomeIconItemSelected = function() {
-            $.loginView.close();
-            $.loginView = null;
+            if($.loginView) {
+            	$.loginView.close();
+            	$.loginView = null;	
+            }
         };
         $.loginView.activity.actionBar.displayHomeAsUp = true;
         $.loginView.activity.actionBar.title = Alloy.Globals.PHRASES.signInTxt;

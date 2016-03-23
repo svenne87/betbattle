@@ -44,8 +44,10 @@ if (OS_IOS) {
 
     $.previousMatchOTD.addEventListener('open', function() {
         $.previousMatchOTD.activity.actionBar.onHomeIconItemSelected = function() {
-            $.previousMatchOTD.close();
-            $.previousMatchOTD = null;
+            if($.previousMatchOTD) {
+                $.previousMatchOTD.close();
+            	$.previousMatchOTD = null;	
+            }
         };
         $.previousMatchOTD.activity.actionBar.displayHomeAsUp = true;
         $.previousMatchOTD.activity.actionBar.title = Alloy.Globals.PHRASES.matchOTDPreviousBtn;

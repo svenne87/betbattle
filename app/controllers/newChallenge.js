@@ -560,6 +560,10 @@ function getGames(league, firstTime, start, rows) {
                             createAndShowTableView(league, array);
                             numberOfGamesFetched = 0;
                             footerViewText.setText(Alloy.Globals.PHRASES.showningMatchesTxt + ': ' + 20 + '/' + totalNumberOfGames + " ");
+                            
+                            if(totalNumberOfGames < 20) {
+                            	footerViewText.setText(Alloy.Globals.PHRASES.showningMatchesTxt + ': ' + totalNumberOfGames + '/' + totalNumberOfGames + " ");
+                            }
                         } else {
                             // not first time, then just add rows
                             appendToRow(array);
@@ -572,9 +576,14 @@ function getGames(league, firstTime, start, rows) {
                             setDisplayText();
                         }
                     } else {
-                        createNoGamesView();
+                    	if(table) {
+                    		if(table.data[0].rowCount < 1) {
+                    			createNoGamesView();
+                    		}
+                    	} else {
+                    		createNoGamesView();
+                    	}
                     }
-
                 } else {
                     Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
                 }
@@ -640,8 +649,10 @@ if (OS_ANDROID) {
         Alloy.Globals.setAndroidCouponMenu($.newChallenge.activity);
 
         $.newChallenge.activity.actionBar.onHomeIconItemSelected = function() {
-            $.newChallenge.close();
-            $.newChallenge = null;
+            if($.newChallenge) {
+                $.newChallenge.close();
+            	$.newChallenge = null;	
+            }
         };
         $.newChallenge.activity.actionBar.displayHomeAsUp = true;
         $.newChallenge.activity.actionBar.title = Alloy.Globals.PHRASES.pickMatchTxt;

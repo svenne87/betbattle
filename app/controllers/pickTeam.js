@@ -25,8 +25,10 @@ if (OS_ANDROID) {
         Alloy.Globals.setAndroidCouponMenu($.pickTeam.activity);
 
         $.pickTeam.activity.actionBar.onHomeIconItemSelected = function() {
-            $.pickTeam.close();
-            $.pickTeam = null;
+            if($.pickTeam) {
+                $.pickTeam.close();
+            	$.pickTeam = null;	
+            }
         };
         $.pickTeam.activity.actionBar.displayHomeAsUp = true;
         $.pickTeam.activity.actionBar.title = Alloy.Globals.PHRASES.selectFavoriteTeamTxt;

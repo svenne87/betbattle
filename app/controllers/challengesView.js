@@ -2061,7 +2061,15 @@ if (!Ti.App.Properties.hasProperty("showInviteSetting")) {
 
 var showInviteCodeBox = Ti.App.Properties.getBool('showInviteSetting');
 
-if(showInviteCodeBox && !args.refresh) {
+function isEmptyObj(obj) {
+    for(var prop in obj) {
+        if(obj.hasOwnProperty(prop))
+            return false;
+    }
+    return true && JSON.stringify(obj) === JSON.stringify({});
+}
+
+if(showInviteCodeBox && isEmptyObj(args) ) {
 	setTimeout(function() {
 		Alloy.Globals.displayEnterInviteCodeDialog(indicator);
     }, 2500);

@@ -231,8 +231,10 @@ if (OS_ANDROID) {
         Alloy.Globals.setAndroidCouponMenu($.halfPot.activity);
 
         $.halfPot.activity.actionBar.onHomeIconItemSelected = function() {
-            $.halfPot.close();
-            $.halfPot = null;
+            if($.halfPot) {
+            	$.halfPot.close();
+           	 	$.halfPot = null;
+            }
         };
         $.halfPot.activity.actionBar.displayHomeAsUp = true;
         $.halfPot.activity.actionBar.title = Alloy.Globals.PHRASES.halfPotTxt;

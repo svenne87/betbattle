@@ -48,8 +48,10 @@ if (isAndroid) {
         Alloy.Globals.setAndroidCouponMenu($.editGroup.activity);
 
         $.editGroup.activity.actionBar.onHomeIconItemSelected = function() {
-            $.editGroup.close();
-            $.editGroup = null;
+            if($.editGroup) {
+            	$.editGroup.close();
+            	$.editGroup = null;
+            }
         };
         $.editGroup.activity.actionBar.displayHomeAsUp = true;
         $.editGroup.activity.actionBar.title = Alloy.Globals.PHRASES.editGroupTxt;

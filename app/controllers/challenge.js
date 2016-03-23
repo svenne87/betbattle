@@ -1149,6 +1149,7 @@ function postAnswer(gameArray) {
                 indicator.closeIndicator();
 
                 if (this.readyState == 4) {
+                	
                     var response = JSON.parse(this.responseText);
                     Alloy.Globals.showToast(response);
 
@@ -1822,8 +1823,10 @@ if (isAndroid) {
         Alloy.Globals.setAndroidCouponMenu($.challengeWindow.activity);
 
         $.challengeWindow.activity.actionBar.onHomeIconItemSelected = function() {
-            $.challengeWindow.close();
-            $.challengeWindow = null;
+            if($.challengeWindow) {
+            	$.challengeWindow.close();
+            	$.challengeWindow = null;
+            }
         };
         $.challengeWindow.activity.actionBar.displayHomeAsUp = true;
         $.challengeWindow.activity.actionBar.title = menuText;

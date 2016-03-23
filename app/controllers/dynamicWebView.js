@@ -17,8 +17,10 @@ if (OS_ANDROID) {
 
     $.dynamicWebViewWin.addEventListener('open', function() {
         $.dynamicWebViewWin.activity.actionBar.onHomeIconItemSelected = function() {
-            $.dynamicWebViewWin.close();
-            $.dynamicWebViewWin = null;
+            if($.dynamicWebViewWin) {
+            	$.dynamicWebViewWin.close();
+            	$.dynamicWebViewWin = null;
+            }
         };
         $.dynamicWebViewWin.activity.actionBar.displayHomeAsUp = true;
         $.dynamicWebViewWin.activity.actionBar.title = args.title;

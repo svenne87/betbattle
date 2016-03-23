@@ -340,8 +340,10 @@ if (OS_ANDROID) {
         Alloy.Globals.setAndroidCouponMenu($.myGroups.activity);
 
         $.myGroups.activity.actionBar.onHomeIconItemSelected = function() {
-            $.myGroups.close();
-            $.myGroups = null;
+            if($.myGroups) {
+                $.myGroups.close();
+            	$.myGroups = null;	
+            }
         };
         $.myGroups.activity.actionBar.displayHomeAsUp = true;
         $.myGroups.activity.actionBar.title = Alloy.Globals.PHRASES.myGroupsTxt;

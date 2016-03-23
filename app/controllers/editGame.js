@@ -1229,8 +1229,10 @@ if (isAndroid) {
 
     $.editGame.addEventListener('open', function() {
         $.editGame.activity.actionBar.onHomeIconItemSelected = function() {
-            $.editGame.close();
-            $.editGame = null;
+            if($.editGame) {
+            	$.editGame.close();
+            	$.editGame = null;
+            }
         };
         $.editGame.activity.actionBar.displayHomeAsUp = true;
         $.editGame.activity.actionBar.title = Alloy.Globals.PHRASES.editTxt;

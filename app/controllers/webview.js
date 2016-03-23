@@ -17,8 +17,10 @@ if (OS_ANDROID) {
 
     $.webview.addEventListener('open', function() {
         $.webview.activity.actionBar.onHomeIconItemSelected = function() {
-            $.webview.close();
-            $.webview = null;
+            if($.webview) {
+            	$.webview.close();
+            	$.webview = null;           	
+            }
         };
         $.webview.activity.actionBar.displayHomeAsUp = true;
         $.webview.activity.actionBar.title = Alloy.Globals.PHRASES.betbattleTxt;

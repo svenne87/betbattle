@@ -771,8 +771,12 @@ if (isAndroid) {
     $.showCoupon.addEventListener('open', function() {
         Alloy.Globals.couponOpen = true;
         $.showCoupon.activity.actionBar.onHomeIconItemSelected = function() {
-            $.showCoupon.close();
-            $.showCoupon = null;
+            if($.showCoupon) {
+                if($.showCoupon) {
+                    $.showCoupon.close();
+            		$.showCoupon = null;		
+                }
+            }
         };
         $.showCoupon.activity.actionBar.displayHomeAsUp = true;
         $.showCoupon.activity.actionBar.title = Alloy.Globals.PHRASES.couponTxt;

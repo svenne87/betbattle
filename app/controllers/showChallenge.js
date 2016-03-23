@@ -43,8 +43,10 @@ if (isAndroid) {
         Alloy.Globals.setAndroidCouponMenu($.showChallengeWindow.activity);
 
         $.showChallengeWindow.activity.actionBar.onHomeIconItemSelected = function() {
-            $.showChallengeWindow.close();
-            $.showChallengeWindow = null;
+            if($.showChallengeWindow) {
+                $.showChallengeWindow.close();
+            	$.showChallengeWindow = null;	
+            }
         };
         $.showChallengeWindow.activity.actionBar.displayHomeAsUp = true;
         $.showChallengeWindow.activity.actionBar.title = Alloy.Globals.PHRASES.showChallengeTxt;

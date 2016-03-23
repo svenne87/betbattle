@@ -14,8 +14,10 @@ if (OS_ANDROID) {
         Alloy.Globals.setAndroidCouponMenu($.groupStats.activity);
 
         $.groupStats.activity.actionBar.onHomeIconItemSelected = function() {
-            $.groupStats.close();
-            $.groupStats = null;
+            if($.groupStats) {
+            	$.groupStats.close();
+            	$.groupStats = null;
+            }
         };
         $.groupStats.activity.actionBar.displayHomeAsUp = true;
         $.groupStats.activity.actionBar.title = Alloy.Globals.PHRASES.groupLeaderTxt;

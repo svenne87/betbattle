@@ -24,8 +24,10 @@ if (OS_ANDROID) {
 
     $.registrationView.addEventListener('open', function() {
         $.registrationView.activity.actionBar.onHomeIconItemSelected = function() {
-            $.registrationView.close();
-            $.registrationView = null;
+            if($.registrationView) {
+                $.registrationView.close();
+            	$.registrationView = null;	
+            }
         };
         $.registrationView.activity.actionBar.displayHomeAsUp = true;
         $.registrationView.activity.actionBar.title = Alloy.Globals.PHRASES.regTxt;

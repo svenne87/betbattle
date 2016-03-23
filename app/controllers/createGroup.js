@@ -31,8 +31,10 @@ if (OS_ANDROID) {
         Alloy.Globals.setAndroidCouponMenu($.createGroup.activity);
 
         $.createGroup.activity.actionBar.onHomeIconItemSelected = function() {
-            $.createGroup.close();
-            $.createGroup = null;
+           	if($.createGroup) {
+           		$.createGroup.close();
+            	$.createGroup = null;
+           	}
         };
         $.createGroup.activity.actionBar.displayHomeAsUp = true;
         $.createGroup.activity.actionBar.title = Alloy.Globals.PHRASES.createGroupTxt + " ";

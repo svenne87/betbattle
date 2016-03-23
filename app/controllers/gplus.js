@@ -19,8 +19,10 @@ if (OS_ANDROID) {
         Alloy.Globals.setAndroidCouponMenu($.gplus.activity);
 
         $.gplus.activity.actionBar.onHomeIconItemSelected = function() {
-            $.gplus.close();
-            $.gplus = null;
+            if($.gplus) {
+            	$.gplus.close();
+            	$.gplus = null;
+            }
         };
         $.gplus.activity.actionBar.displayHomeAsUp = true;
         $.gplus.activity.actionBar.title = Alloy.Globals.PHRASES.shareGoogleTxt + "\n\n" + Alloy.Globals.inviteCodeText + ": " + inviteCode;

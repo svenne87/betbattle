@@ -413,8 +413,10 @@ if (OS_ANDROID) {
         Alloy.Globals.setAndroidCouponMenu($.friendZone.activity);
 
         $.friendZone.activity.actionBar.onHomeIconItemSelected = function() {
-            $.friendZone.close();
-            $.friendZone = null;
+            if($.friendZone) {
+            	$.friendZone.close();
+            	$.friendZone = null;
+            }
         };
         $.friendZone.activity.actionBar.displayHomeAsUp = true;
         $.friendZone.activity.actionBar.title = Alloy.Globals.PHRASES.friendZoneTxt;

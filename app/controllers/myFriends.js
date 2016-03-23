@@ -891,8 +891,10 @@ if (isAndroid) {
         Alloy.Globals.setAndroidCouponMenu($.myFriends.activity);
 
         $.myFriends.activity.actionBar.onHomeIconItemSelected = function() {
-            $.myFriends.close();
-            $.myFriends = null;
+            if($.myFriends) {
+            	$.myFriends.close();
+            	$.myFriends = null;
+            }
         };
         $.myFriends.activity.actionBar.displayHomeAsUp = true;
         $.myFriends.activity.actionBar.title = Alloy.Globals.PHRASES.friendsHeaderTxt;

@@ -408,7 +408,9 @@ if (OS_IOS) {
         Alloy.Globals.setAndroidCouponMenu($.store.activity);
 
         $.store.activity.actionBar.onHomeIconItemSelected = function() {
-            $.store.close();
+            if($.store) {
+            	$.store.close();
+            }           
         };
         $.store.activity.actionBar.displayHomeAsUp = true;
         $.store.activity.actionBar.title = Alloy.Globals.PHRASES.storeTxt;

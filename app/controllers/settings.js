@@ -22,8 +22,10 @@ if (OS_ANDROID) {
         Alloy.Globals.setAndroidCouponMenu($.settingsWindow.activity);
 
         $.settingsWindow.activity.actionBar.onHomeIconItemSelected = function() {
-            $.settingsWindow.close();
-            $.settingsWindow = null;
+            if($.settingsWindow) {
+                $.settingsWindow.close();
+            	$.settingsWindow = null;	
+            }
         };
         $.settingsWindow.activity.actionBar.displayHomeAsUp = true;
         $.settingsWindow.activity.actionBar.title = Alloy.Globals.PHRASES.settingsTxt;

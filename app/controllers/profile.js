@@ -37,8 +37,10 @@ if (OS_ANDROID) {
         };
 
         $.profileWin.activity.actionBar.onHomeIconItemSelected = function() {
-            $.profileWin.close();
-            $.profileWin = null;
+            if($.profileWin) {
+               	$.profileWin.close();
+            	$.profileWin = null;	
+            }
         };
         $.profileWin.activity.actionBar.displayHomeAsUp = true;
         $.profileWin.activity.actionBar.title = Alloy.Globals.PHRASES.profile;

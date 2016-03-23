@@ -17,8 +17,10 @@ if (OS_ANDROID) {
 
     $.terms.addEventListener('open', function() {
         $.terms.activity.actionBar.onHomeIconItemSelected = function() {
-            $.terms.close();
-            $.terms = null;
+            if($.terms) {
+             	$.terms.close();
+            	$.terms = null;           	
+            }
         };
         $.terms.activity.actionBar.displayHomeAsUp = true;
         $.terms.activity.actionBar.title = Alloy.Globals.PHRASES.termsTxt;

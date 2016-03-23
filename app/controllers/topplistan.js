@@ -839,8 +839,10 @@ if (OS_ANDROID) {
         Alloy.Globals.setAndroidCouponMenu($.scoreView.activity);
 
         $.scoreView.activity.actionBar.onHomeIconItemSelected = function() {
-            $.scoreView.close();
-            $.scoreView = null;
+            if($.scoreView) {
+            	$.scoreView.close();
+            	$.scoreView = null;           	
+            }
         };
         $.scoreView.activity.actionBar.displayHomeAsUp = true;
         $.scoreView.activity.actionBar.title = Alloy.Globals.PHRASES.scoreboardTxt;

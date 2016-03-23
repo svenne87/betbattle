@@ -1312,8 +1312,10 @@ if (isAndroid) {
         Alloy.Globals.setAndroidCouponMenu($.challenges_new.activity);
 
         $.challenges_new.activity.actionBar.onHomeIconItemSelected = function() {
-            $.challenges_new.close();
-            $.challenges_new = null;
+            if($.challenges_new) {
+           		$.challenges_new.close();
+            	$.challenges_new = null;
+            }
         };
         $.challenges_new.activity.actionBar.displayHomeAsUp = true;
         $.challenges_new.activity.actionBar.title = Alloy.Globals.PHRASES.challengesTxt;

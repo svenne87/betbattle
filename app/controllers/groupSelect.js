@@ -637,7 +637,7 @@ function inviteSms() {
 			Alloy.Globals.showFeedbackDialog('This device does not support sending sms!');
 		} else {
 			sms.barColor = '#336699';
-			sms.messageBody = Alloy.Globals.PHRASES.smsMsg + '.' + '\n' + Alloy.Globals.PHRASES.inviteCodeText + ": " + challengeCode + "\n" + Alloy.Globals.PHRASES.appLinkTxt;
+			sms.messageBody = Alloy.Globals.PHRASES.smsMsg + '.' + '\n' + Alloy.Globals.PHRASES.inviteCodeText + ': ' + challengeCode + '\n' + Alloy.Globals.PHRASES.appLinkTxt;
 
 			sms.addEventListener('complete', function(e) {
 				if (e.result == sms.SENT) {
@@ -658,16 +658,16 @@ function inviteSms() {
 			action : Ti.Android.ACTION_SENDTO,
 			data : 'smsto:'
 		});
-		intent.putExtra('sms_body', "'" + Alloy.Globals.PHRASES.smsMsg + "." + "\n" + Alloy.Globals.PHRASES.inviteCodeText + ": " + challengeCode + "\n" + Alloy.Globals.PHRASES.appLinkTxt + "'");
+		intent.putExtra('sms_body', Alloy.Globals.PHRASES.smsMsg + "." + "\n" + Alloy.Globals.PHRASES.inviteCodeText + ": " + challengeCode + "\n" + Alloy.Globals.PHRASES.appLinkTxt);
 
 		try {
-			Ti.Android.currentActivity.startActivity(intent);
-			Alloy.Globals.unlockAchievement(5);
 			hasInvited = true;
+			submitButton.setVisible(true);
+			tableWrapper.setHeight('80%');
+		   	Ti.Android.currentActivity.startActivity(intent);
+		   	Alloy.Globals.unlockAchievement(5);
 		} catch (ActivityNotFoundException) {
-			Ti.UI.createNotification({
-				message : "Error"
-			}).show();
+			Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 		}
 	}
 }
@@ -686,8 +686,6 @@ function inviteEmail() {
 			tableWrapper.setHeight('80%');
 			Alloy.Globals.unlockAchievement(5);
 		}
-
-		Ti.API.log(e);
 	});
 }
 
@@ -785,7 +783,7 @@ function addRowEventListener(row, type) {
 				}
 			}
 			
-			if(friendsChallenge.length > 0) {
+			if(friendsChallenge.length > 0 || hasInvited === true) {
 				submitButton.setVisible(true);
 				tableWrapper.setHeight('80%');
 			} else {
@@ -830,7 +828,7 @@ function addRowEventListener(row, type) {
 				}
 			}
 
-			if(selectedGroups.length > 0) {
+			if(selectedGroups.length > 0 || hasInvited === true) {
 				submitButton.setVisible(true);
 				tableWrapper.setHeight('80%');
 			} else {
@@ -1246,8 +1244,10 @@ if (OS_ANDROID) {
 		Alloy.Globals.setAndroidCouponMenu($.groupSelectWindow.activity);
 
 		$.groupSelectWindow.activity.actionBar.onHomeIconItemSelected = function() {
-			$.groupSelectWindow.close();
-			$.groupSelectWindow = null;
+			if($.groupSelectWindow) {
+				$.groupSelectWindow.close();
+				$.groupSelectWindow = null;
+			}
 		};
 		$.groupSelectWindow.activity.actionBar.displayHomeAsUp = true;
 		$.groupSelectWindow.activity.title = Alloy.Globals.PHRASES.chooseConfirmBtnTxt;

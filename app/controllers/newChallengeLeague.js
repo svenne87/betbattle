@@ -266,8 +266,10 @@ if (OS_ANDROID) {
         Alloy.Globals.setAndroidCouponMenu($.newChallengeLeague.activity);
 
         $.newChallengeLeague.activity.actionBar.onHomeIconItemSelected = function() {
-            $.newChallengeLeague.close();
-            $.newChallengeLeague = null;
+            if($.newChallengeLeague) {
+                $.newChallengeLeague.close();
+            	$.newChallengeLeague = null;	
+            }
         };
         $.newChallengeLeague.activity.actionBar.displayHomeAsUp = true;
         $.newChallengeLeague.activity.actionBar.title = Alloy.Globals.PHRASES.leagueChooseTxt;
