@@ -1304,11 +1304,22 @@ function createMatchOTDRow() {
 
     return row;
 }
+/*
+ *  Var inte samma här som i pendeing????
 
  function compare(a, b) {
     if (a.attributes.time > b.attributes.time)
         return -1;
     if (a.attributes.time < b.attributes.time)
+        return 1;
+    return 0;
+}
+*/
+
+function compare(a, b) {
+    if (a.attributes.time < b.attributes.time)
+        return -1;
+    if (a.attributes.time > b.attributes.time)
         return 1;
     return 0;
 }

@@ -977,7 +977,9 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished,
 
     if (isAndroid) {
         if (isFirst) {
-            var androidRefresh = function() {
+            var androidRefresh = function(e) {
+            	Ti.API.log(e);
+            	
                 if (Alloy.Globals.checkConnection()) {
                     pendingStandingsArray = [];
                     setTimeout(function() {
