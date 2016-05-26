@@ -84,10 +84,11 @@
             <supports-screens android:anyDensity="false"
                 android:largeScreens="true" android:normalScreens="true" android:smallScreens="false"/>
             <uses-permission android:name="com.android.vending.BILLING"/>
+            <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
             <!--
             <uses-permission android:name="android.permission.BLUETOOTH"/><uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
             
-            debuggable = true
+            debuggable = tru
             -->
             <application android:hardwareAccelerated="false"
                 android:icon="@drawable/appicon"
@@ -97,8 +98,10 @@
                 android:screenOrientation="portrait" android:theme="@style/Theme.Betkampen">
                 <activity android:label="BetBattle"
                     android:name="com.facebook.LoginActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
-				<activity android:name="com.facebook.FacebookActivity" 
-					android:theme="@android:style/Theme.Translucent.NoTitleBar" android:label="BetBattle" android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation" />                  
+                <activity
+                    android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+                    android:label="BetBattle"
+                    android:name="com.facebook.FacebookActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
                 <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
                 <activity
                     android:configChanges="keyboardHidden|screenSize"
@@ -158,18 +161,19 @@
         <theme>default</theme>
     </mobileweb>
     <modules>
+        <module platform="android">com.boxoutthinkers.reqstorageperm</module>
         <module platform="android">com.yydigital.realswitch</module>
         <module platform="iphone">com.logicallabs.inappproducts</module>
         <module platform="commonjs">ti.cloud</module>
         <module platform="iphone">bencoding.blur</module>
-        <module platform="android">bencoding.blur</module>
         <module platform="android" version="0.2">net.iamyellow.gcmjs</module>
-        <module platform="android">ti.inappbilling</module>
-        <module platform="android">com.rkam.swiperefreshlayout</module>
+        <module platform="android">bencoding.blur</module>
+        <module platform="android">com.alcoapps.actionbarextras</module>
         <module platform="android">facebook</module>
+        <module platform="android">com.rkam.swiperefreshlayout</module>
+        <module platform="android">ti.inappbilling</module>
         <module platform="iphone">com.omorandi</module>
         <module platform="iphone">facebook</module>
-        <module platform="android">com.alcoapps.actionbarextras</module>
     </modules>
     <deployment-targets>
         <target device="android">true</target>

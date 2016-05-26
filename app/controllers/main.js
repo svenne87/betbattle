@@ -575,7 +575,7 @@ function logoutBetbattle() {
                     Alloy.Globals.FACEBOOKOBJECT = null;
                     // close
                     if (isAndroid) {
-                        $.mainWin.close();;
+                        $.mainWin.close();
                         var activity = Titanium.Android.currentActivity;
             
                         // remove old event listeners

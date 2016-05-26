@@ -177,18 +177,54 @@ function getLanguage() {
 // run it
 var language = Ti.App.Properties.getString('languageSelected');
 
-// check if a language file has been downloaded
-if (language) {
-    // set current language
-    try {
-        var file1 = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory, 'language.json');
-        Alloy.Globals.PHRASES = JSON.parse(file1.read().text);
-        openLogin();
-    } catch (e) {
-        getLanguage();
-    }
+if (OS_ANDROID) {
+    var requestStoragePermission = function() {
+        var RSP = require("com.boxoutthinkers.reqstorageperm");
+        if (!RSP.hasStoragePermission()) {
+            RSP.requestStoragePermissions(function(e) {
+                if (e.success) {
+                    // success
+					 loadLanguage();
+                } else {                   	
+                   	var alertWindow = Titanium.UI.createAlertDialog({
+						title : 'Bet Battle',
+       	 				message : 'Permissions need could not be acquired!',
+        				buttonNames : ['OK']
+    				});
 
+   					alertWindow.addEventListener('click', function(e) {
+   						switch (e.index) {
+   							case 0:
+   								alertWindow.hide();
+   								$.indexWin.close();
+   								var activity = Titanium.Android.currentActivity;
+                          		activity.finish();
+            					break;
+   							}
+    				});
+    				alertWindow.show();
+               	}
+            });
+        } else {
+            loadLanguage();
+        }
+    };
+    requestStoragePermission();
 } else {
-    getLanguage();
+	loadLanguage();
 }
 
+function loadLanguage() {
+	if (language) {
+		// set current language
+   		try {
+        	var file1 = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory, 'language.json');
+        	Alloy.Globals.PHRASES = JSON.parse(file1.read().text);
+        	openLogin();
+    	} catch (e) {
+        	getLanguage();
+    	}
+	} else {
+		getLanguage();	
+	}
+}
