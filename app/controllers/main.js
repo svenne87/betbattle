@@ -200,7 +200,7 @@ if (!isAndroid) {
                      setTimeout(function() {
                      	// fix layout issues. Might be sdk version.
                       	$.ds.toggleLeftSlider();
-        			}, 300);
+        			 }, 550);
                 };
                 
     			$.mainWin.activity.invalidateOptionsMenu();
