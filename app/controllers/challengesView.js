@@ -124,6 +124,10 @@ var mod = require('bencoding.blur');
 Alloy.Globals.challengesViewRefreshEvent = function(e) {
     Ti.API.log("refresh körs!!!!!!!!!");
     
+   
+    
+    
+    
     if (Alloy.Globals.checkConnection()) {
         //indicator.openIndicator();
         getChallenges();

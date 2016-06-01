@@ -1149,10 +1149,7 @@ if(typeof args.state !== 'undefined') {
         args.cid = checkWindow.cid;    
         
 
-        // TODO $.showChallengeWindow.cid = args.cid ;  SKit. Fixa och lägg till kod för Android.
-    
-     
-        
+        // TODO $.showChallengeWindow.cid = args.cid ;  SKit. Fixa och lägg till kod för Android. 
         
         checkWindow.setOpacity(0);                    
         checkWindow.close(); 
@@ -1161,12 +1158,30 @@ if(typeof args.state !== 'undefined') {
     $.showChallengeWindow.cid = args.cid;
 }
 
-if (Alloy.Globals.checkConnection()) {
-    if (OS_IOS) {
-        indicator.openIndicator();
-    }
+$.showChallengeWindow.addEventListener('focus', function() {
+	if (Alloy.Globals.checkConnection()) {
+    	if (!isAndroid) {
+        	indicator.openIndicator();
+    	}
+    	getChallengeShow();
+	} else {
+    	Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+	}
 
-    getChallengeShow();
-} else {
-    Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
-}
+	if(!isAndroid) {
+		Alloy.Globals.focusWindow = function() { 
+			if (Alloy.Globals.checkConnection()) {
+        		indicator.openIndicator();
+            	setTimeout(function() {
+           			getChallengeShow();
+        		}, 500);
+       		}
+		};
+		Ti.App.addEventListener('updateFocusWindow', Alloy.Globals.focusWindow);
+	}
+});
+$.showChallengeWindow.addEventListener('blur', function() {
+ 	if(!isAndroid) {
+ 		Ti.App.removeEventListener('updateFocusWindow', Alloy.Globals.focusWindow);
+ 	}
+});

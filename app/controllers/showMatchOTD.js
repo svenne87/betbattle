@@ -218,7 +218,6 @@ function createGameType(gameType, game, values, index, sections) {
                     pt = true;
                 }
             }
-
         }
 
         for (var i = 0; i < game.result_values.length; i++) {
@@ -744,6 +743,8 @@ function getChallengeShow() {
             if (this.readyState == 4) {
                 var response = JSON.parse(this.responseText);
                 
+                 Ti.API.log("Response: " + JSON.stringify(response)); // TODO
+                
                 if(isAndroid) {
                     if(typeof view !== 'undefined') {
                        // view.remove(swipeRefresh);
@@ -793,4 +794,23 @@ if (isAndroid) {
     });
 }
 
-getChallengeShow();
+$.showMatchOTD.addEventListener('focus', function() {
+	getChallengeShow();		
+	if(!isAndroid) {
+		getChallengeShow();		
+		Alloy.Globals.focusWindow = function() { 
+			if (Alloy.Globals.checkConnection()) {
+        		indicator.openIndicator();
+            	setTimeout(function() {
+           			getChallengeShow();
+        		}, 500);
+       		}
+		};
+		Ti.App.addEventListener('updateFocusWindow', Alloy.Globals.focusWindow);
+	}
+});
+$.showMatchOTD.addEventListener('blur', function() {
+	if (!isAndroid) { 
+		Ti.App.removeEventListener('updateFocusWindow', Alloy.Globals.focusWindow);
+	}
+});

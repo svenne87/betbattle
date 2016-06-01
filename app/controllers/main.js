@@ -123,7 +123,6 @@ if (!isAndroid) {
     var ticket;
     $.mainWin.orientationModes = [Titanium.UI.PORTRAIT];
     $.mainWin.addEventListener('open', function() {
-
         if (!$.mainWin.activity) {
             Ti.API.error("Can't access action bar on a lightweight window.");
         } else {
@@ -133,19 +132,17 @@ if (!isAndroid) {
                 $.mainWin.activity.onCreateOptionsMenu = function(e) {
                 	e.menu.clear();
 					actionBar.displayHomeAsUp = true;
-				
-					abx.title = Alloy.Globals.PHRASES.betbattleTxt + ' ';
-					
-					if(typeof(Alloy.Globals.CURRENTVIEW) === 'undefined' || Alloy.Globals.CURRENTVIEW === null) {
+
+					if(Alloy.Globals.showAndroidHome === true) {
 						abx.setHomeAsUpIcon("/images/ic_launcher.png");
+						abx.title = Alloy.Globals.PHRASES.betbattleTxt + ' ';
 					}
 			
                     ticket = e.menu.add( ticketIcon = {
                         showAsAction : Ti.Android.SHOW_AS_ACTION_ALWAYS,
                         itemId : 1
                     });
-                
-                    
+                                   
                     abx.setMenuItemIcon({
    				 		menu: e.menu,
     					menuItem: ticket,
@@ -162,9 +159,7 @@ if (!isAndroid) {
                         if (Alloy.Globals.hasCoupon) {
                             couponOpen = true;
                             var win = Alloy.createController('showCoupon').getView();
-
                             win.open();
-
                             Alloy.Globals.WINDOWS.push(win);
                         }
                     });
@@ -187,7 +182,7 @@ if (!isAndroid) {
   					});
                     
                 };
-              	$.mainWin.activity.invalidateOptionsMenu();
+              	//$.mainWin.activity.invalidateOptionsMenu();
             
                 // set onResume for each activity in order to keep them updated with correct coupon
                 $.mainWin.activity.addEventListener("resume", function() {
@@ -1037,3 +1032,11 @@ function setRateStatus(rate_status) {
 setTimeout(function() {
     Alloy.Globals.appStatus = 'foreground';
 }, 1000);
+
+
+$.mainWin.addEventListener('focus', function() {
+	Alloy.Globals.showAndroidHome = true;
+});
+$.mainWin.addEventListener('blur', function() {
+	Alloy.Globals.showAndroidHome = false;
+});

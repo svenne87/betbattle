@@ -199,8 +199,11 @@ if (!isAndroid) {
 
     Ti.App.addEventListener('pause', Alloy.Globals.iosPauseEvent);
 
-    Alloy.Globals.iosResumeEvent = function() {
-        Ti.API.log(" KöR resume... ");
+    Alloy.Globals.iosResumeEvent = function(e) {
+        Ti.API.log("KöR resume... ");
+
+		Ti.App.fireEvent('updateFocusWindow');
+
         // check connection
         setTimeout(function() {
             Alloy.Globals.appStatus = 'foreground';
@@ -238,7 +241,8 @@ if (!isAndroid) {
     Alloy.Globals.androidResumeEvent = function() {
         Ti.API.log("resume");
         //Ti.App.fireEvent('challengesViewRefresh');
-
+        Ti.App.fireEvent('updateFocusWindow');
+        
         if (Alloy.Globals.checkConnection()) {
             Alloy.Globals.appStatus = 'foreground';
 
