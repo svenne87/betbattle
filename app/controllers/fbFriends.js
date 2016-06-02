@@ -171,7 +171,7 @@ if (Alloy.Globals.FACEBOOKOBJECT == null) {
             width : '100%',
             backgroundColor : 'transparent',
             style : Ti.UI.iPhone.TableViewStyle.GROUPED,
-            separatorInsets : {
+            tableSeparatorInsets : {
                 left : 0,
                 right : 0
             },

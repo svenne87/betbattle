@@ -786,7 +786,7 @@ if (!isAndroid) {
         style : Ti.UI.iPhone.TableViewStyle.GROUPED,
         id : 'challengeTable',
         refreshControl : refresher,
-        separatorInsets : {
+        tableSeparatorInsets : {
             left : 0,
             right : 0
         },
@@ -1076,7 +1076,7 @@ function createMatchOTDRow() {
     });
 
     row.add(Ti.UI.createImageView({
-        image : '/images/ikoner_mix_sport.png',
+        image : '/images/otd_utmaning.png',
         left : 10,
         width : 30,
         height : 30
@@ -2089,3 +2089,5 @@ if(showInviteCodeBox && isEmptyObj(args) ) {
 		Alloy.Globals.displayEnterInviteCodeDialog(indicator);
     }, 2500);
 }
+
+

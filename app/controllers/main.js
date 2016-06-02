@@ -890,7 +890,7 @@ $.ds.leftTableView.headerView = createMenuHeader();
 
 if (!isAndroid) {
     $.ds.leftTableView.separatorStyle = Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE;
-    $.ds.leftTableView.separatorInsets = {
+    $.ds.leftTableView.tableSeparatorInsets = {
         left : 0,
         right : 0
     };

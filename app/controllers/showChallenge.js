@@ -11,6 +11,7 @@ var swipeRefresh = null;
 var androidViews = [];
 var firstSections;
 var firstTable;
+var androidRefresh = false;
 
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({
@@ -689,7 +690,7 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished,
             height : '85%',
             backgroundColor : '#000',
             style : Ti.UI.iPhone.TableViewStyle.GROUPED,
-            separatorInsets : {
+            tableSeparatorInsets : {
                 left : 0,
                 right : 0
             },
@@ -977,7 +978,7 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished,
 
     if (isAndroid) {
         if (isFirst) {
-            var androidRefresh = function(e) {
+            androidRefresh = function(e) {
             	Ti.API.log(e);
             	
                 if (Alloy.Globals.checkConnection()) {
@@ -1159,25 +1160,35 @@ if(typeof args.state !== 'undefined') {
 }
 
 $.showChallengeWindow.addEventListener('focus', function() {
-	if (Alloy.Globals.checkConnection()) {
-    	if (!isAndroid) {
-        	indicator.openIndicator();
-    	}
-    	getChallengeShow();
-	} else {
-    	Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
-	}
-
 	if(!isAndroid) {
 		Alloy.Globals.focusWindow = function() { 
 			if (Alloy.Globals.checkConnection()) {
         		indicator.openIndicator();
+
+        		pendingStandingsArray = [];
+                // clear children
+                for (var c = ($.showChallenge.getViews().length - 1); c >= 0; c--) {
+                    $.showChallenge.removeView($.showChallenge.getViews()[c]);
+                }
+        		
             	setTimeout(function() {
            			getChallengeShow();
         		}, 500);
        		}
 		};
 		Ti.App.addEventListener('updateFocusWindow', Alloy.Globals.focusWindow);
+	} else {
+		if (Alloy.Globals.checkConnection()) {
+			androidViews = [];
+			indicator.openIndicator();
+            for (var view in $.showChallenge.getViews()) {
+            	androidViews.push($.showChallenge.getViews()[view]);
+            }
+			getChallengeShow();
+			if(androidRefresh !== false) {
+				$.swipeRefresh.removeEventListener('refreshing', androidRefresh);
+			}
+		}
 	}
 });
 $.showChallengeWindow.addEventListener('blur', function() {
@@ -1185,3 +1196,11 @@ $.showChallengeWindow.addEventListener('blur', function() {
  		Ti.App.removeEventListener('updateFocusWindow', Alloy.Globals.focusWindow);
  	}
 });
+if (Alloy.Globals.checkConnection()) {
+	if (!isAndroid) {
+       indicator.openIndicator();
+       getChallengeShow();
+    }  		
+} else {
+    Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+}

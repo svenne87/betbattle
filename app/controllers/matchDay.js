@@ -256,7 +256,7 @@ if (!isAndroid) {
         table.separatorStyle = Titanium.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE;
     }
 
-    table.separatorInsets = {
+    table.tableSeparatorInsets = {
         left : 0,
         right : 0
     };

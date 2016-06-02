@@ -1071,7 +1071,7 @@ function createViews(friendArray, groupArray) {
 			id : 'groupsTable',
 			refreshControl : refresher,
 			backgroundColor : 'transparent',
-			separatorInsets : {
+			tableSeparatorInsets : {
 				left : 0,
 				right : 0
 			},

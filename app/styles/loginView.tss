@@ -34,7 +34,7 @@
 	height : '50%',
 	width : Ti.UI.FILL,
 	backgroundColor : '#000',
-	separatorInsets : {
+	tableSeparatorInsets : {
     	left : 0,
         right : 0
     },

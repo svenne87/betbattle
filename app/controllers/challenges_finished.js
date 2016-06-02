@@ -134,7 +134,7 @@ if (!isAndroid) {
         width : '100%',
         backgroundColor : '#000',
         style : Ti.UI.iPhone.TableViewStyle.GROUPED,
-        separatorInsets : {
+        tableSeparatorInsets : {
             left : 0,
             right : 0
         },
@@ -385,8 +385,8 @@ function createLastMatchOTDRow(obj, index) {
         }));
     }
 
-    
-    var imageLocation = '/images/ikoner_mix_sport.png';
+   
+    var imageLocation = '/images/otd_utmaning.png';
     
     if (obj.sport_id === '1') {
     	// Hockey

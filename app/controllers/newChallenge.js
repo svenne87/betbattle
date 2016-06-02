@@ -266,7 +266,7 @@ function createAndShowTableView(league, array) {
             refreshControl : refresher,
             backgroundColor : '#303030',
             separatorColor : '#303030',
-            separatorInsets : {
+            tableSeparatorInsets : {
                 left : 0,
                 right : 0
             },

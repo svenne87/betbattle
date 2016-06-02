@@ -6,7 +6,7 @@ var botView;
 var refresher;
 var swipeRefresh = null;
 var headerScoreLabel;
-
+var view;
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({
     top : 200,
@@ -487,7 +487,7 @@ function createLayout(resp) {
             width : '100%',
             backgroundColor : 'transparent',
             style : Ti.UI.iPhone.TableViewStyle.GROUPED,
-            separatorInsets : {
+            tableSeparatorInsets : {
                 left : 0,
                 right : 0
             },
@@ -794,12 +794,11 @@ if (isAndroid) {
     });
 }
 
-$.showMatchOTD.addEventListener('focus', function() {
-	getChallengeShow();		
-	if(!isAndroid) {
-		getChallengeShow();		
+$.showMatchOTD.addEventListener('focus', function() {	
+	if(!isAndroid) {	
 		Alloy.Globals.focusWindow = function() { 
 			if (Alloy.Globals.checkConnection()) {
+				$.showMatchOTD.remove(view);
         		indicator.openIndicator();
             	setTimeout(function() {
            			getChallengeShow();
@@ -807,6 +806,12 @@ $.showMatchOTD.addEventListener('focus', function() {
        		}
 		};
 		Ti.App.addEventListener('updateFocusWindow', Alloy.Globals.focusWindow);
+	} else {
+		indicator.openIndicator();
+		$.showMatchOTD.remove(swipeRefresh);
+		setTimeout(function() {
+        	getChallengeShow();
+        }, 500);
 	}
 });
 $.showMatchOTD.addEventListener('blur', function() {
@@ -814,3 +819,7 @@ $.showMatchOTD.addEventListener('blur', function() {
 		Ti.App.removeEventListener('updateFocusWindow', Alloy.Globals.focusWindow);
 	}
 });
+
+if(!isAndroid) { 
+	getChallengeShow();
+}
