@@ -54,9 +54,7 @@ if (!isAndroid) {
         } else {
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
             refresher.endRefreshing();
-
         }
-
     });
 }
 
@@ -128,6 +126,14 @@ if (!isAndroid) {
         height : 0.5,
         backgroundColor : '#303030'
     });
+    
+    table.addEventListener('scroll',function(e) {       	 
+		if(e.firstVisibleItem > 1 && typeof swipeRefresh !== 'undefined' && swipeRefresh !== null) {
+          	swipeRefresh.setEnabled(false);
+	     }  else {
+	     	swipeRefresh.setEnabled(true);
+	     }
+	});
 }
 
 // when clicking a row
@@ -306,18 +312,14 @@ function buildTableRows() {
     var createdMatchOTDRow = false;
 	var createdPendingMatchOTD = false;
     
-    // add next Match OTD row
-    // only create this row if the user has not already joined this challenge
-    if (Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_otd_status === 0) {
-        data[0].add(createNextMatchOTDRow());
-        createdMatchOTDRow = true;
-    }
-    
-    // build pending row for match OTD
+    // build row for match OTD
     if ( typeof Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_data !== 'undefined') {
-        if (Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_data.status !== '2') {
+        if (Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_data.status !== '2' && Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_otd_status !== 0) {
             data[1].add(createMatchOTDRow());
             createdPendingMatchOTD = true;
+        } else if(Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_otd_status === 0) {
+        	data[0].add(createNextMatchOTDRow());
+        	createdMatchOTDRow = true;
         }
     }
     
@@ -728,7 +730,7 @@ function createNextMatchOTDRow() {
         width : Ti.UI.FILL,
         left : 0,
         className : 'nextMatchOTDRow',
-        height : 75
+        height : 95
     });
 
     row.add(Ti.UI.createImageView({
@@ -739,7 +741,7 @@ function createNextMatchOTDRow() {
     }));
 
     var firstRowView = Ti.UI.createView({
-        top : -20,
+        top : -40,
         layout : 'absolute',
         width : 'auto'
     });
@@ -752,7 +754,7 @@ function createNextMatchOTDRow() {
     }));
 
     var secondRowView = Ti.UI.createView({
-        top : 25,
+        top : 5,
         layout : 'absolute',
         width : 'auto'
     });
@@ -763,9 +765,92 @@ function createNextMatchOTDRow() {
         font : Alloy.Globals.getFontCustom(12, 'Regular'),
         color : Alloy.Globals.themeColor()
     }));
+    
+    var thirdRowView = Ti.UI.createView({
+        top : 50,
+        layout : 'absolute',
+        width : 'auto'
+    });
+    
+    var date = Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_data.game_date;
+    date = date.split(" ");
+    var time = date[1];
+    date = date[0];
+    date = date.substring(0, 10);
+    date = date.substring(5);
+
+    // check first char
+    if (date.charAt(0) == '0') {
+        date = date.substring(1);
+    }
+    
+    // change position
+    var datePartOne = date.substring(date.lastIndexOf('-'));
+    datePartOne = datePartOne.replace('-', '');
+    if (datePartOne.charAt(0) == '0') {
+        datePartOne = datePartOne.substring(1);
+    }
+
+    var datePartTwo = date.substring(0, date.indexOf('-'));
+    date = datePartOne + '/' + datePartTwo;
+
+    time = time.substring(time.length - 8);
+    time = time.substring(0, 5);
+	
+	var startTextLabel = Ti.UI.createLabel({
+        left : 60,
+        font : {
+            fontFamily : font
+        },
+        text : fontawesome.icon('fa-clock-o'),
+        color : Alloy.Globals.themeColor()
+    });
+    
+    thirdRowView.add(startTextLabel);
+
+    var startTextValueLabel = Ti.UI.createLabel({
+        left : 75,
+        text : '' + date + ' ' + time + ' ',
+        font : Alloy.Globals.getFontCustom(12, 'Regular'),
+        color : Alloy.Globals.themeColor()
+    });
+
+    thirdRowView.add(startTextValueLabel);
+
+    var oppCount = parseInt(Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_data.participants.count);
+
+    var potTextLabel = Ti.UI.createLabel({
+        left : 160,
+        font : {
+            fontFamily : font
+        },
+        text : fontawesome.icon('fa-database'),
+        color : Alloy.Globals.themeColor()
+    });
+
+    thirdRowView.add(potTextLabel);
+
+    var currentPot = Alloy.Globals.PHRASES.unknownSmallTxt;
+
+    try {
+        currentPot = (oppCount * Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_data.participants.bet_amount);
+        currentPot = (currentPot - 0) + (Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_data.participants.extra_pot - 0);
+    } catch (e) {
+        currentPot = Alloy.Globals.PHRASES.unknownSmallTxt;
+    }
+
+    var potValueLabel = Ti.UI.createLabel({
+        left : (160 + potTextLabel.toImage().width + 2), 
+        text : '' + currentPot,
+        font : Alloy.Globals.getFontCustom(12, 'Regular'),
+        color : Alloy.Globals.themeColor()
+    });
+
+    thirdRowView.add(potValueLabel);
 
     row.add(firstRowView);
     row.add(secondRowView);
+    row.add(thirdRowView);
 
     // add custom icon on Android to symbol that the row has child
     if (child != true) {
@@ -856,7 +941,7 @@ function showNextMatchOTD() {
                                             gameID : match.game_id,
                                             matchOTD : 1,
                                             bet_amount : match.bet_amount,
-                                            win : $.challenges_new                    // TODO this should work?
+                                            win : $.challenges_new
                                         };
 
                                         var win = Alloy.createController('challenge', arg).getView();

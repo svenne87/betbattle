@@ -26,7 +26,6 @@ function openChallengesForLeague(league) {
             fullScreen : true
         });
     }
-
 }
 
 // create sections for the table
@@ -198,28 +197,44 @@ for (var z in sports) {
         // fix to get mobile images
         var url = league.logo.replace('logos', 'logos/mobile');
         var finalUrl = url.replace(' ', '');
-        var finalUrl = finalUrl.toLowerCase();
-        var imageLocation = Alloy.Globals.BETKAMPENURL + finalUrl;
+        finalUrl = finalUrl.toLowerCase();
 
-        var leagueImageView = Ti.UI.createImageView({
+       	var leagueImageViewWrapper = Ti.UI.createView({
             left : 10,
             height : 40,
             width : 40,
             borderRadius : 20,
-            backgroundColor : "white",
-            image : imageLocation,
+            backgroundColor : "#FFF",
+        });
+		
+        var leagueImageView = Ti.UI.createImageView({
+            //left : 10,
+            height : 40,
+            width : 40,
+            //borderRadius : 20,
+           // backgroundColor : "white",
+            image : Alloy.Globals.BETKAMPENURL + finalUrl,
             // defaultImage : '/images/Liga_Default.png'
         });
         
+        Ti.API.log("Bildfan -> " + Alloy.Globals.BETKAMPENURL + finalUrl); // TODO
+        
        	if(!isAndroid) {
     		leagueImageView.setDefaultImage('/images/Liga_Default.png');
-    	}   
-
+    	} 
+	  
         leagueImageView.addEventListener('error', function(e) {
             e.source.image = '/images/Liga_Default.png';
+            
+            Ti.API.log("Bildfan -> ge fel..."); // TODO
         });
-
-        tableRow.add(leagueImageView);
+        
+             setTimeout(function() {
+				leagueImageView.setImage(Alloy.Globals.BETKAMPENURL + finalUrl);
+                }, 500);
+		
+		leagueImageViewWrapper.add(leagueImageView);
+        tableRow.add(leagueImageViewWrapper);
 
         var leagueName = league.name;
 

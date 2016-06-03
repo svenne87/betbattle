@@ -707,6 +707,14 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished,
             separatorColor : '#303030',
             selectionStyle : 'none'
         });
+        
+		table.addEventListener('scroll',function(e) {   	 
+	    	if(e.firstVisibleItem > 1 && typeof $.swipeRefresh !== 'undefined' && $.swipeRefresh !== null) {
+          		$.swipeRefresh.setEnabled(false);
+	     	}  else {
+	     		$.swipeRefresh.setEnabled(true);
+	     	}
+	    });
     }
 
     // remove empty space
@@ -1075,7 +1083,6 @@ function getChallengeShow() {
             Ti.API.error("Error =>" + this.response);
         }
     };
-
 }
 
 function showResults(challenge) {

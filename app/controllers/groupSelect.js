@@ -1090,6 +1090,14 @@ function createViews(friendArray, groupArray) {
 			backgroundColor : '#000',
 			separatorColor : '#303030'
 		});
+		
+		table.addEventListener('scroll',function(e) {       	 
+			if(e.firstVisibleItem > 1 && typeof swipeRefresh !== 'undefined' && swipeRefresh !== null) {
+          		swipeRefresh.setEnabled(false);
+	     	}  else {
+	     		swipeRefresh.setEnabled(true);
+	     	}
+		});
 	}
 
 	table.headerView = Ti.UI.createView({

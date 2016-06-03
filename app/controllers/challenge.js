@@ -627,9 +627,6 @@ function createSelectGameType(gameType, gameObject, i, gameArray, index) {
             });
 
             optionsView.add(picker);
-
-            //pickers.push(picker);
-
         }
 
     }
@@ -839,9 +836,12 @@ function postMatchOfTheDay() {
                     }
 
                     if (answer) {
-                        prevWin.close();
+                    	if(prevWin !== false) {
+                        	prevWin.close();
+                      	}
+                       
                         $.challengeWindow.close();
-
+										
                         var args = {
                             gameID : gameID,
                         };

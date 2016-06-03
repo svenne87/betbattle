@@ -130,6 +130,14 @@ if (!isAndroid) {
         height : 0.5,
         backgroundColor : '#303030'
     });
+    
+    table.addEventListener('scroll',function(e) {       	 
+		if(e.firstVisibleItem > 1 && typeof swipeRefresh !== 'undefined' && swipeRefresh !== null) {
+          	swipeRefresh.setEnabled(false);
+	     }  else {
+	     	swipeRefresh.setEnabled(true);
+	     }
+	});
 }
 
 // when clicking a row

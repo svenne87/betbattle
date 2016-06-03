@@ -166,6 +166,14 @@ if (!isAndroid) {
         height : 0.5,
         backgroundColor : '#303030'
     });
+    
+    table.addEventListener('scroll',function(e) {       	 
+		if(e.firstVisibleItem > 1 && typeof swipeRefresh !== 'undefined' && swipeRefresh !== null) {
+          	swipeRefresh.setEnabled(false);
+	     }  else {
+	     	swipeRefresh.setEnabled(true);
+	     }
+	});
 }
 
 if (!isAndroid) {
@@ -384,7 +392,6 @@ function createLastMatchOTDRow(obj, index) {
             width : 'auto'
         }));
     }
-
    
     var imageLocation = '/images/otd_utmaning.png';
     

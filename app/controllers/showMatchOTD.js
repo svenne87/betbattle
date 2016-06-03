@@ -7,6 +7,7 @@ var refresher;
 var swipeRefresh = null;
 var headerScoreLabel;
 var view;
+
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({
     top : 200,
@@ -63,77 +64,6 @@ function checkDate(date) {
     return false;
 }
 
-function createGameType(type, values, game) {
-    var gameValueWrapper = Ti.UI.createTableViewRow({
-        width : Ti.UI.FILL,
-        height : 70,
-        backgroundColor : "transparent",
-        layout : 'absolute',
-    });
-
-    for (var i in values) {
-        if (values[i].game_type == type.type) {
-            var correct = false;
-            for (var m in game.result_values) {
-                if (values[i].game_type == game.result_values[m].game_type) {
-                    if (values[i].value_1 == game.result_values[m].value_1) {
-                        if (values[i].value_2 == game.result_values[m].value_2) {
-                            correct = true;
-                        }
-                    }
-                }
-            }
-
-            if (type.option_type == "button") {
-                var text = Alloy.Globals.PHRASES.gameTypes[type.type].buttonValues[values[i].value_1];
-
-                if (text == "team1") {
-                    text = game.team_1.team_name;
-                } else if (text == "team2") {
-                    text = game.team_2.team_name;
-                }
-            } else if (type.option_type = "select") {
-                var text = "";
-                if (type.number_of_values == 1) {
-                    text = values[i].value_1;
-                } else if (type.number_of_values == 2) {
-                    text = values[i].value_1 + " - " + values[i].value_2;
-                }
-            }
-
-            var color = "#000000";
-
-            gameValueWrapper.setBackgroundColor(color);
-
-            var gameValueLabel = Ti.UI.createLabel({
-                text : text,
-                font : Alloy.Globals.getFontCustom(18, "Regular"),
-                color : "#FFF",
-                left : 20,
-            });
-            gameValueWrapper.add(gameValueLabel);
-
-            // check if correct answer and if the game has started
-            if (correct && checkDate(game.game_date)) {
-                var correctValueLabel = Ti.UI.createLabel({
-                    font : {
-                        fontFamily : font
-                    },
-                    text : fontawesome.icon('fa-check'),
-                    left : gameValueLabel.toImage().width + 25,
-                    color : '#00FF33',
-                    height : Ti.UI.SIZE,
-                    width : Ti.UI.SIZE
-                });
-
-                gameValueWrapper.add(correctValueLabel);
-            }
-
-        }
-    }
-    return gameValueWrapper;
-}
-
 function createGameType(gameType, game, values, index, sections) {
     var type = gameType.type;
 
@@ -176,8 +106,8 @@ function createGameType(gameType, game, values, index, sections) {
         font : Alloy.Globals.getFontCustom(18, 'Regular'),
         color : '#FFF'
     }));
-
-    headerScoreLabel = Ti.UI.createLabel({
+	
+    var gameTypeScoreLabel = Ti.UI.createLabel({
         text : Alloy.Globals.PHRASES.giveTxt + " " + gameType.number_of_values + " " + Alloy.Globals.PHRASES.pointsTxt + '  ',
         top : 37,
         left : 20,
@@ -185,7 +115,7 @@ function createGameType(gameType, game, values, index, sections) {
         color : Alloy.Globals.themeColor()
     });
 
-    gameTypeView.add(headerScoreLabel);
+    gameTypeView.add(gameTypeScoreLabel);
 
     var resultText = '';
     var endTimeResultText = '';
@@ -254,7 +184,7 @@ function createGameType(gameType, game, values, index, sections) {
                         // Yellow card
                         resultText = game.result_values[i].value_1;
                     }
-                    // check if game typ is 1, winning team. Should be cleared out when the match is "live" and the score is more than 0-0
+                    // check if game type is 1, winning team. Should be cleared out when the match is "live" and the score is more than 0-0
                     if (type === '1' && game.status === '3' && game.result_values[1].value_1 === '0' && game.result_values[1].value_1 === "0") {
                         resultText = '';
                     }
@@ -439,8 +369,7 @@ function createGameType(gameType, game, values, index, sections) {
             row.add(valueLabel);
 
             // if the player guessed correct
-            if (correct) {
-
+            if (correct) {           	
                 var correctValueLabel = Ti.UI.createLabel({
                     font : {
                         fontFamily : font
@@ -454,19 +383,42 @@ function createGameType(gameType, game, values, index, sections) {
 
                 row.add(correctValueLabel);
             }
-
             sections[index].add(row);
         }
     }
 }
 
 function createLayout(resp) {
+	// set the length of the images you have in your sequence
+    var loaderArrayLength = 2;
+
+    // initialize the index to 1
+    var loaderIndex = 1;
+
+    var liveIcon = null;
+    // this function will be called by the setInterval
+    function loadingAnimation() {
+        // set the image property of the imageview by constructing the path with the loaderIndex variable
+        try {
+            liveIcon.image = "/images/ikon_" + loaderIndex + "_live.png";
+        } catch (e) {
+
+        }
+
+        //increment the index so that next time it loads the next image in the sequence
+        loaderIndex++;
+        // if you have reached the end of the sequence, reset it to 1
+        if (loaderIndex === 3) {
+            loaderIndex = 1;
+        }
+    }
+
     view = Ti.UI.createView({
         height : 'auto',
         width : 'auto',
         layout : 'vertical'
     });
-
+    
     var tableHeaderView = Ti.UI.createView({
         height : 0.1,
         width : Ti.UI.FILL,
@@ -533,10 +485,20 @@ function createLayout(resp) {
             width : Ti.UI.FILL,
             backgroundColor : '#303030'
         });
+          
+		table.addEventListener('scroll',function(e) {       	 
+			if(e.firstVisibleItem > 1 && typeof swipeRefresh !== 'undefined' && swipeRefresh !== null) {
+          		swipeRefresh.setEnabled(false);
+	     	}  else {
+	     		swipeRefresh.setEnabled(true);
+	     	}
+	     });	    
     }
-
+    
     var matchHeader = Ti.UI.createView({
         height : 70,
+        width : Ti.UI.FILL,
+        layout : 'vertical',
         backgroundColor : '#303030',
         backgroundGradient : {
             type : "linear",
@@ -555,7 +517,7 @@ function createLayout(resp) {
                 color : "#2E2E2E",
 
             }]
-        },
+        }
     });
 
     var teamNames = resp.game.team_1.team_name + " - " + resp.game.team_2.team_name;
@@ -568,35 +530,106 @@ function createLayout(resp) {
         fontResponsive = Alloy.Globals.getFontCustom(18, 'Regular');
     }
     if (teamNames.length > 37) {
-        if (game.team_1.team_name.length > 17) {
-            game.team_1.team_name = game.team_1.team_name.substring(0, 14) + '...';
+        if (resp.game.team_1.team_name.length > 17) {
+            resp.game.team_1.team_name = resp.game.team_1.team_name.substring(0, 14) + '...';
         }
 
-        if (game.team_2.team_name.length > 17) {
-            game.team_2.team_name = game.team_2.team_name.substring(0, 14) + '...';
+        if (resp.game.team_2.team_name.length > 17) {
+            resp.game.team_2.team_name = resp.game.team_2.team_name.substring(0, 14) + '...';
         }
 
-        teamNames = game.team_1.team_name + " - " + game.team_2.team_name;
+        teamNames = resp.game.team_1.team_name + " - " + game.team_2.team_name;
     }
 
-    var matchLabel = Ti.UI.createLabel({
-        text : teamNames + ' ',
+	matchHeader.add(Ti.UI.createLabel({
+        top : 10,
+        left : 10,
+        height : Ti.UI.SIZE,
+        width : Ti.UI.SIZE,
         font : fontResponsive,
-        color : "#FFF",
-        left : 20,
-        top : 12,
-    });
+        color : '#FFF',
+        text : teamNames + ' '
+    }));
+    
+    if (!checkDate(resp.game.game_date)) {    	
+        matchHeader.add(Ti.UI.createLabel({
+            left : 10,
+            top : 3,
+            font : {
+                fontFamily : font
+            },
+            text : fontawesome.icon('fa-clock-o'),
+            color : Alloy.Globals.themeColor()
+        }));
 
-    var matchDateLabel = Ti.UI.createLabel({
-        text : resp.game.game_date_string,
-        font : Alloy.Globals.getFontCustom(14, "Regular"),
-        color : Alloy.Globals.themeColor(),
-        left : 20,
-        top : 40,
-    });
+        matchHeader.add(Ti.UI.createLabel({
+            top : -17,
+            left : 25,
+            height : Ti.UI.SIZE,
+            width : Ti.UI.SIZE,
+            font : Alloy.Globals.getFontCustom(12, 'Regular'),
+            color : Alloy.Globals.themeColor(),
+            text : resp.game.game_date_string + ' '
+        }));
+    } else {
+        if (resp.game.status === '2') {
+            // game has started, show result
+            matchHeader.add(Ti.UI.createLabel({
+                left : 12,
+                top : 3,
+                font : {
+                    fontFamily : font
+                },
+                text : fontawesome.icon('fa-caret-right'),
+                color : Alloy.Globals.themeColor()
+            }));
 
-    matchHeader.add(matchLabel);
-    matchHeader.add(matchDateLabel);
+            headerScoreLabel = Ti.UI.createLabel({
+                top : -17,
+                left : 25,
+                height : Ti.UI.SIZE,
+                width : Ti.UI.SIZE,
+                font : Alloy.Globals.getFontCustom(12, 'Regular'),
+                color : Alloy.Globals.themeColor(),
+                text : ' '
+            });
+
+            matchHeader.add(headerScoreLabel);
+        } else if (resp.game.status === '3') {
+            liveIcon = Ti.UI.createImageView({
+                left : 12,
+                top : 3,
+                image : '/images/ikon_1_live.png',
+                height : 10,
+                width : 10,
+            });
+
+            matchHeader.add(liveIcon);
+
+            var liveLabel = Ti.UI.createLabel({
+                text : "Live",
+                left : 25,
+                top : -15,
+                font : Alloy.Globals.getFontCustom(12, "Regular"),
+                color : Alloy.Globals.themeColor()
+            });
+
+            matchHeader.add(liveLabel);
+
+            var loaderAnimate = setInterval(loadingAnimation, 280);
+
+            headerScoreLabel = Ti.UI.createLabel({
+                top : -18,
+                left : 55,
+                height : Ti.UI.SIZE,
+                width : Ti.UI.SIZE,
+                font : Alloy.Globals.getFontCustom(12, 'Regular'),
+                color : Alloy.Globals.themeColor(),
+                text : ' '
+            });
+            matchHeader.add(headerScoreLabel);
+        }
+    }
 
     if (!isAndroid) {
         sections[0] = Ti.UI.createTableViewSection({
@@ -616,14 +649,12 @@ function createLayout(resp) {
         height : 65,
         width : Ti.UI.FILL,
     });
-
     var usersCountLabel = Ti.UI.createLabel({
         text : Alloy.Globals.PHRASES.showMatchOTDusers + resp.stats.count,
         font : Alloy.Globals.getFontCustom(18, "Regular"),
         color : "#FFF",
         left : 20,
     });
-
     rowUser.add(usersCountLabel);
 	*/
     var rowPot = Ti.UI.createTableViewRow({
@@ -679,7 +710,7 @@ function createLayout(resp) {
             view : view,
             height : Ti.UI.FILL,
             width : Ti.UI.FILL,
-            id : 'swiper'
+            id : 'swiper',
         });
 
         swipeRefresh.addEventListener('refreshing', function(e) {
@@ -742,16 +773,13 @@ function getChallengeShow() {
         if (this.status == '200') {
             if (this.readyState == 4) {
                 var response = JSON.parse(this.responseText);
-                
-                 Ti.API.log("Response: " + JSON.stringify(response)); // TODO
-                
+
                 if(isAndroid) {
                     if(typeof view !== 'undefined') {
                        // view.remove(swipeRefresh);
                         endRefresher();    
                     }
-                }
-                
+                } 
                 createLayout(response);
             } else {
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);

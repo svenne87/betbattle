@@ -1384,9 +1384,10 @@ Alloy.Globals.constructChallenge = function(responseAPI) {
                 "match_otd_status" : responseAPI[5].match_otd_status,
                 "match_data" : responseAPI[5].match_data
             };
-        } else {
+        } else if ( typeof responseAPI[5].show_match_data !== 'undefined' && responseAPI[5].show_match_data !== null) {
             tmpObj = {
-                "match_otd_status" : responseAPI[5].match_otd_status
+                "match_otd_status" : responseAPI[5].match_otd_status,
+                "match_data" : responseAPI[5].show_match_data
             };
         }
 

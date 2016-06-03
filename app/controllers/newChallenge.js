@@ -280,7 +280,14 @@ function createAndShowTableView(league, array) {
             backgroundColor : '#303030',
             separatorColor : '#303030'
         });
-
+        
+        table.addEventListener('scroll',function(e) {       	 
+			if(e.firstVisibleItem > 1 && typeof swipeRefresh !== 'undefined' && swipeRefresh !== null) {
+          		swipeRefresh.setEnabled(false);
+	     	}  else {
+	     		swipeRefresh.setEnabled(true);
+	     	}
+		});
     }
 
     var footerView = Ti.UI.createView({
