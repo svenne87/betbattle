@@ -208,16 +208,10 @@ for (var z in sports) {
         });
 		
         var leagueImageView = Ti.UI.createImageView({
-            //left : 10,
             height : 40,
             width : 40,
-            //borderRadius : 20,
-           // backgroundColor : "white",
             image : Alloy.Globals.BETKAMPENURL + finalUrl,
-            // defaultImage : '/images/Liga_Default.png'
         });
-        
-        Ti.API.log("Bildfan -> " + Alloy.Globals.BETKAMPENURL + finalUrl); // TODO
         
        	if(!isAndroid) {
     		leagueImageView.setDefaultImage('/images/Liga_Default.png');
@@ -225,14 +219,8 @@ for (var z in sports) {
 	  
         leagueImageView.addEventListener('error', function(e) {
             e.source.image = '/images/Liga_Default.png';
-            
-            Ti.API.log("Bildfan -> ge fel..."); // TODO
         });
-        
-             setTimeout(function() {
-				leagueImageView.setImage(Alloy.Globals.BETKAMPENURL + finalUrl);
-                }, 500);
-		
+
 		leagueImageViewWrapper.add(leagueImageView);
         tableRow.add(leagueImageViewWrapper);
 
