@@ -72,6 +72,30 @@
                         </array>
                     </dict>
                 </array>
+                <key>LSApplicationQueriesSchemes</key>
+                <array>
+                    <!--
+    				<string>fbapi</string>
+    				<string>fb-messenger-api</string>
+    				<string>fbauth2</string>
+    				<string>fbshareextension</string>
+    			    -->
+    				<!-- TODO Remove getCanPresentShareDialog in later facebook version (using earlier facebook version now) -->
+                    <string>fbapi</string>
+                    <string>fbapi20130214</string>
+                    <string>fbapi20130410</string>
+                    <string>fbapi20130702</string>
+                    <string>fbapi20131010</string>
+                    <string>fbapi20131219</string>
+                    <string>fbapi20140410</string>
+                    <string>fbapi20140116</string>
+                    <string>fbapi20150313</string>
+                    <string>fbapi20150629</string>
+                    <string>fbapi20160328</string>
+                    <string>fbauth</string>
+                    <string>fbauth2</string>
+                    <string>fb-messenger-api20140430</string>
+                </array>
                 <!--
                 <key>UIBackgroundModes</key><array><string>location</string></array><key>UIRequiredDeviceCapabilities</key><array><string>bluetooth-le</string></array>
                 -->
@@ -170,10 +194,10 @@
         <module platform="android">bencoding.blur</module>
         <module platform="android">com.alcoapps.actionbarextras</module>
         <module platform="android">facebook</module>
+        <module platform="iphone" version="4.0.5">facebook</module>
         <module platform="android">com.rkam.swiperefreshlayout</module>
         <module platform="android">ti.inappbilling</module>
         <module platform="iphone">com.omorandi</module>
-        <module platform="iphone">facebook</module>
     </modules>
     <deployment-targets>
         <target device="android">true</target>
@@ -181,7 +205,7 @@
         <target device="iphone">true</target>
         <target device="mobileweb">false</target>
     </deployment-targets>
-    <sdk-version>5.2.2.GA</sdk-version>
+    <sdk-version>5.3.0.GA</sdk-version>
     <plugins>
         <plugin version="1.0">ti.alloy</plugin>
     </plugins>

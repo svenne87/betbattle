@@ -366,15 +366,15 @@ function createLeagueAndUidObj(response) {
     Alloy.Globals.VERSIONS = response.versions;
     user_team = response.user_team;
 
-    for (var i = 0; i < response.leagues.length; i++) {
+    for (var i = 0; i < response.all_leagues.length; i++) {
         var league = {
-            id : response.leagues[i].id,
-            name : response.leagues[i].name,
-            sport : response.leagues[i].sport,
-            logo : response.leagues[i].logo,
-            active : response.leagues[i].active,
-            sport_name : response.leagues[i].sport_name,
-            sort_order : response.leagues[i].sort_order
+            id : response.all_leagues[i].id,
+            name : response.all_leagues[i].name,
+            sport : response.all_leagues[i].sport,
+            logo : response.all_leagues[i].logo,
+            active : response.all_leagues[i].active,
+            sport_name : response.all_leagues[i].sport_name,
+            sort_order : response.all_leagues[i].sort_order
         };
         // store all active leagues
         Alloy.Globals.LEAGUES.push(league);

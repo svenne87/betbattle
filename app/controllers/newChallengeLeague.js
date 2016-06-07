@@ -160,89 +160,101 @@ function onClose(evt) {
 // add rows to table
 for (var z in sports) {
     sports[z] = sports[z].sort(compare);
-
-    sections[count] = createSectionsForTable(Alloy.Globals.PHRASES[sports[z][0].sport_name + 'Txt']);
+    showSection = false;
+    
+    for (var x in sports[z]) {
+        var league = sports[z][x];
+        
+        if(league.active == '1') {
+        	showSection = true;
+        }
+    }
+	if(showSection) {
+    	sections[count] = createSectionsForTable(Alloy.Globals.PHRASES[sports[z][0].sport_name + 'Txt']);
+	}
 
     for (var x in sports[z]) {
         var league = sports[z][x];
-
-        var tableRow = $.UI.create('TableViewRow', {
-            backgroundColor : '#000',
-            id : league.id,
-            hasChild : child,
-            height : 75
-        });
-
-        // add custom icon on Android to symbol that the row has child
-        if (child != true) {
-            var fontawesome = require('lib/IconicFont').IconicFont({
-                font : 'lib/FontAwesome'
-            });
-
-            font = 'fontawesome-webfont';
-
-            tableRow.add(Ti.UI.createLabel({
-                font : {
-                    fontFamily : font
-                },
-                text : fontawesome.icon('icon-chevron-right'),
-                right : '5%',
-                color : '#FFF',
-                fontSize : 80,
-                height : 'auto',
-                width : 'auto'
-            }));
-        }
-
-        // fix to get mobile images
-        var url = league.logo.replace('logos', 'logos/mobile');
-        var finalUrl = url.replace(' ', '');
-        finalUrl = finalUrl.toLowerCase();
-
-       	var leagueImageViewWrapper = Ti.UI.createView({
-            left : 10,
-            height : 40,
-            width : 40,
-            borderRadius : 20,
-            backgroundColor : "#FFF",
-        });
-		
-        var leagueImageView = Ti.UI.createImageView({
-            height : 40,
-            width : 40,
-            image : Alloy.Globals.BETKAMPENURL + finalUrl,
-        });
         
-       	if(!isAndroid) {
-    		leagueImageView.setDefaultImage('/images/Liga_Default.png');
-    	} 
-	  
-        leagueImageView.addEventListener('error', function(e) {
-            e.source.image = '/images/Liga_Default.png';
-        });
+        if(league.active == '1') {
+			var tableRow = $.UI.create('TableViewRow', {
+				backgroundColor : '#000',
+				id : league.id,
+				hasChild : child,
+				height : 75
+			});
 
-		leagueImageViewWrapper.add(leagueImageView);
-        tableRow.add(leagueImageViewWrapper);
+			// add custom icon on Android to symbol that the row has child
+			if (child != true) {
+				var fontawesome = require('lib/IconicFont').IconicFont({
+					font : 'lib/FontAwesome'
+				});
 
-        var leagueName = league.name;
+				font = 'fontawesome-webfont';
 
-        if (leagueName.length > 20) {
-            leagueName = leagueName.substring(0, 17);
-            leagueName = leagueName + '...';
+				tableRow.add(Ti.UI.createLabel({
+					font : {
+						fontFamily : font
+					},
+					text : fontawesome.icon('icon-chevron-right'),
+					right : '5%',
+					color : '#FFF',
+					fontSize : 80,
+					height : 'auto',
+					width : 'auto'
+				}));
+			}
+
+			// fix to get mobile images
+			var url = league.logo.replace('logos', 'logos/mobile');
+			var finalUrl = url.replace(' ', '');
+			finalUrl = finalUrl.toLowerCase();
+
+			var leagueImageViewWrapper = Ti.UI.createView({
+				left : 10,
+				height : 40,
+				width : 40,
+				borderRadius : 20,
+				backgroundColor : "#FFF",
+			});
+
+			var leagueImageView = Ti.UI.createImageView({
+				height : 40,
+				width : 40,
+				image : Alloy.Globals.BETKAMPENURL + finalUrl,
+			});
+
+			if (!isAndroid) {
+				leagueImageView.setDefaultImage('/images/Liga_Default.png');
+			}
+
+			leagueImageView.addEventListener('error', function(e) {
+				e.source.image = '/images/Liga_Default.png';
+			});
+
+			leagueImageViewWrapper.add(leagueImageView);
+			tableRow.add(leagueImageViewWrapper);
+
+			var leagueName = league.name;
+
+			if (leagueName.length > 20) {
+				leagueName = leagueName.substring(0, 17);
+				leagueName = leagueName + '...';
+			}
+
+			tableRow.add(Ti.UI.createLabel({
+				width : Ti.UI.SIZE,
+				height : Ti.UI.SIZE,
+				left : 65,
+				text : leagueName,
+				font : Alloy.Globals.getFontCustom(16, 'Regular'),
+				color : '#FFF'
+			}));
+
+			//tableRow.add(leagueImage);
+			tableRow.className = 'league';
+			sections[count].add(tableRow);
         }
-
-        tableRow.add(Ti.UI.createLabel({
-            width : Ti.UI.SIZE,
-            height : Ti.UI.SIZE,
-            left : 65,
-            text : leagueName,
-            font : Alloy.Globals.getFontCustom(16, 'Regular'),
-            color : '#FFF'
-        }));
-
-        //tableRow.add(leagueImage);
-        tableRow.className = 'league';
-        sections[count].add(tableRow);
     }
     count++;
 }

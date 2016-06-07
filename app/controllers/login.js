@@ -26,15 +26,15 @@ function createLeagueAndUidObj(response) {
     Alloy.Globals.VERSIONS = response.versions;
     user_team = response.user_team;
 
-    for (var i = 0; i < response.leagues.length; i++) {
+    for (var i = 0; i < response.all_leagues.length; i++) {
         var league = {
-            id : response.leagues[i].id,
-            name : response.leagues[i].name,
-            sport : response.leagues[i].sport,
-            logo : response.leagues[i].logo,
-            active : response.leagues[i].active,
-            sport_name : response.leagues[i].sport_name,
-            sort_order : response.leagues[i].sort_order
+            id : response.all_leagues[i].id,
+            name : response.all_leagues[i].name,
+            sport : response.all_leagues[i].sport,
+            logo : response.all_leagues[i].logo,
+            active : response.all_leagues[i].active,
+            sport_name : response.all_leagues[i].sport_name,
+            sort_order : response.all_leagues[i].sort_order
         };
         // store all active leagues
         Alloy.Globals.LEAGUES.push(league);
@@ -56,6 +56,7 @@ function getChallengesAndStart() {
     xhr.onerror = function(e) {
         Ti.API.error('Bad Sever =>' + e.error);
         indicator.closeIndicator();
+        setButtonOpacity(1);
         addEvent();
         isSubmitting = false;
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
@@ -254,7 +255,7 @@ function loginAuthenticated(fb) {
                     indicator.closeIndicator();
                     addEvent();
                 }
-
+				
                 if (response !== null) {
                     createLeagueAndUidObj(response);
 
@@ -266,7 +267,6 @@ function loginAuthenticated(fb) {
                     indicator.closeIndicator();
                     addEvent();
                 }
-
             }
         } else {
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
@@ -279,12 +279,9 @@ function loginAuthenticated(fb) {
     };
 }
 
-/*
- Rename android_support-v4.jar to android_support-v4.disabled.jar located:
-on OS X: /Users/(your username)/Library/Application Support/Titanium/mobilesdk/osx/(your titanium version)/android/
- */
-
 function login() {
+	Ti.API.log("Facebook login click...");
+	
     if(isSubmitting) {
         return;
     }
@@ -293,15 +290,11 @@ function login() {
     if (Alloy.Globals.checkConnection()) {
         isSubmitting = true;
        // setButtonOpacity(0);
-        if (!args.reauth) {
-                              
-            if(isAndroid) {
-                fb.logout();  // Added to see if it will reinitiate correct at error's (will mess with ios)
-            }
-            
-            fb.authorize();  
-     
-            isSubmitting = false; // ios fix so we can login after restart...         
+        if (!args.reauth) {  
+            fb.logout();  // Added to see if it will reinitiate correct at error's (will mess with ios)
+            fb.authorize();    
+            isSubmitting = false; // ios fix so we can login after restart...             
+            setButtonOpacity(0);      
         } else {
             setButtonOpacity(0);
             removeEvent();
@@ -312,7 +305,6 @@ function login() {
                 loginAuthenticated(fb);
             }
         }
-
     } else {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
         //removeEvent();
@@ -386,6 +378,7 @@ if (OS_IOS) {
 fb.appid = '1403709019858016';
 /* - - - - - */
 
+fb.setLoginBehavior(fb.LOGIN_BEHAVIOR_NATIVE);
 fb.forceDialogAuth = false;
 Alloy.Globals.connect = true;
 
@@ -393,7 +386,6 @@ Alloy.Globals.connect = true;
 Ti.API.log("Försöker iaf 1..." + fb.loggedIn);
 
 // need to keep track if event was already added, since it is beeing added several times otherwise.
-
 
 var fbLoginEvent = function(e) {
     Ti.API.log("Försöker iaf 11...");
@@ -421,7 +413,7 @@ var fbLoginEvent = function(e) {
             };
             
             Alloy.Globals.FACEBOOKOBJECT = Alloy.createModel('facebook', {
-                id : e.data.id,
+                id : e.uid,
                 locale : e.data.locale,
                 username : e.data.name,
                 fullName : e.data.name,
@@ -459,7 +451,7 @@ var fbLoginEvent = function(e) {
         }
     }    
 };
-             
+            
 fb.addEventListener('login', fbLoginEvent);
 
 if (!isAndroid) {
@@ -485,7 +477,6 @@ if (!isAndroid) {
     }
 }
 
-
 addEvent();
 
 if(isAndroid) {
@@ -494,8 +485,7 @@ if(isAndroid) {
 } else {
     if(!reOpen) {
         // TODO ERROR fb.initialize causes the app to load twice...
-       fb.initialize(5000); // , false
-
+       fb.initialize(); // , false
     }
 }
 

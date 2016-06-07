@@ -196,8 +196,7 @@ var levelLabel = Ti.UI.createLabel({
     textAlign : 'center',
     top : 10,
     font : Alloy.Globals.getFontCustom(16, "Normal"),
-   // color : Alloy.Globals.themeColor()
-    color : '#FFF'  // TODO
+    color : '#FFF'
 });
 
 mainProfileCover.add(levelLabel);

@@ -121,6 +121,6 @@
 "#show_invite_settings_row[platform=ios]": {
 	hasChild : false
 },
-"#show_invite_settings_label":{
-	text : Alloy.Globals.PHRASES.settingsshowInviteTxt
+"#show_version_settings_label":{
+	text : Alloy.Globals.PHRASES.settingsshowVersionTxt
 },

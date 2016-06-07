@@ -698,21 +698,21 @@ function inviteFacebook() {
 			tableWrapper.setHeight('80%');
 		}
 	});
-
+	
 	if (fb.getCanPresentShareDialog()) {
 		fb.presentShareDialog({
 			link : Alloy.Globals.PHRASES.appLinkTxt,
 			name : Alloy.Globals.PHRASES.fbPostCaptionTxt,
-			description : Alloy.Globals.PHRASES.inviteCodeText + ": " + challengeCode, // Alloy.Globals.PHRASES.fbPostDescriptionTxt + "." + "\n" +
 			caption : Alloy.Globals.PHRASES.fbPostCaptionTxt,
+			description : Alloy.Globals.PHRASES.inviteCodeText + ": " + challengeCode, // Alloy.Globals.PHRASES.fbPostDescriptionTxt + "." + "\n" +
 			picture : 'http://31.216.36.213/betbattle/admin/images/logo_betkampen-150x150.png'
 		});
 	} else {
 		fb.presentWebShareDialog({
 			link : Alloy.Globals.PHRASES.appLinkTxt,
 			name : Alloy.Globals.PHRASES.fbPostCaptionTxt,
-			description : Alloy.Globals.PHRASES.inviteCodeText + ": " + challengeCode, // Alloy.Globals.PHRASES.fbPostDescriptionTxt + "." + "\n" +
 			caption : Alloy.Globals.PHRASES.fbPostCaptionTxt,
+			description : Alloy.Globals.PHRASES.inviteCodeText + ": " + challengeCode, // Alloy.Globals.PHRASES.fbPostDescriptionTxt + "." + "\n" +
 			picture : 'http://31.216.36.213/betbattle/admin/images/logo_betkampen-150x150.png'
 		});
 	}

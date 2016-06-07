@@ -326,7 +326,6 @@ function createGUI() {
     });
 
     /* Fourth row */
-
     if (Alloy.Globals.PROFILENAME.length > 12) {
         $.profile_name_value_label.text = Alloy.Globals.PROFILENAME.substring(0, 9) + '...';
     }
@@ -425,14 +424,14 @@ function createGUI() {
     $.favorite_team_settings_row.add(favoriteTeamLabel);
     
   	/* Sixth row */
-    var showInviteEnabled;
+    var showVersionEnabled;
 
     // true will be set if no stored value is found
-    if (!Ti.App.Properties.hasProperty("showInviteSetting")) {
-        Ti.App.Properties.setBool("showInviteSetting", true);
+    if (!Ti.App.Properties.hasProperty("showVersionSetting")) {
+        Ti.App.Properties.setBool("showVersionSetting", true);
     }
 
-    showInviteEnabled = Ti.App.Properties.getBool('showInviteSetting');
+    showVersionEnabled = Ti.App.Properties.getBool('showVersionSetting');
     var basicInviteSwitch;
 
     if (!isAndroid) {
@@ -441,14 +440,14 @@ function createGUI() {
             width : 40,
             titleOn : Alloy.Globals.PHRASES.onTxt,
             titleOff : Alloy.Globals.PHRASES.offTxt,
-            value : showInviteEnabled
+            value : showVersionEnabled
         });
     } else {
         basicInviteSwitch = Ti.UI.createSwitch({
   			style: Titanium.UI.Android.SWITCH_STYLE_SWITCH,
             titleOn : Alloy.Globals.PHRASES.onTxt,
             titleOff : Alloy.Globals.PHRASES.offTxt,
-  			value: showInviteEnabled,
+  			value: showVersionEnabled,
             right : 10,
             width : 80,
 		});     
@@ -464,10 +463,10 @@ function createGUI() {
             value = true;
         }
 
-        Ti.App.Properties.setBool("showInviteSetting", value);
+        Ti.App.Properties.setBool("showVersionSetting", value);
     });
-    $.show_invite_settings_row.selectionStyle = 'none';
-    $.show_invite_settings_row.add(basicInviteSwitch);  
+    $.show_version_settings_row.selectionStyle = 'none';
+    $.show_version_settings_row.add(basicInviteSwitch);  
 }
 
 function createPickers() {

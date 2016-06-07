@@ -611,32 +611,7 @@ Alloy.Globals.checkVersions = function(indicator) {
         if (Alloy.Globals.VERSIONS.language_version !== currentLanguageVersion) {
             // update needed
             Alloy.Globals.getLanguage(null);
-            /*
-             var alertWindow = Titanium.UI.createAlertDialog({
-             title : Alloy.Globals.PHRASES.betbattleTxt,
-             message : Alloy.Globals.PHRASES.newLanguageTxt,
-             buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtnTxt],
-             persistent : true
-             });
-
-             alertWindow.addEventListener('click', function(e) {
-             switch (e.index) {
-             case 0:
-             // get new language and store version
-             alertWindow.hide();
-             Ti.App.Properties.setString("language_version", JSON.stringify(Alloy.Globals.VERSIONS.language_version));
-             Alloy.Globals.getLanguage(null);
-             break;
-             case 1:
-             Ti.App.Properties.setString("language_version", JSON.stringify(Alloy.Globals.VERSIONS.language_version));
-             alertWindow.hide();
-             break;
-             }
-             });
-             alertWindow.show();
-             */
         }
-
     } else {
         // store current version
         Ti.App.Properties.setString("language_version", JSON.stringify(Alloy.Globals.VERSIONS.language_version));
@@ -676,6 +651,13 @@ Alloy.Globals.checkVersions = function(indicator) {
         // store current version
         Ti.App.Properties.setString("tutorial_version", JSON.stringify(Alloy.Globals.VERSIONS.tutorial_version));
     }
+
+    // store current app version
+    if(OS_IOS) {
+    	Ti.App.Properties.setString("currentAppVersion", JSON.stringify(Alloy.Globals.VERSIONS.ios_version));
+    } else {
+    	Ti.App.Properties.setString("currentAppVersion", JSON.stringify(Alloy.Globals.VERSIONS.android_version));
+    } 
 };
 
 Alloy.Globals.storeToken = function() {

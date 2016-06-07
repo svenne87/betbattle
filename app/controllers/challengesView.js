@@ -205,8 +205,7 @@ function updateProfileData(userInfo) {
 }
 
 // get coins for user
-function getUserInfo() {
-		
+function getUserInfo() {		
     var xhr = Titanium.Network.createHTTPClient();
     xhr.onerror = function(e) {
         Ti.API.error('Bad Sever 2 =>' + e.error);
@@ -1288,6 +1287,15 @@ function createNextMatchOTDRow() {
         color : "#FFF",
         left : 60
     }));
+    
+    firstRowView.add(Ti.UI.createLabel({
+    	left : 40,
+        font : {
+        	fontFamily : font
+        },
+        text : fontawesome.icon('fa-arrow-right'),
+        color : Alloy.Globals.themeColor()
+    }));
 
     var secondRowView = Ti.UI.createView({
         top : 5,
@@ -1897,9 +1905,58 @@ function constructTableData(array) {
         acceptLabel.setLeft(acceptTextLabel.toImage().width + 70);
         acceptRow.add(acceptLabel);
     }
+    
+   	var inviteRow = Ti.UI.createTableViewRow({
+        //top : 0,
+        height : 75,
+        id : "inviteCode",
+        width : Ti.UI.FILL,
+        color : "#FFF",
+        backgroundColor : 'transparent',
+        font : Alloy.Globals.getFont(),
+        hasChild : child,
+        selectionStyle : 'none'
+    });
 
+    inviteRow.add(Ti.UI.createImageView({
+        left : 10,
+        width : 30,
+        height : 30,
+        image : '/images/sharethis_white.png',
+    }));
+
+    inviteLabel = Ti.UI.createLabel({
+        font : Alloy.Globals.getFontCustom(16, 'Bold'),
+        text : Alloy.Globals.PHRASES.inviteCodeTxt + ' ',
+        color : '#FFF',
+        left : 60,
+        height : Ti.UI.SIZE,
+        width : Ti.UI.SIZE
+    });
+
+    inviteRow.add(inviteLabel);
+
+    if (isAndroid) {
+        inviteRow.add(Ti.UI.createLabel({
+            font : {
+                fontFamily : font
+            },
+            text : fontawesome.icon('icon-chevron-right'),
+            right : rightPercentage,
+            color : '#c5c5c5',
+            fontSize : 60,
+            height : 'auto',
+            width : 'auto'
+        }));
+    }
+    
+    inviteRow.addEventListener('click', function() {
+        Alloy.Globals.displayEnterInviteCodeDialog(indicator);
+    });
+    
     sections[0].add(profileRow);
     sections[0].add(acceptRow);
+    sections[0].add(inviteRow);
     sections[1] = createSectionsForTable(Alloy.Globals.PHRASES.challengesViewHot);
 
     var challengesTournamentsCount = 0;
@@ -1916,6 +1973,7 @@ function constructTableData(array) {
             rightNowRows = rightNowRows + 1;
             sections[1].add(createMatchOTDRow());
         } else if(Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_otd_status === 0) {
+        	rightNowRows = rightNowRows + 1;
         	sections[1].add(createNextMatchOTDRow());
         }
     }
@@ -1929,7 +1987,7 @@ function constructTableData(array) {
                 arrayObj.sort(compare);
 
                 for (var i = 0; i < arrayObj.length; i++) {
-                    if (rightNowRows < 5) {
+                    if (rightNowRows < 6) {
                         rightNowRows++;
                         sections[1].add(constructChallengeRows(arrayObj[i], i, 'accept'));
                     }
@@ -1942,7 +2000,7 @@ function constructTableData(array) {
                 arrayObj.sort(compare);
                 Alloy.Globals.CHALLENGEOBJECTARRAY[x].sort(compare);
                 for (var i = 0; i < arrayObj.length; i++) {
-                    if (rightNowRows < 5) {
+                    if (rightNowRows < 6) {
                         rightNowRows++;
                         sections[1].add(constructChallengeRows(arrayObj[i], i, 'pending'));
                     }
@@ -2166,12 +2224,15 @@ if (!checkFirstTime) {
     }
 } 
 
-
-if (!Ti.App.Properties.hasProperty("showInviteSetting")) {
-	Ti.App.Properties.setBool("showInviteSetting", true);
+if (!Ti.App.Properties.hasProperty("showVersionSetting")) {
+	Ti.App.Properties.setBool("showVersionSetting", true);
 }
 
-var showInviteCodeBox = Ti.App.Properties.getBool('showInviteSetting');
+var showVersionBox = Ti.App.Properties.getBool('showVersionSetting');
+var currentAppVersion = "";
+if (Ti.App.Properties.hasProperty("currentAppVersion")) {
+	currentAppVersion = JSON.parse(Ti.App.Properties.getString('currentAppVersion'));
+}
 
 function isEmptyObj(obj) {
     for(var prop in obj) {
@@ -2181,10 +2242,33 @@ function isEmptyObj(obj) {
     return true && JSON.stringify(obj) === JSON.stringify({});
 }
 
-if(showInviteCodeBox && isEmptyObj(args) ) {
-	setTimeout(function() {
-		Alloy.Globals.displayEnterInviteCodeDialog(indicator);
-    }, 2500);
+if(showVersionBox && isEmptyObj(args) ) {
+	if(currentAppVersion && Ti.App.version != currentAppVersion) {
+		var appUrl = "http://itunes.apple.com/app/id884939881";
+		if (isAndroid) {                         
+        	appUrl = "market://details?id=apps.topgame.betkampen";
+        }
+          
+        var alertWindow = Titanium.UI.createAlertDialog({
+          	title : Alloy.Globals.PHRASES.betbattleTxt,
+           	message : Alloy.Globals.PHRASES.newVersionTxt,
+            buttonNames : [Alloy.Globals.PHRASES.okConfirmTxt, Alloy.Globals.PHRASES.abortBtnTxt],
+            persistent : true
+        });
+
+        alertWindow.addEventListener('click', function(e) {
+        	switch (e.index) {
+            	case 0:
+                    alertWindow.hide();
+					Ti.Platform.openURL(appUrl);
+                    break;
+                case 1:
+                    alertWindow.hide();
+                    break;
+            }
+        });
+        setTimeout(function() {
+        	alertWindow.show();
+        }, 2500);
+	}
 }
-
-
