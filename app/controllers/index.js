@@ -48,6 +48,7 @@ function startApp() {
     if (hasLaunched) {
         doLogin();
     } else {
+    	/*
         // display welcome dialog
         var alertWindow = Titanium.UI.createAlertDialog({
             title : Alloy.Globals.PHRASES.betbattleTxt,
@@ -65,14 +66,16 @@ function startApp() {
                 doLogin();
                 break;
             default:
-                Ti.App.Properties.setString("appLaunch", JSON.stringify({
-                    opened : true
-                }));
-                doLogin();
+
                 break;
             }
         });
         alertWindow.show();
+        */
+        Ti.App.Properties.setString("appLaunch", JSON.stringify({
+        	opened : true
+        }));
+        doLogin();
     }
 }
 
@@ -188,7 +191,7 @@ if (OS_ANDROID) {
                 } else {                   	
                    	var alertWindow = Titanium.UI.createAlertDialog({
 						title : 'Bet Battle',
-       	 				message : 'Permissions need could not be acquired!',
+       	 				message : 'Permissions needed could not be acquired!',
         				buttonNames : ['OK']
     				});
 

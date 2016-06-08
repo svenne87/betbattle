@@ -101,10 +101,9 @@ function getChallengesAndStart() {
                     dialog : indicator
                 };
                 
-                    if(!isAndroid) {
-                         $.nav.close();
-                    }  // TODO
-
+                if(!isAndroid) {
+ 					$.nav.close();
+                }
 
                 if (user_team.data.length > 0) {
                     // keep landing page in memory

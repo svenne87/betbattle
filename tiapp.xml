@@ -8,7 +8,7 @@
     <property name="acs-api-key-production" type="string">2wBlKaB11UTry7XMIDVw1wvb54rNoty2</property>
     <id>apps.topgame.betkampen</id>
     <name>BetBattle</name>
-    <version>2.6</version>
+    <version>2.65</version>
     <publisher>Topgame</publisher>
     <url>http://betkampen.se</url>
     <description>not specified</description>
