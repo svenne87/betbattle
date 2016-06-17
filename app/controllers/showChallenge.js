@@ -1119,7 +1119,7 @@ function showResults(challenge) {
         }
     }
 
-    if (finishedGamesCount === challenge.games.length) {
+    if (finishedGamesCount === challenge.games.length && challenge.challenge_status == 3) {
         // all matches are finished
         isFinished = true;
     }
@@ -1187,6 +1187,8 @@ $.showChallengeWindow.addEventListener('focus', function() {
 	} else {
 		if (Alloy.Globals.checkConnection()) {
 			androidViews = [];
+			pendingStandingsArray = [];
+			
 			indicator.openIndicator();
             for (var view in $.showChallenge.getViews()) {
             	androidViews.push($.showChallenge.getViews()[view]);

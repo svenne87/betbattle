@@ -128,7 +128,7 @@ resetPasswordView.addEventListener('click', function(e) {
 	
 	var emailField = Titanium.UI.createTextField({
         hintText: '',
-        height: 45,
+        height: 60,
         width: 250,
         borderStyle: Titanium.UI.INPUT_BORDERSTYLE_ROUNDED
     });

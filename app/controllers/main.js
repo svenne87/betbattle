@@ -622,13 +622,13 @@ function createSection() {
     };
 
     // Update menu with icon if there are new challenges
-    if (Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_otd_status === 0 && Alloy.Globals.CHALLENGEOBJECTARRAY[0].length > 0) {
+    if (typeof (Alloy.Globals.CHALLENGEOBJECTARRAY[6]) !== 'undefined' && Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_otd_status === 0 && Alloy.Globals.CHALLENGEOBJECTARRAY[0].length > 0) {
         // add badge
         args.rightIcon = (Alloy.Globals.CHALLENGEOBJECTARRAY[0].length + 1);
     } else if (Alloy.Globals.CHALLENGEOBJECTARRAY[0].length > 0) {
         // accept challenges, add badge
         args.rightIcon = Alloy.Globals.CHALLENGEOBJECTARRAY[0].length;
-    } else if (Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_otd_status === 0) {
+    } else if (typeof (Alloy.Globals.CHALLENGEOBJECTARRAY[6]) !== 'undefined' && Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_otd_status === 0) {
         args.rightIcon = 1;
     }
 

@@ -313,7 +313,7 @@ function buildTableRows() {
 	var createdPendingMatchOTD = false;
     
     // build row for match OTD
-    if ( typeof Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_data !== 'undefined') {
+    if ( typeof (Alloy.Globals.CHALLENGEOBJECTARRAY[6]) !== 'undefined' && typeof(Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_data) !== 'undefined') {
         if (Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_data.status !== '2' && Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_otd_status !== 0) {
             data[1].add(createMatchOTDRow());
             createdPendingMatchOTD = true;

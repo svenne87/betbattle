@@ -69,7 +69,7 @@
 "#loginEmail":{
 	color:'#CCC',
     width: "90%",
-    height: 60,
+    height: 75,
     backgroundColor : '#000',
     backgroundImage : 'none',
     left : 20,
@@ -83,7 +83,7 @@
 "#loginPass":{
 	color:'#CCC',
     width: "90%",
-    height: 60,
+    height: 75,
     backgroundColor : '#000',
     backgroundImage : 'none',
     left : 20,

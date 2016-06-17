@@ -377,7 +377,9 @@ if (OS_IOS) {
 fb.appid = '1403709019858016';
 /* - - - - - */
 
-fb.setLoginBehavior(fb.LOGIN_BEHAVIOR_NATIVE);
+if(!isAndroid) {
+	fb.setLoginBehavior(fb.LOGIN_BEHAVIOR_NATIVE);
+}
 fb.forceDialogAuth = false;
 Alloy.Globals.connect = true;
 

@@ -1889,7 +1889,7 @@ function constructTableData(array) {
         }));
     }
 
-    if (Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_otd_status === 0 && Alloy.Globals.CHALLENGEOBJECTARRAY[0].length > 0) {
+    if (typeof(Alloy.Globals.CHALLENGEOBJECTARRAY[6]) !== 'undefined' && Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_otd_status === 0 && Alloy.Globals.CHALLENGEOBJECTARRAY[0].length > 0) {
         // add badge
         acceptLabel.setText(Alloy.Globals.CHALLENGEOBJECTARRAY[0].length + 1);
         acceptLabel.setLeft(acceptTextLabel.toImage().width + 70);
@@ -1899,7 +1899,7 @@ function constructTableData(array) {
         acceptLabel.setText(Alloy.Globals.CHALLENGEOBJECTARRAY[0].length);
         acceptLabel.setLeft(acceptTextLabel.toImage().width + 70);
         acceptRow.add(acceptLabel);
-    } else if (Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_otd_status === 0) {
+    } else if (typeof(Alloy.Globals.CHALLENGEOBJECTARRAY[6]) !== 'undefined' && Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_otd_status === 0) {
         // match otd, add badge
         acceptLabel.setText('1');
         acceptLabel.setLeft(acceptTextLabel.toImage().width + 70);
@@ -1968,7 +1968,7 @@ function constructTableData(array) {
 	
 	
 	// add Match OTD row
-	if ( typeof Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_data !== 'undefined') {
+	if ( typeof (Alloy.Globals.CHALLENGEOBJECTARRAY[6]) !== 'undefined' && typeof (Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_data) !== 'undefined') {
         if (Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_data.status !== '2' && Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_otd_status !== 0) {
             rightNowRows = rightNowRows + 1;
             sections[1].add(createMatchOTDRow());
@@ -2167,7 +2167,7 @@ function getChallenges() {
                 // construct array with objects
                 Alloy.Globals.CHALLENGEOBJECTARRAY = Alloy.Globals.constructChallenge(response);
 
-                if (Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_otd_status === 0 && Alloy.Globals.CHALLENGEOBJECTARRAY[0].length > 0) {
+                if (typeof(Alloy.Globals.CHALLENGEOBJECTARRAY[6]) !== 'undefined' && Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_otd_status === 0 && Alloy.Globals.CHALLENGEOBJECTARRAY[0].length > 0) {
                     // add badge
                     acceptLabel.setText(Alloy.Globals.CHALLENGEOBJECTARRAY[0].length + 1);
                     acceptLabel.setLeft(acceptTextLabel.toImage().width + 70);
@@ -2177,7 +2177,7 @@ function getChallenges() {
                     acceptLabel.setText(Alloy.Globals.CHALLENGEOBJECTARRAY[0].length);
                     acceptLabel.setLeft(acceptTextLabel.toImage().width + 70);
                     acceptRow.add(acceptLabel);
-                } else if (Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_otd_status === 0) {
+                } else if (typeof(Alloy.Globals.CHALLENGEOBJECTARRAY[6]) !== 'undefined' && Alloy.Globals.CHALLENGEOBJECTARRAY[6].match_otd_status === 0) {
                     // match otd, add badge
                     acceptLabel.setText('1');
                     acceptLabel.setLeft(acceptTextLabel.toImage().width + 70);

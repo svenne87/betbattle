@@ -100,7 +100,7 @@ if (gAdmin == Alloy.Globals.BETKAMPENUID) {
         borderColor : '#000',
         top : 7,
         width : '90%',
-        height : 50,
+        height : 60,
         value : gName,
         tintColor : '#000',
         keyboardType : Titanium.UI.KEYBOARD_DEFAULT,

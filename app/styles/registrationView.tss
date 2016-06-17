@@ -70,7 +70,7 @@
 "#regPass":{
 	color:'#CCC',
     width: "90%",
-    height: 60,
+    height: 75,
     backgroundColor : '#000',
     backgroundImage : 'none',
     left : 20,
@@ -85,7 +85,7 @@
 "#regPassAgain":{
 	color:'#CCC',
     width: "90%",
-    height: 60,
+    height: 75,
     backgroundColor : '#000',
     backgroundImage : 'none',
     left : 20,
@@ -100,7 +100,7 @@
 "#regEmail":{
 	color:'#CCC',
     width: "90%",
-    height: 60,
+    height: 75,
     backgroundColor : '#000',
     backgroundImage : 'none',
     left : 20,

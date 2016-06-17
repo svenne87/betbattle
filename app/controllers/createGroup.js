@@ -205,7 +205,7 @@ groupName = Ti.UI.createTextField({
     top : 18,
     left : '20%',
     width : '60%',
-    height : 40,
+    height : 60,
     tintColor : '#000',
     zIndex : 999,
     keyboardType : Titanium.UI.KEYBOARD_DEFAULT,

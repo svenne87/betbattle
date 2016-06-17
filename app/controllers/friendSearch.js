@@ -82,7 +82,7 @@ var searchText = Ti.UI.createTextField({
     backgroundColor : '#CCC',
     left : 18,
     width : '90%',
-    height : 50,
+    height : 60,
     hintText : Alloy.Globals.PHRASES.searchHintTxt,
     tintColor : '#000',
     keyboardType : Titanium.UI.KEYBOARD_DEFAULT,
