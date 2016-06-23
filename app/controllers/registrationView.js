@@ -345,6 +345,9 @@ signUpBtn.addEventListener('click', function(e) {
         if ($.regPass.value != $.regPassAgain.value) {
             Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noMatchPass);
         } else {
+        	/* Replace spaces in email */
+        	$.regEmail.value = $.regEmail.value.replace(/\s/g,'');
+   	
             if (!checkemail($.regEmail.value)) {
                 Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.validEmail);
             } else {

@@ -179,7 +179,9 @@ function getLanguage() {
 
 // run it
 var language = Ti.App.Properties.getString('languageSelected');
+loadLanguage();
 
+/*
 if (OS_ANDROID) {
     var requestStoragePermission = function() {
         var RSP = require("com.boxoutthinkers.reqstorageperm");
@@ -216,6 +218,7 @@ if (OS_ANDROID) {
 } else {
 	loadLanguage();
 }
+*/
 
 function loadLanguage() {
 	if (language) {
