@@ -16,6 +16,7 @@ var indicator = uie.createIndicatorWindow({
 
 var iOSVersion;
 var isAndroid = true;
+var pastRow = args.row;
 
 var imageErrorHandler = function(e) {
     e.source.image = '/images/no_pic.png';
@@ -63,6 +64,32 @@ function onOpen(evt) {
 function onClose(evt) {
     if(isAndroid) {
         context.off('previousMatchOTDActivity');
+    }
+}
+
+function viewChallengeStatsClick() {
+	if (!Alloy.Globals.checkConnection()) {
+    	Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+        	return;
+    }
+
+	// open web view
+   	var arg = {
+   		url : Alloy.Globals.SHOWCHALLENGESTATS + '?uid=' + Alloy.Globals.BETKAMPENUID + '&match_id=' + match_id + '&lang=' + Alloy.Globals.LOCALE,
+        title : Alloy.Globals.PHRASES.showChallengeTxt
+    };
+
+    var win = Alloy.createController('dynamicWebView', arg).getView();
+    Alloy.Globals.WINDOWS.push(win);
+
+    if (!isAndroid) {
+    	Alloy.Globals.NAV.openWindow(win, {
+        	animated : true
+        });
+    } else {
+    	win.open({
+        	fullScreen : true
+        });
     }
 }
 
@@ -617,6 +644,24 @@ function constructTableView(obj) {
         backgroundColor : 'transparent',
         layout : "absolute",
     });
+    
+    var showStatsButton = false;
+    if(typeof(Alloy.Globals.SETTINGS) !== 'undefined' &&  Alloy.Globals.SETTINGS.enable_ww_challenge_otd_stats == true) {
+        if(typeof(obj.match.status) !== 'undefined') {       	
+        	if (obj.match.status == '2' || obj.match.status == '3') {
+        		showStatsButton = true;
+        	}   
+        }     
+
+   		if(showStatsButton == true) {
+   			var statsButton = Alloy.Globals.createButtonView(Alloy.Globals.themeColor(), "#FFF", Alloy.Globals.PHRASES.statsTxt);
+    		$.previousMatchOTD.add(statsButton);
+
+    		statsButton.addEventListener('click', function(e) {
+      			viewChallengeStatsClick();
+    		});
+   		}
+   	}
 
     if (!isAndroid) {
         table = Titanium.UI.createTableView({
@@ -656,6 +701,11 @@ function constructTableView(obj) {
             width : Ti.UI.FILL,
             backgroundColor : '#303030'
         });
+    }
+    
+    if(showStatsButton) {
+   		table.setHeight('85%');
+    	table.setTop('15%');
     }
 
     var teamHeader = Ti.UI.createView({

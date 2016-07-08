@@ -715,11 +715,11 @@ tableHeaderView.addEventListener('click', function() {
         Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
         return;
     }
-
+	
     if (webViewUrl !== '' && webViewUrl !== null) {
         // open web view
         var arg = {
-            url : webViewUrl,
+            url : webViewUrl + '?uid=' + Alloy.Globals.BETKAMPENUID + '&lang=' + Alloy.Globals.LOCALE,
             title : webViewTitle
         };
 
@@ -736,12 +736,6 @@ tableHeaderView.addEventListener('click', function() {
             });
         }
     } else {
-        // check connection
-        if (!Alloy.Globals.checkConnection()) {
-            Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
-            return;
-        }
-
         var win = Alloy.createController('newChallengeLeague').getView();
         if (OS_IOS) {
             Alloy.Globals.NAV.openWindow(win, {

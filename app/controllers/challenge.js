@@ -111,7 +111,6 @@ function createGameType(gameType, gameObject, i, gameArray, index) {
             e.source.backgroundColor = "#6d6d6d";
         }
     }
-
 }
 
 function createGameTypeWinnerResult(gameType, gameObject, i, gameArray, index) {

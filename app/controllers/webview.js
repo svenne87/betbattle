@@ -34,7 +34,7 @@ if (OS_ANDROID) {
         url : url,
         height : Ti.UI.FILL,
         width : Ti.UI.FILL,
-        backgroundColor : '#303030',
+        backgroundColor : '#FFF',
         softKeyboardOnFocus : Titanium.UI.Android.SOFT_KEYBOARD_HIDE_ON_FOCUS
     });
 } else {

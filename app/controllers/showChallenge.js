@@ -12,6 +12,7 @@ var androidViews = [];
 var firstSections;
 var firstTable;
 var androidRefresh = false;
+var pastRow = args.row;
 
 var uie = require('lib/IndicatorWindow');
 var indicator = uie.createIndicatorWindow({
@@ -59,6 +60,32 @@ if (isAndroid) {
         font : Alloy.Globals.getFontCustom(18, "Bold"),
         color : '#FFF'
     });
+}
+
+function viewChallengeStatsClick() {
+	if (!Alloy.Globals.checkConnection()) {
+    	Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.noConnectionErrorTxt);
+        	return;
+    }
+
+	// open web view
+   	var arg = {
+   		url : Alloy.Globals.SHOWCHALLENGESTATS + '?uid=' + Alloy.Globals.BETKAMPENUID + '&cid=' + args.cid + '&lang=' + Alloy.Globals.LOCALE,
+        title : Alloy.Globals.PHRASES.showChallengeTxt
+    };
+
+    var win = Alloy.createController('dynamicWebView', arg).getView();
+    Alloy.Globals.WINDOWS.push(win);
+
+    if (!isAndroid) {
+    	Alloy.Globals.NAV.openWindow(win, {
+        	animated : true
+        });
+    } else {
+    	win.open({
+        	fullScreen : true
+        });
+    }
 }
 
 function onOpen(evt) {
@@ -507,6 +534,32 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished,
         width : Ti.UI.FILL,
         layout : 'vertical'
     });
+    
+   	if(typeof(Alloy.Globals.SETTINGS) !== 'undefined' &&  Alloy.Globals.SETTINGS.enable_ww_challenge_stats == true) {
+   		var showStatsButton = false;
+   		if (games.length > 1) {
+            for (var g in games) {
+                if (checkDate(games[g].game_date)) {
+                   showStatsButton = true;
+                   break;
+                }
+            }
+   		}
+   		
+   		if(showStatsButton == true) {
+   			var statsButton = Alloy.Globals.createButtonView(Alloy.Globals.themeColor(), "#FFF", Alloy.Globals.PHRASES.statsTxt);
+    		view.add(statsButton);
+    		view.add(Ti.UI.createView({
+        		height : 10,
+        		width : Ti.UI.FILL,
+        		layout : 'vertical'
+    		}));
+
+    		statsButton.addEventListener('click', function(e) {
+      			viewChallengeStatsClick();
+    		});
+   		}
+   	}
 
     var header = Ti.UI.createView({
         height : '15%',
@@ -987,8 +1040,6 @@ function createLayout(game, values, games, currentStanding, isFirst, isFinished,
     if (isAndroid) {
         if (isFirst) {
             androidRefresh = function(e) {
-            	Ti.API.log(e);
-            	
                 if (Alloy.Globals.checkConnection()) {
                     pendingStandingsArray = [];
                     setTimeout(function() {

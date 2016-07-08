@@ -745,7 +745,17 @@ function createNextMatchOTDRow() {
         layout : 'absolute',
         width : 'auto'
     });
-
+	
+	firstRowView.add(Ti.UI.createLabel({
+  		left : 40,
+    	id : 'user_viewed_challenge_indicator',
+        font : {
+        	fontFamily : font
+        },
+        text : fontawesome.icon('fa-arrow-right'),
+        color : Alloy.Globals.themeColor()
+    }));
+	
     firstRowView.add(Ti.UI.createLabel({
         text : Alloy.Globals.PHRASES.landingPageMatch + ' ',
         font : Alloy.Globals.getFontCustom(16, "Regular"),
@@ -1031,7 +1041,7 @@ function createMatchOTDRow() {
     });
 
     row.add(Ti.UI.createImageView({
-        image : '/images/ikoner_mix_sport.png',
+        image : '/images/otd_utmaning.png',
         left : 10,
         width : 30,
         height : 30

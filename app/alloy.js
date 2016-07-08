@@ -47,6 +47,7 @@ Alloy.Globals.AcceptedBeacon2 = false;
 Alloy.Globals.AcceptedBeacon3 = false;
 Alloy.Globals.connect;
 Alloy.Globals.VERSIONS;
+Alloy.Globals.SETTINGS;
 Alloy.Globals.COUPON = null;
 Alloy.Globals.hasCoupon = false;
 Alloy.Globals.couponOpen = false;
@@ -228,6 +229,7 @@ Alloy.Globals.BETKAMPENGETTUTORIALURL = Alloy.Globals.BETKAMPENURL + '/webviews/
 Alloy.Globals.FINISHEDCHALLENGESURL = Alloy.Globals.BETKAMPENURL + '/api/get_finished_challenges.php';
 Alloy.Globals.JOINCODEURL = Alloy.Globals.BETKAMPENURL + '/api/join_challenge_with_code.php';
 Alloy.Globals.RESETPASSWORDURL = Alloy.Globals.BETKAMPENURL + '/api/request_password_reset.php';
+Alloy.Globals.SHOWCHALLENGESTATS = '/webviews/show_challenge_stats.php';
 
 Alloy.Globals.performTimeout = function(func) {
     if (OS_ANDROID) {
@@ -671,6 +673,18 @@ Alloy.Globals.readToken = function() {
 };
 
 Alloy.Globals.createButtonView = function(buttonColor, fontColor, text) {
+    var button = Titanium.UI.createButton({
+ 		width : "90%",
+        height : 50,
+        borderRadius : 5,
+        backgroundColor : buttonColor,
+        top : 10,
+        title : text,
+        font : Alloy.Globals.FONT,
+        color : fontColor,
+        textAlign : "center"
+	});
+    /*
     var buttonView = Ti.UI.createView({
         width : "90%",
         height : 65,
@@ -687,8 +701,8 @@ Alloy.Globals.createButtonView = function(buttonColor, fontColor, text) {
     });
 
     buttonView.add(buttonLabel);
-
-    return buttonView;
+	*/
+    return button;
 };
 
 

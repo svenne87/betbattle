@@ -24,6 +24,7 @@ function createLeagueAndUidObj(response) {
 	Alloy.Globals.LEAGUES = [];
 	Alloy.Globals.AVAILABLELANGUAGES = [];
 	Alloy.Globals.VERSIONS = response.versions;
+	Alloy.Globals.SETTINGS = response.settings;
 	user_team = response.user_team;
 
 	for (var i = 0; i < response.all_leagues.length; i++) {

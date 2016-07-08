@@ -239,7 +239,8 @@ table.addEventListener('click', function(e) {
                 if (e.rowData.className === 'last_match_otd') {
                 	
                 	var args = {
-                		match_id : e.rowData.id
+                		match_id : e.rowData.id,
+                		row : e.rowData
                 	};
                 	
                     var win = Alloy.createController('previousMatchOTD', args).getView();
@@ -261,6 +262,7 @@ table.addEventListener('click', function(e) {
                         Alloy.Globals.CHALLENGEINDEX = e.rowData.id;
                         args = {
                             cid : obj.id,
+                            row : e.rowData
                         };
                         var win = Alloy.createController('showChallenge', args).getView();
 
@@ -393,29 +395,31 @@ function createLastMatchOTDRow(obj, index) {
         }));
     }
    
-    var imageLocation = '/images/otd_utmaning.png';
-    
-    if (obj.sport_id === '1') {
-    	// Hockey
-        imageLocation = '/images/ikonhockey.png';
-     } else if (obj.sport_id === '2') {
-        // Soccer
-        imageLocation = '/images/ikonfotboll.png';
-     }
-
     row.add(Ti.UI.createImageView({
-        image : imageLocation,
+        image : '/images/otd_utmaning.png',
         left : 10,
         width : 30,
         height : 30
     }));
-
+    
     var firstRowView = Ti.UI.createView({
         top : -20,
         layout : 'absolute',
         width : 'auto'
-    });
-
+    });    
+    
+    if(typeof(obj.user_viewed_challenge) !== 'undefined' && obj.user_viewed_challenge == false) {
+    	firstRowView.add(Ti.UI.createLabel({
+    		left : 40,
+    		id: 'user_viewed_challenge_indicator',
+        	font : {
+        		fontFamily : font
+        	},
+        	text : fontawesome.icon('fa-arrow-right'),
+        	color : Alloy.Globals.themeColor()
+    	}));
+	}
+	
     firstRowView.add(Ti.UI.createLabel({
         text : Alloy.Globals.PHRASES.pastMatchOTDTxt + ' ',
         font : Alloy.Globals.getFontCustom(16, "Regular"),
@@ -624,6 +628,18 @@ function constructChallengeRows(obj, index) {
         layout : 'absolute',
         width : 'auto'
     });
+	
+    if(typeof(obj.user_viewed_challenge) !== 'undefined' && obj.user_viewed_challenge == false) {
+    	firstRowView.add(Ti.UI.createLabel({
+    		left : 40,
+    		id : 'user_viewed_challenge_indicator',
+        	font : {
+        		fontFamily : font
+        	},
+        	text : fontawesome.icon('fa-arrow-right'),
+        	color : Alloy.Globals.themeColor()
+    	}));
+	}
 
     var betGroupName = Alloy.Globals.PHRASES.unknownGroupTxt;
 
@@ -855,8 +871,6 @@ function getFinishedChallenges(firstTime, start, rows) {
     if (isLoading) {
         return;
     }
-
-    Ti.API.log(firstTime + " Fetching -> " + start + " - " + rows);
 
     // Get challenges
     var xhr = Titanium.Network.createHTTPClient();
