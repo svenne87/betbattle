@@ -4,15 +4,9 @@
 			<ScrollableView id="scrollableView" showPagingControl="true">
 				<View id="content">
 					<ImageView id="betbattleLogo" />
-					<View id="facebookBtn">
-						<Label id="facebookBtnText">sign in with Facebook</Label>
-					</View>
-					<View id="loginBtn">
-						<Label id="loginBtnText">Sign in</Label>
-					</View>
-					<View id="registerBtn">
-						<Label id="registerBtnText">Register with Email</Label>
-					</View>
+					<Button id="facebookBtn" title="Sign in with Facebook"></Button>
+					<Button id="loginBtn" title="Sign in"></Button>
+					<Button id="registerBtn" title="Register with Email"></Button>
 				</View>
 				
 			</ScrollableView>

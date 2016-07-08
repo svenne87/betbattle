@@ -16,44 +16,41 @@
 	barColor : 'black',
 	height : Ti.UI.FILL,
 },
-"#facebookBtn":{
+"#facebookBtn[platform=ios]":{
 	top: '65%',
 	height: '9%',
 	width: '80%',
 	backgroundColor: '#336699',
-	borderRadius: 3
-},
-"#facebookBtnText[platform=ios]":{
+	borderRadius: 3,
 	color: '#FFF',
 	textAlign: 'center',
-	width: 'auto',
 	font: {
 		fontSize: 16,
 		fontFamily: 'OpenSans',
 		fontWeight: 'Regular'
 	}
 },
-"#facebookBtnText[platform=android]":{
+"#facebookBtn[platform=android]":{
+	top: '65%',
+	height: '9%',
+	width: '80%',
+	backgroundColor: '#336699',
+	borderRadius: 3,
 	color: '#FFF',
 	textAlign: 'center',
-	width: 'auto',
 	font: {
 		fontSize: 16,
 		fontFamily: 'OpenSans-Regular',
 		fontWeight: 'Regular'
 	}
 },
-"#registerBtn":{
+"#registerBtn[platform=ios]":{
 	top: '1%',
 	height: '9%',
 	width: '80%',
 	backgroundColor: '#fff',
-	borderRadius: 3
-},
-"#registerBtnText[platform=ios]":{
+	borderRadius: 3,
 	color: '#FFF',
-	//left: '19%',
-	width: 'auto',
 	textAlign: 'center',
 	font: {
 		fontSize: 16,
@@ -61,28 +58,27 @@
 		fontWeight: 'Regular'
 	}
 },
-"#registerBtnText[platform=android]":{
-	color: '#FFF',
-	//left: '19%',
-	width: 'auto',
-	textAlign: 'center',
-	font: {
-		fontSize: 16,
-		fontFamily: 'OpenSans-Regular',
-		fontWeight: 'Regular'
-	}
-},
-"#loginBtn":{
+"#registerBtn[platform=android]":{
 	top: '1%',
 	height: '9%',
 	width: '80%',
 	backgroundColor: '#fff',
-	borderRadius: 3
-},
-"#loginBtnText[platform=ios]":{
+	borderRadius: 3,
 	color: '#FFF',
-	//left: '19%',
-	width: 'auto',
+	textAlign: 'center',
+	font: {
+		fontSize: 16,
+		fontFamily: 'OpenSans-Regular',
+		fontWeight: 'Regular'
+	}
+},
+"#loginBtn[platform=ios]":{
+	top: '1%',
+	height: '9%',
+	width: '80%',
+	backgroundColor: '#fff',
+	borderRadius: 3,
+	color: '#FFF',
 	textAlign: 'center',
 	font: {
 		fontSize: 16,
@@ -90,21 +86,20 @@
 		fontWeight: 'Regular'
 	}
 },
-"#loginBtnText[platform=android]":{
+"#loginBtn[platform=android]":{
+	top: '1%',
+	height: '9%',
+	width: '80%',
+	backgroundColor: '#fff',
+	borderRadius: 3,
 	color: '#FFF',
-	//left: '19%',
-	width: 'auto',
 	textAlign: 'center',
 	font: {
 		fontSize: 16,
 		fontFamily: 'OpenSans-Regular',
 		fontWeight: 'Regular'
 	}
-}
-
-
-
-
+},
 ".scrollView":{
 	backgroundColor: '#61A542',
 	backgroundGradient: {

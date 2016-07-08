@@ -497,7 +497,7 @@ if (isAndroid) {
 }
 
 // set correct language phrase
-$.facebookBtnText.text = Alloy.Globals.PHRASES.loginFacebookButtonTxt + ' ';
+$.facebookBtn.title = Alloy.Globals.PHRASES.loginFacebookButtonTxt + ' ';
 
 // try to get Betkampen token
 Alloy.Globals.readToken();
@@ -782,5 +782,5 @@ $.registerBtn.addEventListener('click', function(e) {
 	Alloy.Globals.WINDOWS.push($.login);
 });
 
-$.registerBtnText.text = Alloy.Globals.PHRASES.registerTxt + ' ';
-$.loginBtnText.text = Alloy.Globals.PHRASES.signInTxt + ' ';
+$.registerBtn.title = Alloy.Globals.PHRASES.registerTxt + ' ';
+$.loginBtn.title = Alloy.Globals.PHRASES.signInTxt + ' ';
