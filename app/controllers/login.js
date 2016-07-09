@@ -250,7 +250,7 @@ function loginAuthenticated(fb) {
 		if (this.status == '200') {
 			if (this.readyState == 4) {
 				var response = null;
-
+				
 				try {
 					response = JSON.parse(this.responseText);
 				} catch(e) {
@@ -268,6 +268,9 @@ function loginAuthenticated(fb) {
 					Alloy.Globals.showFeedbackDialog(Alloy.Globals.PHRASES.commonErrorTxt);
 					indicator.closeIndicator();
 					addEvent();
+					isSubmitting = false;
+					added = false;
+					setButtonOpacity(1);
 				}
 			}
 		} else {
@@ -411,7 +414,6 @@ var fbLoginEvent = function(e) {
 	if (Alloy.Globals.connect == true) {
 		if (e.success) {
 			e.data = JSON.parse(e.data);
-
 			Alloy.Globals.FACEBOOK = fb;
 
 			Alloy.Globals.BETKAMPEN = {
