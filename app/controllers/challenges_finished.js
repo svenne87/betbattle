@@ -407,7 +407,7 @@ function createLastMatchOTDRow(obj, index) {
         layout : 'absolute',
         width : 'auto'
     });    
-    
+
     if(typeof(obj.user_viewed_challenge) !== 'undefined' && obj.user_viewed_challenge == false) {
     	firstRowView.add(Ti.UI.createLabel({
     		left : 40,
@@ -628,8 +628,8 @@ function constructChallengeRows(obj, index) {
         layout : 'absolute',
         width : 'auto'
     });
-	
-    if(typeof(obj.user_viewed_challenge) !== 'undefined' && obj.user_viewed_challenge == false) {
+		
+    if(typeof(obj.attributes.user_viewed_challenge) !== 'undefined' && obj.attributes.user_viewed_challenge == false) {	
     	firstRowView.add(Ti.UI.createLabel({
     		left : 40,
     		id : 'user_viewed_challenge_indicator',

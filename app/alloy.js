@@ -1362,6 +1362,7 @@ Alloy.Globals.constructChallenge = function(responseAPI) {
                     round : response[i].round,
                     show : response[i].show,
                     matches : response[i].matches,
+                    user_viewed_challenge : response[i].user_viewed_challenge,
                     leagueMixed : leagueMixed
                 });
             }
